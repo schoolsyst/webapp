@@ -1,4 +1,4 @@
-# schoolsyst-api-frontend
+# schoolsyst's frontend
 
 > A centralized school management system for high school students
 
