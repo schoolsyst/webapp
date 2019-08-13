@@ -1,0 +1,67 @@
+.Layout
+* Navbar
+* Floating action...
+** button
+** bar
+* Popup _(base)_
+
+.Others
+* Subject badge
+** normal
+** dot
+* Big number array
+** Big number
+```js
+// Format for :number prop on <BigNumber> component
+number: {
+    value: 12322,
+    unit: 'Kg',
+    sign: '+',
+    writable: ['value', 'sign']
+}
+```
+  
+* Exercise item
+** Normal
+** MNML
+* Schedule mutation item
+** Deleted
+** Rescheduled
+
+.Buttons
+* Toolbox _<h2>: aside/below, <h1>: below_
+** Button
+** Search
+** Checkbox
+** Dropdown _(with search box)_
+** Date range picker
+* Flat button _@schedule<Nouvelle modification>_
+
+.Cards
+* Document card
+* Course card
+** Big
+** Medium
+* Test card
+** Normal
+** Expanded
+** Grades
+* Homework card  _@dashboard_
+* Event card
+* Subject card  _@settings_
+
+.Popups
+* Subject picker _(popup version)_
+* New note
+* New homework
+** test
+** exercise
+* New schedule mutation
+* Dialog
+** Primary btn
+** Secondary btn
+
+.Settings
+* Textinput
+* Radioinput
+* Integerinput

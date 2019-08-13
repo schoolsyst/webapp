@@ -1,72 +1,122 @@
 <template>
   <div class="container">
-    <div>
-      <logo />
-      <h1 class="title">
-        schoolsyst-api-frontend
-      </h1>
-      <h2 class="subtitle">
-        A centralized school management system for high school students
-      </h2>
-      <div class="links">
-        <a
-          href="https://nuxtjs.org/"
-          target="_blank"
-          class="button--green"
-        >
-          Documentation
-        </a>
-        <a
-          href="https://github.com/nuxt/nuxt.js"
-          target="_blank"
-          class="button--grey"
-        >
-          GitHub
-        </a>
+    <Heading :content="formattedDate" />
+    <Toolbar :buttons="toolbarButtons"/>
+    <div class="horizontal-group">
+      <div class="left">
+        <h2>Prochain cours</h2>
+        <CourseCard :course="nextCourse"/>
+        <h2>Devoirs du prochain cours</h2>
+        <HomeworkCard :homework="nextCourse.homework" />
+      </div>
+      <div class="right">
+        <h2>Moyenne</h2>
+        <BigNumber :number="globalMean"/>
+        <h2>Évolution</h2>
+        <BigNumber :number="evolution" />
       </div>
     </div>
   </div>
 </template>
 
 <script>
-import Logo from '~/components/Logo.vue'
+import axios from 'axios'
+import { async } from 'q';
+import Heading from "~/components/Heading.vue"
+import Toolbar from "~/components/Toolbar.vue"
+import CourseCard from "~/components/CourseCard.vue"
+import HomeworkCard from "~/components/HomeworkCard.vue"
+import BigNumber from "~/components/BigNumber.vue"
 
 export default {
   components: {
-    Logo
-  }
+    Heading,
+    Toolbar,
+    CourseCard,
+    HomeworkCard,
+    BigNumber
+  },
+  head() {
+    return {
+      title: "Dashboard",
+      meta: [
+        {
+          hid: 'description',
+          name: 'description',
+          content: "Schoolsyst — Dashboard",
+        }
+      ]
+    }
+  },
+
+  data() {
+    return { 
+      formattedDate: 'Dimanche 11 Août—13:20',
+      toolbarButtons: [
+        {
+          icon: 'edit',
+          text: 'Devoir',
+          action: 'new_exercise',
+          type: 'button'
+        },
+        {
+          icon: 'note_add',
+          text: 'Nouveau chapitre',
+          action: 'new_chapter',
+          type: 'button'
+        },
+        {
+          icon: 'format_list_bulleted',
+          text: 'Contrôle',
+          action: 'new_test',
+          type: 'button'
+        },
+        {
+          icon: 'insert_drive_file',
+          text: 'Dernier chapitre',
+          action: 'open_latest_chapter',
+          type: 'button'
+        }
+      ],
+      nextCourse: {
+        subject: {
+          color: "#43A047",
+          name: "Histoire—Géographie",
+        },
+        room: 'L109',
+        time: "12:00",
+        homework: {
+          subject: {
+            color: "#43A047"
+          },
+          name: "Ex 4–6 p306",
+          progress: 1
+        }
+      },
+      globalMean: {
+        value: 14.75,
+        unit: '/20',
+        writables: []
+      },
+      evolution: {
+        value: 0.2,
+        sign: '+',
+        writables: []
+      }
+    }
+  },
+
+  // async created() {
+  //   const res = await axios.get('http://localhost:8000/api/users', {headers:{
+  //     Authorization: 'Basic ZXdlbjpwb3RkZWZsZXVyNzYyMw==',
+  //   }})
+  //   this.ip = res.data[0].username
+  // }
 }
 </script>
 
-<style>
-.container {
-  margin: 0 auto;
-  min-height: 100vh;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  text-align: center;
-}
-
-.title {
-  font-family: 'Quicksand', 'Source Sans Pro', -apple-system, BlinkMacSystemFont,
-    'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-  display: block;
-  font-weight: 300;
-  font-size: 100px;
-  color: #35495e;
-  letter-spacing: 1px;
-}
-
-.subtitle {
-  font-weight: 300;
-  font-size: 42px;
-  color: #526488;
-  word-spacing: 5px;
-  padding-bottom: 15px;
-}
-
-.links {
-  padding-top: 15px;
+<style scoped>
+.Toolbar {
+  width: 50%;
 }
 </style>

@@ -1,55 +1,57 @@
 <template>
-  <div>
+  <main>
+    <link href="https://fonts.googleapis.com/css?family=Material+Icons|Material+Icons+Outlined" rel="stylesheet">
+    <link rel="stylesheet" href="~static/fonts/Manrope/index.css">
+    <Navbar currentPage="dashboard"/>
     <nuxt />
-  </div>
+  </main>
 </template>
 
+<script>
+import Navbar from '~/components/Navbar.vue'
+export default {
+  components: {
+    Navbar
+  }
+}
+</script>
+
+
 <style>
-html {
-  font-family: 'Source Sans Pro', -apple-system, BlinkMacSystemFont, 'Segoe UI',
-    Roboto, 'Helvetica Neue', Arial, sans-serif;
-  font-size: 16px;
-  word-spacing: 1px;
-  -ms-text-size-adjust: 100%;
-  -webkit-text-size-adjust: 100%;
-  -moz-osx-font-smoothing: grayscale;
-  -webkit-font-smoothing: antialiased;
-  box-sizing: border-box;
+:root {
+  --material-blue: #1389FD;
+  --offset-blue: #E7F8FF;
 }
 
-*,
-*:before,
-*:after {
-  box-sizing: border-box;
-  margin: 0;
+li {
+  list-style: none;
 }
 
-.button--green {
-  display: inline-block;
-  border-radius: 4px;
-  border: 1px solid #3b8070;
-  color: #3b8070;
-  text-decoration: none;
-  padding: 10px 30px;
+* {
+  font-family: 'Manrope3', sans-serif;
+  font-weight: 400;
 }
 
-.button--green:hover {
-  color: #fff;
-  background-color: #3b8070;
+ul, h1, h2, h3, h4, h5, h6, p, li {
+    margin: 0;
+    padding: 0;
 }
 
-.button--grey {
-  display: inline-block;
-  border-radius: 4px;
-  border: 1px solid #35495e;
-  color: #35495e;
-  text-decoration: none;
-  padding: 10px 30px;
-  margin-left: 15px;
+h2 {
+  text-transform: uppercase;
+  font-weight: bold;
+  letter-spacing: 4px;
+  margin-top: 20px;
 }
 
-.button--grey:hover {
-  color: #fff;
-  background-color: #35495e;
+@media (min-width: 1000px) {
+  main {
+    margin: 30px 0 0 30px;
+  }
+
+  .horizontal-group {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+  }
 }
 </style>
