@@ -1,7 +1,6 @@
 <template>
   <main>
-    <link href="https://fonts.googleapis.com/css?family=Material+Icons|Material+Icons+Outlined" rel="stylesheet">
-    <link rel="stylesheet" href="~static/fonts/Manrope/index.css">
+    <link v-for="fontPath in fonts" :key="fontPath" rel="stylesheet" :href="fontPath">
     <Navbar currentPage="dashboard"/>
     <nuxt />
   </main>
@@ -12,7 +11,14 @@ import Navbar from '~/components/Navbar.vue'
 export default {
   components: {
     Navbar
-  }
+  },
+
+  data() { return {
+    fonts: [
+      '/fonts/Manrope/index.css',
+      'https://fonts.googleapis.com/css?family=Material+Icons|Material+Icons+Outlined'
+    ]
+  }}
 }
 </script>
 
@@ -28,7 +34,7 @@ li {
 }
 
 * {
-  font-family: 'Manrope3', sans-serif;
+  font-family: 'Manrope', sans-serif;
   font-weight: 400;
 }
 
