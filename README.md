@@ -1,6 +1,6 @@
 # schoolsyst's frontend
 
-> A centralized school management system for high school students
+> Schoolsyst&#39;s frontend: a single-page web application built to be used offline and online.
 
 ## Build Setup
 
