@@ -1,63 +1,31 @@
 <template>
-  <main>
-    <link v-for="fontPath in fonts" :key="fontPath" rel="stylesheet" :href="fontPath">
-    <Navbar currentPage="dashboard"/>
+  <div class="app">
+    <TheNavbar />
     <nuxt />
-  </main>
+    <TheFooter />
+  </div>
 </template>
 
 <script>
-import Navbar from '~/components/Navbar.vue'
+import TheNavbar from "~/components/TheNavbar.vue";
+import TheFooter from "~/components/TheFooter.vue";
+
 export default {
   components: {
-    Navbar
-  },
-
-  data() { return {
-    fonts: [
-      '/fonts/Manrope/index.css',
-      'https://fonts.googleapis.com/css?family=Material+Icons|Material+Icons+Outlined'
-    ]
-  }}
-}
+    TheNavbar,
+    TheFooter
+  }
+};
 </script>
 
+<style scoped lang="sass">
+/* DESKTOP */
+@media (min-width: 1000px) 
+  .container 
+    margin: 30px 0 0 30px
 
-<style>
-:root {
-  --material-blue: #1389FD;
-  --offset-blue: #E7F8FF;
-}
-
-li {
-  list-style: none;
-}
-
-* {
-  font-family: 'Manrope', sans-serif;
-  font-weight: 400;
-}
-
-ul, h1, h2, h3, h4, h5, h6, p, li {
-    margin: 0;
-    padding: 0;
-}
-
-h2 {
-  text-transform: uppercase;
-  font-weight: bold;
-  letter-spacing: 4px;
-  margin-top: 20px;
-}
-
-@media (min-width: 1000px) {
-  main {
-    margin: 30px 0 0 30px;
-  }
-
-  .horizontal-group {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-  }
-}
+/* MOBILE */
+@media (max-width: 999px) 
+  .container 
+    margin: 10px
 </style>

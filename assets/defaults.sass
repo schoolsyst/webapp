@@ -1,0 +1,61 @@
+//====================
+//    TYPOGRAPHY
+//==================== 
+
+html 
+    font-family: 'Google Sans', 'Product Sans', 'Manrope', sans-serif
+
+
+pre, code, source 
+    font-family: 'Roboto Mono' monospace
+
+
+//=====================
+//       COLORS
+//=====================
+
+html
+    --blue: #1389FD
+    --offset-blue: #E7F8FF
+    --grey: #F3F3F3
+
+
+// ====================
+//     INTERACTIONS
+//===================== 
+
+.material-icons, .material-icons-outlined
+    user-select: none
+
+
+button, a, select 
+    cursor: pointer
+
+
+//=====================
+//     TRANSITIONS
+//=====================
+.page-enter-active, .page-leave-active 
+    transition: all 0.25s
+
+
+.page-enter, .page-leave-active 
+    opacity: 0
+
+
+//=====================
+//     ANIMATIONS
+//=====================
+
+@keyframes blink
+    0%
+        opacity: 0
+    49.999%
+        opacity: 0
+    50%
+        opacity: 1
+    100%
+        opacity: 1
+
+.anim--blink
+    animation: blink 1s linear infinite
