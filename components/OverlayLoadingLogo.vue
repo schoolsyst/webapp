@@ -1,0 +1,41 @@
+<template>
+    <div class="OverlayLoadingLogo" id="lottie-overlay-loading-logo">
+
+    </div>
+</template>
+
+<script>
+  export default {
+    name: 'OverlayLoadingLogo',
+
+    mounted() {
+        this.animation = lottie.loadAnimation({
+            container: document.getElementById('lottie-overlay-loading-logo'),
+            renderer: 'svg',
+            loop: false,
+            autoplay: false,
+            // TODO: move this to a json file
+            animationData: {v:'5.5.7',fr:60,ip:0,op:61,w:300,h:300,nm:'Animatein',ddd:0,assets:[],layers:[{ddd:0,ind:1,ty:4,nm:'Calquedeforme1',sr:1,ks:{o:{a:0,k:100,ix:11},r:{a:0,k:0,ix:10},p:{a:0,k:[147,148,0],ix:2},a:{a:0,k:[1000,1000,0],ix:1},s:{a:0,k:[12,12,100],ix:6}},ao:0,hasMask:true,masksProperties:[{inv:false,mode:'a',pt:{a:1,k:[{i:{x:0.833,y:0.833},o:{x:0.167,y:0.167},t:46,s:[{i:[[0,0],[0,0],[0,0],[0,0]],o:[[0,0],[0,0],[0,0],[0,0]],v:[[1491.667,241.667],[295.833,370.833],[291.667,1383.333],[1491.667,1383.333]],c:true}]},{i:{x:0.833,y:0.833},o:{x:0.167,y:0.167},t:52,s:[{i:[[0,0],[0,0],[0,0],[0,0]],o:[[0,0],[0,0],[0,0],[0,0]],v:[[645.833,240.833],[290.208,466.042],[291.667,1383.333],[1491.667,1383.333]],c:true}]},{t:61,s:[{i:[[0,0],[0,0],[0,0],[0,0]],o:[[0,0],[0,0],[0,0],[0,0]],v:[[653.125,239.583],[281.771,608.854],[291.667,1383.333],[1491.667,1383.333]],c:true}]}],ix:1},o:{a:0,k:100,ix:3},x:{a:0,k:0,ix:4},nm:'Masque1'}],shapes:[{ty:'gr',it:[{ty:'gr',it:[{ind:0,ty:'sh',ix:1,ks:{a:0,k:{i:[[0,0],[0,0]],o:[[0,0],[0,0]],v:[[279,619],[673,619]],c:false},ix:2},nm:'Tracé1',mn:'ADBEVectorShape-Group',hd:false},{ty:'tm',s:{a:0,k:0,ix:1},e:{a:0,k:100,ix:2},o:{a:0,k:0,ix:3},m:1,ix:2,nm:'Raccorderlestracés1',mn:'ADBEVectorFilter-Trim',hd:false},{ty:'st',c:{a:0,k:[0,0,0,1],ix:3},o:{a:0,k:100,ix:4},w:{a:0,k:50,ix:5},lc:1,lj:1,ml:4,bm:0,nm:'Contour1',mn:'ADBEVectorGraphic-Stroke',hd:false},{ty:'tr',p:{a:0,k:[0,0],ix:2},a:{a:0,k:[0,0],ix:1},s:{a:0,k:[100,100],ix:3},r:{a:0,k:0,ix:6},o:{a:0,k:100,ix:7},sk:{a:0,k:0,ix:4},sa:{a:0,k:0,ix:5},nm:'Transformer'}],nm:'Groupe3',np:3,cix:2,bm:0,ix:1,mn:'ADBEVectorGroup',hd:false},{ty:'gr',it:[{ind:0,ty:'sh',ix:1,ks:{a:0,k:{i:[[0,0],[0,0]],o:[[0,0],[0,0]],v:[[647,254],[647,627]],c:false},ix:2},nm:'Tracé1',mn:'ADBEVectorShape-Group',hd:false},{ty:'gr',it:[{ty:'tr',p:{a:0,k:[0,0],ix:2},a:{a:0,k:[0,0],ix:1},s:{a:0,k:[100,100],ix:3},r:{a:0,k:0,ix:6},o:{a:0,k:100,ix:7},sk:{a:0,k:0,ix:4},sa:{a:0,k:0,ix:5},nm:'Transformer'}],nm:'Groupe1',np:0,cix:2,bm:0,ix:2,mn:'ADBEVectorGroup',hd:false},{ty:'tm',s:{a:0,k:0,ix:1},e:{a:0,k:100,ix:2},o:{a:0,k:0,ix:3},m:1,ix:3,nm:'Raccorderlestracés1',mn:'ADBEVectorFilter-Trim',hd:false},{ty:'st',c:{a:0,k:[0,0,0,1],ix:3},o:{a:0,k:100,ix:4},w:{a:0,k:50,ix:5},lc:1,lj:1,ml:4,bm:0,nm:'Contour1',mn:'ADBEVectorGraphic-Stroke',hd:false},{ty:'tr',p:{a:0,k:[0,2],ix:2},a:{a:0,k:[0,0],ix:1},s:{a:0,k:[100,100],ix:3},r:{a:0,k:0,ix:6},o:{a:0,k:100,ix:7},sk:{a:0,k:0,ix:4},sa:{a:0,k:0,ix:5},nm:'Transformer'}],nm:'Groupe2',np:4,cix:2,bm:0,ix:2,mn:'ADBEVectorGroup',hd:false},{ty:'tr',p:{a:1,k:[{i:{x:0.833,y:0.833},o:{x:0.167,y:0.167},t:45,s:[-371,-393],to:[61.833,65.5],ti:[-61.833,-65.5]},{t:60,s:[0,0]}],ix:2},a:{a:0,k:[0,0],ix:1},s:{a:0,k:[100,100],ix:3},r:{a:0,k:0,ix:6},o:{a:0,k:100,ix:7},sk:{a:0,k:0,ix:4},sa:{a:0,k:0,ix:5},nm:'Transformer'}],nm:'Groupe6',np:2,cix:2,bm:0,ix:1,mn:'ADBEVectorGroup',hd:false}],ip:0,op:181,st:0,bm:0},{ddd:0,ind:2,ty:4,nm:'LogoschoolsystSilhouettes',sr:1,ks:{o:{a:0,k:100,ix:11},r:{a:0,k:0,ix:10},p:{a:0,k:[146.173,146.877,0],ix:2},a:{a:0,k:[1000,1000,0],ix:1},s:{a:0,k:[12,12,100],ix:6}},ao:0,shapes:[{ty:'gr',it:[{ind:0,ty:'sh',ix:1,ks:{a:0,k:{i:[[-114.013,0],[0,-114.012],[114.012,0],[0,114.012]],o:[[114.012,0],[0,114.012],[-114.013,0],[0,-114.012]],v:[[0,-206.437],[206.437,0],[0,206.437],[-206.437,0]],c:true},ix:2},nm:'Tracé1',mn:'ADBEVectorShape-Group',hd:false},{ty:'tm',s:{a:0,k:0,ix:1},e:{a:1,k:[{i:{x:[0.213],y:[1]},o:{x:[1],y:[0]},t:25,s:[0]},{t:60,s:[100]}],ix:2},o:{a:0,k:0,ix:3},m:1,ix:2,nm:'Raccorderlestracés1',mn:'ADBEVectorFilter-Trim',hd:false},{ty:'st',c:{a:0,k:[0,0,0,1],ix:3},o:{a:0,k:100,ix:4},w:{a:0,k:50,ix:5},lc:1,lj:1,ml:4,bm:0,nm:'Contour1',mn:'ADBEVectorGraphic-Stroke',hd:false},{ty:'tr',p:{a:0,k:[1455.331,1387.665],ix:2},a:{a:0,k:[0,0],ix:1},s:{a:0,k:[100,100],ix:3},r:{a:0,k:0,ix:6},o:{a:0,k:100,ix:7},sk:{a:0,k:0,ix:4},sa:{a:0,k:0,ix:5},nm:'Transformer'}],nm:'Groupe1',np:3,cix:2,bm:0,ix:1,mn:'ADBEVectorGroup',hd:false},{ty:'gr',it:[{ind:0,ty:'sh',ix:1,ks:{a:1,k:[{i:{x:0.833,y:0.833},o:{x:0.167,y:0.167},t:40,s:[{i:[[0,0],[0,0],[0,0],[0,0]],o:[[0,0],[0,0],[0,0],[0,0]],v:[[-532.5,591.5],[-532.285,-592.705],[-165.981,-591.5],[532.5,-587.35]],c:false}]},{t:60,s:[{i:[[0,0],[0,0],[0,0],[0,0]],o:[[0,0],[0,0],[0,0],[0,0]],v:[[-532.5,591.5],[-532.487,-228.122],[-165.981,-591.5],[532.5,-587.35]],c:false}]}],ix:2},nm:'Tracé1',mn:'ADBEVectorShape-Group',hd:false},{ty:'tm',s:{a:0,k:0,ix:1},e:{a:1,k:[{i:{x:[0.207],y:[1]},o:{x:[1],y:[0]},t:25,s:[0]},{t:60,s:[100]}],ix:2},o:{a:0,k:0,ix:3},m:1,ix:2,nm:'Raccorderlestracés1',mn:'ADBEVectorFilter-Trim',hd:false},{ty:'st',c:{a:0,k:[0,0,0,1],ix:3},o:{a:0,k:100,ix:4},w:{a:0,k:50,ix:5},lc:1,lj:1,ml:4,bm:0,nm:'Contour1',mn:'ADBEVectorGraphic-Stroke',hd:false},{ty:'tr',p:{a:0,k:[809.5,845.5],ix:2},a:{a:0,k:[0,0],ix:1},s:{a:0,k:[100,100],ix:3},r:{a:0,k:0,ix:6},o:{a:0,k:100,ix:7},sk:{a:0,k:0,ix:4},sa:{a:0,k:0,ix:5},nm:'Transformer'}],nm:'Groupe4',np:3,cix:2,bm:0,ix:2,mn:'ADBEVectorGroup',hd:false},{ty:'gr',it:[{ind:0,ty:'sh',ix:1,ks:{a:0,k:{i:[[0,0],[0,0]],o:[[0,0],[0,0]],v:[[-759.106,759.105],[759.105,-759.105]],c:false},ix:2},nm:'Tracé1',mn:'ADBEVectorShape-Group',hd:false},{ty:'tm',s:{a:1,k:[{i:{x:[0.667],y:[1]},o:{x:[1],y:[0]},t:0,s:[50]},{t:25,s:[0]}],ix:1},e:{a:1,k:[{i:{x:[0.667],y:[1]},o:{x:[1],y:[0]},t:0,s:[50]},{t:25,s:[100]}],ix:2},o:{a:0,k:0,ix:3},m:1,ix:2,nm:'Raccorderlestracés1',mn:'ADBEVectorFilter-Trim',hd:false},{ty:'st',c:{a:0,k:[0,0,0,1],ix:3},o:{a:0,k:100,ix:4},w:{a:0,k:50,ix:5},lc:1,lj:1,ml:4,bm:0,nm:'Contour1',mn:'ADBEVectorGraphic-Stroke',hd:false},{ty:'tr',p:{a:0,k:[1031.894,1038.938],ix:2},a:{a:0,k:[0,0],ix:1},s:{a:0,k:[100,100],ix:3},r:{a:0,k:0,ix:6},o:{a:0,k:100,ix:7},sk:{a:0,k:0,ix:4},sa:{a:0,k:0,ix:5},nm:'Transformer'}],nm:'Groupe5',np:3,cix:2,bm:0,ix:3,mn:'ADBEVectorGroup',hd:false}],ip:0,op:181,st:0,bm:0},{ddd:0,ind:3,ty:1,nm:'Blancuni1',sr:1,ks:{o:{a:0,k:100,ix:11},r:{a:0,k:0,ix:10},p:{a:0,k:[150,150,0],ix:2},a:{a:0,k:[150,150,0],ix:1},s:{a:0,k:[100,100,100],ix:6}},ao:0,sw:300,sh:300,sc:'#ffffff',ip:0,op:181,st:0,bm:0}],markers:[]},
+        })
+
+        setTimeout(() => {
+            this.animation.play()
+            setTimeout(() => {
+                console.log('navigatin')
+                this.$router.push('/dashboard')
+            }, 2300)
+        }, 500);
+    },
+  }
+</script>
+
+<style lang="sass" scoped>
+.OverlayLoadingLogo
+    background-color: #fff
+    width: 25%
+    height: 25%
+    display: block
+    overflow: hidden
+    text-align: center
+    opacity: 1
+</style>
