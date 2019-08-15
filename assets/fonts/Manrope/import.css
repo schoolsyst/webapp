@@ -48,8 +48,6 @@
   url("manrope-thin.otf") format("truetype");
   font-style: normal;
   font-weight: 200; }
-body, html {
-  font-family: "Manrope",sans-serif; }
 *,*:before,*:after {
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
