@@ -1,0 +1,112 @@
+#!/usr/bin/python3
+import argparse
+import os
+import re
+
+"""
+Generates NuxtJS core files quickly from templates with #VARIABLES_TO_COMPLETE#
+"""
+
+def nice_path(path:str) -> str:
+    """ Get an absolute path relative to the cwd
+    """
+    return os.path.join(os.path.abspath(os.path.dirname(__file__)), path)
+
+def nice_path_disp(path:str) -> str:
+    path = nice_path(path)
+    foo = os.path.abspath(os.path.dirname(__file__))
+    return '.' + path.replace(foo, '', 1)
+
+def _template_path(template:str, ext:str) -> str:
+    directory = nice_path('TEMPLATES')
+    filename = f"{template}s.template.{ext}"
+    return os.path.join(directory, filename)
+
+def _template_placeholders(string:str) -> list:
+    ret = list()
+    regex = re.compile(r'#([A-Z_0-9]+)#')
+    for match in regex.findall(string):
+        ret.append(match)
+    return set(ret)
+
+def _file(filepath:str, content = None):
+    mode = 'r' if content is None else 'w'
+    with open(nice_path(filepath), mode, encoding='utf8') as file:
+        if mode == 'r':
+            return file.read()
+        else:
+            file.write(content)
+            linescount = len(content.split(''))
+            print(f"Written {linescount} lines to {nice_path_disp(filepath)}:")
+
+def _registers(args) -> str:
+    if not args.components: return ''
+    components = args.components.split(',')
+    syntax = "        {c},"
+    return ''.join([ syntax.format(c=component) for component in components ])
+
+def _imports(args) -> str:
+    if not args.components: return ''
+    components = args.components.split(',')
+    syntax = "import {c} from '~/components/{c}.vue'"
+    return ''.join([ syntax.format(c=component) for component in components ])
+
+def ask(placeholder:str, name, args) -> str:
+    if placeholder.startswith('__'):
+        return {
+            "name": name,
+            "registers": _registers(args),
+            "imports": _imports(args)
+        }.get(placeholder.replace('__','',1).lower(),  '')
+    
+    disp_placeholder = placeholder.replace('_', ' ').lower()
+    disp_placeholder = disp_placeholder[0].upper() + disp_placeholder[1:]
+    disp_placeholder = disp_placeholder.replace('Api ', 'API ')
+
+    return input(f"{disp_placeholder}: ").strip()
+
+def walk(placeholders:set, string:str, name:str) -> str:
+    for placeholder in placeholders:
+        try:
+            string = string.replace(f"#{placeholder}#", ask(placeholder, name, args))
+        except TypeError:
+            print(f"Error while replacing #{placeholder}#")
+    return string
+
+
+
+def main(name, args, ext, folder):
+    template = args.template
+    # Get the template contents
+    content = _file(_template_path(template, ext))
+    # Replace the vars
+    content = walk(_template_placeholders(content), content, name)
+    # Write to the new file
+    _file(f"{folder}/{name}.{ext}", content)
+
+if __name__ == "__main__":
+    argparser = argparse.ArgumentParser(description="Generates NuxtJS core files quickly from templates with #VARIABLES_TO_COMPLETE#")
+    argparser.add_argument('template', help="""The type of file you want to generate. The script will look for the following file: ./TEMPLATES/<what you typed>s.template.vue
+    Example: python3 generate component will grab the file `./TEMPLATES/components.template.vue` and write a new file to `components/`""")
+    argparser.add_argument('name', nargs='+', help="The name of the component/page/etc you want to generate. Will be used for the generated file's name, and to replace the placeholder `#__NAME#`")
+    argparser.add_argument('-c', '--components', help="Comma-separated list of components to import.")
+    args = argparser.parse_args()
+    
+    ext = {
+        'store': 'js'
+    }.get(args.template, 'vue')
+
+    folder = {
+        'store': 'store'
+    }.get(args.template, args.template+'s')
+
+    for name in args.name:
+        if args.template == 'page' and name.endswith('/'):
+            name += 'index'
+        if args.template == 'component':
+            print(f'Placeholders to fill in for <{name}>')
+        else:
+            print(f'Placeholders to fill in for {folder}/{name}.{ext}')
+        
+        print('-' * 54)
+        main(name, args, ext, folder)
