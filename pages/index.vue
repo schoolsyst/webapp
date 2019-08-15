@@ -15,7 +15,14 @@ export default {
 
     data() {
         return {
-            
+            // TODO
+            routeTimeMap: {
+                // - /notes : currently in a event
+                // - /homework : after the last course
+                // - /bag : from 20:00 to 00:00 if tomorrow has any events
+                // - /grades : when today has no events
+                // - /dashboard : fallback
+            }
         }
     },
 
