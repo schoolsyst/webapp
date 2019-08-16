@@ -35,7 +35,7 @@
         )
 
     .buttons
-      ButtonRegPrimary.submit(type="submit") Valider
+      ButtonRegPrimary.submit(type="submit") Connexion
     .register-link
       p 
         |Pas inscrit ? 

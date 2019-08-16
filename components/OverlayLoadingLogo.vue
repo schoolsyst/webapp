@@ -31,6 +31,8 @@ import { mapGetters } from 'vuex';
     background-color: #fff
     width: 25%
     height: 25%
+    min-width: 200px
+    min-height: 200px
     display: block
     overflow: hidden
     text-align: center
