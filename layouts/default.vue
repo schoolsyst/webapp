@@ -19,13 +19,21 @@ export default {
 </script>
 
 <style scoped lang="sass">
+@import '~/assets/defaults'
+
 /* DESKTOP */
-@media (min-width: 1000px) 
++desktop 
   .container 
-    margin: 30px 0 0 30px
+    margin: 50px 0 0 calc(50px + 60px)
+
 
 /* MOBILE */
-@media (max-width: 999px) 
++mobile 
   .container 
-    margin: 10px
+    margin: 20px
+    padding-bottom: calc((100vw - 30px) / 6)
+    
++tablet
+  .container
+    margin-left: 110px
 </style>

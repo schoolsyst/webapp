@@ -1,12 +1,7 @@
-<template>
-    <BaseFlatComponent 
-        class="ButtonFlat" 
-        :icon="icon" 
-        :icon-style="iconStyle"
-        :large-icon="largeIcon"
-    >
-        <button class="input"><slot></slot></button>
-    </BaseFlatComponent>
+<template lang="pug">
+BaseFlatComponent.ButtonFlat(:icon="icon" :icon-style="iconStyle" :large-icon="largeIcon")
+    button.input
+        slot
 </template>
 
 <script>
@@ -54,6 +49,7 @@ export default {
 </script>
 
 <style lang="sass" scoped>
+@import '~/assets/defaults'
 .ButtonFlat:hover, .ButtonFlat:focus 
     color: var(--blue)
 
@@ -66,7 +62,6 @@ export default {
 .input 
     color: inherit
     font-size: 1em
-
 
 
 </style>

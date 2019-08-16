@@ -60,6 +60,7 @@ export default {
 </script>
 
 <style lang="sass" scoped>
+@import '~/assets/defaults'
 .CardHomework 
     border-radius: 10px
     height: auto

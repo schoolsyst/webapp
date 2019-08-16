@@ -59,3 +59,53 @@ button, a, select
 
 .anim--blink
     animation: blink 1s linear infinite
+
+//=====================
+//    BREAKPOINTS
+//=====================
+
+$bk-desktop: 1000px
+$bk-tablet: 500px
+$bk-sidebar: 650px
+
+=desktop
+    @media (min-width: $bk-desktop)
+        @content
+
+=mobile
+    @media ( max-width: $bk-desktop - 1px )
+        @content
+
+=phone
+    @media ( max-width: $bk-tablet - 1px )
+        @content
+
+=tablet
+    @media ( min-width: $bk-tablet )
+        @content
+
+
+//============================
+//    MATERIAL ICONS HELPER
+// Used with @extends to allow
+// material icons in pseudo-els
+//============================
+
+//FIXME
+@mixin material-icons
+    .material-icons
+        direction: ltr
+        display: inline-block
+        font-size: 24px
+        line-height: 1
+        font-family: 'Material Icons'
+        font-style: normal
+        font-weight: normal
+        letter-spacing: normal
+        text-transform: none
+        white-space: nowrap
+        word-wrap: normal
+        -webkit-font-feature-settings: 'liga'
+        -webkit-font-smoothing: antialiased
+        
+        

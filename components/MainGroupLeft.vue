@@ -9,34 +9,11 @@ export default {
     name: 'MainGroupLeft',
 
 
-    props: {
-
-    },
-
-
-    data() {
-        return {
-            
-        }
-    },
-
-    computed: {
-        
-    },
-
-
-    created() {
-
-    },
-
-
-    methods: {
-
-    }
 }
 </script>
 
 <style lang="sass" scoped>
+@import '~/assets/defaults'
 .MainGroupLeft 
     grid-column: 1
 

@@ -5,6 +5,7 @@
 </template>
 
 <style lang="sass" scoped>
+@import '~/assets/defaults'
 .BaseCard 
     background-color: #ffffff
     border-radius: 10px

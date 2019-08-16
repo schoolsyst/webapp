@@ -9,35 +9,12 @@ export default {
     name: 'MainGroupRight',
 
 
-    props: {
-
-    },
-
-
-    data() {
-        return {
-            
-        }
-    },
-
-    computed: {
-        
-    },
-
-
-    created() {
-
-    },
-
-
-    methods: {
-
-    }
 }
 </script>
 
 <style lang="sass" scoped>
-@media (min-width: 1000px) 
+@import '~/assets/defaults'
++desktop 
     .MainGroupRight 
         grid-column: 2
 </style>

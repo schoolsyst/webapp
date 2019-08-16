@@ -1,19 +1,30 @@
 export const state = () => ({
+    grades: [],
     tests: [],
     exercises: [],
-    grades: []
 })
 
 export const getters = { 
     allGrades (state, getters) {
         return state.grades
     },
-    gradesOf: (state, getters) => (subject)  => {
-        return state.grades.filter(grade => grade.subject.slug === subject.slug)
+    gradesOf: (state, getters) => (subjectOrTrimester)  => {
+        // its a trimester: get the date boundary for the requested trimester
+        if (typeof subjectOrTrimester === Number) {
+            start = getters.trimesterStartDate(subjectOrTrimester)
+            // get the end (aka the start of the next one, or the end of the year)
+            end = getters.trimesterStartDate(subjectOrTrimester+1)
+
+            return state.grades.filter(grade => grade.added >= start && grade.added <= end)
+        // its a subject
+        } else {
+            return state.grades.filter(grade => grade.subject.slug === subject.slug)
+        }
     },
     gradesIn: (state, getters) => (from, upto)  => {
         return state.grades.filter(grade => grade.added >= from && grade.added <= upto)
     },
+
     allTests (state, getters) {
         return state.tests
     },
@@ -34,6 +45,35 @@ export const getters = {
         }
         return tests
     },
+    meanOf: (state, getters) => (subjectOrTrimester, applyGradeMax = true) => {
+        // get an array containing the grade values from the requested subject/trimester
+        let grades = getters.gradesOf(subjectOrTrimester).map(grade => grade.value)
+        // calculate the mean
+        let mean = grades.reduce((accumulated, val) => accumulated + val) / grades.length
+        
+        // NOTE: all grades are in [0;1], this option allows to give out the
+        // "correct" value, according to the user's settings (grade-max)
+        // eg. percentage grades would have a grade-max of 100
+        if (applyGradeMax) {
+            let gradeMax = getters.setting('grades/grade-max')
+            mean *= gradeMax
+        }
+        return mean
+    },
+    globalMean (state, getters) {
+        let grades = getters.allGrades.map(grade => grade.value)
+        if (!grades.length) return 0 // prevent division by zero & reduce empty array
+        let sum = grades.reduce((acc, val) => acc+val)
+        let mean = sum / grades.length
+
+        // See `store/homework.js#getters.meanOf`
+        if (applyGradeMax) {
+            let gradeMax = getters.setting('grades/grade-max')
+            mean *= gradeMax
+        }
+        return mean
+    },
+
     allExercises (state, getters) {
         return state.exercises
     },
@@ -46,7 +86,22 @@ export const getters = {
 }
 
 export const mutations = { 
+    ADD_GRADE (state, newGrade) {
+        state.grades.push(newGrade)
+    },
+    UPDATE_GRADE (state, id, newGrade) {
+        // Get grade
+        grade = state.grades.filter(grade => grade.id === id)[0]
 
+        // Compute new grade
+        Object.assign(grade, newGrade)
+
+        // Remove the original grade
+        state.grades = state.grades.filter(grade => grade.id !== id)
+
+        // Add the modified grade
+        state.grades.push(grade)
+    }
 
  }
 

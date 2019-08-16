@@ -81,6 +81,7 @@ export default {
 </script>
 
 <style lang="sass" scoped>
+@import '~/assets/defaults'
 .add-homework
     margin-left: 70px
 

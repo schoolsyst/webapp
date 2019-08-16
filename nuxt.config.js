@@ -31,10 +31,10 @@ export default {
   ** Global CSS
   */
   css: [
-    '@/assets/reset.sass',
-    '@/assets/defaults.sass',
+    '~/assets/reset.sass',
+    '~/assets/defaults.sass',
     // Fonts
-    '@/assets/fonts/Manrope/import.css',
+    '~/assets/fonts/Manrope/import.css',
 
   ],
   /*
@@ -54,7 +54,6 @@ export default {
     // Doc: https://axios.nuxtjs.org/usage
     '@nuxtjs/axios',
     '@nuxtjs/pwa',
-    // '@nuxtjs/auth',
   ],
   /*
   ** Auth module configuration.
@@ -86,7 +85,4 @@ export default {
     extend (config, ctx) {
     }
   },
-  // router: {
-  //   middleware: ['auth']
-  // },
 }

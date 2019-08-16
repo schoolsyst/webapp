@@ -55,6 +55,7 @@ export default {
 </script>
 
 <style lang="sass" scoped>
+@import '~/assets/defaults'
 .BigNumber 
     height: 144px
     line-height: 144px
@@ -68,7 +69,7 @@ export default {
     font-size: 72px
 
 
-@media (max-width: 1000px) 
++mobile
     .value, .sign 
         font-size: 96px
     

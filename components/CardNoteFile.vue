@@ -52,6 +52,7 @@ export default {
 </script>
 
 <style lang="sass" scoped>
+@import '~/assets/defaults'
 .CardNoteFile 
     height: 300px
     width: 200px

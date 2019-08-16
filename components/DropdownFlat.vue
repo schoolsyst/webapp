@@ -71,6 +71,7 @@ export default {
 </script>
 
 <style lang="sass" scoped>
+@import '~/assets/defaults'
 .input 
     width: max-content
 

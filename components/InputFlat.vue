@@ -1,14 +1,17 @@
-<template>
+<template lang="pug">
     <BaseFlatComponent class="InputFlat" :icon="icon" :icon-style="iconStyle">
-        <input
+        input(
             class="input" 
-            type="text" 
             :name="name" 
             :id="'input_' + name" 
-            :value="value"
             :placeholder="placeholder"
-            @input="$emit('input', $event.taget.value)"
-        >
+            :type="type",
+            :value="value"
+            v-model="inputVal",
+            @input="$emit('input', $event.target.value)",
+            :autofocus="autofocus ? 'autofocus' : 'no'"
+        )
+        //- inside <input> : @input="$emit('input', $event.taget.value)"
     </BaseFlatComponent>
 </template>
 
@@ -30,13 +33,21 @@ export default {
         },
         name: String,
         value: String,
-        placeholder: String
+        placeholder: String,
+        type: {
+            type: String,
+            default: 'text'
+        },
+        autofocus: {
+            type: Boolean,
+            default: false
+        }
     },
 
 
     data() {
         return {
-            
+            inputVal: this.value
         }
     },
 
@@ -57,6 +68,7 @@ export default {
 </script>
 
 <style lang="sass" scoped>
+@import '~/assets/defaults'
 .input 
     width: max-content
 

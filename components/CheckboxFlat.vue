@@ -9,33 +9,10 @@ export default {
     name: 'COMPONENT_NAME',
 
 
-    props: {
-
-    },
-
-
-    data() {
-        return {
-            
-        }
-    },
-
-    computed: {
-        
-    },
-
-
-    created() {
-
-    },
-
-
-    methods: {
-
-    }
 }
 </script>
 
 <style lang="sass" scoped>
+@import '~/assets/defaults'
 
 </style>

@@ -10,33 +10,10 @@ export default {
     name: 'ButtonFloating',
 
 
-    props: {
-
-    },
-
-
-    data() {
-        return {
-            
-        }
-    },
-
-    computed: {
-        
-    },
-
-
-    created() {
-
-    },
-
-
-    methods: {
-
-    }
 }
 </script>
 
 <style lang="sass" scoped>
+@import '~/assets/defaults'
 
 </style>

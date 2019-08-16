@@ -89,6 +89,7 @@ export default {
 </script>
 
 <style lang="sass" scoped>
+@import '~/assets/defaults'
 .CardCourseUpcoming 
     height: 250px
     display: grid

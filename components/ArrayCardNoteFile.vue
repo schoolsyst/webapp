@@ -1,45 +1,21 @@
-<template>
-    <ul class="ArrayCardNoteFile">
-        <slot></slot>
-    </ul>
+<template lang="pug">
+ul.ArrayCardNoteFile
+    slot
 </template>
 
 <script>
 export default {
-    name: 'ArrayCardNoteFile',
-
-
-    props: {
-
-    },
-
-
-    data() {
-        return {
-            
-        }
-    },
-
-    computed: {
-        
-    },
-
-
-    created() {
-
-    },
-
-
-    methods: {
-
-    }
-}
+  name: "ArrayCardNoteFile"
+};
 </script>
 
 <style lang="sass" scoped>
-.ArrayCardNoteFile 
-    display: flex
-    margin-top: 10px
+@import '~/assets/defaults'
+
++desktop
+    .ArrayCardNoteFile 
+        display: flex
+        margin-top: 10px
 
 
 .CardNoteFile 

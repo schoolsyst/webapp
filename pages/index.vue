@@ -1,11 +1,11 @@
 <template>
 <div class="container">
-    <OverlayLoadingLogo/>
 </div>
 </template>
 
 <script>
 import OverlayLoadingLogo from '~/components/OverlayLoadingLogo.vue'
+import { mapGetters } from 'vuex';
 
 export default {
     layout: 'bare',
@@ -27,19 +27,33 @@ export default {
     },
 
     mounted() {
-        document.getElementById('lottie-overlay-loading-logo').addEventListener('complete', event => {
-            console.log('Animation ended')
-            this.$router.push('/dashboard')
-        })
+        if (this.token) {
+            $nuxt.$router.push('/dashboard')
+        } else {
+            window.location.href = "/login"
+        }
     },
 
     computed: {
-
+        ...mapGetters({
+            token: 'auth/token'
+        })
     },
+
+    methods: {
+        redirect() {
+            if (this.token) {
+                this.$router.push('/dashboard')
+            } else {
+                this.$router.push('/login')
+            }
+        }
+    }
 }
 </script>
 
 <style lang="sass" scoped>
+@import '~/assets/defaults'
 .OverlayLoadingLogo
     position: fixed
     left: 50%

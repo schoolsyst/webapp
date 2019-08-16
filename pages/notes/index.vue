@@ -14,7 +14,7 @@ MainGroup
     <TheHeading>Prises de notes</TheHeading>
     <MainGroup full-size>
         <HeadingSub>{{currentCourse.subject.name}}</HeadingSub>
-        <ArrayCardNoteFile>
+        <ArrayCardNoteFile v-if="currentSubjectCards">
             <CardNoteFile 
                 v-for="(note, i) in currentSubjectCards" :key="i" 
                 v-bind="note"
@@ -38,7 +38,7 @@ MainGroup
                 </DropdownFlat>
             </ArrayButtonFlat>
         </HeadingSub>
-        <ArrayCardNoteFile>
+        <ArrayCardNoteFile v-if="allCards">
             <CardNoteFile 
                 v-for="(note, i) in allCards" :key="i"
                 v-bind="note"
@@ -49,6 +49,7 @@ MainGroup
 </template>
 
 <script>
+import axios from '@nuxtjs/axios'
 import { mapState, mapGetters, mapMutations, mapActions } from 'vuex'
 import TheHeading from '~/components/TheHeading.vue'
 import ArrayButtonFlat from '~/components/ArrayButtonFlat.vue'
@@ -78,6 +79,13 @@ export default {
         CardNoteFile
     },
 
+    async asyncData() {
+        const {data} = await axios.get('http://localhost:8000/api/notes', {headers: {
+            Authorization: `Bearer ${localStorage('token')}`
+        }})
+        return {notes: data}
+    },
+
     data() {
         return {
             searchText: '',
@@ -88,103 +96,8 @@ export default {
             ],
             sortBy: 'lastModified',
             // API DATA ↓
-            currentCourse: {
-                subject: {
-                    name: 'English',
-                    slug: 'english',
-                    abbreviation: 'eng',
-                    color: '#1A237E'
-                }
-            },
-            notes: [
-                {
-                    name: 'Present Perfect',
-                    notion: {
-                        subject: {
-                            name: 'English',
-                            slug: 'english',
-                            abbreviation: 'eng',
-                            color: '#1A237E'
-                        },
-                        name: 'Present Perfect',
-                        slug: 'present-perfect',
-                        progress: 1
-                    },
-                    /* content: `
-                        Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                        Aliquam ac ullamcorper erat. Nam aliquet congue quam ac viverra. 
-                        Donec nec diam auctor, aliquet lorem eget, consectetur lectus. 
-                        Ut sodales elementum nisl at imperdiet. Nulla facilisi. 
-                        Phasellus non ornare velit, et mollis nulla. 
-                        Nunc mollis consectetur diam in sollicitudin. 
-                        Curabitur rutrum sem accumsan aliquet ullamcorper. Nullam sodales 
-                        neque quis quam iaculis, nec sodales mi aliquam. Nulla vel dolor pretium, aliquam metus tempor, pellentesque ante. 
-                        Maecenas sollicitudin blandit pellentesque. 
-                        Sed at massa tempor, varius urna posuere, mollis nisi.
-                    `, */
-                    created: '07/08/2019',
-                    filepath: 'english/present-perfect.adoc',
-                    lastModified: '13/08/2019'
-                },
-                {
-                    name: 'Futur',
-                    notion: {
-                        subject: {
-                            name: 'English',
-                            slug: 'english',
-                            abbreviation: 'eng',
-                            color: '#1A237E'
-                        },
-                        name: 'Futur',
-                        slug: 'futur',
-                        progress: 0.95
-                    },
-                    /* content: `
-                        Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                        Aliquam ac ullamcorper erat. Nam aliquet congue quam ac viverra. 
-                        Donec nec diam auctor, aliquet lorem eget, consectetur lectus. 
-                        Ut sodales elementum nisl at imperdiet. Nulla facilisi. 
-                        Phasellus non ornare velit, et mollis nulla. 
-                        Nunc mollis consectetur diam in sollicitudin. 
-                        Curabitur rutrum sem accumsan aliquet ullamcorper. Nullam sodales 
-                        neque quis quam iaculis, nec sodales mi aliquam. Nulla vel dolor pretium, aliquam metus tempor, pellentesque ante. 
-                        Maecenas sollicitudin blandit pellentesque. 
-                        Sed at massa tempor, varius urna posuere, mollis nisi.
-                    `, */
-                    created: '13/08/2019',
-                    filepath: 'english/futur.adoc',
-                    lastModified: '13/08/2019'
-                },
-                {
-                    name: "Vecteurs dans l'espace 3D",
-                    notion: {
-                        subject: {
-                            name: 'Mathématiques',
-                            slug: 'mathematiques',
-                            abbreviation: 'mth',
-                            color: '#039BE5'
-                        },
-                        name: "Vecteurs dans l'espace 3D",
-                        slug: 'vecteurs-dans-l-espace-3d',
-                        progress: 0
-                    },
-                    /* content: `
-                        Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                        Aliquam ac ullamcorper erat. Nam aliquet congue quam ac viverra. 
-                        Donec nec diam auctor, aliquet lorem eget, consectetur lectus. 
-                        Ut sodales elementum nisl at imperdiet. Nulla facilisi. 
-                        Phasellus non ornare velit, et mollis nulla. 
-                        Nunc mollis consectetur diam in sollicitudin. 
-                        Curabitur rutrum sem accumsan aliquet ullamcorper. Nullam sodales 
-                        neque quis quam iaculis, nec sodales mi aliquam. Nulla vel dolor pretium, aliquam metus tempor, pellentesque ante. 
-                        Maecenas sollicitudin blandit pellentesque. 
-                        Sed at massa tempor, varius urna posuere, mollis nisi.
-                    `, */
-                    created: '05/08/2019',
-                    filepath: 'english/vecteurs-dans-l-espace-3d.adoc',
-                    lastModified: '05/08/2019'
-                }
-            ]
+            currentCourse: {},
+            notes: []
 
         }
     },
@@ -221,5 +134,6 @@ export default {
 </script>
 
 <style lang="sass" scoped>
+@import '~/assets/defaults'
 
 </style>

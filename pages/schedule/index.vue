@@ -1,26 +1,22 @@
-<template>
-<!-- COMPONENT TREE
-Excluding single-use components (TheHeading, TheNavbar, TheFooter,...)
+<template lang="pug">
+//-
+    COMPONENT TREE
+    Excluding single-use components (TheHeading, TheNavbar, TheFooter,...)
 
-ArrayButtonFlat
-MainGroup
-    MainGroupLeft
-    MainGroupRight
--->
+    ArrayButtonFlat
+    MainGroup
+        MainGroupRight
+        MainGroupLeft
+        MainGroupRight
 
-<div class="container">
-    <MainGroup>
-        <MainGroupLeft>
-            <HeadingSub></HeadingSub>
-        </MainGroupLeft>
-        <MainGroupRight>
-            <TheHeading>{{weekday}}</TheHeading>
-            <p class="heading-detail">Semaine du {{weekStartingDate}} au {{weekEndingDate}} ({{weekType}})</p>
-            <HeadingSub>Cours reportés & supprimés</HeadingSub>
-            <ButtonLargeFlat class="new-mutation">Nouvelle modification...</ButtonLargeFlat>
-        </MainGroupRight>
-    </MainGroup>
-</div>
+.container
+    MainGroup
+        MainGroupLeft
+            TheHeading {{weekday}}
+            p.heading-detail Semaine du {{weekStartingDate}} au {{weekEndingDate}} ({{weekType}})
+            HeadingSub Cours reportés & supprimés
+            ButtonLargeFlat.new-mutation Nouvelle modification…
+        MainGroupRight
 </template>
 
 <script>
@@ -79,22 +75,14 @@ export default {
 </script>
 
 <style lang="sass" scoped>
-.TheHeading, .heading-detail
-    text-align: right
+@import '~/assets/defaults'
 
 .heading-detail 
     font-size: 24px
 
 .HeadingSub 
     margin-right: 50px
-    white-space: nowrap
     font-size: 24px
 
-/* DESKTOP */
-@media (min-width: 1000px) 
-  .MainGroup:not(.full-size) 
-    grid-template-columns: 1.5fr 1fr
-  
-  .container 
-    margin: 30px 30px 0 0
 </style>
+

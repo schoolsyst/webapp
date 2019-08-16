@@ -40,16 +40,20 @@ export default {
 </script>
 
 <style lang="sass" scoped>
+@import '~/assets/defaults'
 .HeadingAlt 
     font-weight: bold
     margin-top: 20px
-    font-size: 48px
+    +desktop
+        font-size: 48px
+    +mobile
+        font-size: 32px
 
 .HeadingAlt.has-inline-buttons 
     display: inline-flex
     align-items: center
 
-@media (min-width: 1000px)
++desktop
     .HeadingAlt
         white-space: nowrap
         max-width: 50vw

@@ -36,7 +36,7 @@ def _file(filepath:str, content = None):
             return file.read()
         else:
             file.write(content)
-            linescount = len(content.split(''))
+            linescount = len(content.split(' '))
             print(f"Written {linescount} lines to {nice_path_disp(filepath)}:")
 
 def _registers(args) -> str:

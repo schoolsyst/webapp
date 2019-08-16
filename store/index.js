@@ -1,16 +1,14 @@
 export const state = () => ({
-    stuff: 69
+    baseURL: 'http://localhost:8000/api/',
 })
 
 export const getters = { 
 
-
 }
 
-export const mutations = { 
+export const mutations = {
 
-
- }
+}
 
 export const actions = {
     test() {

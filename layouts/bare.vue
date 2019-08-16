@@ -12,6 +12,8 @@ export default {
 </script>
 
 <style scoped lang="sass">
+@import '~/assets/defaults'
+
 .container
   height: 100vh
   width: 100vw

@@ -1,71 +1,60 @@
-<template>
-    <ul class="ArrayButtonFlat" :class="{'inline': inline}">
-        <slot></slot>
-    </ul>
+<template lang="pug">
+ul.ArrayButtonFlat(:class="{'inline': inline}")
+    slot
 </template>
 
 <script>
 export default {
-    name: 'ArrayButtonFlat',
+  name: "ArrayButtonFlat",
 
-
-    props: {
-        inline: {
-            type: Boolean,
-            default: false
-        }
-    },
-
-
-    data() {
-        return {
-            
-        }
-    },
-
-    computed: {
-        
-    },
-
-
-    created() {
-
-    },
-
-
-    methods: {
-
+  props: {
+    inline: {
+      type: Boolean,
+      default: false
     }
-}
+  },
+
+  data() {
+    return {};
+  },
+
+  computed: {},
+
+  created() {},
+
+  methods: {}
+};
 </script>
 
 <style lang="sass" scoped>
+@import '~/assets/defaults'
 
-.ArrayButtonFlat:not(.inline)
+.ArrayButtonFlat
     margin-top: 10px
 
-@media (min-width: 1000px) 
++desktop 
     .ArrayButtonFlat 
         width: 50%
     
-
     .ArrayButtonFlat.inline 
         display: inline
-    
+        margin-top: 0
 
     .HeadingSub, .ButtonFlat 
         display: inline
-    
 
-
-@media (min-width: 500px) 
++desktop 
     .ArrayButtonFlat 
         display: grid
-        grid-template-columns: repeat(2, 1fr)
-    
+        grid-template-columns: repeat(2, max-content)
+        grid-gap: 5px
 
     .ArrayButtonFlat.inline 
         display: inline-grid
         padding-left: 30px
+
++mobile
+    .BaseFlatComponent
+      margin-bottom: 5px
 
 </style>

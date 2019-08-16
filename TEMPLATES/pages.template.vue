@@ -1,25 +1,21 @@
-<template>
-<!-- COMPONENT TREE
-Excluding single-use components (TheHeading, TheNavbar, TheFooter,...)
+<template lang="pug">
+//-
+  COMPONENT TREE
+  Excluding single-use components (TheHeading, TheNavbar, TheFooter,...)
 
-ArrayButtonFlat
-MainGroup
+  ArrayButtonFlat
+  MainGroup
     MainGroupLeft
     MainGroupRight
--->
 
-<div class="container">
-    <TheHeading>#PAGE_HEADING#</TheHeading>
-    <ArrayButtonFlat></ArrayButtonFlat>
-    <MainGroup>
-        <MainGroupLeft>
-            <HeadingSub></HeadingSub>
-        </MainGroupLeft>
-        <MainGroupRight>
-            <HeadingSub></HeadingSub>
-        </MainGroupRight>
-    </MainGroup>
-</div>
+.container
+  TheHeading #PAGE_HEADING#
+  ArrayButtonFlat
+  MainGroup
+    MainGroupLeft
+      HeadingSub
+    MainGroupRight
+      HeadingSub
 </template>
 
 <script>
@@ -47,7 +43,7 @@ export default {
 
     async fetch({ store, params }) {
         let { data } = await axios.get('#API_RESOURCE#', { headers: {
-            Authorization: 'Basic ZXdlbi5wb3RkZWZsZXVyNzYyMw=='
+            Authorization: `Bearer ${auth.token}`
         }})
 
 
@@ -61,11 +57,14 @@ export default {
     },
 
     computed: {
-
+      ...mapGetters([
+        'auth/getToken'
+      ])
     },
 }
 </script>
 
 <style lang="sass" scoped>
+@import '~/assets/defaults'
 
 </style>

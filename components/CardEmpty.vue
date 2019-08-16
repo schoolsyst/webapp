@@ -42,9 +42,11 @@ export default {
 </script>
 
 <style lang="sass" scoped>
+@import '~/assets/defaults'
 .CardEmpty 
     padding: 50px 50px
-    width: 500px
+    max-width: 500px
+    width: 100%
     background: var(--grey)
     display: flex
     align-items: center
@@ -54,5 +56,6 @@ export default {
     color: black
     opacity: 0.75
     font-size: 30px
+    text-align: center
 
 </style>
