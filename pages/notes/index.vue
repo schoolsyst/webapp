@@ -12,7 +12,7 @@ MainGroup
 
 <div class="container">
     <TheHeading>Prises de notes</TheHeading>
-    <MainGroup full-size>
+    <MainGroup full-size v-if="currentCourse">
         <HeadingSub>{{currentCourse.subject.name}}</HeadingSub>
         <ArrayCardNoteFile v-if="currentSubjectCards">
             <CardNoteFile 
@@ -49,7 +49,7 @@ MainGroup
 </template>
 
 <script>
-import axios from '@nuxtjs/axios'
+import axios from 'axios'
 import { mapState, mapGetters, mapMutations, mapActions } from 'vuex'
 import TheHeading from '~/components/TheHeading.vue'
 import ArrayButtonFlat from '~/components/ArrayButtonFlat.vue'
@@ -79,11 +79,21 @@ export default {
         CardNoteFile
     },
 
-    async asyncData() {
+    computed: {
+        ...mapGetters({
+            token: 'auth/token'
+        })
+    },
+
+    /* async fetch({ store, params }) {
         const {data} = await axios.get('http://localhost:8000/api/notes', {headers: {
-            Authorization: `Bearer ${localStorage('token')}`
+            Authorization: `Bearer ${store.state.auth.token}`
         }})
         return {notes: data}
+    }, */
+
+    mounted() {
+        console.log(this.token)
     },
 
     data() {
@@ -96,7 +106,22 @@ export default {
             ],
             sortBy: 'lastModified',
             // API DATA ↓
-            currentCourse: {},
+            currentCourse: {
+                "id": 2,
+                "subject": {
+                    "id": 7,
+                    "user": 1,
+                    "color": "#1A237E",
+                    "name": "English",
+                    "slug": "english",
+                    "abbreviation": "eng"
+                },
+                "start": "08:00:00",
+                "end": "08:55:00",
+                "room": "L216",
+                "day": "monday",
+                "weekType": "both"
+            },
             notes: []
 
         }

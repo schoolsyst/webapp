@@ -35,7 +35,7 @@ export default {
 
   mounted() {
     //TODO: fill label icon on <slot>:focus
-    this.$slots.default.forEach(vnode => console.log(vnode))
+    //this.$slots.default.forEach(vnode => console.log(vnode))
   },
 
   methods: {}

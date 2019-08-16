@@ -25,19 +25,23 @@ export const mutations = {
     localStorage.removeItem("token");
     state.token = null;
   },
-  SET_TOKEN: (state, getters) => (token) => {
+  SET_TOKEN(state, token) {
     state.token = token
   },
 };
 
 export const actions = {
-  obtainToken: async (store, { username, password }) => {
-    try {
-      const {data} = await axios.post('http://localhost:8000/api/auth/', {username, password})
-      this.commit('SET_TOKEN', data.token)
-    } catch (error) {
-      throw new Error('Wrong credentials')
-    }
+  obtainToken(store, { username, password }) {
+    return new Promise((resolve, reject) => {
+      axios.post('http://localhost:8000/api/auth/', {username, password})
+      .then((res) => {
+        this.commit('auth/SET_TOKEN', res.data.token)
+        resolve()
+      })
+      .catch((err) => {
+        reject(err.response.data)
+      })
+  })
   },
 
   refreshToken() {
