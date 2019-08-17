@@ -10,7 +10,7 @@ export default {
   name: "ButtonRegSecondary",
   components: {
     BaseButtonReg
-  }
+  },
 };
 </script>
 

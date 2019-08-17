@@ -9,10 +9,12 @@
     MainGroupRight
 
 .container
-  TheHeading #PAGE_HEADING#
   MainGroup
     MainGroupLeft
+      textarea(v-model="content" :style="{height: '100vh', width: '100%'}")
     MainGroupRight
+      no-ssr
+        markdown-it-nuxt.md-body(:content="content", :options="options")
 </template>
 
 <script>
@@ -26,30 +28,46 @@ import ButtonFlat from '~/components/ButtonFlat.vue'
 import MainGroup from '~/components/MainGroup.vue'
 import MainGroupLeft from '~/components/MainGroupLeft.vue'
 import MainGroupRight from '~/components/MainGroupRight.vue'
-import HeadingSub from '~/components/HeadingSub.vue'
-#__IMPORTS#
+// //--- MarkdownItVue MUST be imported client-side because it tries to access
+// // the window object on import. So I have to use require() instead.
+import 'markdown-it-vue/dist/markdown-it-vue.css'
+// import MarkdownItNuxt from 'markdown-it-vue'
 
-export default {
-    #MIDDLEWARE_DECLARATION#
-    #LAYOUT_DECLARATION#
+export default {  
     components: {
         TheHeading,
         MainGroup,
         MainGroupLeft,
         MainGroupRight,
-        HeadingSub,
-#__REGISTERS#
+
     },
 
     data() {
         return {
-
+          title: 'Vecteurs 3D',
+          content: '# Vecteurs 3D',
+          options: {
+            markdownIt: {
+              linkify: true
+            },
+            linkAttributes: {
+              target: '_blank',
+              rel: 'noopener'
+            }
+          }
         }
+    },
+
+    async mounted() {
+      const {data} = await axios.get('http://localhost:8000/api/notes/', {headers:{Authorization: this.$auth.$storage._state['_token.local']}})
+      return {
+        notes: data
+      }
     },
 
     computed: {
       ...mapGetters({
-        #GETTERS_MAPPING#
+        
       })
     },
 }

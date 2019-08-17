@@ -6,8 +6,6 @@
 
 export default {
     name: '#__NAME#',
-
-
 }
 </script>
 

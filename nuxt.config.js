@@ -41,6 +41,7 @@ export default {
   ** Plugins to load before mounting the App
   */
   plugins: [
+    { src: '~/plugins/markdown-it-nuxt.js', ssr: false }
   ],
   /*
   ** Nuxt.js dev-modules
@@ -90,7 +91,7 @@ export default {
     rewriteRedirects: false
   },
   router: {
-    middleware: ['auth']
+    middleware: ['auth', 'setup']
   },
   /*
   ** Axios module configuration
@@ -107,6 +108,7 @@ export default {
     ** You can extend webpack config here
     */
     extend (config, ctx) {
-    }
+    },
+    vendors: ['markdown-it-nuxt']
   },
 }

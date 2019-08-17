@@ -1,0 +1,61 @@
+html,
+.CodeMirror,
+.CodeMirror-scroll {
+  height: 100%;
+}
+.CodeMirror,
+#reditor {
+  height: calc(100% - 50px);
+  margin-top: 20px;
+  box-shadow: 0px 0px 3px #bbb inset;
+  border: 0;
+}
+.CodeMirror {
+  font-family: DejaVu Sans Mono, monospace;
+  font-size: 10px;
+}
+body {
+  margin: auto;
+  width: 90%;
+  height: 100%;
+}
+#leditor {
+  height: 100%;
+}
+#reditor {
+  overflow: auto;
+  padding: 5px;
+}
+#leditor,
+#reditor {
+  width: 50%;
+  float: left;
+}
+#error {
+  position: fixed;
+  bottom: 0;
+  background: #f88;
+  display: none;
+  z-index: 2;
+}
+#website-link {
+  position: fixed;
+  text-align: center;
+  width: 100%;
+  left: 0;
+  font-size: 0.7em;
+  color: #aaa;
+}
+#website-link a {
+  color: #aaa;
+  text-decoration: none;
+}
+#website-link a:hover {
+  text-decoration: underline;
+}
+#website-link a::before {
+  content: "[";
+}
+#website-link a::after {
+  content: "]";
+}

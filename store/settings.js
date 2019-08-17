@@ -26,20 +26,6 @@ export const getters = {
                 return Date.parse(getters.setting('schedule/end'))
         }
     },
-    isSetup(state, getters) {
-        return (
-                getters.setting('schedule/start')
-            &&  getters.setting('schedule/trimester2')
-            &&  getters.setting('schedule/trimester3')
-            &&  getters.setting('schedule/end')
-            &&  getters.setting('schedule/offdays')
-            &&  getters.setting('schedule/hours')
-            &&  getters.setting('schedule/start_week_type')
-            &&  getters.setting('defaults/grade_max')
-            &&  getters.setting('defaults/grade_weight')
-        )
-    }
-    
 }
 
 export const mutations = { 

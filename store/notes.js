@@ -7,7 +7,7 @@ export const getters = {
     allNotes (state, getters) {
         return state.notes
     },
-    notesOf (state, subject) {
+    notesOf: (state, getters) => (subject) => {
         return state.notes.filter(note => {
             // Search through the notions of the iterating note, and
             // as soon as one notion of the requested subject is found,

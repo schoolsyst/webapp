@@ -1,5 +1,6 @@
 <template lang="pug">
 button.BaseButtonReg(:type="type" @click="$emit('click')")
+    i.material-icons(v-if="icon") {{icon}}
     slot
 </template>
 
@@ -7,8 +8,9 @@ button.BaseButtonReg(:type="type" @click="$emit('click')")
 export default {
   name: "BaseButtonReg",
   props: {
-      type: String
-  }
+    type: String,
+    icon: String
+  },
 };
 </script>
 

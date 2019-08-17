@@ -81,8 +81,11 @@ def main(name, args, ext, folder):
     content = _file(_template_path(template, ext))
     # Replace the vars
     content = walk(_template_placeholders(content), content, name)
-    # Write to the new file
-    _file(f"{folder}/{name}.{ext}", content)
+    # Write to the new file & open it
+    path = f"{folder}/{name}.{ext}"
+    _file(path, content)
+    os.system(f"code {path}")
+
 
 if __name__ == "__main__":
     argparser = argparse.ArgumentParser(description="Generates NuxtJS core files quickly from templates with #VARIABLES_TO_COMPLETE#")

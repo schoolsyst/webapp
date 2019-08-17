@@ -17,4 +17,8 @@ export default {
 .container
   height: 100vh
   width: 100vw
+
++mobile
+  .container
+    padding: 10px
 </style>
