@@ -1,54 +1,52 @@
 <template>
-<!-- COMPONENT TREE
+  <!-- COMPONENT TREE
 Excluding single-use components (TheHeading, TheNavbar, TheFooter,...)
 
 ArrayButtonFlat
 MainGroup
     MainGroupLeft
     MainGroupRight
--->
+  -->
 
-<div class="container">
+  <div class="container">
     <TheHeading>Notes</TheHeading>
     <ArrayButtonFlat></ArrayButtonFlat>
     <MainGroup>
-        <MainGroupLeft>
-            <HeadingSub></HeadingSub>
-        </MainGroupLeft>
-        <MainGroupRight>
-            <HeadingSub></HeadingSub>
-        </MainGroupRight>
+      <MainGroupLeft>
+        <HeadingSub></HeadingSub>
+      </MainGroupLeft>
+      <MainGroupRight>
+        <HeadingSub></HeadingSub>
+      </MainGroupRight>
     </MainGroup>
-</div>
+  </div>
 </template>
 
 <script>
-import { mapState, mapGetters, mapMutations, mapActions } from 'vuex'
-import TheHeading from '~/components/TheHeading.vue'
-import ArrayButtonFlat from '~/components/ArrayButtonFlat.vue'
-import ButtonFlat from '~/components/ButtonFlat.vue'
-import MainGroup from '~/components/MainGroup.vue'
-import MainGroupLeft from '~/components/MainGroupLeft.vue'
-import MainGroupRight from '~/components/MainGroupRight.vue'
-import HeadingSub from '~/components/HeadingSub.vue'
+import { mapState, mapGetters, mapMutations, mapActions } from "vuex";
+import TheHeading from "~/components/TheHeading.vue";
+import ArrayButtonFlat from "~/components/ArrayButtonFlat.vue";
+import ButtonFlat from "~/components/ButtonFlat.vue";
+import MainGroup from "~/components/MainGroup.vue";
+import MainGroupLeft from "~/components/MainGroupLeft.vue";
+import MainGroupRight from "~/components/MainGroupRight.vue";
+import HeadingSub from "~/components/HeadingSub.vue";
 
 export default {
-    components: {
-        TheHeading,
-        ArrayButtonFlat,
-        ButtonFlat,
-        MainGroup,
-        MainGroupLeft,
-        MainGroupRight,
-        HeadingSub,
-    },
+  components: {
+    TheHeading,
+    ArrayButtonFlat,
+    ButtonFlat,
+    MainGroup,
+    MainGroupLeft,
+    MainGroupRight,
+    HeadingSub
+  },
 
-    data() {
-        return {
-            
-        }
-    },
-}
+  data() {
+    return {};
+  }
+};
 </script>
 
 <style lang="sass" scoped>
