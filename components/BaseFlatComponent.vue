@@ -18,7 +18,7 @@ export default {
     largeIcon: {
       type: Boolean,
       default: false
-    }
+    },
   },
 
   data() {
@@ -76,6 +76,9 @@ export default {
     text-align: left
     white-space: nowrap
     display: inline
+    &::placeholder
+      opacity: 0.25
+      color: #000000
 
 +desktop 
     /* Smaller font-size for elements inside <slot> when the `inline` option is `true` */

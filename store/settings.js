@@ -7,20 +7,37 @@ export const getters = {
         return state.settings
     },
     setting: (state, getters) => (key) => {
-        return getters.allSettings.filter(setting => setting.key === key)[0]
+        let matchedSetting = getters.allSettings.filter(setting => setting.key === key)
+        if (matchedSetting.length < 1)
+            return null
+        else
+            return matchedSetting[0]
     },
     getTrimesterStartDate: (state, getters) => (trimester) => {
         switch (trimester) {
             case 1:
                 return Date.parse(getters.setting('schedule/start'))
             case 2:
-                return Date.parse(getters.setting('schedule/trimester2start'))
+                return Date.parse(getters.setting('schedule/trimester2'))
             case 3:
-                return Date.parse(getters.setting('schedule/trimester3start'))
+                return Date.parse(getters.setting('schedule/trimester3'))
             // This is intentional, see the rest of the getter function to know why
             case 4:
                 return Date.parse(getters.setting('schedule/end'))
         }
+    },
+    isSetup(state, getters) {
+        return (
+                getters.setting('schedule/start')
+            &&  getters.setting('schedule/trimester2')
+            &&  getters.setting('schedule/trimester3')
+            &&  getters.setting('schedule/end')
+            &&  getters.setting('schedule/offdays')
+            &&  getters.setting('schedule/hours')
+            &&  getters.setting('schedule/start_week_type')
+            &&  getters.setting('defaults/grade_max')
+            &&  getters.setting('defaults/grade_weight')
+        )
     }
     
 }

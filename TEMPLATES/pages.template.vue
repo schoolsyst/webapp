@@ -41,15 +41,6 @@ export default {
 #__REGISTERS#
     },
 
-    async fetch({ store, params }) {
-        let { data } = await axios.get('#API_RESOURCE#', { headers: {
-            Authorization: `Bearer ${auth.token}`
-        }})
-
-
-    },
-
-
     data() {
         return {
 
@@ -57,9 +48,9 @@ export default {
     },
 
     computed: {
-      ...mapGetters([
-        'auth/getToken'
-      ])
+      ...mapGetters({
+        #__GETTERS#
+      })
     },
 }
 </script>

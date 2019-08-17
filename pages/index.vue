@@ -1,5 +1,6 @@
 <template>
 <div class="container">
+  <OverlayLoadingLogo/>
 </div>
 </template>
 
@@ -8,6 +9,7 @@ import OverlayLoadingLogo from '~/components/OverlayLoadingLogo.vue'
 import { mapGetters } from 'vuex';
 
 export default {
+    middleware: false,
     layout: 'bare',
     components: {
         OverlayLoadingLogo,
@@ -15,7 +17,7 @@ export default {
 
     data() {
         return {
-            // TODO
+            // TODO: do this in a middleware, not here
             routeTimeMap: {
                 // - /notes : currently in a event
                 // - /homework : after the last course
@@ -25,38 +27,9 @@ export default {
             }
         }
     },
-
-    mounted() {
-        if (this.token) {
-            $nuxt.$router.push('/dashboard')
-        } else {
-            window.location.href = "/login"
-        }
-    },
-
-    computed: {
-        ...mapGetters({
-            token: 'auth/token'
-        })
-    },
-
-    methods: {
-        redirect() {
-            if (this.token) {
-                this.$router.push('/dashboard')
-            } else {
-                this.$router.push('/login')
-            }
-        }
-    }
 }
 </script>
 
 <style lang="sass" scoped>
 @import '~/assets/defaults'
-.OverlayLoadingLogo
-    position: fixed
-    left: 50%
-    top: 50%
-    transform: translate3d(0,0,0) translate(-50%, -50%)
 </style>

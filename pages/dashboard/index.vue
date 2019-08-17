@@ -61,7 +61,6 @@ import CardHomework from "~/components/CardHomework.vue";
 import CardEmpty from "~/components/CardEmpty.vue";
 
 export default {
-  middleware: 'authed',
   components: {
     TheHeading,
     ArrayButtonFlat,
@@ -78,20 +77,8 @@ export default {
 
   data() {
     let now = new Date(Date.now());
-    let days = ["Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi"];
-    let months = [
-      "Janv",
-      "Fév",
-      "Mars",
-      "Avril",
-      "Mai",
-      "Juin",
-      "Juillet",
-      "Août",
-      "Sept",
-      "Nov",
-      "Déc"
-    ];
+    let days = ["Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi"]
+    let months = ["Janv","Fév","Mars","Avril","Mai","Juin","Juillet","Août","Sept","Nov","Déc"]
     return {
       addExerciseModal: false,
       now: {
@@ -100,24 +87,17 @@ export default {
         w: days[now.getDay()],
         m: months[now.getMonth()],
         d: now.getDate()
-      },
-    }
+      }
+    };
   },
 
   computed: {
     ...mapGetters({
-      token: 'auth/token',
-      upcomingCourse: 'schedule/upcomingCourse',
-      currentCourse: 'schedule/currentCourse'
+      upcomingCourse: "schedule/upcomingCourse",
+      currentCourse: "schedule/currentCourse"
     })
   },
 
-  async mounted() {
-    const {data} = await axios.get("http://127.0.0.1:8000/api/events/", {
-        headers: { Authorization: "Bearer " + this.token }
-    })
-    this.$store.dispatch('setCourses', data)
-  }
 };
 </script>
 

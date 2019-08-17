@@ -1278,6 +1278,13 @@
     "@nuxtjs/pwa-utils" "3.0.0-beta.16"
     "@nuxtjs/workbox" "3.0.0-beta.16"
 
+"@nuxtjs/toast@^3.2.1":
+  version "3.2.1"
+  resolved "https://registry.yarnpkg.com/@nuxtjs/toast/-/toast-3.2.1.tgz#b104c9139d609cf0966287aba38fa430e89d2c09"
+  integrity sha512-unMXSoTrrg6ql4slP41Zasui5UebK6wjSXPyCng4KfSMRnjyuDBODKyundQaMHl9whZYzIi4MZPbKNX376yeIw==
+  dependencies:
+    vue-toasted "^1.1.27"
+
 "@nuxtjs/workbox@3.0.0-beta.16":
   version "3.0.0-beta.16"
   resolved "https://registry.yarnpkg.com/@nuxtjs/workbox/-/workbox-3.0.0-beta.16.tgz#23353837bd438bde6bc41ccbfa8888be2035c69f"
@@ -8322,6 +8329,11 @@ vue-template-es2015-compiler@^1.9.0:
   version "1.9.1"
   resolved "https://registry.yarnpkg.com/vue-template-es2015-compiler/-/vue-template-es2015-compiler-1.9.1.tgz#1ee3bc9a16ecbf5118be334bb15f9c46f82f5825"
   integrity sha512-4gDntzrifFnCEvyoO8PqyJDmguXgVPxKiIxrBKjIowvL9l+N66196+72XVYR8BBf1Uv1Fgt3bGevJ+sEmxfZzw==
+
+vue-toasted@^1.1.27:
+  version "1.1.27"
+  resolved "https://registry.yarnpkg.com/vue-toasted/-/vue-toasted-1.1.27.tgz#ce0a74b875f90c2e4a9e163cce6d5fc37d78a07c"
+  integrity sha512-GVbwInwnqkVxQ4GU/XYeQt1e0dAXL8sF5Hr1H/coCBbYUan5xP0G2mEz/HRDf1lt73rFQAN/bJcLTOKkqiM6tg==
 
 vue@^2.6.10:
   version "2.6.10"

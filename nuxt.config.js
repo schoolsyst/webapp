@@ -54,27 +54,50 @@ export default {
     // Doc: https://axios.nuxtjs.org/usage
     '@nuxtjs/axios',
     '@nuxtjs/pwa',
-    'cookie-universal-nuxt'
+    '@nuxtjs/auth',
+    '@nuxtjs/toast'
   ],
+  /*
+  ** Toasts
+  */
+  toast: {
+    position: 'bottom-right',
+    duration: 5000
+  },
   /*
   ** Auth module configuration.
   ** See https://auth.nuxtjs.org
   */
-  // auth: {
-  //   strategies: {
-  //     local: {
-  //       endpoints: {
-  //         login: { url: '/api/auth/login', method: 'post', propertyName: '' }
-  //       }
-  //     }
-  //   }
-  // },
+  auth: {
+    redirect: {
+      login: '/login',
+      logout: '/login',
+      callback: false,
+      home: '/dashboard'
+    },
+    strategies: {
+      local: {
+        endpoints: {
+          login: {url: '/auth/', method: 'post', propertyName: 'token'},
+          user: {url: '/users/self/', method: 'get', propertyName: ''},
+          logout: {url: '/auth/logout/', method:'post'},
+        },
+        tokenRequired: true,
+        tokenType: 'Bearer',
+      }
+    },
+    // resetOnError: true,
+    rewriteRedirects: false
+  },
+  router: {
+    middleware: ['auth']
+  },
   /*
   ** Axios module configuration
   ** See https://axios.nuxtjs.org/options
   */
   axios: {
-    // baseURL: 'http://127.0.0.1:8000/api/'
+    baseURL: 'http://127.0.0.1:8000/api/'
   },
   /*
   ** Build configuration

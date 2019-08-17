@@ -1,5 +1,5 @@
 <template lang="pug">
-button.BaseButtonReg(v-if="!link" :type="type")
+button.BaseButtonReg(:type="type" @click="$emit('click')")
     slot
 </template>
 
@@ -7,10 +7,6 @@ button.BaseButtonReg(v-if="!link" :type="type")
 export default {
   name: "BaseButtonReg",
   props: {
-      link: {
-        type: [String, Boolean],
-        default: false
-      },
       type: String
   }
 };

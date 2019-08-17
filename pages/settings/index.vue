@@ -10,7 +10,9 @@ MainGroup
 
 <div class="container">
     <TheHeading>Réglages</TheHeading>
-    <ArrayButtonFlat></ArrayButtonFlat>
+    <ArrayButtonFlat>
+        <ButtonFlat @click="$auth.logout()" icon="power_off">Déconnexion</ButtonFlat>
+    </ArrayButtonFlat>
     <MainGroup>
         <MainGroupLeft>
             <HeadingSub></HeadingSub>
