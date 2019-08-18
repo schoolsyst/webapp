@@ -41,7 +41,6 @@ export default {
   ** Plugins to load before mounting the App
   */
   plugins: [
-    { src: '~/plugins/markdown-it-nuxt.js', ssr: false }
   ],
   /*
   ** Nuxt.js dev-modules
@@ -56,8 +55,29 @@ export default {
     '@nuxtjs/axios',
     '@nuxtjs/pwa',
     '@nuxtjs/auth',
-    '@nuxtjs/toast'
+    '@nuxtjs/toast',
+    '@nuxtjs/markdownit'
   ],
+  /*
+  ** Markdown-it configuration
+  ** See https://github.com/nuxt-community/modules/tree/master/packages/markdownit
+  ** and https://github.com/markdown-it/markdown-it
+  */
+  markdownit: {
+    injected: true,
+    breaks: true,
+    linkify: true,
+    typographer: true,
+    use: [
+      'markdown-it-deflist',
+      'markdown-it-sup',
+      'markdown-it-footnote',
+      'markdown-it-checkbox',
+      'markdown-it-math',
+      'markdown-it-plot',
+      // 'markvis',
+    ]
+  },
   /*
   ** Toasts
   */
@@ -109,6 +129,5 @@ export default {
     */
     extend (config, ctx) {
     },
-    vendors: ['markdown-it-nuxt']
   },
 }

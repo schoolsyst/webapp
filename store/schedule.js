@@ -11,7 +11,14 @@ export const getters = {
     return state.courses;
   },
   currentCourse(state, getters) {
-    return getters.allEvents[0];
+    course = getters.allEvents.filter(event => {
+      return event.start >= Date.now()
+          && event.end   <= Date.now()
+    });
+
+    if (course.length < 1) return null
+
+    return course[0]
   },
   upcomingCourse(state, getters) {
     return getters.allEvents[0];
