@@ -33,7 +33,11 @@ export default {
     margin: 20px
     padding-bottom: calc((100vw - 30px) / 6)
     
-+tablet
++desktop
   .container
     margin-left: 110px
+
+@media (max-width: $bk-sidebar - 1px)
+  .container
+    padding-bottom: 100px
 </style>

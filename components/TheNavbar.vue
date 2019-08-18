@@ -91,6 +91,8 @@ nav
         bottom: 0
         display: flex
         justify-content: space-around
+        background: var(--offset-blue)
+        padding-top: 20px
         .NavbarButton
             margin-bottom: 20px
     +mobile
