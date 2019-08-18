@@ -74,6 +74,7 @@ export default {
 @import '~/assets/defaults'
 .input 
     width: max-content
+    letter-spacing: initial
 
 .input:focus 
     outline: none
