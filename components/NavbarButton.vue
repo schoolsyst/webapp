@@ -17,7 +17,7 @@ export default {
   },
 
   methods: {
-    isCurrentPage: function() {
+    isCurrentPage() {
       if (this.to === "/") {
         return this.to == this.$route.path;
       } else {
@@ -32,16 +32,18 @@ export default {
 @import '~/assets/defaults'
 
 .NavbarButton 
-    background-color: transparent
-    width: 100%
-    @media (min-width: $bk-sidebar)
-        height: 64px
-        width: 64px
-        margin-bottom: 20px
-    border-radius: 50%
-    display: flex
-    justify-content: center
-    align-items: center
+  &:focus
+    outline: none
+  background-color: transparent
+  width: 100%
+  @media (min-width: $bk-sidebar)
+      height: 64px
+      width: 64px
+      margin-bottom: 20px
+  border-radius: 50%
+  display: flex
+  justify-content: center
+  align-items: center
 
 .NavbarButton i 
     font-size: calc((100vw - 30px) / 6 / 1.5 - 5px)
@@ -53,7 +55,9 @@ export default {
     .NavbarButton.current-page 
         background-color: var(--offset-blue)
 
-.NavbarButton:hover i, .NavbarButton.current-page i 
+.NavbarButton:hover i,
+.NavbarButton.current-page i,
+.NavbarButton:focus i
     color: var(--blue)
     font-family: 'Material Icons'
 
