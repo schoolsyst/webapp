@@ -11,9 +11,12 @@ export const getters = {
     return state.courses;
   },
   currentCourse(state, getters) {
-    course = getters.allEvents.filter(event => {
+    let course = getters.allEvents.filter(event => {
       return event.start >= Date.now()
           && event.end   <= Date.now()
+          && event.day  === [
+            'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'
+          ][Date.now().getDay()]
     });
 
     if (course.length < 1) return null
@@ -101,7 +104,7 @@ export const mutations = {
     state.courses = courses;
   },
   UPDATE_COURSE(state, courseId, newCourse) {
-    course = state.getters
+    let course = state.getters
       .allEvents()
       .filter(event => event.id === courseId)[0];
     Object.assign(course, newCourse);
@@ -109,7 +112,4 @@ export const mutations = {
 };
 
 export const actions = {
-  setCourses (store, courses) {
-    store.commit('SET_COURSES', courses)
-  }
 };
