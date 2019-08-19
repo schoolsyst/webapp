@@ -1,9 +1,9 @@
 <template lang="pug">
-    <BaseFlatComponent class="InputFlat" :icon="icon" :icon-style="iconStyle">
+    BaseFlatComponent.InputFlat(:class="`input_${name}`" :icon="icon" :icon-style="iconStyle")
         input(
-            class="input" 
-            :name="name" 
-            :id="'input_' + name" 
+            class="input"
+            :name="name"
+            :id="`input_${name}`"
             :placeholder="placeholder"
             :type="type",
             :value="value"
@@ -12,67 +12,57 @@
             :autofocus="autofocus ? 'autofocus' : 'no'"
         )
         //- inside <input> : @input="$emit('input', $event.taget.value)"
-    </BaseFlatComponent>
 </template>
 
 <script>
-import BaseFlatComponent from '~/components/BaseFlatComponent.vue'
+import BaseFlatComponent from "~/components/BaseFlatComponent.vue";
 
 export default {
-    name: 'InputFlat',
+  name: "InputFlat",
 
-    components: {
-        BaseFlatComponent
+  components: {
+    BaseFlatComponent
+  },
+
+  props: {
+    icon: String,
+    iconStyle: {
+      type: String,
+      default: "outlined"
     },
-
-    props: {
-        icon: String,
-        iconStyle: {
-            type: String,
-            default: 'outlined'
-        },
-        name: String,
-        value: String,
-        placeholder: String,
-        type: {
-            type: String,
-            default: 'text'
-        },
-        autofocus: {
-            type: Boolean,
-            default: false
-        }
+    name: String,
+    value: String,
+    placeholder: String,
+    type: {
+      type: String,
+      default: "text"
     },
-
-
-    data() {
-        return {
-            inputVal: this.value
-        }
-    },
-
-    computed: {
-        
-    },
-
-
-    created() {
-
-    },
-
-
-    methods: {
-
+    autofocus: {
+      type: Boolean,
+      default: false
     }
-}
+  },
+
+  data() {
+    return {
+      inputVal: this.value
+    };
+  },
+
+  computed: {},
+
+  created() {},
+
+  methods: {}
+};
 </script>
 
 <style lang="sass" scoped>
 @import '~/assets/defaults'
-.input 
+.input
     width: max-content
 
-.input:focus 
+.input:focus
     outline: none
 
 </style>

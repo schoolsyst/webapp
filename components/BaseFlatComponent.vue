@@ -26,7 +26,7 @@ export default {
   },
 
   computed: {
-    iconStyleClass: function() {
+    iconStyleClass() {
       return (
         "material-icons" + (this.iconStyle === "baseline" ? "" : "-outlined")
       );
@@ -44,7 +44,7 @@ export default {
 
 <style lang="sass" scoped>
 @import '~/assets/defaults'
-.BaseFlatComponent 
+.BaseFlatComponent
     display: flex
     align-items: center
     height: 36px
@@ -57,7 +57,7 @@ export default {
 
     /* Switch to filled icon on hover, if it's an outlined-style icon */
     &:hover, &:focus
-       .icon.material-icons-outlined 
+       .icon.material-icons-outlined
           font-family: 'Material Icons'
 
 
@@ -72,7 +72,7 @@ export default {
 
 
 /* Select the elements inside <slot> */
-.BaseFlatComponent label + * 
+.BaseFlatComponent label + *
     text-align: left
     white-space: nowrap
     display: inline
@@ -80,14 +80,14 @@ export default {
       opacity: 0.25
       color: #000000
 
-+desktop 
++desktop
     /* Smaller font-size for elements inside <slot> when the `inline` option is `true` */
-    .ArrayButtonFlat.inline .BaseFlatComponent label + * 
+    .ArrayButtonFlat.inline .BaseFlatComponent label + *
         font-size: 18px
 
 
 // Larger icon for text-less buttons
-.BaseFlatComponent.large-icon .icon 
+.BaseFlatComponent.large-icon .icon
     +desktop
         font-size: 84px
     +mobile

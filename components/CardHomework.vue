@@ -42,7 +42,7 @@ export default {
     },
 
     computed: {
-        percentProgress: function() {
+        percentProgress() {
             return this.progress * 100 + '%'
         }
     },

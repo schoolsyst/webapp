@@ -63,7 +63,7 @@ export default {
 
 
     methods: {
-        openDropdown: function() {
+        openDropdown() {
             this.$el.querySelector('option').click()
         }
     }

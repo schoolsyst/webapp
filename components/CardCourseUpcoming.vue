@@ -51,7 +51,7 @@ export default {
     },
 
     computed: {
-        timeRemaining: function() {
+        timeRemaining() {
             // parse date
             let $0, hours, mins, date, delta, minutes
             [$0, hours, mins] = this.start.match(/(\d+):(\d+)/)
