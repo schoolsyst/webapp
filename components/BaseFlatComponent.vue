@@ -49,7 +49,7 @@ export default {
     align-items: center
     height: 36px
     +desktop
-        font-size: 32px
+        font-size: 24px
         padding: 0 10px
     +mobile
         height: 24px
