@@ -1,5 +1,5 @@
 <template lang="pug">
-button.BadgeSubject(:style="{backgroundColor: color}" :title="name") {{abbreviation}}
+button.BadgeSubject(:style="{backgroundColor: color}" :title="name" @click="$emit('click')") {{abbreviation}}
 </template>
 
 <script>
