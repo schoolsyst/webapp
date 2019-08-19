@@ -19,7 +19,7 @@
     template(v-if="currentCourse")
       HeadingSub {{currentCourse.subject.name}}
       ArrayCardNoteFile
-        CardNoteAdd(open-modal="add-note" open-at="self")
+        CardNoteAdd(open-modal="add-note" open-at="center")
         CardNoteFile(v-for="(note, i) in currentSubjectCards" :key="i" v-bind="note")
 
     HeadingSub.all-notes(has-inline-buttons)
