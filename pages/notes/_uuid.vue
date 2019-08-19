@@ -301,7 +301,16 @@ export default {
 
 <style lang="sass" scoped>
 @import '~/assets/defaults'
-
+.MainGroup
+  //--- positioning ---
+  
+  //--- dimensions  ---
+  
+  //---   margins   ---
+  margin-top: 20px
+  //---  appearance ---
+  
+  //---  animation  ---
 #editor
   padding-left: 20px // Remove conflict with navbar handle
   height: 100%
