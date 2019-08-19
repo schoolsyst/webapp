@@ -104,10 +104,10 @@ export default {
       return "";
     },
     defaultMax() {
-      return this.setting("grades/defaultMax") || "";
+      return this.setting("default_max") || "";
     },
     defaultWeight() {
-      return this.setting("grades/defaultWeight") || "";
+      return this.setting("default_weight") || "";
     }
   },
   methods: {
