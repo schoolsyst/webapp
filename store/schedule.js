@@ -41,22 +41,22 @@ export const getters = {
   },
   trimesterStart: (state, getters, rootState, rootGetters) => (trimester) => {
     switch (trimester) {
-        case 1:
-            return pdate(getters.setting('schedule/yearStart'))
-        case 2:
-            return pdate(getters.setting('schedule/trimester2start'))
-        case 3:
-            return pdate(getters.setting('schedule/trimester3start'))
-        // This is intentional, see the rest of the getter function to know why
-        case 4:
-            return pdate(getters.setting('schedule/yearEnd'))
+      case 1:
+        return pdate(getters.setting("year_start"));
+      case 2:
+        return pdate(getters.setting("trimester_2_start"));
+      case 3:
+        return pdate(getters.setting("trimester_3_start"));
+      // This is intentional, see the rest of the getter function to know why
+      case 4:
+        return pdate(getters.setting("year_end"));
     }
   },
   //TODO: offdays getter
-  weekType: (state, getters) => (date) => {
+  weekType: (state, getters) => date => {
     // get base Q1/Q2
-    let base  = getters.setting('schedule/startingWeekType')
-    let start = getters.setting('schedule/yearStart')
+    let base = getters.setting("starting_week_type");
+    let start = getters.setting("year_start");
     // convert to week-of-year number, and get if its even or odd.
     // tested date will be [base] (Q1 or Q2) if its also even.
     let startingWeekIsEven = moment(start).isoWeek() % 2 === 0
