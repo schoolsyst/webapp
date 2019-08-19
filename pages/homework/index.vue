@@ -29,6 +29,8 @@
       //-FIXME: &nbsp = Cheap hack to align both plus signs on mobile, should do proper alignement
       HeadingAlt(has-inline-buttons) Exercices&nbsp;
         ButtonFlat(open-modal="add-exercise", open-at="center" icon="add" inline large-icon)
+      ArrayItemExercise
+        ItemExercise(v-for="(exercise, i) in exercises" :key="i", v-bind="exercise")
     MainGroupRight
       HeadingAlt(has-inline-buttons) Contrôles
         ButtonFlat(open-modal="add-test", open-at="center" icon="add" inline large-icon)
@@ -54,6 +56,8 @@ import HeadingAlt from "~/components/HeadingAlt.vue";
 import DropdownFlat from "~/components/DropdownFlat.vue";
 import ModalAddExercise from "~/components/ModalAddExercise.vue";
 import ModalAddTest from '~/components/ModalAddTest.vue'
+import ItemExercise from '~/components/ItemExercise.vue'
+import ArrayItemExercise from '~/components/ArrayItemExercise.vue'
 
 export default {
   components: {
@@ -67,10 +71,12 @@ export default {
     HeadingAlt,
     DropdownFlat,
     ModalAddExercise,
-    ModalAddTest
+    ModalAddTest,
+    ItemExercise,
+    ArrayItemExercise
   },
 
-  async fetch({ store, app }) {
+  async asyncData({ store, app }) {
     let subjects = store.getters.subjects;
     let res
 
@@ -82,6 +88,9 @@ export default {
 
     res = await app.$axios.get("/events/");
     store.commit("schedule/SET_EVENTS", res.data);
+
+    res = await app.$axios.get("/exercises/");
+    store.commit("homework/SET_EXERCISES", res.data);
   },
 
   data() {
@@ -99,6 +108,8 @@ export default {
     ...mapGetters({
       subjects: "subjects",
       currentCourseSubject: "schedule/currentCourseSubject",
+      exercises: "homework/allExercises",
+      tests: "homework/allTests",
     })
   }
 };
@@ -108,6 +119,5 @@ export default {
 @import '~/assets/defaults'
 [modal-open^="add"]
     margin-left: 70px
-
 </style>
 
