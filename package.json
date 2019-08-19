@@ -5,7 +5,7 @@
   "author": "Ewen Le Bihan",
   "private": true,
   "scripts": {
-    "dev": "nuxt --port 8666",
+    "dev": "nuxt",
     "build": "nuxt build",
     "start": "nuxt start",
     "generate": "nuxt generate"
@@ -29,7 +29,8 @@
     "nuxt": "^2.0.0",
     "pug": "2.0.3",
     "pug-plain-loader": "^1.0.0",
-    "sass-loader": "^7.2.0"
+    "sass-loader": "^7.2.0",
+    "slugify": "^1.3.4"
   },
   "devDependencies": {}
 }

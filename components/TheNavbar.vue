@@ -1,7 +1,7 @@
 <template lang="pug">
     nav.TheNavbar
         NavbarButton(
-            to="/dashboard"         
+            to="/"         
             title="Dashboard"
             icon="home"
         )
@@ -55,7 +55,7 @@ export default {
     NavbarButton
   },
 
-  updated: function() {
+  updated() {
     // Fix the work_outline icon
     let badIcon = document.querySelector("nav a.bad-icon");
 
