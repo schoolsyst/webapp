@@ -14,7 +14,7 @@
             placeholder="Titre..."
             :value="newNoteName"
             @input="newNoteName = $event"
-            @keydown.enter="addNote"
+            @keydown.enter.native="addNote"
             modal-autofocus
             name="title"
         )
