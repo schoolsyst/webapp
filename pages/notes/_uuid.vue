@@ -278,7 +278,7 @@ export default {
       // update note name
       let noteName = document.getElementsByTagName('h1')[0].innerText
       this.name = noteName
-      this.uploadToServer(moment().format(), this.content, false, noteName);
+      this.uploadToServer(moment().toISOString(), this.content, false, noteName);
     },
     saveSource() {
       var element = document.createElement("a");

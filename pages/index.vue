@@ -27,7 +27,7 @@
   TheHeading
     | {{now.format('dddd D MMM').capFirstChar()}}
     // Will be commented until the hour is refreshed, cuz it's missleading rn
-      | &mdash;{{now.format('hh')}}
+      | &mdash;{{now.format('HH')}}
       span.anim--blink :
       | {{now.format('mm')}}
   ArrayButtonFlat
@@ -74,22 +74,22 @@
 
 <script>
 import axios from "axios";
-  import moment from 'moment'
-  import { mapState, mapGetters, mapMutations, mapActions } from "vuex";
-  import TheHeading from "~/components/TheHeading.vue";
-  import ArrayButtonFlat from "~/components/ArrayButtonFlat.vue";
-  import ButtonFlat from "~/components/ButtonFlat.vue";
-  import MainGroup from "~/components/MainGroup.vue";
-  import MainGroupLeft from "~/components/MainGroupLeft.vue";
-  import MainGroupRight from "~/components/MainGroupRight.vue";
-  import HeadingSub from "~/components/HeadingSub.vue";
-  import BigNumber from "~/components/BigNumber.vue";
-  import CardCourseUpcoming from "~/components/CardCourseUpcoming.vue";
-  import CardHomework from "~/components/CardHomework.vue";
-  import CardEmpty from "~/components/CardEmpty.vue";
-  import ModalAddExercise from '~/components/ModalAddExercise.vue'
-  import ModalAddNote from "~/components/ModalAddNote.vue";
-  import ModalAddTest from '~/components/ModalAddTest.vue'
+import moment from "moment";
+import { mapState, mapGetters, mapMutations, mapActions } from "vuex";
+import TheHeading from "~/components/TheHeading.vue";
+import ArrayButtonFlat from "~/components/ArrayButtonFlat.vue";
+import ButtonFlat from "~/components/ButtonFlat.vue";
+import MainGroup from "~/components/MainGroup.vue";
+import MainGroupLeft from "~/components/MainGroupLeft.vue";
+import MainGroupRight from "~/components/MainGroupRight.vue";
+import HeadingSub from "~/components/HeadingSub.vue";
+import BigNumber from "~/components/BigNumber.vue";
+import CardCourseUpcoming from "~/components/CardCourseUpcoming.vue";
+import CardHomework from "~/components/CardHomework.vue";
+import CardEmpty from "~/components/CardEmpty.vue";
+import ModalAddExercise from "~/components/ModalAddExercise.vue";
+import ModalAddNote from "~/components/ModalAddNote.vue";
+import ModalAddTest from "~/components/ModalAddTest.vue";
 
 export default {
   components: {
@@ -109,24 +109,24 @@ export default {
     ModalAddTest
   },
 
-  async fetch({app, store}) {
-    let res
-    
-    res = await app.$axios.get('/events/')
-    store.commit('schedule/SET_EVENTS', res.data)
-    
-    res = await app.$axios.get('/settings/')
-    store.commit('SET_SETTINGS', res.data)
+  async fetch({ app, store }) {
+    let res;
 
-    res = await app.$axios.get('/event-additions/')
-    store.commit('schedule/SET_ADDITIONS', res.data)
+    res = await app.$axios.get("/events/");
+    store.commit("schedule/SET_EVENTS", res.data);
 
-    res = await app.$axios.get('/event-deletions/')
-    store.commit('schedule/SET_DELETIONS', res.data)
+    res = await app.$axios.get("/settings/");
+    store.commit("SET_SETTINGS", res.data);
+
+    res = await app.$axios.get("/event-additions/");
+    store.commit("schedule/SET_ADDITIONS", res.data);
+
+    res = await app.$axios.get("/event-deletions/");
+    store.commit("schedule/SET_DELETIONS", res.data);
   },
 
   data() {
-    moment.locale('fr')
+    moment.locale("fr");
     return {
       addExerciseModal: false,
       now: moment()
@@ -143,27 +143,27 @@ export default {
     }),
     //TODO: get globalMean from a getter
     globalMean() {
-      let gradeMax = Number(this.setting('grades/defaultMax'))
+      let gradeMax = Number(this.setting("default_max"));
       return {
         value: this.getGlobalMean || NaN,
         unit: `/${gradeMax}`
-      }
+      };
     },
     //TODO: evolution calculations
     evolution() {
       return {
         value: NaN,
-        unit: '%'
-      }
-    },
+        unit: "%"
+      };
+    }
     /* currentCourse() {
       return this.$store.getters['schedule/upcomingCourse']
     }, */
   },
 
   created() {
-    String.prototype.capFirstChar = function () {
-      return this.charAt(0).toUpperCase() + this.substr(1).toLowerCase()
+    String.prototype.capFirstChar = function() {
+      return this.charAt(0).toUpperCase() + this.substr(1).toLowerCase();
     };
   }
 };

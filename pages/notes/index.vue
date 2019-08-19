@@ -19,6 +19,7 @@
     template(v-if="currentCourse")
       HeadingSub {{currentCourse.subject.name}}
       ArrayCardNoteFile
+        CardNoteAdd(open-modal="add-note" open-at="self")
         CardNoteFile(v-for="(note, i) in currentSubjectCards" :key="i" v-bind="note")
 
     HeadingSub.all-notes(has-inline-buttons)
@@ -64,6 +65,7 @@ import ArrayCardNoteFile from "~/components/ArrayCardNoteFile.vue";
 import CardNoteFile from "~/components/CardNoteFile.vue";
 import ButtonFloating from "~/components/ButtonFloating.vue";
 import ModalAddNote from "~/components/ModalAddNote.vue";
+import CardNoteAdd from '~/components/CardNoteAdd.vue'
 
 export default {
   layout: "default",
@@ -80,7 +82,8 @@ export default {
     HeadingSub,
     ArrayCardNoteFile,
     CardNoteFile,
-    ModalAddNote
+    ModalAddNote,
+    CardNoteAdd
   },
 
   computed: {
