@@ -1,3 +1,4 @@
+
 export const state = () => ({
   grades: [],
   tests: [],
@@ -95,7 +96,7 @@ export const getters = {
   },
   pendingExercises(state, getters) {
     return getters.dueExercises.filter(exercise => !exercise.completed);
-  }
+  },
 };
 
 export const mutations = {
@@ -146,6 +147,12 @@ export const mutations = {
   },
   SET_GRADES(state, grades) {
     state.grades = grades;
+  },
+  ADD_EXERCISE(state, exercise) {
+    state.exercises.push(exercise)
+  },
+  ADD_TEST(state, test) {
+    state.tests.push(test)
   }
 };
 
