@@ -22,6 +22,31 @@
       textarea.editor(v-model="content") 
     MainGroupRight(v-if="content")
       #mirror(v-html="$md.render(content)")
+  style.
+    h2 {
+      margin-top: 20px;
+      margin-bottom: 5px;
+      font-weight: 500;
+      font-size: 45px;
+    }
+    h1 {
+      font-family: 'Google Sans', 'Product Sans';
+      font-weight: lighter;
+      font-size: 70px;
+    }
+    h3 {
+      margin-top: 10px;
+      margin-bottom: 5px;
+      font-size: 30px;
+      font-weight: normal;
+    }
+    p {
+      line-height: 1.3;
+      margin: 10px 0;
+    }
+    code {
+      color: var(--blue);
+    }
 </template>
 
 <script>
