@@ -5393,6 +5393,11 @@ map-visit@^1.0.0:
   dependencies:
     object-visit "^1.0.0"
 
+markdown-it-admonition@^1.0.4:
+  version "1.0.4"
+  resolved "https://registry.yarnpkg.com/markdown-it-admonition/-/markdown-it-admonition-1.0.4.tgz#d7bbc7eb1fe6168fc8cc304de7a9d8c993acb2f5"
+  integrity sha512-+Jow9A7tBSwSuGvQufneeT35o9Cq8+OyR+WAhhC4dOG2NvB2oCeXiaUGGyP9PCRrxQoFxZF+xoVHbo98xYAi+g==
+
 markdown-it-apexcharts@^0.2.5:
   version "0.2.5"
   resolved "https://registry.yarnpkg.com/markdown-it-apexcharts/-/markdown-it-apexcharts-0.2.5.tgz#a6edc9f9748a1ad507a30a35da77e60d0a5bf5de"

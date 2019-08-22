@@ -10,6 +10,9 @@
   //TODO: synchronized scrolling
   //TODO: button to upload source file to textarea
   //TODO: Jump to section
+  //TODO: slide-out navbar
+  //TODO: Search-and-replace
+  //TODO: save scroll pos
 
 .container
   BarFloating
@@ -244,6 +247,7 @@ export default {
   font-family: 'Roboto Mono', monospace
   font-weight: 300
   font-size: 18px
+  line-height: 1.2
 .MainGroupLeft, .MainGroupRight
   margin-top: 0
   height: calc(100vh - 200px)

@@ -18,6 +18,7 @@
     "@nuxtjs/pwa": "^3.0.0-0",
     "@nuxtjs/toast": "^3.2.1",
     "jwt-decode": "^2.2.0",
+    "markdown-it-admonition": "^1.0.4",
     "markdown-it-apexcharts": "^0.2.5",
     "markdown-it-checkbox": "^1.1.0",
     "markdown-it-deflist": "^2.0.3",

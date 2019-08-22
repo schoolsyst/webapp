@@ -87,7 +87,8 @@ export default {
       "markdown-it-footnote",
       "markdown-it-checkbox",
       "markdown-it-math",
-      "markdown-it-plot"
+      "markdown-it-plot",
+      "markdown-it-admonition"
       // 'markvis',
     ]
   },
