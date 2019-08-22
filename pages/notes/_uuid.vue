@@ -117,7 +117,7 @@ export default {
     data() {
       return {
         content: 'Chargement...'
-      }
+      lastSave: moment()
     },
 
     mounted() {
@@ -155,9 +155,15 @@ export default {
     },
 
     methods: {
-      async uploadToServer(last_modified, content) {
-        let errored = false
-        try {
+    async uploadToServer(last_modified, content, force = false) {
+      if (moment().diff(this.lastSave, "seconds") < 5 && !force) {
+        this.$toast.error(
+          "Veuillez attendre un peu avant de synchroniser de nouveau."
+        );
+        return;
+      } else {
+        this.lastSave = moment();
+      }
           const { data } = await this.$axios.patch(`/notes/${this.uuid}/`, {last_modified, content})
           this.$toast.success('Synchronisation réussie')
         } catch (e) {
