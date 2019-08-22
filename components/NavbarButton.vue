@@ -18,11 +18,23 @@ export default {
 
   methods: {
     isCurrentPage() {
+      let currentPage
+
       if (this.to === "/") {
-        return this.to == this.$route.path;
+        currentPage = this.to == this.$route.path;
       } else {
-        return this.$route.path.startsWith(this.to);
+        currentPage = this.$route.path.startsWith(this.to);
       }
+
+      return currentPage
+    }
+  },
+
+  updated() {
+    if (this.$route.path.startsWith('/bag')) {
+      document.querySelector('.NavbarButton.bad-icon i').innerHTML = 'work'
+    } else {
+      document.querySelector('.NavbarButton.bad-icon i').innerHTML = 'work_outline'
     }
   }
 };

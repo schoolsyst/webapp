@@ -1,48 +1,47 @@
 <template lang="pug">
-    nav.TheNavbar
-        NavbarButton(
-            to="/"         
-            title="Dashboard"
-            icon="home"
-        )
+nav.TheNavbar(:class="{'slide-out': slideOut}", tabindex="1")
+    NavbarButton(
+        to="/"         
+        title="Dashboard"
+        icon="home"
+    )
 
-        NavbarButton(
-            to="/notes"    
-            title="Prises de notes"
-            icon="insert_drive_file"
-        )
+    NavbarButton(
+        to="/notes"    
+        title="Prises de notes"
+        icon="insert_drive_file"
+    )
 
-        NavbarButton(
-            to="/homework" 
-            title="Devoirs"
-            icon="book"
-        )
+    NavbarButton(
+        to="/homework" 
+        title="Devoirs"
+        icon="book"
+    )
 
-        NavbarButton(
-            to="/schedule" 
-            title="Emploi du temps"
-            icon="calendar_today"
-        )
+    NavbarButton(
+        to="/schedule" 
+        title="Emploi du temps"
+        icon="calendar_today"
+    )
 
-        NavbarButton(
-            to="/grades"   
-            title="Notes & moyennes"
-            icon="school"
-        )
+    NavbarButton(
+        to="/grades"   
+        title="Notes & moyennes"
+        icon="school"
+    )
 
-        NavbarButton(
-            to="/bag"      
-            title="Sac"
-            icon="work_outline"
-        )
+    NavbarButton(
+        to="/bag"      
+        title="Sac"
+        icon="work_outline"
+    ).bad-icon
 
-        NavbarButton(
-            to="/settings" 
-            title="Réglages"
-            icon="settings"
-        )
+    NavbarButton(
+        to="/settings" 
+        title="Réglages"
+        icon="settings"
+    )
 
-    </nav>
 </template>
 
 <script>
@@ -66,15 +65,16 @@ export default {
     // Fix the work_outline icon
     let badIcon = document.querySelector("nav a.bad-icon");
 
-    badIcon.onmouseover = function(event) {
-      badIcon.querySelector("i").innerText = "work";
-    };
-    badIcon.onmouseout = function(event) {
-      badIcon.querySelector("i").innerText = "work_outline";
-    };
-    if (badIcon.classList.contains("current-page")) {
-      badIcon.querySelector("i").innerText = "work";
-    }
+      badIcon.addEventListener('mouseover', event => {
+        if (!badIcon.classList.contains("current-page")) {
+          badIcon.querySelector("i").innerText = "work";
+        }
+      });
+      badIcon.addEventListener('mouseout', event => {
+        if (!badIcon.classList.contains("current-page")) {
+          badIcon.querySelector("i").innerText = "work_outline";
+        }
+      });
   },
 
   methods: {}
