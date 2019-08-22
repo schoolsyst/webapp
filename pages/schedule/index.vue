@@ -13,7 +13,10 @@
     MainGroup
         MainGroupLeft
             TheHeading {{weekday}}
-            p.heading-detail Semaine du {{weekStartingDate}} au {{weekEndingDate}} ({{weekType}})
+            p.heading-detail 
+                | Semaine du {{scheduleNow.startOf('week').format('D/M')}} 
+                | au {{scheduleNow.endOf('week').format('D/M')}} 
+                | ({{weekType}})
             HeadingSub Cours reportés & supprimés
             ButtonLargeFlat.new-mutation Nouvelle modification…
         MainGroupRight
@@ -34,6 +37,7 @@ import BarFloating from '~/components/BarFloating.vue'
 import EventSchedule from '~/components/EventSchedule.vue'
 import LineScheduleNow from '~/components/LineScheduleNow.vue'
 import ButtonLargeFlat from '~/components/ButtonLargeFlat.vue'
+import moment from 'moment';
 
 export default {
     components: {
@@ -54,12 +58,15 @@ export default {
 
     data() {
         return {
-            
+            scheduleNow: moment()
         }
     },
 
     computed: {
-        weekday: function() {
+        ...mapGetters({
+            getWeekType: 'schedule/weekType' 
+        }),
+        weekday() {
             return [
                 'Lundi',
                 'Mardi',
@@ -70,6 +77,9 @@ export default {
                 'Dimanche'
             ][new Date(Date.now()).getDay()]
         },
+        weekType() {
+            this.getWeekType(this.scheduleNow.format('YYYY-MM-DD'))
+        }
     },
 }
 </script>

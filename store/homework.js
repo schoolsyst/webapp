@@ -45,17 +45,20 @@ export const getters = {
         }
         return tests
     },
-    meanOf: (state, getters) => (subjectOrTrimester, applyGradeMax = true) => {
+    meanOf: (state, getters, rootState, rootGetters) => (subjectOrTrimester, applyGradeMax = true) => {
         // get an array containing the grade values from the requested subject/trimester
-        let grades = getters.gradesOf(subjectOrTrimester).map(grade => grade.value)
+        let grades = getters.gradesOf(subjectOrTrimester)
+        if (!grades.length) return null
+        grades = grades.map(grade => grade.value)
+        if (!grades.length) return null
         // calculate the mean
-        let mean = grades.reduce((accumulated, val) => accumulated + val) / grades.length
+        let mean = grades.reduce((acc, val) => acc+val) / grades.length
         
         // NOTE: all grades are in [0;1], this option allows to give out the
-        // "correct" value, according to the user's settings (grade-max)
-        // eg. percentage grades would have a grade-max of 100
+        // "correct" value, according to the user's settings (grades/defaultMax)
+        // eg. percentage grades would have a defaultMax of 100
         if (applyGradeMax) {
-            let gradeMax = getters.setting('grades/grade-max')
+            let gradeMax = rootGetters.setting('grades/defaultMax')
             mean *= gradeMax
         }
         return mean
@@ -68,10 +71,13 @@ export const getters = {
 
         // See `store/homework.js#getters.meanOf`
         if (applyGradeMax) {
-            let gradeMax = getters.setting('grades/grade-max')
+            let gradeMax = getters.setting('grades/defaultMax')
             mean *= gradeMax
         }
         return mean
+    },
+    currentTrimesterGlobalMean (state, getters) {
+
     },
 
     allExercises (state, getters) {

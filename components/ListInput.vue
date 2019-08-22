@@ -1,18 +1,15 @@
 <template lang="pug">
-section.MainGroupLeft: slot
+ul.ListInput
 </template>
 
 <script>
+
 export default {
-    name: 'MainGroupLeft',
-
-
+    name: 'ListInput',
 }
 </script>
 
 <style lang="sass" scoped>
 @import '~/assets/defaults'
-.MainGroupLeft
-    grid-column: 1
 
 </style>

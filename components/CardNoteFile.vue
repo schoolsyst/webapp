@@ -1,54 +1,71 @@
-<template>
+<template lang="pug">
     <li class="CardNoteFile">
-        <nuxt-link :to="`notes/${filepath}`">
+        //TODO: maybe context-menu to delete?
+        <nuxt-link :to="`/notes/${uuid}`">
             <BaseCard class="card">
-                <p class="detail">{{detail}}</p>
+                <p class="detail" v-html="detailDisp"></p>
+                <p class="content-preview">{{contentPreview}}</p>
             </BaseCard>
-            <h4 class="title">{{title}}</h4>
+            h4.title 
+                SubjectDot(v-bind="subject")
+                span.title-text {{name}}
         </nuxt-link>
     </li>
 </template>
 
 <script>
-import BaseCard from '~/components/BaseCard.vue'
+import BaseCard from "~/components/BaseCard.vue";
+import SubjectDot from "~/components/SubjectDot.vue";
+import moment from "moment";
 
 export default {
-    name: 'CardNoteFile',
+  name: "CardNoteFile",
 
-    components: {
-        BaseCard
+  components: {
+    BaseCard,
+    SubjectDot
+  },
+
+  props: {
+    detail: String,
+    detailKey: String,
+    name: String,
+    content: String,
+    subject: {
+      type: Object,
+      default: () => {
+        return { slug: "???", color: "#000000" };
+      }
     },
-
-    props: {
-        detail: String,
-        title: String,
-        filepath: {
-            type: String,
-            required: true
-        }
-    },
-
-
-    data() {
-        return {
-            
-        }
-    },
-
-    computed: {
-        
-    },
-
-
-    created() {
-
-    },
-
-
-    methods: {
-
+    uuid: {
+      type: String,
+      required: true
     }
-}
+  },
+
+  data() {
+    return {};
+  },
+
+  computed: {
+    contentPreview() {
+      return this.content.substring(50);
+    },
+    detailDisp() {
+      if (this.detailKey === "subject") {
+        return "";
+      } else if (moment(this.detail).isValid()) {
+        return moment(this.detail).format("DD/MM/YYYY hh:mm");
+      } else {
+        return this.detail;
+      }
+    }
+  },
+
+  created() {},
+
+  methods: {}
+};
 </script>
 
 <style lang="sass" scoped>
@@ -64,15 +81,38 @@ export default {
     margin-bottom: 10px
 
 .title 
-    text-align: center
+    text-align: left
     font-weight: 500
     font-size: 18px
     line-height: 1.2em
+    display: flex
+    align-items: center
+    // justify-content: center
+
+.title-text
+    white-space: wrap
+    flex-wrap: wrap
+    text-overflow: ellipsis
+    word-break: break-all
+
+.SubjectDot
+    height: 30px
+    width: 30px
+    margin-right: 10px
 
 .detail 
-    font-size: 18px
+    font-size: 16px
     opacity: 0.5
     text-align: center
-    font-weight: bold
+    font-family: 'Roboto Mono', monospace
 
+.content-preview
+    opacity: 0.25
+    margin-top: 10px
+    letter-spacing: 1px
+    font-size: 9px
+    overflow: hidden
+    line-height: 1.2
+    max-height: 180px
+    // overflow-wrap: anywhere
 </style>

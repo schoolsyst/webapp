@@ -96,6 +96,7 @@ nav
         .NavbarButton
             margin-bottom: 20px
     +mobile
+        z-index: 100
         .NavbarButton[href="/notes"]
             display: none
 

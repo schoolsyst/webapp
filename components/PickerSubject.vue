@@ -1,16 +1,20 @@
 <template lang="pug">
-BaseModal.PickerSubject(:name="`subject-picker-${parentModal}`")
+BaseModal.PickerSubject(:name="`${parentModal}-subject-picker`" :class="{'dots':dots}")
+    //TODO: prop "first" (subject.slug) use as the first one in the forloop
+    //TODO: choose orientation from screen remaining 
     template(v-if="dots")
         SubjectDot(
             v-for="subject in subjects" :key="subject.id"
-            v-bind="subject"
-            close-modal
+            v-bind="subject",
+            @mouseup.native="$emit('pick', subject)"
+            close-modal,
         )
     template(v-else)
         BadgeSubject(
             v-for="subject in subjects" :key="subject.id"
-            v-bind="subject"
-            close-modal
+            v-bind="subject",
+            @mouseup.native="$emit('pick', subject)"
+            close-modal,
         )
 
 </template>
@@ -36,9 +40,6 @@ export default {
       subjects: "subjects"
     })
   },
-  mounted() {
-    //@click does not work
-  }
 };
 </script>
 
@@ -48,11 +49,24 @@ export default {
 .PickerSubject
     z-index: 2000
 /deep/ .modal-wrapper
-    display: grid
     grid-gap: 0
     padding: 0
-    overflow: hidden
-    grid-template-columns: repeat(4, 1fr)
+    +shadow(3)
+
+// badges (default)
+.PickerSubject:not(.dots) /deep/ .modal-wrapper
+  overflow: hidden
+  display: grid
+  grid-template-columns: repeat(4, 1fr)
+  +phone
+    grid-template-columns: repeat(3, 1fr)
+
+// dots
+.PickerSuject.dots /deep/ .modal-wrapper
+  display: flex
+  overflow-x: scroll
+  flex-direction: row
+  background: transparent
 
 .BadgeSubject
     border-radius: 0
@@ -62,8 +76,6 @@ export default {
 
 .BaseModal.opened
     background: rgba(0, 0, 0, 0)
-    .modal-wrapper
-        +shadow(5)
 .BaseModal
     transition: box-shadow .125s ease
     // animation: none

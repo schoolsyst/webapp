@@ -1,19 +1,12 @@
-<template>
-    <BaseCard class="CardCourseUpcoming" :style="{backgroundColor: subject.color}">
-        <h4  class="name">{{subject.name}}</h4>
-        <div class="room">{{room}}</div>
-        <time class="remaining-time">
-            <template v-if="timeRemaining.hours">
-                Dans {{timeRemaining.hours}}h{{timeRemaining.minutes}}
-            </template>
-            <template v-else>
-                Dans {{timeRemaining.minutes}} minutes
-            </template>
-        </time>
-    </BaseCard>
+<template lang="pug">
+    BaseCard(class="CardCourseUpcoming" :style="{backgroundColor: subject.color}")
+        h4.name {{subject.name}}
+        div.room {{room}}
+        time.remaining-time {{ timeRemaining.capFirstChar() }}
 </template>
 
 <script>
+import moment from 'moment'
 import BaseCard from '~/components/BaseCard.vue'
 
 export default {
@@ -52,27 +45,8 @@ export default {
 
     computed: {
         timeRemaining() {
-            // parse date
-            let $0, hours, mins, date, delta, minutes
-            [$0, hours, mins] = this.start.match(/(\d+):(\d+)/)
-
-            // convert into a Date object
-            date = new Date(Date.now())
-            date.setHours(hours)
-            date.setMinutes(mins)
-
-            // compute delta
-            delta = new Date() - date
-            delta /= 1000 // get in seconds
-            delta *= -1 // invert the sign 
-            
-            // split into mins & hours
-            hours = Math.floor( delta / 3600 )
-            minutes = Math.round( (delta - hours*3600) / 60 )
-            return {
-                hours, 
-                minutes
-            }
+            moment.locale('fr')
+            return moment(this.start, 'hh:mm').fromNow()
         }
     },
 
@@ -82,8 +56,10 @@ export default {
     },
 
 
-    methods: {
-
+    created() {
+        String.prototype.capFirstChar = function () {
+        return this.charAt(0).toUpperCase() + this.substr(1).toLowerCase()
+        };
     }
 }
 </script>

@@ -1,8 +1,17 @@
-<template>
-    <span class="BigNumber">
-        <span class="sign"  v-if="sign.trim()"  :contenteditable="'sign' in writables">{{sign}}</span>
-        <span class="value" v-if="value"        :contenteditable="'value'in writables">{{value}}</span>
-        <span class="unit"  v-if="unit.trim()"  :contenteditable="'unit' in writables">{{unit}}</span>
+<template lang="pug">
+    span.BigNumber
+        span.sign(
+            v-if="sign.trim()"  
+            :contenteditable="writables.includes('sign' )"
+            :style="{color: signColor}"
+        ) {{sign}}
+        span.value(
+            :contenteditable="writables.includes('value')"
+        ) {{valueDisp}}
+        span.unit(
+            v-if="unit.trim()"  
+            :contenteditable="writables.includes('unit' )"
+        ) {{unit}}
     </span>
 </template>
 
@@ -27,7 +36,7 @@ export default {
         },
         writables: {
             type: Array,
-            default: []
+            default: () => []
         }
     },
 
@@ -39,7 +48,28 @@ export default {
     },
 
     computed: {
-        
+        signColor() {
+            switch (this.sign) {
+                case '+':
+                    return 'var(--blue)'
+                    break;
+
+                case '-':
+                    return 'var(--red)'
+                    break;
+            
+                default:
+                    return ''
+                    break;
+            }
+        },
+        valueDisp() {
+            let val = Number(this.value).toFixed(2)
+            // if it wasn't able to convert to a number, or the value is null/undefined
+            let isUndef = val === 'NaN' || this.value === null || isNaN(this.value)
+
+            return isUndef ? '—' : val
+        }
     },
 
 
@@ -57,16 +87,22 @@ export default {
 <style lang="sass" scoped>
 @import '~/assets/defaults'
 .BigNumber 
-    height: 144px
-    line-height: 144px
+    height: 96px
+    line-height: 96px
+    font-weight: 500
 
 
 .value, .sign 
-    font-size: 144px
+    font-size: 96px
 
 
 .unit 
-    font-size: 72px
+    font-weight: 500
+    font-size: 56px
+    opacity: 0.25
+
+.sign
+
 
 
 +mobile

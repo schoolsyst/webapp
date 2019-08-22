@@ -1,46 +1,44 @@
-<template>
-  <!-- COMPONENT TREE
-Excluding single-use components (TheHeading, TheNavbar, TheFooter,...)
+<template lang="pug">
+//- COMPONENT TREE
+  Excluding single-use components (TheHeading, TheNavbar, TheFooter,...)
 
-MainGroup
+  MainGroup
+      MainGroupLeft
+          HeadingAlt
+              ArrayButtonFlat
+                  ButtonFlat
+          ArrayButtonFlat
+              CheckboxFlat
+          HeadingSub
+              ItemExercise
+      MainGroupRight
+          HeadingAlt
+              ArrayButtonFlat
+                  ButtonFlat
+          HeadingSub
+              CardTest
+
+
+.container
+  ModalAddExercise(:subject="currentCourseSubject")
+  ModalAddTest(:subject="currentCourseSubject")
+
+  TheHeading Devoirs
+  MainGroup
     MainGroupLeft
-        HeadingAlt
-            ArrayButtonFlat
-                ButtonFlat
-        ArrayButtonFlat
-            CheckboxFlat
-        HeadingSub
-            ItemExercise
+      //-FIXME: &nbsp = Cheap hack to align both plus signs on mobile, should do proper alignement
+      HeadingAlt(has-inline-buttons) Exercices&nbsp;
+        ButtonFlat(open-modal="add-exercise", open-at="center" icon="add" inline large-icon)
     MainGroupRight
-        HeadingAlt
-            ArrayButtonFlat
-                ButtonFlat
-        HeadingSub
-            CardTest
-        
-  -->
+      HeadingAlt(has-inline-buttons) Contrôles
+        ButtonFlat(open-modal="add-test", open-at="center" icon="add" inline large-icon)
+      ArrayButtonFlat
+        DropdownFlat(
+          :options="sortingOptions"
+          icon="sort"
+          v-model="sortBy"
+        )
 
-  <div class="container">
-    <TheHeading>Devoirs</TheHeading>
-    <MainGroup>
-      <MainGroupLeft>
-        <HeadingAlt has-inline-buttons>
-          Exercices&nbsp;
-          <!-- <--FIXME: Cheap hack to align both plus signs on mobile, should do proper alignement -->
-          <ButtonFlat class="add-homework" icon="add" inline large-icon></ButtonFlat>
-        </HeadingAlt>
-      </MainGroupLeft>
-      <MainGroupRight>
-        <HeadingAlt has-inline-buttons>
-          Contrôles
-          <ButtonFlat class="add-homework" icon="add" inline large-icon></ButtonFlat>
-        </HeadingAlt>
-        <ArrayButtonFlat>
-          <DropdownFlat :options="sortingOptions" icon="sort" v-model="sortBy"></DropdownFlat>
-        </ArrayButtonFlat>
-      </MainGroupRight>
-    </MainGroup>
-  </div>
 </template>
 
 <script>
@@ -54,6 +52,8 @@ import MainGroupRight from "~/components/MainGroupRight.vue";
 import HeadingSub from "~/components/HeadingSub.vue";
 import HeadingAlt from "~/components/HeadingAlt.vue";
 import DropdownFlat from "~/components/DropdownFlat.vue";
+import ModalAddExercise from "~/components/ModalAddExercise.vue";
+import ModalAddTest from '~/components/ModalAddTest.vue'
 
 export default {
   components: {
@@ -65,7 +65,23 @@ export default {
     MainGroupRight,
     HeadingSub,
     HeadingAlt,
-    DropdownFlat
+    DropdownFlat,
+    ModalAddExercise,
+    ModalAddTest
+  },
+
+  async fetch({ store, app }) {
+    let subjects = store.getters.subjects;
+    let res
+
+    res = await app.$axios.get("/subjects/");
+    store.commit("SET_SUBJECTS", res.data);
+
+    res = await app.$axios.get('/settings/')
+    store.commit('SET_SETTINGS', res.data)
+
+    res = await app.$axios.get("/events/");
+    store.commit("schedule/SET_EVENTS", res.data);
   },
 
   data() {
@@ -77,13 +93,20 @@ export default {
       ]
       // API DATA
     };
+  },
+
+  computed: {
+    ...mapGetters({
+      subjects: "subjects",
+      currentCourseSubject: "schedule/currentCourseSubject",
+    })
   }
 };
 </script>
 
 <style lang="sass" scoped>
 @import '~/assets/defaults'
-.add-homework
+[modal-open^="add"]
     margin-left: 70px
 
 </style>

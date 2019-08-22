@@ -1,4 +1,7 @@
 <template>
+    <!-- TODO: Custom dropdown interface for desktop
+         TODO: Search bar in custom interface
+    -->
     <BaseFlatComponent class="DropdownFlat" :icon="icon" :icon-style="iconStyle">
         <select
             class="input" 
@@ -7,7 +10,7 @@
             :id="'input_' + name" 
             :value="value"
             :placeholder="placeholder"
-            @input="$emit('input', $event.taget.value)"
+            @input="$emit('input', $event)"
         >
             <option 
                 v-for="opt in options" 

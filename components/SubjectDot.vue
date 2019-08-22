@@ -1,5 +1,5 @@
 <template lang="pug">
-button.SubjectDot(:style="{backgroundColor: bgcolor}" @click="$emit('click', $event)")
+button.SubjectDot(:style="{backgroundColor: bgcolor}", :title="name")
   i.icon.material-icons(v-if="color === 'unknown'") more_horiz
 </template>
 
@@ -11,7 +11,7 @@ export default {
       type: String,
       default: 'unknown'
     },
-
+    name: String
   },
   computed: {
     bgcolor() {
@@ -28,12 +28,14 @@ export default {
     $size: 40px
     height: $size
     width: $size
-    min-width: $size
-    min-height: $size
+    min-width: $size * 0.75
+    min-height: $size * 0.75
     border-radius: $size / 2
     display: flex
     justify-content: center
     align-items: center
+    &:focus
+      outline: none
 
 .icon
   color: white

@@ -1,18 +1,21 @@
 //====================
+
 //    TYPOGRAPHY
-//==================== 
+//====================
 
-html 
-    font-family: 'Google Sans', 'Product Sans', 'Manrope', sans-serif
+html
+    font-family:  'Manrope', sans-serif
 
 
-pre, code, source 
+pre, code, source
     font-family: 'Roboto Mono' monospace
 
 
 //=====================
 //       COLORS
 //=====================
+
+$blue: #1389FD
 
 html
     --blue: #1389FD
@@ -47,24 +50,24 @@ html
 
 // ====================
 //     INTERACTIONS
-//===================== 
+//=====================
 
 .material-icons, .material-icons-outlined
     user-select: none
 
 
-button, a, select 
+button, a, select
     cursor: pointer
 
 
 //=====================
 //     TRANSITIONS
 //=====================
-.page-enter-active, .page-leave-active 
+.page-enter-active, .page-leave-active
     transition: all 0.25s
 
 
-.page-enter, .page-leave-active 
+.page-enter, .page-leave-active
     opacity: 0
 
 
@@ -106,7 +109,7 @@ $bk-tablet: 500px
 $bk-sidebar: 650px
 
 =desktop
-    @media (min-width: $bk-desktop)
+    @media ( min-width: $bk-desktop )
         @content
 
 =mobile
@@ -128,7 +131,6 @@ $bk-sidebar: 650px
 // material icons in pseudo-els
 //============================
 
-//FIXME
 @mixin material-icons
     .material-icons
         direction: ltr
@@ -144,8 +146,8 @@ $bk-sidebar: 650px
         word-wrap: normal
         -webkit-font-feature-settings: 'liga'
         -webkit-font-smoothing: antialiased
-        
-        
+
+
 //=====================
 //       MODULES
 //=====================

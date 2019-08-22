@@ -1,18 +1,16 @@
 <template lang="pug">
-section.MainGroupLeft: slot
+nuxt-link.ButtonLinkIcon
+    i.material-icons: slot
 </template>
 
 <script>
+
 export default {
-    name: 'MainGroupLeft',
-
-
+    name: 'ButtonLinkIcon',
 }
 </script>
 
 <style lang="sass" scoped>
 @import '~/assets/defaults'
-.MainGroupLeft
-    grid-column: 1
 
 </style>

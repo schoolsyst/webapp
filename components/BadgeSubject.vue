@@ -1,5 +1,5 @@
 <template lang="pug">
-button.BadgeSubject(:style="{backgroundColor: color}") {{abbreviation}}
+button.BadgeSubject(:style="{backgroundColor: color}" :title="name") {{abbreviation}}
 </template>
 
 <script>
@@ -14,6 +14,10 @@ export default {
         color: {
             type:String,
             default:'#000000'
+        },
+        name: {
+            type: String,
+            default() { return this.abbreviation === '...' ? 'Choisissez une matière...' : this.abbreviation }
         }
     }
 }
@@ -31,9 +35,11 @@ export default {
     border-radius: 10px
     color: #fff
     display: flex
+    white-space: nowrap
     justify-content: center
     align-items: center
     text-transform: uppercase
     &:focus, &:hover
+        outline: none
         opacity: 0.75
 </style>

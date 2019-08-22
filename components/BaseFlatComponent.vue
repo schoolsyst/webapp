@@ -47,13 +47,14 @@ export default {
 .BaseFlatComponent
     display: flex
     align-items: center
-    height: 36px
     +desktop
-        font-size: 24px
-        padding: 0 10px
+      padding: 0 10px
+      height: 36px
+      font-size: 36px
     +mobile
-        height: 24px
-        font-size: 18px
+      padding: 0 5px
+      height: 24px
+      font-size: 26px
 
     /* Switch to filled icon on hover, if it's an outlined-style icon */
     &:hover, &:focus
@@ -63,11 +64,11 @@ export default {
 
 
 .icon
-    margin-right: 5px
+    margin-right: 10px
     +desktop
-        font-size: 35px
+        font-size: 36px
     +mobile
-        font-size: 25px
+        font-size: 36px
 
 
 
@@ -83,7 +84,7 @@ export default {
 +desktop
     /* Smaller font-size for elements inside <slot> when the `inline` option is `true` */
     .ArrayButtonFlat.inline .BaseFlatComponent label + *
-        font-size: 18px
+        font-size: 24px
 
 
 // Larger icon for text-less buttons
@@ -91,7 +92,7 @@ export default {
     +desktop
         font-size: 84px
     +mobile
-        font-size: 48px
+        font-size: 64px
 
 .BaseFlatComponent:hover .icon
     cursor: pointer //TODO remove this

@@ -11,7 +11,9 @@ MainGroup
 <div class="container">
     <TheHeading>Réglages</TheHeading>
     <ArrayButtonFlat>
-        <ButtonFlat @click="$auth.logout()" icon="power_off">Déconnexion</ButtonFlat>
+        <ButtonFlat @click="$router.push('/logout')" icon="power_off">
+            <nuxt-link to="/logout">Déconnexion</nuxt-link>
+        </ButtonFlat>
     </ArrayButtonFlat>
     <MainGroup>
         <MainGroupLeft>

@@ -19,10 +19,16 @@ export default {
 +material-icons
         
 .BaseButtonReg
-    text-align: center
+    display: flex
+    justify-content: center
+    align-items: center
     border-radius: 7.5px
-    padding: 20px 25px
+    +desktop
+        padding: 20px 25px
+    +mobile
+        padding: 15px 15px
     min-width: 150px
+    // max-height: 50px
     font-size: 24px
     margin-right: 10px
     &::before

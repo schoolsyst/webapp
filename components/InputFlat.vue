@@ -1,17 +1,15 @@
 <template lang="pug">
-    BaseFlatComponent.InputFlat(:class="`input_${name}`" :icon="icon" :icon-style="iconStyle")
-        input(
-            class="input"
-            :name="name"
-            :id="`input_${name}`"
-            :placeholder="placeholder"
-            :type="type",
-            :value="value"
-            v-model="inputVal",
-            @input="$emit('input', $event.target.value)",
-            :autofocus="autofocus ? 'autofocus' : 'no'"
-        )
-        //- inside <input> : @input="$emit('input', $event.taget.value)"
+BaseFlatComponent.InputFlat(:class="`input_${name}`" :icon="icon" :icon-style="iconStyle")
+    input(
+        class="input"
+        :name="name"
+        :id="`input_${name}`"
+        :placeholder="placeholder"
+        :type="type",
+        :value="inputVal"
+        @input="inputVal = $event.target.value; $emit('input', $event.target.value)",
+        :autofocus="autofocus ? 'autofocus' : 'no'"
+    )
 </template>
 
 <script>
@@ -45,13 +43,18 @@ export default {
 
   data() {
     return {
-      inputVal: this.value
+      inputVal: this.value,
     };
   },
 
-  computed: {},
+  computed: {
+  },
 
-  created() {},
+  watch: {
+    value(newVal, oldVal) {
+      this.inputVal = newVal
+    }
+  },
 
   methods: {}
 };
@@ -60,7 +63,9 @@ export default {
 <style lang="sass" scoped>
 @import '~/assets/defaults'
 .input
-    width: max-content
+    width: auto
+    overflow: hidden
+    height: 48px // fix lower case g being cut
 
 .input:focus
     outline: none

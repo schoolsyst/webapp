@@ -145,7 +145,7 @@ export default {
         console.log(this.$auth.loggedIn)
         this.$toast.success(`Connexion réussie. Redirection...`);
       } catch (e) {
-        this.$toast.error(`Nom d'utilisateur ou mot de passe incorrect.`);
+        this.$toast.error(`${e}`);
       }
     },
     async register() {
@@ -167,7 +167,7 @@ export default {
             });
             this.$toast.success(`Connexion réussie.`);
           } catch (e) {
-            this.$toast.error(`Nom d'utilisateur ou mot de passe incorrect.`);
+            this.$toast.error(`${e}`);
           }
         } catch (e) {
           this.errors = e.response.data;
@@ -189,14 +189,15 @@ export default {
 @import '~/assets/defaults'
 
 .centered
-    height: 100vh
-    width: 100vw
-    display: flex
-    align-items: center
-    justify-content: center
-    flex-direction: column
+  height: 100vh
+  width: 100vw
+  display: flex
+  align-items: center
+  justify-content: center
+  flex-direction: column
 
-.error
+// UNUSED
+/* .error
   display: flex
   align-items: center
   z-index: 10
@@ -212,7 +213,7 @@ export default {
     text-align: center
     display: block
     font-size: 48px
-    margin-right: 20px
+    margin-right: 20px */
 
 .TheHeading
   margin-bottom: 70px
@@ -222,7 +223,7 @@ export default {
   text-align: center
 
 .field
-  margin-bottom: 10px
+  margin-bottom: 30px
 
 .register-link, .login-link
   margin-top: 20px

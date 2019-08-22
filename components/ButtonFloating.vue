@@ -28,8 +28,12 @@ export default {
     $height: 75px
     // self-positionning
     position: fixed
-    right: 50px
-    bottom: 50px
+    +desktop
+        right: 50px
+        bottom: 50px
+    +mobile
+        right: 25px
+        bottom: 125px
     // inner items positionning
     padding-left: $height / 2 - 20px
     padding-right: $height / 2

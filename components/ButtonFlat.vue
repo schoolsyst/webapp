@@ -1,5 +1,6 @@
 <template lang="pug">
 BaseFlatComponent.ButtonFlat(:icon="icon" :icon-style="iconStyle" :large-icon="largeIcon")
+    //-@click, @mouseup both don't work (w/ .native as well)
     button.input
         slot
 </template>
@@ -50,11 +51,11 @@ export default {
 
 <style lang="sass" scoped>
 @import '~/assets/defaults'
-.ButtonFlat:hover, .ButtonFlat:focus 
-    color: var(--blue)
+.ButtonFlat button
+    &:hover, &:focus 
+        color: var(--blue)
 
-
-.ButtonFlat:focus, .ButtonFlat:hover .ButtonFlat 
+.ButtonFlat:focus, .ButtonFlat:hover
     outline-color: transparent
     color: var(--blue)
 

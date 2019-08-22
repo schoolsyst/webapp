@@ -47,10 +47,10 @@ export default {
     +desktop
         font-size: 48px
     +mobile
-        font-size: 32px
+        font-size: 48px
 
 .HeadingAlt.has-inline-buttons 
-    display: inline-flex
+    display: flex
     align-items: center
 
 +desktop

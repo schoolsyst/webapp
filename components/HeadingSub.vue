@@ -30,14 +30,17 @@ export default {
 <style lang="sass" scoped>
 @import '~/assets/defaults'
 .HeadingSub 
-    text-transform: uppercase
-    font-weight: bold
-    letter-spacing: 0.09em
-    margin-top: 60px
+  text-transform: uppercase
+  font-weight: bold
+  letter-spacing: 0.09em
+  margin-top: 60px
 
 +desktop
-    .HeadingSub.has-inline-buttons 
-        display: inline-flex
-        align-items: center
-
+  .HeadingSub.has-inline-buttons 
+    display: inline-flex
+    align-items: center
+    white-space: nowrap
++mobile
+  .HeadingSub.has-inline-buttons > *
+    margin-top: 10px
 </style>

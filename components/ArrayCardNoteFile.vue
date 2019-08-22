@@ -12,13 +12,15 @@ export default {
 <style lang="sass" scoped>
 @import '~/assets/defaults'
 
-+desktop
-    .ArrayCardNoteFile 
-        display: flex
-        margin-top: 10px
+.ArrayCardNoteFile 
+    display: flex
+    flex-wrap: wrap
 
 
-.CardNoteFile 
-    margin-right: 35px
+/deep/ li
+    margin-top: 10px
+    margin-right: 30px
+    width: 200px
+    min-width: 200px
 
 </style>

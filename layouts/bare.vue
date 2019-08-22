@@ -7,7 +7,12 @@
 <script>
 export default {
   components: {
-  }
+  },
+  head() { return {
+    bodyAttrs: {
+      class: 'layoutBare'
+    }
+  }}
 };
 </script>
 
@@ -21,4 +26,10 @@ export default {
 +mobile
   .container
     padding: 10px
+</style>
+
+<style lang="sass">
+//WARNING: _NOT_ SCOPED!
+body.layoutBare
+  overflow: hidden
 </style>

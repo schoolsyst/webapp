@@ -1,17 +1,18 @@
 # Priorities
 
-## For back-to-school (essentials)
+## For back-to-school (Closed Beta)
 - [ ] homework
 - [ ] tests
 - [ ] note-taking
 - [ ] basic settings (no fromatting, just key-value text inputs)
 
-## Just after (core features)
+## Just after (Open Beta)
 - [ ] schedule
-- [ ] notions
 - [ ] fancy settings
+- [ ] initial beta
 
-## Less-important features
+## Less-important features (Release)
+- [ ] custom markdown theme
 - [ ] grades (stats)
 - [ ] learn\_it integration
 - [ ] bag

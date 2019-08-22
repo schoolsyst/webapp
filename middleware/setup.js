@@ -49,8 +49,7 @@ export default async function({ store, redirect,app }) {
     let scheduleIsEmpty = data.length < 1;
 
     // If any of the three checks has failed
-    let notSettedUpProperly =
-      missingSetupSettings || noSubjects || scheduleIsEmpty;
+    let notSettedUpProperly = missingSetupSettings || noSubjects || scheduleIsEmpty;
     if (false /* temp */) {
       // Redirect to the setup page
       redirect("/setup");
