@@ -29,8 +29,7 @@
       //-FIXME: &nbsp = Cheap hack to align both plus signs on mobile, should do proper alignement
       HeadingAlt(has-inline-buttons) Exercices&nbsp;
         ButtonFlat(open-modal="add-exercise", open-at="center" icon="add" inline large-icon)
-      ArrayItemExercise
-        ItemExercise(v-for="(exercise, i) in exercises" :key="i", v-bind="exercise")
+      ArrayGroupedItemExercise(:groups="groupedExercises")
     MainGroupRight
       HeadingAlt(has-inline-buttons) Contrôles
         ButtonFlat(open-modal="add-test", open-at="center" icon="add" inline large-icon)
@@ -45,6 +44,7 @@
 
 <script>
 import { mapState, mapGetters, mapMutations, mapActions } from "vuex";
+import groupBy from "lodash.groupby";
 import TheHeading from "~/components/TheHeading.vue";
 import ArrayButtonFlat from "~/components/ArrayButtonFlat.vue";
 import ButtonFlat from "~/components/ButtonFlat.vue";
@@ -55,9 +55,8 @@ import HeadingSub from "~/components/HeadingSub.vue";
 import HeadingAlt from "~/components/HeadingAlt.vue";
 import DropdownFlat from "~/components/DropdownFlat.vue";
 import ModalAddExercise from "~/components/ModalAddExercise.vue";
-import ModalAddTest from '~/components/ModalAddTest.vue'
-import ItemExercise from '~/components/ItemExercise.vue'
-import ArrayItemExercise from '~/components/ArrayItemExercise.vue'
+import ModalAddTest from "~/components/ModalAddTest.vue";
+import ArrayGroupedItemExercise from "~/components/ArrayGroupedItemExercise.vue";
 
 export default {
   components: {
@@ -72,19 +71,18 @@ export default {
     DropdownFlat,
     ModalAddExercise,
     ModalAddTest,
-    ItemExercise,
-    ArrayItemExercise
+    ArrayGroupedItemExercise
   },
 
   async asyncData({ store, app }) {
     let subjects = store.getters.subjects;
-    let res
+    let res;
 
     res = await app.$axios.get("/subjects/");
     store.commit("SET_SUBJECTS", res.data);
 
-    res = await app.$axios.get('/settings/')
-    store.commit('SET_SETTINGS', res.data)
+    res = await app.$axios.get("/settings/");
+    store.commit("SET_SETTINGS", res.data);
 
     res = await app.$axios.get("/events/");
     store.commit("schedule/SET_EVENTS", res.data);
@@ -109,8 +107,12 @@ export default {
       subjects: "subjects",
       currentCourseSubject: "schedule/currentCourseSubject",
       exercises: "homework/allExercises",
-      tests: "homework/allTests",
-    })
+      tests: "homework/allTests"
+    }),
+    groupedExercises() {
+      //TODO: sort by increasing datedelta (using a [key, value] array instead of an object)
+      return groupBy(this.exercises, "due");
+    }
   }
 };
 </script>
