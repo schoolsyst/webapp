@@ -164,7 +164,8 @@ export default {
   data() {
     return {
       content: "Chargement...",
-      lastSave: moment()
+      lastSave: moment(),
+      autosyncInterval: null
     }
   },
 
@@ -208,9 +209,18 @@ export default {
       document.getElementsByClassName('TheNavbar')[0].classList.remove('slid-out')
     }, 500);
 
-    setInterval(() => {
+    //TODO: get setting from API
+    let autosave = 5
+
+    this.autosyncInterval = setInterval(() => {
+      this.$toast.info('Synchronisation automatique...')
       this.sync()
     }, autosave * 60 * 1000);
+  },
+
+  beforeRouteLeave(to, from, next) {
+    clearInterval(this.autosyncInterval)
+    next()
   },
 
   watch: {
