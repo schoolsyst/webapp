@@ -80,6 +80,18 @@
     .admonition.bug p:not(.admonition-title)  {
       opacity: 0.75
     }
+    /* TODO: change this in the parser instead: can't select thoses */
+    .admonition.quote .admonition-title::before {
+      content: '«'
+    }
+    .admonition.quote .admonition-title::after {
+      content: '»'
+    }
+    .admonition.quote .admonition-title + p::before {
+      content: '—\2009'
+      /*        |   |-> thin space */
+      /*        |-> em dash        */
+    }
 </template>
 
 <script>
