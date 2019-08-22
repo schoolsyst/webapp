@@ -177,7 +177,8 @@ export default {
   },
 
   methods: {
-    async uploadToServer(last_modified, content, force = false) {
+    async uploadToServer(last_modified, content, force = false, updateNoteName = false) {
+      // rate limitting
       if (moment().diff(this.lastSave, "seconds") < 5 && !force) {
         this.$toast.error(
           "Veuillez attendre un peu avant de synchroniser de nouveau."
@@ -186,24 +187,34 @@ export default {
       } else {
         this.lastSave = moment();
       }
+      // request
       let errored = false;
+      let requestData = {
+        last_modified, content
+      }
+      // update title
+      if (updateNoteName) {
+        requestData.name = updateNoteName
+      }
       try {
-        const { data } = await this.$axios.patch(`/notes/${this.uuid}/`, {
-          last_modified,
-          content
-        });
+        const { data } = await this.$axios.patch(`/notes/${this.uuid}/`, requestData);
         this.$toast.success("Synchronisation réussie");
       } catch (e) {
         errored = true;
         this.$toast.error(`Erreur lors de la synchronisation: ${e}`);
       }
       if (!errored) {
+        // remove from localStorage if synced correctly to avoid
+        // incorrect "local version is more recent" notifications
         window.localStorage.removeItem(`${this.uuid}--noteContent`);
         window.localStorage.removeItem(`${this.uuid}--noteLastModified`);
       }
     },
     sync() {
-      this.uploadToServer(moment().format(), this.content);
+      // update note name
+      let noteName = document.getElementsByTagName('h1')[0].innerText
+      this.name = noteName
+      this.uploadToServer(moment().format(), this.content, false, noteName);
     },
     save_source() {
       var element = document.createElement("a");
