@@ -113,7 +113,7 @@ nav
 
 .TheNavbar.slide-out
   // positioning
-  left: -90px
+  left: -95px
   // dimensions
   padding: $nav-padding
   // appearance
