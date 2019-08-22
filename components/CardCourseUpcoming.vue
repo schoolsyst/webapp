@@ -6,62 +6,57 @@
 </template>
 
 <script>
-import moment from 'moment'
-import BaseCard from '~/components/BaseCard.vue'
+import moment from "moment";
+import BaseCard from "~/components/BaseCard.vue";
 
 export default {
-    name: 'CardCourseUpcoming',
+  name: "CardCourseUpcoming",
 
-    components: {
-        BaseCard
+  components: {
+    BaseCard
+  },
+
+  props: {
+    subject: {
+      type: Object,
+      required: true
     },
-
-    props: {
-        subject: {
-            type:Object,
-            required: true
-        },
-        start: {
-            // HH:MM
-            validator: function(value) { return value.match(/\d+:\d+/) },
-            required: true
-        },
-        room: {
-            type:String,
-            required: true
-        },
-        start: {
-            type:String,
-            required: true
-        },
+    start: {
+      // HH:MM
+      validator: function(value) {
+        return value.match(/\d+:\d+/);
+      },
+      required: true
     },
-
-
-    data() {
-        return {
-            
-        }
+    room: {
+      type: String,
+      required: true
     },
-
-    computed: {
-        timeRemaining() {
-            moment.locale('fr')
-            return moment(this.start, 'hh:mm').fromNow()
-        }
-    },
-
-
-    created() {
-
-    },
-
-
-    created() {
-        String.prototype.capFirstChar = function () {
-        return this.charAt(0).toUpperCase() + this.substr(1).toLowerCase()
-        };
+    start: {
+      type: String,
+      required: true
     }
-}
+  },
+
+  data() {
+    return {};
+  },
+
+  computed: {
+    timeRemaining() {
+      moment.locale("fr");
+      return moment(this.start, "HH:mm").fromNow();
+    }
+  },
+
+  created() {},
+
+  created() {
+    String.prototype.capFirstChar = function() {
+      return this.charAt(0).toUpperCase() + this.substr(1).toLowerCase();
+    };
+  }
+};
 </script>
 
 <style lang="sass" scoped>
