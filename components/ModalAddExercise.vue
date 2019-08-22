@@ -99,6 +99,7 @@ export default {
     nextCourseDate() {
       if (this.nextCourse) {
         let val = this.nextCourse.date;
+        this.mutDate = val
         return val;
       }
       return "";
@@ -106,6 +107,7 @@ export default {
     nextCourseRoom() {
       if (this.nextCourse) {
         let val = this.nextCourse.room;
+        this.mutRoom = val
         return val;
       }
       return "";
@@ -150,18 +152,25 @@ ${this.exerciseName} due for ${this.mutDate} @ ${this.mutRoom}`)
         }
       }
       // if any errors: inform the user, and quit
-      if (errs) {
+      if (errs.length) {
         errs.forEach(err => this.$toast.error(err))
         return
       }
 
       try {
+        console.log(moment().format('YYYY-MM-DD[T]hh:mm:ss'))
         const { data } = await this.$axios.post("/exercises/", {
           subject: this.mutSubject.slug,
-
+          name: this.exerciseName,
+          due: moment(this.mutDate, 'DD/MM/YYYY').format('YYYY-MM-DD'),
+          room: this.mutRoom,
+          created: moment().toISOString(),
+          notes: this.notes,
+          completed: false
         })
+        this.$toast.success(`Exercice "${this.exerciseName}" ajouté!`)
       } catch (error) {
-        
+        this.$toast.error(`Erreur lors de l'ajout de l'exercice: ${error}`)
       }
 
     }
