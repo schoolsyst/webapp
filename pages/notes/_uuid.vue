@@ -205,7 +205,7 @@ export default {
     // Slide the navabr back in only a few seconds after to show that it's here
     setTimeout(() => {
       document.getElementsByClassName('TheNavbar')[0].classList.remove('slid-out')
-    }, 1500);
+    }, 500);
 
   },
 
