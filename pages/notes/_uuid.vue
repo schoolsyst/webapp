@@ -18,8 +18,6 @@
   MainGroup
     MainGroupLeft
       textarea#editor(v-model="content") 
-      //@keyup.control.s.prevent="sync"
-      textarea.editor(v-model="content") 
     MainGroupRight(v-if="content")
       #mirror(v-html="$md.render(content)")
   style.
@@ -120,23 +118,33 @@ export default {
       lastSave: moment()
     },
 
-    mounted() {
-      let content
-      let local = {
-        content: window.localStorage.getItem(`${this.uuid}--noteContent`),
-        modified: moment(window.localStorage.getItem(`${this.uuid}--noteLastModified`)),
-      }
-      let server = {
-        content: this.server_content,
-        modified: moment(this.server_last_modified)
-      }
-      if (local.modified.isAfter(server.modified)) {
-        this.content = local.content
-        this.$toast.show('La note enregistrée ici est plus récente que celle du serveur, et a été restaurée.')
-        this.uploadToServer(moment().format(), local.content)
+  mounted() {
+    let content;
+    let local = {
+      content: window.localStorage.getItem(`${this.uuid}--noteContent`),
+      modified: moment(
+        window.localStorage.getItem(`${this.uuid}--noteLastModified`)
+      )
+    };
+    let server = {
+      content: this.server_content,
+      modified: moment(this.server_last_modified)
+    };
+    if (local.modified.isAfter(server.modified)) {
+      this.content = local.content;
+      this.$toast.show(
+        "La note enregistrée ici est plus récente que celle du serveur, et a été restaurée."
+      );
+      this.uploadToServer(moment().format(), local.content, true);
+    } else {
+      this.content = server.content;
+    }
 
-      } else {
-        this.content = server.content
+    //                         |-> keyup never fires for Ctrl-S
+    window.addEventListener('keydown', event => {
+      if (event.ctrlKey && event.key === 's') {
+        event.preventDefault()
+        this.sync()
       }
     },
 
