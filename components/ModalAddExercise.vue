@@ -123,6 +123,7 @@ export default {
         .classList.remove("opened");
     },
     async addExercise() {
+      //TODO: add to the store using the mutation ADD_EXERCISE
       let errs = []
       console.log(`adding exercise: \
 [${this.mutSubject.abbreviation.toUpperCase()}] \
@@ -158,7 +159,6 @@ ${this.exerciseName} due for ${this.mutDate} @ ${this.mutRoom}`)
       }
 
       try {
-        console.log(moment().format('YYYY-MM-DD[T]hh:mm:ss'))
         const { data } = await this.$axios.post("/exercises/", {
           subject: this.mutSubject.slug,
           name: this.exerciseName,
@@ -169,6 +169,8 @@ ${this.exerciseName} due for ${this.mutDate} @ ${this.mutRoom}`)
           completed: false
         })
         this.$toast.success(`Exercice "${this.exerciseName}" ajouté!`)
+        // --- close modal manually ---
+        document.getElementById(`modal_add-exercise`).classList.remove('opened')
       } catch (error) {
         this.$toast.error(`Erreur lors de l'ajout de l'exercice: ${error}`)
       }
