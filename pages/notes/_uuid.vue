@@ -16,10 +16,10 @@
 .container
   TheNavbar(slide-out).slid-out
   BarFloating
-    ButtonIcon(@click="save_source" title="Télécharger la source (.md)") archive
+    ButtonIcon(@click="saveSource" title="Télécharger la source (.md)") archive
     //TODO: Ripple effect when @click on sync btn
     ButtonIcon(@click="sync"        title="Synchroniser") import_export
-    ButtonIcon(@click="save_render" title="Télécharger le rendu (.pdf)") file_copy
+    ButtonIcon(@click="savePDF" title="Télécharger le rendu (.pdf)") file_copy
   MainGroup
     MainGroupLeft
       textarea#editor(v-model="content") 
@@ -280,7 +280,7 @@ export default {
       this.name = noteName
       this.uploadToServer(moment().format(), this.content, false, noteName);
     },
-    save_source() {
+    saveSource() {
       var element = document.createElement("a");
       element.setAttribute(
         "href",
