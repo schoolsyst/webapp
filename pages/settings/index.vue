@@ -17,7 +17,13 @@ MainGroup
     </ArrayButtonFlat>
     <MainGroup>
         <MainGroupLeft>
-            <HeadingSub></HeadingSub>
+            <HeadingSub>Réglages</HeadingSub>
+            <dl>
+                <div v-for="(setting, i) in settings" :key="i">
+                    <dt>{{name}} [<code>{{key}}</code>]</dt>
+                    <dd>{{value}}</dd>
+                </div>
+            </dl>
         </MainGroupLeft>
         <MainGroupRight>
             <HeadingSub></HeadingSub>
@@ -47,9 +53,16 @@ export default {
         HeadingSub,
     },
 
-    data() {
+    async asyncData() {
+        let settings
+        try {
+            const { data } = await this.$axios.get('/settings/')
+            settings = data
+        } catch(error) {
+            settings = null
+        }
         return {
-            
+            settings
         }
     },
 }
