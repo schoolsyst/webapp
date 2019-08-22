@@ -1,9 +1,9 @@
 <template lang="pug">
 li.ItemExercise(
     :data-exercise-id="uuid" 
-    :class="{'completed': completed}"
-    @keyup.enter="markAsComplete"
-    @click="markAsComplete",
+    :class="{'completed': completed, 'show-completed': showCompleted}"
+    @keyup.enter="switchCompleteStatus"
+    @click="switchCompleteStatus",
     tabindex="0"
 )
     BadgeSubject(
@@ -15,6 +15,7 @@ li.ItemExercise(
 
 <script>
 import BadgeSubject from "~/components/BadgeSubject.vue";
+import moment from 'moment';
 
 export default {
   name: "ItemExercise",
@@ -26,41 +27,47 @@ export default {
     name: String,
     notes: String,
     uuid: String,
-    completed: Boolean
+    completed: Boolean,
+    //TODO: finish this (checkbox to show or not completed items)
+    showCompleted: {
+      type: Boolean,
+      default: false
+    }
   },
 
   data: {
     badgeHasCheckmark: false,
-    initialInnerHTML: ''
+    initialInnerHTML: '',
+    lastCompletionSync: null
   },
 
   methods: {
-    async markAsComplete() {
-      let requestData = {
-        subject: this.subject.slug,
-        name: this.name,
-        notes: this.notes,
-        completed: true
-      };
+    switchCompleteStatus() {
+      //TODO: change this in the store, and also sync everything onBeforeRouteLeave in the pages component.
+      this.completed = !this.completed;
+      // Remove icon from badge innerHTML 
+      let item = document.querySelector(`[data-exercise-id="${this.uuid}"]`)
+      // TODO: maybe do this with a .switching class instead? (this removes focus, no good for accessibility)
+      item.blur() // Remove focus automatically, removing weird styling conflicts 
+      item.querySelector(`.BadgeSubject`).innerHTML = this.initialInnerHTML
+      this.syncCompletionStatuses()
+    },
+    async syncCompletionStatuses() {
+      // don't sync too much (every 5 secs. max)
+      if (this.lastCompletionSync && this.lastCompletionSync.diff(moment(), 'seconds') < 5) return
 
       try {
-        const { data } = await this.$axios.patch(
-          `/exercises/${this.uuid}/`,
-          requestData
-        );
-        this.completed = true;
-        // Remove icon from badge innerHTML
-        document.querySelector(`[data-exercise-id="${this.uuid}"] .BadgeSubject`).innerHTML = this.initialInnerHTML
-      } catch (error) {
-        this.$toast.error(
-          `Impossible de marquer l'exercice comme terminé: ${error}`
-        );
+        const { data } = await this.$axios.patch(`/exercises/${this.uuid}/`, { completed: this.completed })
+        this.lastCompletionSync = moment()
+      } catch(error) {
+        this.$toast.error(`Erreur lors de la synchronisation: ${error}`)
       }
-    }
+    },
   },
 
   mounted() {
     let item = document.querySelector(`[data-exercise-id="${this.uuid}"]`);
+    if (!item) return
     let badge = item.querySelector(".BadgeSubject");
     this.initialInnerHTML = badge.innerHTML;
 
@@ -74,7 +81,7 @@ export default {
         badge.innerHTML = this.initialInnerHTML;
       }
     });
-  }
+  },
 };
 </script>
 
@@ -128,7 +135,8 @@ export default {
     margin-left: 20px
     //--- dimensions  ---
     font-size: 25px
-    max-width: 500px
+    min-width: 500px
+    max-width: calc(50vh - 50px)
     //---   margins   ---
     
     //---  appearance ---
@@ -144,6 +152,11 @@ export default {
 // Reactions
 // =========
 
+//TODO: move this outta this component (use a filter in the ArrayGroupedItemExercise)
+// --- Hide completed exercises ---
+.ItemExercise:not(.show-completed).completed
+  display: none
+
 // --- hover, focus AND completed state ---
 .ItemExercise:hover,
 .ItemExercise:focus,
@@ -158,6 +171,7 @@ export default {
         opacity: 0.25
     &::before
         width: 600px + 20px * 2 + 10px
+        max-width: 50vw
 
 // --- hover, focus only ---
 .ItemExercise:not(.completed):hover,
