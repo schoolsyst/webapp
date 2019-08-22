@@ -11,10 +11,10 @@
 
 .container
   BarFloating
-    ButtonIcon(@click="save_render" title="Télécharger le rendu (.pdf)") file_copy
+    ButtonIcon(@click="save_source" title="Télécharger la source (.md)") archive
     //TODO: Ripple effect when @click on sync btn
     ButtonIcon(@click="sync"        title="Synchroniser") import_export
-    ButtonIcon(@click="save_source" title="Télécharger la source (.md)") archive
+    ButtonIcon(@click="save_render" title="Télécharger le rendu (.pdf)") file_copy
   MainGroup
     MainGroupLeft
       //TODO: Keyboard shortcut Ctrl-S to sync()
