@@ -1,6 +1,7 @@
 <template lang="pug">
     <li class="CardNoteFile">
         //TODO: maybe context-menu to delete?
+        //TODO: subject color overlay on hover
         <nuxt-link :to="`/notes/${uuid}`">
             <BaseCard class="card">
                 <p class="detail" v-html="detailDisp"></p>
@@ -55,7 +56,7 @@ export default {
       if (this.detailKey === "subject") {
         return "";
       } else if (moment(this.detail).isValid()) {
-        return moment(this.detail).format("DD/MM/YYYY hh:mm");
+        return moment(this.detail).format("DD/MM/YYYY HH:mm");
       } else {
         return this.detail;
       }
@@ -93,7 +94,7 @@ export default {
     white-space: wrap
     flex-wrap: wrap
     text-overflow: ellipsis
-    word-break: break-all
+    word-break: break-word
 
 .SubjectDot
     height: 30px
