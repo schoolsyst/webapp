@@ -50,6 +50,36 @@
     code {
       color: var(--blue);
     }
+    .footnotes-sep {
+      opacity: .75
+      margin-top: 10px
+    }
+    .admonition {
+      background: var(--offset-blue);
+      border-radius: 10px;
+      padding: 10px 20px;
+      margin: 20px 0;
+    }
+    .admonition-title {
+      color: var(--blue);
+      font-size: 24px;
+      font-weight: bold
+    }
+    .admonition.failure,
+    .admonition.danger,
+    .admonition.bug {
+      background: var(--red)
+    }
+    .admonition.failure p,
+    .admonition.danger p,
+    .admonition.bug p {
+      color: white
+    }
+    .admonition.failure p:not(.admonition-title),
+    .admonition.danger p:not(.admonition-title),
+    .admonition.bug p:not(.admonition-title)  {
+      opacity: 0.75
+    }
 </template>
 
 <script>
