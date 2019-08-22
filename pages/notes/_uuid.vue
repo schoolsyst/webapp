@@ -17,11 +17,11 @@
     ButtonIcon(@click="save_render" title="Télécharger le rendu (.pdf)") file_copy
   MainGroup
     MainGroupLeft
-      //TODO: Keyboard shortcut Ctrl-S to sync()
+      textarea#editor(v-model="content") 
       //@keyup.control.s.prevent="sync"
       textarea.editor(v-model="content") 
     MainGroupRight(v-if="content")
-      .mirror(v-html="$md.render(content)")
+      #mirror(v-html="$md.render(content)")
 </template>
 
 <script>
@@ -166,7 +166,7 @@ export default {
 <style lang="sass" scoped>
 @import '~/assets/defaults'
 
-textarea
+#editor
   height: 100%
   width: 100%
   font-family: 'Roboto Mono', monospace
@@ -174,6 +174,7 @@ textarea
 .MainGroup [class^=MainGroup]
   height: 100vh
 .mirror
+#mirror
   overflow-y: scroll
   line-height: 1.3
   font-size: 24px
