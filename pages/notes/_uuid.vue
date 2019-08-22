@@ -10,11 +10,11 @@
   //TODO: synchronized scrolling
   //TODO: button to upload source file to textarea
   //TODO: Jump to section
-  //TODO: slide-out navbar
   //TODO: Search-and-replace
   //TODO: save scroll pos
 
 .container
+  TheNavbar(slide-out).slid-out
   BarFloating
     ButtonIcon(@click="save_source" title="Télécharger la source (.md)") archive
     //TODO: Ripple effect when @click on sync btn
@@ -100,7 +100,7 @@ import axios from "axios";
 import moment from "moment";
 import { mapState, mapGetters, mapMutations, mapActions } from "vuex";
 //--- components ---
-import TheHeading from "~/components/TheHeading.vue";
+import TheNavbar from "~/components/TheNavbar.vue";
 import ArrayButtonFlat from "~/components/ArrayButtonFlat.vue";
 import ButtonFlat from "~/components/ButtonFlat.vue";
 import MainGroup from "~/components/MainGroup.vue";
@@ -112,7 +112,7 @@ import BarFloating from "~/components/BarFloating.vue";
 export default {
   layout: "bare",
   components: {
-    TheHeading,
+    TheNavbar,
     MainGroup,
     MainGroupLeft,
     MainGroupRight,
@@ -202,6 +202,11 @@ export default {
       document.getElementById("mirror").scrollTop = event.target.scrollTop;
     });
 
+    // Slide the navabr back in only a few seconds after to show that it's here
+    setTimeout(() => {
+      document.getElementsByClassName('TheNavbar')[0].classList.remove('slid-out')
+    }, 1500);
+
   },
 
   watch: {
@@ -284,6 +289,7 @@ export default {
 @import '~/assets/defaults'
 
 #editor
+  padding-left: 20px // Remove conflict with navbar handle
   height: 100%
   width: 100%
   font-family: 'Roboto Mono', monospace

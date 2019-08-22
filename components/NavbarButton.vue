@@ -39,7 +39,6 @@ export default {
   @media (min-width: $bk-sidebar)
       height: 64px
       width: 64px
-      margin-bottom: 20px
   border-radius: 50%
   display: flex
   justify-content: center

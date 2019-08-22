@@ -55,6 +55,13 @@ export default {
     NavbarButton
   },
 
+  props: {
+    slideOut: {
+      type: Boolean,
+      default: false
+    }
+  },
+
   updated() {
     // Fix the work_outline icon
     let badIcon = document.querySelector("nav a.bad-icon");
@@ -77,27 +84,54 @@ export default {
 <style lang="sass" scoped>
 @import '~/assets/defaults'
 
-
+$nav-padding: 20px
 nav 
-    position: fixed
-    @media (min-width: $bk-sidebar)
-        top: 50%
-        left: 20px
-        transform: translateY(-50%)
+  position: fixed
+  @media (min-width: $bk-sidebar)
+    top: 50%
+    // DO this instead of left -20px
+    // because hovering in the gap 
+    padding-left: $nav-padding
+    left: 0
+    transform: translateY(-50%)
+    .NavbarButton:not(:last-child)
+      margin-bottom: 20px
 
-    @media (max-width: $bk-sidebar - 1px)
-        left: 0
-        right: 0
-        bottom: 0
-        display: flex
-        justify-content: space-around
-        background: var(--offset-blue)
-        padding-top: 20px
-        .NavbarButton
-            margin-bottom: 20px
-    +mobile
-        z-index: 100
-        .NavbarButton[href="/notes"]
-            display: none
+  //TODO hide on scroll on mobile ?
+  @media (max-width: $bk-sidebar - 1px)
+    left: 0
+    right: 0
+    bottom: 0
+    display: flex
+    justify-content: space-around
+    background: var(--offset-blue)
+    padding-top: 20px
+  +mobile
+    z-index: 100
+    .NavbarButton[href="/notes"]
+      display: none
 
+.TheNavbar.slide-out
+  // positioning
+  left: -90px
+  // dimensions
+  padding: $nav-padding
+  // appearance
+  background: #000
+  border-top-right-radius: 10px
+  border-bottom-right-radius: 10px
+  box-shadow: none
+  .NavbarButton
+    opacity: 0
+  // animations
+  transition: all 0.25s ease
+  .NavbarButton
+    transition: opacity 0.25s ease 0.25s
+  // reactions
+  &:hover, &:focus, &.slid-out
+    background: #ffffff
+    +shadow(3)
+    left: 0
+    .NavbarButton
+      opacity: 1
 </style>
