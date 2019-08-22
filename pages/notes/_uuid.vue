@@ -49,6 +49,7 @@
     }
     code {
       color: var(--blue);
+      line-height: 1.2
     }
     .footnotes-sep {
       opacity: .75
@@ -207,6 +208,9 @@ export default {
       document.getElementsByClassName('TheNavbar')[0].classList.remove('slid-out')
     }, 500);
 
+    setInterval(() => {
+      this.sync()
+    }, autosave * 60 * 1000);
   },
 
   watch: {
