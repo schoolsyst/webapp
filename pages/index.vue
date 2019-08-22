@@ -3,6 +3,7 @@
 //-
   COMPONENT TREE
   Excluding single-use components (TheHeading, TheNavbar, TheFooter,...)
+  And modals
 
   ArrayButtonFlat
     ButtonFlat ×4
@@ -48,7 +49,7 @@
     ButtonFlat.nomobile(icon='insert_drive_file') Dernier chapitre
   MainGroup
     MainGroupLeft
-      template(v-if="currentCourse")
+      template(v-if="currentCourse || upcomingCourse")
         HeadingSub cours suivant
         template(v-if='upcomingCourse')
           CardCourseUpcoming(v-bind='upcomingCourse')
