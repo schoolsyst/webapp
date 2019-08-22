@@ -1,4 +1,5 @@
 <template lang="pug">
+//FIXME: sometimes the modification date is null (not shown atleast)
 //-
   COMPONENT TREE
   Excluding single-use components (TheHeading, TheNavbar, TheFooter,...)
