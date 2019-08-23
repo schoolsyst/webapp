@@ -31,6 +31,7 @@ export const getters = {
   allDeletions(state) {
     return state.deletions;
   },
+  //TODO: implement default settings
   setting: (state, getters, rootState, rootGetters) => settingName => {
     let settings = rootGetters.allSettings;
     settings = settings.filter(setting => setting.setting.key == settingName);
