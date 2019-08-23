@@ -1,3 +1,4 @@
+// FIXME: don't cache "nextCourse"-related getters.
 // CLARIFICATION: event(s) vs course(s)
 // - events are "base" events as returned by the /events/ API endpoint.
 //   They describe a normal week of the year
