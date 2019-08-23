@@ -1,5 +1,5 @@
 <template lang="pug">
-//TODO: caret to show exercise notes
+//TODO: click to expand & show exercise notes, full title. Complete w/ the subject badge/dot
 li.ItemExercise(
     :data-exercise-id="uuid" 
     :class="{'completed': completed, 'show-completed': showCompleted}"
@@ -49,7 +49,7 @@ export default {
 
   methods: {
     switchCompleteStatus() {
-      //TODO: change this in the store, and also sync everything onBeforeRouteLeave in the pages component.
+      //TODO: also sync everything onBeforeRouteLeave in the pages component.
       this.$store.commit('homework/SWITCH_EXERCISE_COMPLETED', this.uuid)
       // Remove icon from badge innerHTML 
       let item = document.querySelector(`[data-exercise-id="${this.uuid}"]`)
@@ -98,7 +98,7 @@ export default {
     //--- positioning ---
     position: relative
     //--- dimensions  ---
-    
+    max-width: 90vw
     //---   margins   ---
 
     //---  appearance ---
@@ -114,7 +114,10 @@ export default {
         content: ''
         //--- positioning ---
         position: absolute
-        left: -20px
+        +tablet
+          left: -20px
+        +phone
+          left: -10px
         //--- dimensions  ---
         height: 3px
         width: 0
@@ -141,8 +144,10 @@ export default {
     margin-left: 15px
     //--- dimensions  ---
     font-size: 25px
-    min-width: 500px
-    max-width: calc(50vw - 50px)
+    +tablet
+      width: 500px
+    +phone
+      width: calc(100vw - 20px)
     //---   margins   ---
     
     //---  appearance ---
@@ -188,7 +193,10 @@ export default {
     .BadgeSubject
         opacity: 0.25
     &::before
-        width: 600px + 20px * 2 + 10px
+        +tablet
+          width: 600px + 20px * 2 + 10px
+        +phone
+          width: calc(100vw - 20px)
         max-width: 50vw
 
 // --- hover, focus only ---
