@@ -19,7 +19,7 @@
     template(v-if="currentCourse")
       HeadingSub {{currentCourse.subject.name}}
       ArrayCardNoteFile
-        CardNoteAdd(open-modal="add-note" open-at="center")
+        CardNoteAdd
         CardNoteFile(v-for="(note, i) in currentSubjectCards" :key="i" v-bind="note")
 
     HeadingSub.all-notes(has-inline-buttons)
@@ -39,6 +39,7 @@
           @input="sortBy = $event.target.value"
         ) Date de modification
     ArrayCardNoteFile
+      CardNoteAdd(v-if="!currentCourse")
       CardNoteFile(
         v-for="(card, i) in allCards"
         :key="i"
