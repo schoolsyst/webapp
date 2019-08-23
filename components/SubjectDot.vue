@@ -28,8 +28,8 @@ export default {
     $size: 40px
     height: $size
     width: $size
-    min-width: $size * 0.75
-    min-height: $size * 0.75
+    min-width: $size / 2
+    min-height: $size / 2
     border-radius: $size / 2
     display: flex
     justify-content: center

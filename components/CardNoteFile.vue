@@ -72,12 +72,13 @@ export default {
 <style lang="sass" scoped>
 @import '~/assets/defaults'
 .CardNoteFile 
-    height: 300px
-    width: 200px
+    height: 320px
+    width: 220px
 
-.card 
+.card
     background: var(--grey)
-    height: 250px
+    height: 270px
+    margin-right: 20px
     width: 100%
     margin-bottom: 10px
 
@@ -97,9 +98,9 @@ export default {
     word-break: break-word
 
 .SubjectDot
-    height: 30px
-    width: 30px
-    margin-right: 10px
+    height: 25px
+    width: 25px
+    margin-right: 5px
 
 .detail 
     font-size: 16px
