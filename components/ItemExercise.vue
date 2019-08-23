@@ -129,7 +129,7 @@ export default {
     //---  appearance ---
 
     //---  animation  ---
-
+    transition: background .125s ease
 .name
     //--- positioning ---
     margin-left: 20px
@@ -147,7 +147,7 @@ export default {
     height: 30px
     white-space: nowrap
     //---  animation  ---
-    // transition: opacity .125s ease
+    transition: opacity .125s ease
 
 // Reactions
 // =========
