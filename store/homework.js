@@ -162,7 +162,10 @@ export const mutations = {
     let exercise = state.exercises.find(ex => ex.uuid === exerciseUUID)
     if (!exercise) return
     state.exercises[state.exercises.indexOf(exercise)].completed = !exercise.completed
-  }
+  },
+  ADD_GRADE(state, grade) {
+    state.grades.push(grade)
+  },
 };
 
 export const actions = {};

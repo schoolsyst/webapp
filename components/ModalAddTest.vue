@@ -163,11 +163,15 @@ export default {
       document
         .getElementById("modal_add-test-subject-picker")
         .classList.remove("opened");
+      // deselect all elements upon switching subjects        
+      document.querySelectorAll("#modal_add-test select option").forEach(e => {
+        e.removeAttribute('selected')
+      })
     },
     async addTest() {
         let errs = []
         console.log(this.selectedNotes)
-        console.log(`adding exercise: \
+        console.log(`adding test: \
   [${this.mutSubject.abbreviation.toUpperCase()}] \
   ${this.selectedNotes.join(',')} due for ${this.mutDate} @ ${this.mutRoom}`)
         // --- validate data ---
@@ -204,7 +208,7 @@ export default {
         }
 
         try {
-          const { data } = await this.$axios.post("/exercises/", {
+          const { data } = await this.$axios.post("/tests/", {
             subject: this.mutSubject.slug,
             due: moment(this.mutDate, 'DD/MM/YYYY').format('YYYY-MM-DD'),
             room: this.mutRoom,
@@ -212,8 +216,16 @@ export default {
             notes: this.selectedNotes,
             details: this.details
           })
-          this.$store.commit('homework/ADD_EXERCISE', data)
-          this.$toast.success(`Exercice "${this.exerciseName}" ajouté!`)
+
+          const response = await this.$axios.post("/grades/", {
+            weight: this.mutWeight,
+            maximum: this.mutMax,
+            test: data.uuid
+          })
+
+          this.$store.commit('homework/ADD_TEST', data)
+          this.$store.commit('homework/ADD_GRADE', response.data)
+          this.$toast.success(`Contrôle de ${this.mutSubject.name} ajouté!`)
           // --- close modal manually ---
           document.getElementById(`modal_add-exercise`).classList.remove('opened')
         } catch (error) {
@@ -246,11 +258,13 @@ export default {
     
 .row.main
   margin-top: 20px
-  .notes
+  .notes /deep/ select
     width: 100%
+    option
+      font-size: 24px
   +tablet
     display: grid
-    grid-template-columns: 1fr 1fr
+    grid-template-columns: repeat(2, 400px)
     grid-gap: 20px
   +phone
     display: flex
@@ -277,6 +291,7 @@ export default {
 
 .ModalAddTest
   +phone
+    max-height: calc(100vh - 20px)
     overflow-y: scroll
 
 .BadgeSubject
