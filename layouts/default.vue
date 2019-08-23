@@ -21,6 +21,10 @@ export default {
 <style scoped lang="sass">
 @import '~/assets/defaults'
 
+// Keep footer outta the first page
+.container
+  min-height: 100vh
+
 /* DESKTOP */
 +desktop 
   .container 
