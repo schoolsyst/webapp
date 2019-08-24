@@ -37,6 +37,7 @@ export default {
     &:focus
       outline: none
 
-.icon
+.material-icons
   color: white
+
 </style>
