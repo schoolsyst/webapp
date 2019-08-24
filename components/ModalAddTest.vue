@@ -11,27 +11,54 @@
             //TODO: use dropdown w/ search to select a note title of that subject
             .field
               span.before-input le
-              InputFlat(:value="nextCourseDate", name="date", placeholder="JJ/MM/AAAA")
+              InputFlat(
+                name="date", 
+                placeholder="JJ/MM/AAAA"
+                :value="nextCourseDate",
+                @input="mutDate = $event"
+              )
             .field
               span.before-input en
-              InputFlat(:value="nextCourseRoom", name="room", placeholder="Salle")
+              InputFlat(
+                name="room", 
+                placeholder="Salle"
+                :value="nextCourseRoom",
+                @input="mutRoom = $event"
+              )
             .field
               span.before-input sur
-              InputFlat(:value="defaultMax", name="grade-max")
+              InputFlat(
+                name="grade-max"
+                :value="defaultMax", 
+                @input="mutMax = $event"
+              )
             .field
               span.before-input coef
-              InputFlat(:value="defaultWeight", name="grade-weight")
+              InputFlat(
+                name="grade-weight"
+                :value="defaultWeight", 
+                @input="mutWeight = $event"
+              )
         .row.main
-            .to-learn
+            .notes
               HeadingSub À apprendre
-              TextBlockInput(name="to-learn")
+              select(
+                name="notes"
+                v-model="selectedNotes"
+                multiple
+              )
+                //TODO: select by default the latest-created note that doesn't have a grade linked
+                option(v-for="(note, i) in notes" :key="i" :value="note.uuid") {{ note.name }}
               //TODO: list of dropdowns w/ each note of subject as option || list of <input>'s
-            .additional-notes
+            .details
               HeadingSub Notes additionnelles
-              TextBlockInput(name="notes")
+              TextBlockInput(
+                name="details"
+                v-model="details"
+              )
         ArrayButtonReg.row.buttons
             ButtonRegSecondary(close-modal) Annuler
-            ButtonRegPrimary(@click="$event('confirm')", close-modal) Ajouter
+            ButtonRegPrimary(@mouseup.native="addTest") Ajouter
 </template>
 
 <script>
@@ -75,13 +102,21 @@ export default {
   data() {
     return {
       newNoteName: "",
-      mutSubject: this.subject
+      mutSubject: this.subject,
+      mutDate: "",
+      mutRoom: "",
+      mutWeight: "",
+      mutRoom: "",
+      details: "",
+      selectedNotes: []
     };
   },
   computed: {
     ...mapGetters({
       nextCourseOf: "schedule/nextCourseOf",
-      setting: "schedule/setting"
+      setting: "schedule/setting",
+      notesOf: "notes/notesOf",
+      allNotes: "notes/allNotes"
     }),
     nextCourse() {
       if ("_isPlaceholder" in this.mutSubject) return "";
@@ -92,6 +127,7 @@ export default {
     nextCourseDate() {
       if (this.nextCourse) {
         let val = this.nextCourse.date;
+        this.mutDate = val
         return val;
       }
       return "";
@@ -99,15 +135,26 @@ export default {
     nextCourseRoom() {
       if (this.nextCourse) {
         let val = this.nextCourse.room;
+        this.mutRoom = val
         return val;
       }
       return "";
     },
     defaultMax() {
-      return this.setting("default_max") || "";
+      let val = this.setting("default_max") || "";
+      this.mutMax = val
+      return val
     },
     defaultWeight() {
-      return this.setting("default_weight") || "";
+      let val = this.setting("default_weight") || "";
+      this.mutWeight = val
+      return val
+    },
+    notes() {
+      console.log(`getting notes for ${this.mutSubject.slug}`)
+      let notes = this.notesOf(this.mutSubject.slug)
+      console.log(notes)
+      return notes
     }
   },
   methods: {
@@ -116,6 +163,62 @@ export default {
       document
         .getElementById("modal_add-test-subject-picker")
         .classList.remove("opened");
+    },
+    async addTest() {
+        let errs = []
+        console.log(this.selectedNotes)
+        console.log(`adding exercise: \
+  [${this.mutSubject.abbreviation.toUpperCase()}] \
+  ${this.selectedNotes.join(',')} due for ${this.mutDate} @ ${this.mutRoom}`)
+        // --- validate data ---
+        // check for existence & non-emptiness of fields...
+        if ("_isPlaceholder" in this.mutSubject) {
+          errs.push(`Sélectionnez une matière`)
+        }
+        if(!this.mutRoom) {
+          errs.push(`Choisissez une salle dans laquelle le devoir devra être rendu`)
+        }
+        if(!this.mutMax) {
+          errs.push(`Choisissez l'unité de cette note (vous pouvez changer cela plus tard)`)
+        }
+        if(!this.mutWeight) {
+          errs.push(`Choisissez le coefficient de la note (vous pouvez changer cela plus tard)`)
+        }
+        if(!this.mutDate) {
+          errs.push(`Choisissez la date du contrôle`)
+        } else {
+          // check for date validity
+          let parsedDate = moment(this.mutDate, 'DD/MM/YYYY')
+          // is correct format
+          if(!parsedDate.isValid()) {
+            errs.push('Choisissez une date valide, au format JJ/MM/AAAA')
+          // is in the future
+          } else if (!parsedDate.isAfter(moment())) {
+            errs.push('La date du contrôle doit être dans le futur, Marty! Tu veux créer un paradoxe temporel‽')
+          }
+        }
+        // if any errors: inform the user, and quit
+        if (errs.length) {
+          errs.forEach(err => this.$toast.error(err))
+          return
+        }
+
+        try {
+          const { data } = await this.$axios.post("/exercises/", {
+            subject: this.mutSubject.slug,
+            due: moment(this.mutDate, 'DD/MM/YYYY').format('YYYY-MM-DD'),
+            room: this.mutRoom,
+            created: moment().toISOString(),
+            notes: this.selectedNotes,
+            details: this.details
+          })
+          this.$store.commit('homework/ADD_EXERCISE', data)
+          this.$toast.success(`Exercice "${this.exerciseName}" ajouté!`)
+          // --- close modal manually ---
+          document.getElementById(`modal_add-exercise`).classList.remove('opened')
+        } catch (error) {
+          this.$toast.error(`Erreur lors de l'ajout de l'exercice: ${error}`)
+        }
     }
   }
 };
@@ -143,6 +246,8 @@ export default {
     
 .row.main
   margin-top: 20px
+  .notes
+    width: 100%
   +tablet
     display: grid
     grid-template-columns: 1fr 1fr
@@ -151,8 +256,6 @@ export default {
     display: flex
     flex-direction: column
     align-items: flex-start
-    .to-learn
-      width: 100%
 .row.buttons
   justify-content: flex-end
   padding: 0 20px
