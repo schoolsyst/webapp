@@ -29,6 +29,9 @@
       //-FIXME: &nbsp = Cheap hack to align both plus signs on mobile, should do proper alignement
       HeadingAlt(has-inline-buttons) Exercices&nbsp;
         ButtonFlat(open-modal="add-exercise", open-at="center" icon="add" inline large-icon)
+      ArrayButtonFlat
+        input(type="checkbox", v-model="showCompleted")#field_show-completed
+        label(for="field_show-completed") Voir les exercices terminés
       ArrayGroupedItemExercise(:groups="groupedExercises")
     MainGroupRight
       HeadingAlt(has-inline-buttons) Contrôles
@@ -39,12 +42,16 @@
           icon="sort"
           v-model="sortBy"
         )
+      ArrayCardTest
+        CardTest(v-for="(test, i) in tests" :key="i" v-bind="test")
 
 </template>
 
 <script>
 import { mapState, mapGetters, mapMutations, mapActions } from "vuex";
 import groupBy from "lodash.groupby";
+import moment from 'moment';
+//-----------------------------------------------
 import TheHeading from "~/components/TheHeading.vue";
 import ArrayButtonFlat from "~/components/ArrayButtonFlat.vue";
 import ButtonFlat from "~/components/ButtonFlat.vue";
@@ -57,6 +64,8 @@ import DropdownFlat from "~/components/DropdownFlat.vue";
 import ModalAddExercise from "~/components/ModalAddExercise.vue";
 import ModalAddTest from "~/components/ModalAddTest.vue";
 import ArrayGroupedItemExercise from "~/components/ArrayGroupedItemExercise.vue";
+import CardTest from '~/components/CardTest.vue'
+import ArrayCardTest from '~/components/ArrayCardTest.vue'
 
 export default {
   components: {
@@ -71,7 +80,9 @@ export default {
     DropdownFlat,
     ModalAddExercise,
     ModalAddTest,
-    ArrayGroupedItemExercise
+    ArrayGroupedItemExercise,
+    CardTest,
+    ArrayCardTest
   },
 
   async asyncData({ store, app }) {
@@ -89,6 +100,12 @@ export default {
 
     res = await app.$axios.get("/exercises/");
     store.commit("homework/SET_EXERCISES", res.data);
+
+    res = await app.$axios.get("/tests/");
+    store.commit("homework/SET_TESTS", res.data);
+
+    res = await app.$axios.get("/notes/");
+    store.commit("notes/SET_NOTES", res.data);
   },
 
   data() {
@@ -97,7 +114,8 @@ export default {
       sortingOptions: [
         { value: "due", name: "Date due" },
         { value: "created", name: "Date d'ajout" }
-      ]
+      ],
+      showCompleted: true
       // API DATA
     };
   },
@@ -106,12 +124,24 @@ export default {
     ...mapGetters({
       subjects: "subjects",
       currentCourseSubject: "schedule/currentCourseSubject",
-      exercises: "homework/allExercises",
-      tests: "homework/allTests"
+      allExercises: "homework/dueExercises",
+      uncompleteExercises: "homework/pendingExercises",
+      tests: "homework/allTests",
     }),
     groupedExercises() {
       //TODO: sort by increasing datedelta (using a [key, value] array instead of an object)
-      return groupBy(this.exercises, "due");
+      let exercises = this.showCompleted ? this.allExercises : this.uncompleteExercises
+      let groupped = groupBy(exercises, "due");
+      // transform {a: [...], b: [...]} into [[a, [...]], [a, [...]]]
+      // objects don't have order
+      let arrayed = Object.keys(groupped).map(key => [key, groupped[key]])
+      let sorted  = arrayed.sort((a, b) => {
+        let adate = moment(a[0], 'YYYY-MM-DD')
+        let bdate = moment(b[0], 'YYYY-MM-DD')
+        return moment(adate).isAfter(bdate) ? 1 : -1
+      })
+      console.log(sorted)
+      return sorted
     }
   }
 };
