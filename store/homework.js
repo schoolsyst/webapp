@@ -1,3 +1,4 @@
+import moment from "moment";
 
 export const state = () => ({
   grades: [],
@@ -91,11 +92,14 @@ export const getters = {
   },
   dueExercises(state, getters) {
     return getters.allExercises.filter(
-      exercise => exercise.event.start >= new Date(Date.now())
+      exercise => moment(exercise.due, 'YYYY-MM-DD').isAfter(moment())
     );
   },
   pendingExercises(state, getters) {
     return getters.dueExercises.filter(exercise => !exercise.completed);
+  },
+  uncompleteExercises(state, getters) {
+    return getters.allExercises.filter(exercise => !exercise.completed);
   },
 };
 
@@ -153,6 +157,11 @@ export const mutations = {
   },
   ADD_TEST(state, test) {
     state.tests.push(test)
+  },
+  SWITCH_EXERCISE_COMPLETED(state, exerciseUUID) {
+    let exercise = state.exercises.find(ex => ex.uuid === exerciseUUID)
+    if (!exercise) return
+    state.exercises[state.exercises.indexOf(exercise)].completed = !exercise.completed
   }
 };
 

@@ -152,7 +152,6 @@ export const getters = {
     return computedEvents;
   },
   coursesInCurrentWeek: (state, getters) => {
-    let now = moment();
     return getters.coursesIn(moment().startOf("week"), moment().endOf("week"));
   },
   eventsOf: (state, getters) => subjectSlug => {
