@@ -1,12 +1,12 @@
 <template lang="pug">
 ul.ArrayGroupedItemExercise
-  li(v-for="(group, i) in groups" :key="due")
+  li(v-for="(group, i) in groups" :key="i")
     HeadingSub
-      span.date {{ formatDate(group[0].due) }}
-      span.sep(v-if="formatDate(group[0].due)") &mdash;
-      span.delta {{ formatDelta(group[0].due) }}
+      span.date {{ formatDate(group[0]) }}
+      span.sep(v-if="formatDate(group[0])") &mdash;
+      span.delta {{ formatDelta(group[0]) }}
     ArrayItemExercise
-      ItemExercise(v-for="(exercise, i) in group" :key="i" v-bind="exercise")
+      ItemExercise(v-for="(exercise, i) in group[1]" :key="i" v-bind="exercise")
 </template>
 
 <script>
@@ -26,11 +26,17 @@ export default {
   props: {
     groups: Array
   },
+  computed: {
+
+  },
   methods: {
     formatDate(date) {
       moment.locale("fr");
       let m = moment(date);
       let dayFmt;
+      if (m.isBefore(moment())) {
+        dayFmt = "En retard"
+      }
       // don't show infos if they're close enough:
       if (m.isSame(moment(), "week")) {
         // in same week: show only the day name
@@ -56,7 +62,10 @@ export default {
         .replace("un jour", "demain")
         .replace("2 jours", "après-demain");
     }
-  }
+  },
+  mounted() {
+    console.log(this.groups)
+  },
 };
 </script>
 
