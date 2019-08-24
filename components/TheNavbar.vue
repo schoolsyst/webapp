@@ -85,7 +85,7 @@ export default {
 @import '~/assets/defaults'
 
 $nav-padding: 20px
-nav 
+.TheNavbar
   position: fixed
   @media (min-width: $bk-sidebar)
     top: 50%
@@ -106,6 +106,7 @@ nav
     justify-content: space-around
     background: var(--offset-blue)
     padding-top: 20px
+    padding-bottom: 20px
   +mobile
     z-index: 100
     .NavbarButton[href="/notes"]
