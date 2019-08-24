@@ -50,7 +50,7 @@ export default {
     +desktop
       padding: 0 10px
       height: 36px
-      font-size: 36px
+      font-size: 30px
     +mobile
       padding: 0 5px
       height: 24px
