@@ -123,7 +123,6 @@ export default {
         .classList.remove("opened");
     },
     async addExercise() {
-      //TODO: add to the store using the mutation ADD_EXERCISE
       let errs = []
       console.log(`adding exercise: \
 [${this.mutSubject.abbreviation.toUpperCase()}] \
@@ -168,6 +167,7 @@ ${this.exerciseName} due for ${this.mutDate} @ ${this.mutRoom}`)
           notes: this.notes,
           completed: false
         })
+        this.$store.commit('homework/ADD_EXERCISE', data)
         this.$toast.success(`Exercice "${this.exerciseName}" ajouté!`)
         // --- close modal manually ---
         document.getElementById(`modal_add-exercise`).classList.remove('opened')
