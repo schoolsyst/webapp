@@ -88,7 +88,7 @@ export default {
     font-size: 18px
     line-height: 1.2em
     display: flex
-    align-items: center
+    // align-items: center
     // justify-content: center
 
 .title-text
@@ -97,10 +97,11 @@ export default {
     text-overflow: ellipsis
     word-break: break-word
 
-.SubjectDot
-    height: 25px
-    width: 25px
+.SubjectDot /deep/
+    height: 100%
+    width: 5px 
     margin-right: 5px
+    // border-radius: 0
 
 .detail 
     font-size: 16px
