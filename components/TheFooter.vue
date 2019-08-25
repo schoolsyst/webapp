@@ -53,7 +53,7 @@ export default {
     //---   margins   ---
     margin-top: 20px
     //---  appearance ---
-    font-family: 'Toboto Mono', monospace
+    font-family: 'Roboto Mono', monospace
     font-weight: 100
     color: #ffffff
     //---  animation  ---
