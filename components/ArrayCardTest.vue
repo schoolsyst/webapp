@@ -1,5 +1,6 @@
 <template lang="pug">
 ul.ArrayCardTest
+    slot
 </template>
 
 <script>
