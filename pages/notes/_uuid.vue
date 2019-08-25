@@ -94,7 +94,29 @@
       /*        |   |-> thin space */
       /*        |-> em dash        */
     }
+
+    ul {
+      padding-left: 15px;
+      list-style: disc;
+    }
+
+    ul li {
+      list-style: '• '
+    }
+
+    dd {
+      padding-left: 15px
+    }
+
+    dt {
+      font-weight: bold
+    }
+
+    a, a:hover, a:focus {
+      text-decoration: underline
+    }
 </template>
+
 
 <script>
 //--- essentials ---
@@ -172,6 +194,8 @@ export default {
 
   mounted() {
     let content;
+    let editor = document.getElementById('editor')
+    let mirror = document.getElementById('mirror')
     let local = {
       content: window.localStorage.getItem(`${this.uuid}--noteContent`),
       modified: moment(
@@ -201,8 +225,11 @@ export default {
     })
 
     // Rough scroll syncing
-    document.getElementById("editor").addEventListener("scroll", event => {
-      document.getElementById("mirror").scrollTop = event.target.scrollTop;
+    editor.addEventListener("scroll", event => {
+      let mirrorHeight = mirror.scrollHeight - mirror.clientHeight
+      let scrollVal = editor.scrollTop / editor.scrollHeight * mirrorHeight
+      console.log(editor.scrollTop, editor.scrollHeight, mirrorHeight, scrollVal)
+      mirror.scrollTop = scrollVal
     });
 
     // Slide the navabr back in only a few seconds after to show that it's here
