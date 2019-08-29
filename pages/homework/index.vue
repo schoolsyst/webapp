@@ -126,7 +126,7 @@ export default {
       currentCourseSubject: "schedule/currentCourseSubject",
       allExercises: "homework/dueExercises",
       uncompleteExercises: "homework/pendingExercises",
-      tests: "homework/allTests",
+      tests: "homework/dueTests",
     }),
     groupedExercises() {
       //TODO: sort by increasing datedelta (using a [key, value] array instead of an object)

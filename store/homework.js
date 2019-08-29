@@ -35,7 +35,7 @@ export const getters = {
     return state.tests;
   },
   dueTests(state, getters) {
-    return getters.allTests.filter(test => test.due >= new Date(Date.now()));
+    return getters.allTests.filter(test => moment(test.due, 'YYYY-MM-DD').isAfter(moment()));
   },
   ungradedTests(state, getters) {
     let tests = getters.allTests;
