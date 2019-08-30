@@ -33,7 +33,7 @@ export default {
       {
         src:
           "https://cdnjs.cloudflare.com/ajax/libs/bodymovin/5.5.7/lottie.min.js"
-      }
+      },
     ]
   },
   /*
@@ -55,7 +55,9 @@ export default {
   /*
    ** Plugins to load before mounting the App
    */
-  plugins: [],
+  plugins: [
+    '~/plugins/kbshortcuts.js'
+  ],
   /*
    ** Nuxt.js dev-modules
    */
@@ -88,7 +90,9 @@ export default {
       "markdown-it-checkbox",
       "markdown-it-math",
       "markdown-it-plot",
-      "markdown-it-admonition"
+      "markdown-it-admonition",
+      "markdown-it-abbr",
+      "markdown-it-slack",
       // 'markvis',
     ]
   },
