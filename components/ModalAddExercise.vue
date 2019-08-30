@@ -88,7 +88,8 @@ export default {
   },
   computed: {
     ...mapGetters({
-      nextCourseOf: "schedule/nextCourseOf"
+      nextCourseOf: "schedule/nextCourseOf",
+      subjectBySlug: "subjectBySlug",
     }),
     nextCourse() {
       if ("_isPlaceholder" in this.mutSubject) return "";
@@ -158,7 +159,7 @@ ${this.exerciseName} due for ${this.mutDate} @ ${this.mutRoom}`)
       }
 
       try {
-        const { data } = await this.$axios.post("/exercises/", {
+        let { data } = await this.$axios.post("/exercises/", {
           subject: this.mutSubject.slug,
           name: this.exerciseName,
           due: moment(this.mutDate, 'DD/MM/YYYY').format('YYYY-MM-DD'),
@@ -167,6 +168,7 @@ ${this.exerciseName} due for ${this.mutDate} @ ${this.mutRoom}`)
           notes: this.notes,
           completed: false
         })
+        data.subject = this.subjectBySlug(data.subject)
         this.$store.commit('homework/ADD_EXERCISE', data)
         this.$toast.success(`Exercice "${this.exerciseName}" ajouté!`)
         // --- close modal manually ---

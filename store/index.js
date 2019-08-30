@@ -15,9 +15,15 @@ export const getters = {
         let defaultSetting = getters.defaultSettings.find(setting => setting.key === settingKey)
         if (!defaultSetting) return null
         let userSetting = getters.allSettings.find(setting => setting.setting.key === settingKey)
-        if (!userSetting) return defaultSetting
+        if (!userSetting) {
+            console.warn(`falling back to default value for setting ${settingKey}(=${defaultSetting.value})`)
+            return defaultSetting
+        }
         return Object.assign({}, defaultSetting, userSetting.setting)
     },
+    subjectBySlug: (state, getters) => (subjSlug) => {
+        return state.subjects.find(subj => subj.slug === subjSlug)
+    }
 }
 
 export const mutations = {
