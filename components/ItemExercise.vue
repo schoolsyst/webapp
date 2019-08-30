@@ -49,22 +49,29 @@ export default {
 
   methods: {
     switchCompleteStatus() {
+      let item = document.querySelector(`[data-exercise-id="${this.uuid}"]`)
+      // get the completed state from the DOM now, and invert it 
+      // (the changes are reflected on the DOM *after* the method has run)
+      // we need this because otherwise, syncCompletionStatus has no way
+      // of knowing the completed state to switch to.
+      let completed = !item.classList.contains('completed')
       //TODO: also sync everything onBeforeRouteLeave in the pages component.
       this.$store.commit('homework/SWITCH_EXERCISE_COMPLETED', this.uuid)
       // Remove icon from badge innerHTML 
-      let item = document.querySelector(`[data-exercise-id="${this.uuid}"]`)
       // TODO: maybe do this with a .switching class instead? (this removes focus, no good for accessibility)
       item.blur() // Remove focus automatically, removing weird styling conflicts 
       item.querySelector('.BadgeSubject, .SubjectDot').innerHTML = this.initialInnerHTML
-      this.syncCompletionStatuses()
+      this.syncCompletionStatus(completed)
     },
-    async syncCompletionStatuses() {
+    async syncCompletionStatus(completed) {
       // don't sync too much (every 5 secs. max)
-      if (this.lastCompletionSync && this.lastCompletionSync.diff(moment(), 'seconds') < 5) return
+      if (this.lastCompletionSync) console.log(moment().diff(this.lastCompletionSync, 'seconds'))
+      if (this.lastCompletionSync && moment().diff(this.lastCompletionSync, 'seconds') < 3) return
 
       try {
-        const { data } = await this.$axios.patch(`/exercises/${this.uuid}/`, { completed: this.completed })
+        const { data } = await this.$axios.patch(`/exercises/${this.uuid}/`, { completed })
         this.lastCompletionSync = moment()
+        console.log()
       } catch(error) {
         this.$toast.error(`Erreur lors de la synchronisation: ${error}`)
       }
@@ -205,8 +212,9 @@ export default {
     .BadgeSubject, .SubjectDot
         background: var(--blue) !important
         opacity: 1 !important
-        // font-family: 'Material Icons' !important
-        & /deep/ .material-icons
-            font-size: 45px !important
+    .BadgeSubject /deep/ .material-icons
+        font-size: 45px !important
+    .SubjectDot /deep/ .material-icons
+        font-size: 30px !important
 
 </style>
