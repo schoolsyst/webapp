@@ -10,10 +10,9 @@
         ],
         [ ... ]
     ]
-//TODO: Remove the others ArrayGrouped components and use this everywhere
 ul.ArrayGroupedCardTest
     li(v-for="(group, i) in groups" :key="i")
-        HeadingSub(v-if="(show === 'exercises' && group[1].exercises) || (show === 'tests' && group[1].tests) || show === 'both'")
+        HeadingSub(v-if="showThisGroup(group)")
             span.date {{ formatDate(group[0]) }}
             span.sep(v-if="formatDate(group[0])") &mdash;
             span.delta {{ formatDelta(group[0]) }}
@@ -100,6 +99,18 @@ export default {
                 .fromNow(true)
                 .replace("un jour", "demain")
                 .replace("2 jours", "après-demain");
+        },
+        showThisGroup(group) {
+            let completedExercisesLength = group[1].exercises ? group[1].exercises.filter(ex => !ex.completed).length : 0
+            console.log(completedExercisesLength)
+            let testsLength = group[1].tests ? group[1].tests.length : 0
+
+            let type = (this.show === 'exercises' && group[1].exercises) 
+                    || (this.show === 'tests' && group[1].tests) 
+                    || (this.show === 'both')
+            let done = (this.showCompleted)
+                    || (completedExercisesLength + testsLength > 0)
+            return type && done
         }
     }
 }
