@@ -53,6 +53,7 @@ export default {
     color: white
     font-size: 35px
     font-weight: normal
+    z-index: 100
 
 
 .icon
