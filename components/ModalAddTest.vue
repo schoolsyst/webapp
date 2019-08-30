@@ -151,9 +151,7 @@ export default {
       return val
     },
     notes() {
-      console.log(`getting notes for ${this.mutSubject.slug}`)
       let notes = this.notesOf(this.mutSubject.slug)
-      console.log(notes)
       return notes
     }
   },
@@ -169,8 +167,12 @@ export default {
       })
     },
     async addTest() {
+        //TODO: add new note when notes to learn
+        //      don't exist, or allow for non-registered
+        //      ghost notes that won't appear in /notes/
+        //TODO: add subject (as a test could have no notes linked to)
+        
         let errs = []
-        console.log(this.selectedNotes)
         console.log(`adding test: \
   [${this.mutSubject.abbreviation.toUpperCase()}] \
   ${this.selectedNotes.join(',')} due for ${this.mutDate} @ ${this.mutRoom}`)
