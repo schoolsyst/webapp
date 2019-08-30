@@ -59,6 +59,9 @@ export default {
     outline-color: transparent
     color: var(--blue)
 
+.ButtonFlat.disabled
+    opacity: 0.25
+    pointer-events: none
 
 .input 
     color: inherit

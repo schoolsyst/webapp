@@ -46,7 +46,11 @@
       open-modal="add-test",
       open-at="center"
     ) Contrôle
-    ButtonFlat.nomobile(icon='insert_drive_file') Dernier chapitre
+    ButtonFlat.nomobile(
+      icon='insert_drive_file',
+      @click.native="openCurrentSubjectLatestNote",
+      :class="{'disabled': !currentCourse}"
+    ) Dernier chapitre
   MainGroup
     MainGroupLeft
       template(v-if="currentCourse || upcomingCourse")
@@ -58,13 +62,14 @@
             HeadingSub devoirs du cours suivant
             CardHomework(v-bind='homework', v-for='(homework, i) in upcomingCourse.homework', :key='i')
           CardEmpty(v-else) 👌
-        CardEmpty(v-else) C'est bientôt fini 😉
+        CardEmpty(v-else) Plus que {{ timeTilEndOfCurrentCourse }} !
       template(v-else)
         HeadingSub(has-inline-buttons)
           | Devoirs de la semaine
           ArrayButtonFlat(inline)
               ButtonFlat(icon="arrow_forward")
                 nuxt-link.goto-homework(to="/homework") Voir tout
+        ArrayGroupedHomework(:groups="groupedHomework")
     MainGroupRight
       HeadingSub moyenne
       BigNumber(v-bind="globalMean")
@@ -75,7 +80,9 @@
 <script>
 import axios from "axios";
 import moment from "moment";
+import groupBy from 'lodash.groupby';
 import { mapState, mapGetters, mapMutations, mapActions } from "vuex";
+//-------------------------------------------------------
 import TheHeading from "~/components/TheHeading.vue";
 import ArrayButtonFlat from "~/components/ArrayButtonFlat.vue";
 import ButtonFlat from "~/components/ButtonFlat.vue";
@@ -90,6 +97,7 @@ import CardEmpty from "~/components/CardEmpty.vue";
 import ModalAddExercise from "~/components/ModalAddExercise.vue";
 import ModalAddNote from "~/components/ModalAddNote.vue";
 import ModalAddTest from "~/components/ModalAddTest.vue";
+import ArrayGroupedHomework from '~/components/ArrayGroupedHomework.vue'
 
 export default {
   components: {
@@ -106,23 +114,8 @@ export default {
     CardEmpty,
     ModalAddNote,
     ModalAddExercise,
-    ModalAddTest
-  },
-
-  async fetch({ app, store }) {
-    let res;
-
-    res = await app.$axios.get("/events/");
-    store.commit("schedule/SET_EVENTS", res.data);
-
-    res = await app.$axios.get("/settings/");
-    store.commit("SET_SETTINGS", res.data);
-
-    res = await app.$axios.get("/event-additions/");
-    store.commit("schedule/SET_ADDITIONS", res.data);
-
-    res = await app.$axios.get("/event-deletions/");
-    store.commit("schedule/SET_DELETIONS", res.data);
+    ModalAddTest,
+    ArrayGroupedHomework
   },
 
   data() {
@@ -139,7 +132,9 @@ export default {
       currentCourse: "schedule/currentCourse",
       currentCourseSubject: "schedule/currentCourseSubject",
       setting: "schedule/setting",
-      getGlobalMean: "homework/globalMean"
+      getGlobalMean: "homework/globalMean",
+      groupedHomework: "homework/groupedHomework",
+      notesOf: "notes/notesOf"
     }),
     //TODO: get globalMean from a getter
     globalMean() {
@@ -155,17 +150,33 @@ export default {
         value: NaN,
         unit: "%"
       };
+    },
+    timeTilEndOfCurrentCourse() {
+      return moment().to(moment(this.currentCourse.end, 'hh:mm'), true)
+    },
+  },
+
+  methods: {
+    openCurrentSubjectLatestNote() {
+      if (!this.currentCourse) return
+
+      let notesByModDate = this.notesOf(this.currentCourseSubject.slug).sort(
+        (a, b) => moment(a.last_modified, 'YYYY-MM-DD[T]hh:mm').isBefore(moment(b.last_modified, 'YYYY-MM-DD[T]hh:mm')) ? 1 : -1
+      )
+      if (notesByModDate.length) {
+        this.$router.push(`/notes/${notesByModDate[0].uuid}`)
+      } else {
+        this.$toast.error(`Aucune prise de note de ${this.currentCourseSubject.name} trouvée`)
+      }
     }
-    /* currentCourse() {
-      return this.$store.getters['schedule/upcomingCourse']
-    }, */
   },
 
   created() {
     String.prototype.capFirstChar = function() {
       return this.charAt(0).toUpperCase() + this.substr(1).toLowerCase();
     };
-  }
+  },
+
 };
 </script>
 
