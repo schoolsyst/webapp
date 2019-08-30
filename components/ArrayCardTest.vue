@@ -13,4 +13,6 @@ export default {
 <style lang="sass" scoped>
 @import '~/assets/defaults'
 
+.CardTest
+    margin-bottom: 30px
 </style>

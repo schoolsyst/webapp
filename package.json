@@ -5,7 +5,7 @@
   "author": "Ewen Le Bihan",
   "private": true,
   "scripts": {
-    "dev": "nuxt --port 8888",
+    "dev": "nuxt",
     "build": "nuxt build",
     "start": "nuxt start",
     "generate": "nuxt generate"
@@ -17,25 +17,33 @@
     "@nuxtjs/moment": "^1.2.0",
     "@nuxtjs/pwa": "^3.0.0-0",
     "@nuxtjs/toast": "^3.2.1",
+    "chroma-js": "^2.0.6",
     "jwt-decode": "^2.2.0",
+    "lodash.debounce": "^4.0.8",
     "lodash.groupby": "^4.6.0",
+    "markdown-it-abbr": "^1.0.4",
     "markdown-it-admonition": "^1.0.4",
     "markdown-it-apexcharts": "^0.2.5",
+    "markdown-it-chat-formatter": "^0.1.1",
     "markdown-it-checkbox": "^1.1.0",
     "markdown-it-deflist": "^2.0.3",
     "markdown-it-footnote": "^3.0.2",
     "markdown-it-math": "^4.1.1",
     "markdown-it-plot": "^1.0.3",
+    "markdown-it-slack": "^1.2.0",
     "markdown-it-sup": "^1.0.0",
     "markvis": "^0.0.12",
     "moment": "^2.24.0",
     "moment-range": "^4.0.2",
     "node-sass": "^4.12.0",
     "nuxt": "^2.0.0",
+    "platform": "^1.3.5",
     "pug": "2.0.3",
     "pug-plain-loader": "^1.0.0",
     "sass-loader": "^7.2.0",
-    "slugify": "^1.3.4"
+    "slugify": "^1.3.4",
+    "stylus": "^0.54.5",
+    "stylus-loader": "^3.0.1"
   },
   "devDependencies": {}
 }

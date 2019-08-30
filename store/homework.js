@@ -1,4 +1,5 @@
 import moment from "moment";
+import groupBy from "lodash.groupby"
 
 export const state = () => ({
   grades: [],
@@ -101,6 +102,34 @@ export const getters = {
   uncompleteExercises(state, getters) {
     return getters.allExercises.filter(exercise => !exercise.completed);
   },
+  groupedHomework(state, getters) {
+    let exercises = getters.dueExercises
+    let tests = getters.dueTests
+    let grouppedExs = groupBy(exercises, "due")
+    let grouppedTests = groupBy(tests, "due")
+    let groupped = {}
+    for (const [due, exercises] of Object.entries(grouppedExs)) {
+      if (due in groupped) {
+        groupped[due]['exercises'] = exercises
+      } else {
+        groupped[due] = { exercises }
+      }
+    }
+    for (const [due, tests] of Object.entries(grouppedTests)) {
+      if (due in groupped) {
+        groupped[due]['tests'] = tests
+      } else {
+        groupped[due] = { tests }
+      }
+    }
+    let arrayed = Object.keys(groupped).map(k => [k, groupped[k]])
+    let sorted  = arrayed.sort((a, b) => {
+      let adate = moment(a[0], 'YYYY-MM-DD')
+      let bdate = moment(b[0], 'YYYY-MM-DD')
+      return moment(adate).isAfter(bdate) ? 1 : -1
+    })
+    return sorted
+  },
 };
 
 export const mutations = {
@@ -168,4 +197,17 @@ export const mutations = {
   },
 };
 
-export const actions = {};
+export const actions = {
+  async nuxtServerInit({commit}, {app}) {
+    let res
+    
+    res = await app.$axios.get("/tests/")
+    commit("homework/SET_TESTS", res.data)
+
+    res = await app.$axios.get('/exercises/')
+    commit('homework/SET_EXERCISES', res.data)
+
+    res = await app.$axios.get('/grades/')
+    commit('homework/SET_GRADES', res.data)
+  }
+};
