@@ -78,7 +78,7 @@ export default {
             ][new Date(Date.now()).getDay()]
         },
         weekType() {
-            this.getWeekType(this.scheduleNow.format('YYYY-MM-DD'))
+            return this.getWeekType(this.scheduleNow.format('YYYY-MM-DD'))
         }
     },
 }
