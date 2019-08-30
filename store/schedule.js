@@ -31,15 +31,8 @@ export const getters = {
   allDeletions(state) {
     return state.deletions;
   },
-  //TODO: implement default settings
-  setting: (state, getters, rootState, rootGetters) => settingName => {
-    let settings = rootGetters.allSettings;
-    settings = settings.filter(setting => setting.setting.key == settingName);
-    if (!settings.length) {
-      console.error(`Setting "${settingName}" does not exist for this user`);
-      return null;
-    }
-    return settings[0].value;
+  setting(state, getters, rootState, rootGetters) {
+    return rootGetters.setting
   },
   trimesterStart: (state, getters, rootState, rootGetters) => trimester => {
     switch (trimester) {
@@ -87,7 +80,7 @@ export const getters = {
     if (debug) console.log(start.format("D/M/Y"), "->", upto.format("D/M/Y"));
     // inclusive range, since we check for isBefore (and not isBefore && isSame, lot more costly)
     // EDIT: this should turn it into an inclusive range
-    //start = start.subtract(1, 'day')
+    // start = start.subtract(1, 'day')
     // loop through every date between start and upto
     for (let current = start; current.isBefore(upto); current.add(1, "day")) {
       //TODO: continue if date in getters.offdays
@@ -99,7 +92,7 @@ export const getters = {
         "friday",
         "saturday",
         "sunday"
-      ][current.day()];
+      ][current.isoWeekday()-1];
 
       weekType = getters.weekType(current);
       if (debug)
@@ -154,6 +147,9 @@ export const getters = {
     return computedEvents;
   },
   coursesInCurrentWeek: (state, getters) => {
+    console.group('coursesInCurrentWeek')
+    console.log("from " + moment().startOf("week").format("dddd MM YYYY")+" to "+moment().endOf('week').format('dddd MM YYYY'))
+    console.groupEnd()
     return getters.coursesIn(moment().startOf("week"), moment().endOf("week"));
   },
   eventsOf: (state, getters) => subjectSlug => {
@@ -163,11 +159,12 @@ export const getters = {
   },
   upcomingCourse: (state, getters) => {
     let now = moment();
-    let courses = getters.coursesInCurrentWeek;
+    let courses = getters.coursesIn(moment(), moment().endOf('day'), true);
+    console.log(courses)
     if (courses.length) {
       courses = courses
-        .filter(course => ptime(course.start) >= now)
-        .sort((a, b) => (ptime(a.start) > ptime(b.start) ? 1 : -1)); // sort by start date
+        .filter(course => ptime(course.start).isAfter(now))
+        .sort((a, b) => (ptime(a.start).isAfter(ptime(b.start)) ? 1 : -1)); // sort by start date
 
       if (courses.length) return courses[0];
     }
@@ -175,10 +172,11 @@ export const getters = {
   },
   currentCourse: (state, getters) => {
     let now = moment();
-    let courses = getters.coursesInCurrentWeek;
+    let courses = getters.coursesIn(moment().startOf('day'), moment().endOf('day'));
     if (courses.length) {
       courses = courses.filter(
-        course => ptime(course.start) <= now && ptime(course.end) >= now
+        course => ptime(course.start).isSameOrBefore(moment())
+               && ptime(course.end).isAfter(moment())
       );
       if (courses.length) return courses[0];
     }
@@ -270,4 +268,20 @@ export const mutations = {
   }, */
 };
 
-export const actions = {};
+export const actions = {
+  async nuxtServerInit({commit}, {app}) {
+    let res;
+
+    res = await app.$axios.get("/events/");
+    commit("schedule/SET_EVENTS", res.data);
+
+    res = await app.$axios.get("/settings/");
+    commit("SET_SETTINGS", res.data);
+
+    res = await app.$axios.get("/event-additions/");
+    commit("schedule/SET_ADDITIONS", res.data);
+
+    res = await app.$axios.get("/event-deletions/");
+    commit("schedule/SET_DELETIONS", res.data);
+  }
+};
