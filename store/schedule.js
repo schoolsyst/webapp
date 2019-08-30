@@ -37,26 +37,26 @@ export const getters = {
   trimesterStart: (state, getters, rootState, rootGetters) => trimester => {
     switch (trimester) {
       case 1:
-        return pdate(getters.setting("year_start"));
+        return pdate(getters.setting("year_start").value);
       case 2:
-        return pdate(getters.setting("trimester_2_start"));
+        return pdate(getters.setting("trimester_2_start").value);
       case 3:
-        return pdate(getters.setting("trimester_3_start"));
+        return pdate(getters.setting("trimester_3_start").value);
       // This is intentional, see the rest of the getter function to know why
       case 4:
-        return pdate(getters.setting("year_end"));
+        return pdate(getters.setting("year_end").value);
     }
   },
   //TODO: offdays getter
   weekType: (state, getters) => date => {
     // get base Q1/Q2
-    let base = getters.setting("starting_week_type");
-    let start = getters.setting("year_start");
+    let base = getters.setting("starting_week_type").value;
+    let start = getters.setting("year_start").value;
     // convert to week-of-year number, and get if its even or odd.
     // tested date will be [base] (Q1 or Q2) if its also even.
     let startingWeekIsEven = moment(start).isoWeek() % 2 === 0;
     let other = base === "Q1" ? "Q2" : "Q1";
-    return moment(date).isoWeek() % 2 === 0 && startingWeekIsEven
+    return moment(date, 'YYYY-MM-DD').isoWeek() % 2 === 0 && startingWeekIsEven
       ? base
       : other;
   },
@@ -223,7 +223,7 @@ export const getters = {
   offdays: (state, getters) => {
     let offdays;
     let offdaySeries = getters
-      .setting("offdays") // get offdays
+      .setting("offdays").value // get offdays
       .split("\n") // split by line
       .forEach(offday => offday.replace("\r", "")); // fuck windows
     for (const offdaySerie of offdaySeries) {
