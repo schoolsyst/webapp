@@ -90,7 +90,8 @@ export default {
           content: `# ${this.newNoteName}\n`,
           name: this.newNoteName,
           subject: this.mutSubject.slug,
-          created: moment().toISOString()
+          created: moment().toISOString(),
+          last_modified: moment().toISOString()
         });
         this.$toast.success(
           `Note "${this.newNoteName}" créée`
