@@ -2,7 +2,7 @@
 //TODO: click to expand & show exercise notes, full title. Complete w/ the subject badge/dot
 li.ItemExercise(
     :data-exercise-id="uuid" 
-    :class="{'completed': completed, 'show-completed': showCompleted}"
+    :class="{'completed': mutCompleted, 'show-completed': showCompleted}"
     @keyup.enter="switchCompleteStatus"
     @click="switchCompleteStatus",
     tabindex="0"
@@ -30,7 +30,6 @@ export default {
     notes: String,
     uuid: String,
     completed: Boolean,
-    //TODO: finish this (checkbox to show or not completed items)
     showCompleted: {
       type: Boolean,
       default: true
@@ -44,7 +43,8 @@ export default {
   data() { return {
     badgeHasCheckmark: false,
     initialInnerHTML: '',
-    lastCompletionSync: null
+    lastCompletionSync: null,
+    mutCompleted: this.completed
   }},
 
   methods: {
@@ -55,8 +55,7 @@ export default {
       // we need this because otherwise, syncCompletionStatus has no way
       // of knowing the completed state to switch to.
       let completed = !item.classList.contains('completed')
-      //TODO: also sync everything onBeforeRouteLeave in the pages component.
-      this.$store.commit('homework/SWITCH_EXERCISE_COMPLETED', this.uuid)
+      this.mutCompleted = !this.mutCompleted
       // Remove icon from badge innerHTML 
       // TODO: maybe do this with a .switching class instead? (this removes focus, no good for accessibility)
       item.blur() // Remove focus automatically, removing weird styling conflicts 
@@ -182,7 +181,7 @@ export default {
 // Reactions
 // =========
 
-//TODO: move this outta this component (use a filter in the ArrayGroupedItemExercise)
+//TODO: move this outta this component ?
 // --- Hide completed exercises ---
 .ItemExercise:not(.show-completed).completed
   display: none
