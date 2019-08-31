@@ -26,7 +26,6 @@ export const mutations = {
     SET_NOTES (state, notes) {
         if (notes && typeof notes === 'object') {
             state.notes = notes
-            console.log(state.notes.filter(n => n.learnt === 0))
         } else {
             console.error(`Mutation aborted: given \`notes\` object is falsey`)
         }
@@ -53,8 +52,6 @@ export const mutations = {
         let note = state.notes.find(n => n.uuid === uuid)
         if (!note) {
             console.error(`SET_NOTE_PROGRESS: Note with UUID "${uuid}" not found in the state.`)
-            console.log(state.notes)
-            console.log('-----------------------------')
             return
         }
         state.notes[state.notes.indexOf(note)].learnt = progress
@@ -62,9 +59,4 @@ export const mutations = {
  }
 
 export const actions = {
-    async nuxtServerInit({commit}, {app}) {
-        let res
-        res = await app.$axios.get('/notes/')
-        commit('notes/SET_NOTES', res.data)
-    }   
 }

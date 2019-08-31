@@ -130,6 +130,7 @@ export const getters = {
     })
     return sorted
   },
+  
 };
 
 export const mutations = {
@@ -198,16 +199,4 @@ export const mutations = {
 };
 
 export const actions = {
-  async nuxtServerInit({commit}, {app}) {
-    let res
-    
-    res = await app.$axios.get("/tests/")
-    commit("homework/SET_TESTS", res.data)
-
-    res = await app.$axios.get('/exercises/')
-    commit('homework/SET_EXERCISES', res.data)
-
-    res = await app.$axios.get('/grades/')
-    commit('homework/SET_GRADES', res.data)
-  }
 };

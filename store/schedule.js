@@ -269,19 +269,4 @@ export const mutations = {
 };
 
 export const actions = {
-  async nuxtServerInit({commit}, {app}) {
-    let res;
-
-    res = await app.$axios.get("/events/");
-    commit("schedule/SET_EVENTS", res.data);
-
-    res = await app.$axios.get("/settings/");
-    commit("SET_SETTINGS", res.data);
-
-    res = await app.$axios.get("/event-additions/");
-    commit("schedule/SET_ADDITIONS", res.data);
-
-    res = await app.$axios.get("/event-deletions/");
-    commit("schedule/SET_DELETIONS", res.data);
-  }
 };

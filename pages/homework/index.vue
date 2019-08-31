@@ -80,29 +80,6 @@ export default {
     ArrayGroupedHomework
   },
 
-  async asyncData({ store, app }) {
-    let subjects = store.getters.subjects;
-    let res;
-
-    res = await app.$axios.get("/subjects/");
-    store.commit("SET_SUBJECTS", res.data);
-
-    res = await app.$axios.get("/settings/");
-    store.commit("SET_SETTINGS", res.data);
-
-    res = await app.$axios.get("/events/");
-    store.commit("schedule/SET_EVENTS", res.data);
-
-    res = await app.$axios.get("/exercises/");
-    store.commit("homework/SET_EXERCISES", res.data);
-
-    res = await app.$axios.get("/tests/");
-    store.commit("homework/SET_TESTS", res.data);
-
-    res = await app.$axios.get("/notes/");
-    store.commit("notes/SET_NOTES", res.data);
-  },
-
   data() {
     return {
       sortBy: "due",

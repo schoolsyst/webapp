@@ -59,16 +59,6 @@ export default {
     };
   },
   computed: {},
-  mounted() {
-    if (!this.$store.subjects) {
-      this.$axios.get("/subjects/").then(response => {
-        this.$store.commit("SET_SUBJECTS", response.data);
-      });
-    }
-    /* document.querySelectorAll(`#modal_${this.name} [confirm-modal]`).forEach(e => {
-      e.addEventListener()
-    }) */
-  },
   methods: {
     async addNote() {
       let errs = [];

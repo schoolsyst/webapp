@@ -93,33 +93,6 @@ export default {
     })
   },
 
-  async asyncData({ store, app }) {
-    try {
-      const { data } = await app.$axios.get(`/notes/`);
-      store.commit("notes/SET_NOTES", data);
-    } catch (e) {
-      console.error(e);
-    }
-
-    if (!store.getters['schedule/allEvents'].length) {
-      try {
-        const { data } = await app.$axios.get(`/events/`);
-        store.commit("schedule/SET_EVENTS", data);
-      } catch (error) {
-        console.error(error);
-      }
-    }
-
-    if (!store.getters.allSettings.length) {
-      try {
-        const { data } = await app.$axios.get('/settings/')
-        store.commit('SET_SETTINGS', data)
-      } catch (error) {
-        console.error(error)
-      }
-    }
-  },
-
 
   data() {
     return {

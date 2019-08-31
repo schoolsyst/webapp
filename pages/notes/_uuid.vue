@@ -196,23 +196,6 @@ export default {
   },
 
   async asyncData({ store, app, route }) {
-    let error = false;
-    try {
-      const { data } = await app.$axios.get(`/notes/`);
-      store.commit("notes/SET_NOTES", data);
-    } catch (e) {
-      console.error(e);
-    }
-
-    if (!store.getters.allSettings.length) {
-      try {
-        const { data } = await app.$axios.get("/settings/");
-        store.commit("SET_SETTINGS", data);
-      } catch (e) {
-        console.error(e);
-      }
-    }
-
     try {
       let { uuid } = route.params;
       const { data } = await app.$axios.get(`/notes/${uuid}/`);
