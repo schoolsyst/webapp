@@ -78,58 +78,58 @@ export default {
 
 <style lang="stylus" scoped>
 .CardTestNoteItem > *
-    margin-bottom: 7.5px
+    margin-bottom 7.5px
 .top
     display: grid
-    grid-template-columns: calc(100% - 75px) 75px
+    grid-template-columns calc(100% - 75px) 75px
 .progress-percentage
-    text-align: right
-    font-family: 'Roboto Mono', monospace
+    text-align right
+    font-family 'Roboto Mono', monospace
     input
-        display: inline
-        color: inherit
-        max-width: 50px
-        text-align: right
-        font-family: inherit
-        margin-right: 2px
-        border: solid 2px
+        display inline
+        color inherit
+        max-width 50px
+        text-align right
+        font-family inherit
+        margin-right 2px
+        border solid 2px
 dashed-bg(color)
     background repeating-linear-gradient(to right, color, color 30px, transparent 10px, transparent 40px)
 
 .progress-bar-total
-    height: 10px
-    width: 100%
+    height 10px
+    width 100%
     &.undefined
-        opacity: .5
+        opacity .5
         &.text-is-white
             dashed-bg white
         &:not(.text-is-white)
             dashed-bg black
     &.text-is-white
-        background: rgba(255,255,255,0.5)
+        background rgba(255,255,255,0.5)
     &:not(.text-is-white)
-        background: rgba(0,0,0,0.5)
+        background rgba(0,0,0,0.5)
 .progress-bar
-    height: 100%
-    transition: width 0.25s ease
+    height 100%
+    transition width 0.25s ease
     &.text-is-white
-        background: white
+        background white
     &:not(.text-is-white)
-        background: black
+        background black
 .learn
     &.finished,
     &:hover,
     &:focus
-        opacity: 0.5
+        opacity 0.5
     &:not(.finished)
-        cursor: pointer
-    display: flex
-    align-items: center
-    letter-spacing: 3px
-    text-transform: uppercase
-    font-weight: bold
-    font-size: 24px
+        cursor pointer
+    display flex
+    align-items center
+    letter-spacing 3px
+    text-transform uppercase
+    font-weight bold
+    font-size 24px
     i
-        font-size: 1.2em
-        margin-right: 2.5px
+        font-size 1.2em
+        margin-right 2.5px
 </style>
