@@ -1,5 +1,11 @@
 <template lang="pug">
 div.CardTest(:style="{backgroundColor: subject.color, color: textColor}")
+    ModalDialogConfirm(
+        name="delete-test", 
+        @confirm="deleteTest"
+        confirm-text="Supprimer"
+    )
+        | Cette action n'est pas réversible.
     .progress-infos
         span.subject-abbr {{subject.abbreviation}}
         span.percentage(v-if="totalProgressDisp !== '?'") {{totalProgressDisp}}%
@@ -16,7 +22,7 @@ div.CardTest(:style="{backgroundColor: subject.color, color: textColor}")
             CardTestNoteItem(v-if="expanded", v-bind="note")
             template(v-else) {{ note.name }}
     //TODO: make the infos modifiable
-    .infos(v-if="expanded")
+    .infos(:class="{'opened': expanded}")
         p.grade-and-room
             |sur 
             span.info {{gradeMax}}
@@ -27,6 +33,7 @@ div.CardTest(:style="{backgroundColor: subject.color, color: textColor}")
         p.date
             |le 
             span.info {{dateDisp}}
+        ButtonIcon(open-modal="confirm-delete-test", open-at="center", :color="textColor" title="Supprimer ce contrôle").delete-test delete
     button.expand(@click="expanded = !expanded")
         i.material-icons
             template(v-if="expanded") expand_less
@@ -41,12 +48,14 @@ import moment from 'moment'
 import chroma from 'chroma-js'
 //-----------------------------------
 import CardTestNoteItem from '~/components/CardTestNoteItem.vue'
+import ModalDialogConfirm from '~/components/ModalDialogConfirm.vue'
 import HeadingSub from '~/components/HeadingSub.vue'
+import ButtonIcon from '~/components/ButtonIcon.vue'
 
 export default {
     name: 'CardTest',
 
-    components: {CardTestNoteItem, HeadingSub},
+    components: {CardTestNoteItem, HeadingSub, ButtonIcon, ModalDialogConfirm,},
 
     props: {
         subject: Object,
@@ -55,7 +64,12 @@ export default {
         notes: Array,
         grades: Array,
         room: String,
-        details: String
+        details: String,
+        uuid: String,
+        grades: {
+            type: Array,
+            default: () => []
+        }
     },
 
     data() { 
@@ -103,55 +117,67 @@ export default {
             return this.totalProgress * 100
         }
     },
+
+    methods: {
+        deleteTest() {
+            try {
+                this.$axios.delete(`/tests/${this.uuid}`)
+                this.$store.commit('homework/DELETE_TEST', this.uuid)
+                this.$toast.success(`Contrôle de ${this.subject.name} supprimé`)
+            } catch (error) {
+                this.$toast.error(`Erreur lors de la suppression: ${error}`)
+            }
+        }
+    }
 }
 </script>
 
-<style lang="sass" scoped>
-@import '~/assets/defaults'
+<style lang="stylus" scoped>
 
 .CardTest
-    border-radius: 10px
-    color: black
-    font-size: 24px
-    overflow: hidden
-    max-width: 520px
-
+    border-radius 10px
+    color black
+    font-size 24px
+    overflow hidden
+    max-width 520px
+.infos:not(.opened)
+    display none
 .notes, .details
-    padding: 10px 30px
+    padding 10px 30px
 .details
-    padding-top: 20px
+    padding-top 20px
 .HeadingSub
-    padding: 0 30px
-    margin-top: 20px 
-    font-size: 24px
+    padding 0 30px
+    margin-top 20px 
+    font-size 24px
 .notes
-    transition: height .25s ease
+    transition height .25s ease
     li
-        margin-bottom: 10px
+        margin-bottom 10px
     &.expanded li
-        margin-bottom: 30px
+        margin-bottom 30px
 .notes:not(.expanded) li:not(:last-child)::after
-    content: ','
+    content ','
 .notes:not(.expanded) li::before
-    // content: '— '
+    // content '— '
     
 .top-bar
-    background: rgba(255,255,255,0.5)
+    background rgba(255,255,255,0.5)
     width: 100%
 .progress
-    display: grid
-    grid-template-columns: repeat(2, 50%)
-    height: 45px
-    background: rgba(255, 255, 255, 0.5)
+    display grid
+    grid-template-columns repeat(2, 50%)
+    height 45px
+    background rgba(255, 255, 255, 0.5)
 .progress-infos
-    height: 0
-    overflow: visible
-    position: absolute
-    padding: 2.5px 7.5px
-    color: black
+    height 0
+    overflow visible
+    position absolute
+    padding 2.5px 7.5px
+    color black
 .percentage, .subject-abbr
-    position: relative
-    top: 5px
+    position relative
+    top 5px
     font-size: 30px
     font-family: 'Roboto Mono', monospace
 .percentage
@@ -163,21 +189,26 @@ export default {
 .details
     opacity: 0.75
 .infos
-    text-align: center
-    line-height: 1.1
-    font-size: 18px
-    padding-bottom: 20px
+    margin-top: 20px
+    text-align center
+    justify-content center
+    line-height 1.1
+    font-size 18px
+    padding-bottom 20px
     span.info
-        font-weight: bold
-        margin-right: 10px
+        font-weight bold
+        margin-right 10px
+
+.delete-test
+    margin-top 10px
 
 .expand
-    color: inherit
+    color inherit
     &:focus
         //FIXME: no good for a11y
         outline: none
     i
-        font-size: 56px
-        color: inherit
-    width: 100%
+        font-size 56px
+        color inherit
+    width 100%
 </style>

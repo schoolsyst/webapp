@@ -1,4 +1,5 @@
 <template lang="pug">
+//TODO: Fix the close arrow (put to the right)
 //https://www.w3.org/TR/wai-aria-practices/examples/dialog-modal/dialog.html
 aside.BaseModal(:id="`modal_${name}`",
     aria-hidden="true"
@@ -51,8 +52,9 @@ export default {
     const modal = document.getElementById(`modal_${component.name}`);
     const focusableEls = "button, a, input, textarea, select"
     const focusables = Array.from(modal.querySelectorAll(focusableEls));
-
+    console.group(`listening for clicks to open ${component.name} on:`)
     document.querySelectorAll(`[open-modal="${component.name}"`).forEach(e => {
+      console.log(e)
       e.addEventListener("click", event => {
         // calculate the position of .modal-wrapper:
         // - cented: centered (use display:flex) (default)
@@ -219,6 +221,7 @@ export default {
         focusables[focusIndex].focus();
       }
     });
+    console.groupEnd()
   }
 };
 </script>
