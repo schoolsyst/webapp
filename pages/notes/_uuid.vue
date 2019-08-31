@@ -34,7 +34,7 @@
       font-size: 45px;
     }
     h1 {
-      font-family: 'Google Sans', 'Product Sans';
+      font-family: 'Google Sans', 'Product Sans', 'Manrope', sans-serif;
       font-weight: lighter;
       font-size: 70px;
     }
