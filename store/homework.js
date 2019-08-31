@@ -41,14 +41,14 @@ export const getters = {
   ungradedTests(state, getters) {
     let tests = getters.allTests;
     for (const grade of getters.allGrades) {
-      tests = tests.filter(test => grade.test.uuid !== test.uuid);
+      tests = tests.filter(test => test.grades.uuid !== test.uuid);
     }
     return tests;
   },
   gradedTests(state, getters) {
     let tests = [];
     for (const grade of state.grades) {
-      tests.append(grade.test);
+      tests.push(grade.test);
     }
     return tests;
   },
@@ -73,7 +73,7 @@ export const getters = {
     }
     return mean;
   },
-  globalMean(state, getters) {
+  globalMean: (state, getters) => (applyGradeMax=true) => {
     let grades = getters.allGrades.map(grade => grade.value);
     if (!grades.length) return 0; // prevent division by zero & reduce empty array
     let sum = grades.reduce((acc, val) => acc + val);
@@ -196,6 +196,10 @@ export const mutations = {
   ADD_GRADE(state, grade) {
     state.grades.push(grade)
   },
+  DELETE_TEST(state, testUUID) {
+    let i = state.tests.indexOf(state.tests.find(t => t.uuid === testUUID))
+    state.tests.splice(i, 1)
+  }
 };
 
 export const actions = {
