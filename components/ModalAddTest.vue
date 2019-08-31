@@ -8,7 +8,6 @@
                 open-modal="add-test-subject-picker"
                 open-at="self" 
             )
-            //TODO: use dropdown w/ search to select a note title of that subject
             .field
               span.before-input le
               InputFlat(
@@ -47,9 +46,7 @@
                 v-model="selectedNotes"
                 multiple
               )
-                //TODO: select by default the latest-created note that doesn't have a grade linked
                 option(v-for="(note, i) in notes" :key="i" :value="note.uuid") {{ note.name }}
-              //TODO: list of dropdowns w/ each note of subject as option || list of <input>'s
             .details
               HeadingSub Notes additionnelles
               TextBlockInput(

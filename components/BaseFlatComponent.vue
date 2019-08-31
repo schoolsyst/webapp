@@ -95,6 +95,6 @@ export default {
         font-size: 64px
 
 .BaseFlatComponent:hover .icon
-    cursor: pointer //TODO remove this
+    cursor: pointer
 
 </style>

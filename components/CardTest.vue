@@ -15,6 +15,7 @@ div.CardTest(:style="{backgroundColor: subject.color, color: textColor}")
         li(v-for="note in notes" :key="note.uuid")
             CardTestNoteItem(v-if="expanded", v-bind="note")
             template(v-else) {{ note.name }}
+    //TODO: make the infos modifiable
     .infos(v-if="expanded")
         p.grade-and-room
             |sur 
@@ -92,7 +93,7 @@ export default {
 
             if(knownProgressNoteCount < 1) return -1
 
-            return 0.7 // Just for testing
+            // return 0.7 // Just for testing
 
             return totalProgress / this.notes.length
         },
