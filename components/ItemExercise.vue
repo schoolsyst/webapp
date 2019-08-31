@@ -3,35 +3,48 @@
 //TODO: On expanded notes, linkify http[s]://domain.tld and also domain.tld if domain in ICANN domains.
 //TODO: Reset all fields after clicking "add" or "cancel"
 //FIXME: Additionnal notes aren't sent to the DB
-li.ItemExercise(
-    :data-exercise-id="uuid" 
-    :class="{'completed': mutCompleted, 'show-completed': showCompleted}"
-    @keyup.enter="switchCompleteStatus"
-    @click="switchCompleteStatus",
-    tabindex="0"
-)
-    SubjectDot(v-bind="subject" v-if="mnml")
-    BadgeSubject(v-bind="subject" v-else)
-    h4.name {{name}}
-    p.notes {{notes}}
+//TODO: expand less others when expanding this one (also for CardTest)
+li.ItemExercise(:class="{'expanded': expanded && !mutCompleted}")
+  .non-expanded-content
+    .main-content(
+      :data-exercise-id="uuid" 
+      :class="{'completed': mutCompleted, 'show-completed': showCompleted}"
+      @keyup.enter="switchCompleteStatus"
+      @click="switchCompleteStatus",
+      tabindex="0"
+    )
+      SubjectDot(v-bind="subject" v-if="mnml")
+      BadgeSubject(v-bind="subject" v-else)
+      h4.name {{name}}
+    button.expand(
+      @click="expanded = !expanded"
+      v-if="!mutCompleted"
+    )
+      i.material-icons.icon {{expanded ? 'expand_less' : 'expand_more'}}
+  .expanded-content
+    textarea(v-model="mutNotes")
+    label(:for="`field_${uuid}-date`") À rendre pour le
+    input(type="date" :value="mutDue" :id="`field_${uuid}-date`")
 </template>
 
 <script>
 import BadgeSubject from "~/components/BadgeSubject.vue";
 import SubjectDot from '~/components/SubjectDot.vue'
+import ButtonFlat from '~/components/ButtonFlat.vue'
 import moment from 'moment';
 import { mapMutations } from 'vuex';
 
 export default {
   name: "ItemExercise",
   components: {
-    BadgeSubject, SubjectDot
+    BadgeSubject, SubjectDot, ButtonFlat
   },
   props: {
     subject: Object,
     name: String,
     notes: String,
     uuid: String,
+    due: String,
     completed: Boolean,
     showCompleted: {
       type: Boolean,
@@ -40,14 +53,17 @@ export default {
     mnml: {
       type: Boolean,
       default: false
-    }
+    },
   },
 
   data() { return {
     badgeHasCheckmark: false,
     initialInnerHTML: '',
     lastCompletionSync: null,
-    mutCompleted: this.completed
+    mutCompleted: this.completed,
+    mutDue: this.due,
+    mutNotes: this.notes,
+    expanded: true
   }},
 
   methods: {
@@ -78,6 +94,7 @@ export default {
         this.$toast.error(`Erreur lors de la synchronisation: ${error}`)
       }
     },
+
   },
 
   mounted() {
@@ -104,10 +121,40 @@ export default {
 @import '~/assets/defaults'
 
 .ItemExercise
+  //--- dimensions ---
+  max-width: 90vw
+  //--- appearance ---
+  box-shadow: none
+  border-radius: 7.5px
+  //--- animations ---
+  transition: box-shadow 0.25s ease
+.non-expanded-content
+  //====   items   ====
+  display: flex
+  align-items: center
+
+.expand
+  .icon
+    font-size: 35px
+.expanded-content
+  //--- dimensions ---
+  height: 0
+  width: 0
+  overflow: hidden
+  //---   spacing  ---
+  padding: 0px
+  //---  position  ---
+  display: block
+  // position: absolute
+  // top: 70px
+  //--- animations ---
+  transition: height 0.25s ease
+
+.main-content
     //--- positioning ---
     position: relative
     //--- dimensions  ---
-    max-width: 90vw
+    max-width: 45vw
     //---   margins   ---
 
     //---  appearance ---
@@ -154,7 +201,8 @@ export default {
     //--- dimensions  ---
     font-size: 25px
     +tablet
-      width: 500px
+      max-width: 500px
+      width: calc(100% - 100px)
     +phone
       width: calc(100vw - 20px)
     //---   margins   ---
@@ -186,31 +234,31 @@ export default {
 
 //TODO: move this outta this component ?
 // --- Hide completed exercises ---
-.ItemExercise:not(.show-completed).completed
+.main-content:not(.show-completed).completed
   display: none
 
 // --- hover, focus AND completed state ---
-.ItemExercise:hover,
-.ItemExercise:focus,
-.ItemExercise.completed
+.main-content:hover,
+.main-content:focus,
+.main-content.completed
     outline: none
     .name
         opacity: 0.25
 
 // --- completed state only ---
-.ItemExercise.completed
+.main-content.completed
     .BadgeSubject
         opacity: 0.25
     &::before
         +tablet
-          width: 600px + 20px * 2 + 10px
+          width: 45vw
         +phone
           width: calc(100vw - 20px)
-        max-width: 50vw
+        max-width: 500px
 
 // --- hover, focus only ---
-.ItemExercise:not(.completed):hover,
-.ItemExercise:not(.completed):focus
+.main-content:not(.completed):hover,
+.main-content:not(.completed):focus
     .BadgeSubject, .SubjectDot
         background: var(--blue) !important
         opacity: 1 !important
@@ -218,5 +266,14 @@ export default {
         font-size: 45px !important
     .SubjectDot /deep/ .material-icons
         font-size: 30px !important
+
+// --- expanded ---
+.ItemExercise.expanded 
+  &
+    +shadow(2) 
+  .expanded-content
+    padding: 10px
+    height: auto
+    width: 100%
 
 </style>
