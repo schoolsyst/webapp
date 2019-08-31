@@ -26,7 +26,7 @@
 
   TheHeading
     | {{now.format('dddd D MMM').capFirstChar()}}
-    // Will be commented until the hour is refreshed, cuz it's missleading rn
+    //- Will be commented until the hour is refreshed, cuz it's missleading rn
       | &mdash;{{now.format('HH')}}
       span.anim--blink :
       | {{now.format('mm')}}
@@ -69,7 +69,8 @@
           ArrayButtonFlat(inline)
               ButtonFlat(icon="arrow_forward")
                 nuxt-link.goto-homework(to="/homework") Voir tout
-        ArrayGroupedHomework(:groups="groupedHomework")
+        ArrayItemExercise
+          ItemExercise(v-for="exercise in exercises", :key="exercise.uuid" v-bind="exercise")
     MainGroupRight
       HeadingSub moyenne
       BigNumber(v-bind="globalMean")
@@ -97,7 +98,8 @@ import CardEmpty from "~/components/CardEmpty.vue";
 import ModalAddExercise from "~/components/ModalAddExercise.vue";
 import ModalAddNote from "~/components/ModalAddNote.vue";
 import ModalAddTest from "~/components/ModalAddTest.vue";
-import ArrayGroupedHomework from '~/components/ArrayGroupedHomework.vue'
+import ArrayItemExercise from '~/components/ArrayItemExercise.vue'
+import ItemExercise from '~/components/ItemExercise.vue'
 
 export default {
   components: {
@@ -115,7 +117,8 @@ export default {
     ModalAddNote,
     ModalAddExercise,
     ModalAddTest,
-    ArrayGroupedHomework
+    ArrayItemExercise,
+    ItemExercise,
   },
 
   data() {
@@ -131,14 +134,14 @@ export default {
       upcomingCourse: "schedule/upcomingCourse",
       currentCourse: "schedule/currentCourse",
       currentCourseSubject: "schedule/currentCourseSubject",
-      setting: "schedule/setting",
+      setting: "setting",
       getGlobalMean: "homework/globalMean",
-      groupedHomework: "homework/groupedHomework",
-      notesOf: "notes/notesOf"
+      notesOf: "notes/notesOf",
+      pendingExercises: "homework/pendingExercises",
     }),
     //TODO: get globalMean from a getter
     globalMean() {
-      let gradeMax = Number(this.setting("default_max"));
+      let gradeMax = Number(this.setting("grade_max").value);
       return {
         value: this.getGlobalMean || NaN,
         unit: `/${gradeMax}`
@@ -153,6 +156,20 @@ export default {
     },
     timeTilEndOfCurrentCourse() {
       return moment().to(moment(this.currentCourse.end, 'hh:mm'), true)
+    },
+    //FIXME
+    exercises() {
+      console.log(this.pendingExercises)
+      let condition
+      // if we are Fri/Sat/Sun
+      if (moment().isoWeekday() >= 5) {
+        condition = (exo) => {
+          return moment(exo.due, 'YYYY-MM-DD').isSame(moment().add(1, 'week'), 'week')
+        }
+      } else {
+        condition = (exo) => moment(exo.due, 'YYYY-MM-DD').isSame(moment(), 'week')
+      }
+      return this.pendingExercises.filter(condition)
     },
   },
 
@@ -194,4 +211,6 @@ export default {
   grid-gap: 20px
   +mobile
     grid-template-columns: repeat(2, max-content)
+.ArrayItemExercise
+  margin-top: 10px
 </style>
