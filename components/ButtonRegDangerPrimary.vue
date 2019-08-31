@@ -1,5 +1,5 @@
 <template lang="pug">
-BaseButtonReg.ButtonRegPrimary
+BaseButtonReg.ButtonRegDangerPrimary
     slot
 </template>
 
@@ -7,7 +7,7 @@ BaseButtonReg.ButtonRegPrimary
 import BaseButtonReg from '~/components/BaseButtonReg.vue'
 
 export default {
-    name: 'ButtonRegPrimary',
+    name: 'ButtonRegDangerPrimary',
     components: {
         BaseButtonReg
     },
@@ -17,7 +17,7 @@ export default {
 <style lang="sass">
 @import '~/assets/defaults'
 
-.ButtonRegPrimary
+.ButtonRegDangerPrimary
     background-color: var(--red)
     color: #ffffff
     &.inverted-colors
