@@ -10,8 +10,10 @@
         ],
         [ ... ]
     ]
-ul.ArrayGroupedCardTest
+ul.ArrayGroupedHomework
     li(v-for="(group, i) in groups" :key="i")
+        //TODO: showThisGroup as a computed property, separate into a component "GroupedHomework"
+        //
         HeadingSub(v-if="showThisGroup(group)")
             span.date {{ formatDate(group[0]) }}
             span.sep(v-if="formatDate(group[0])") &mdash;
@@ -41,7 +43,7 @@ import ItemExercise from '~/components/ItemExercise.vue'
 import CardTest from '~/components/CardTest.vue'
 
 export default {
-    name: 'ArrayGroupedCardTest',
+    name: 'ArrayGroupedHomework',
     components: {
         ArrayCardTest,
         ArrayItemExercise,
