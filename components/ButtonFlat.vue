@@ -1,7 +1,7 @@
 <template lang="pug">
 BaseFlatComponent.ButtonFlat(:icon="icon" :icon-style="iconStyle" :large-icon="largeIcon")
     //-@click, @mouseup both don't work (w/ .native as well)
-    button.input
+    button.input(@click="$emit('click')")
         slot
 </template>
 

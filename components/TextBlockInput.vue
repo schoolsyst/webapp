@@ -1,5 +1,5 @@
 <template lang="pug">
-textarea.TextBlockInput
+textarea.TextBlockInput(@input="$emit('input', $event.target.value)")
 </template>
 
 <script>

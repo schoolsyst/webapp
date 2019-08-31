@@ -51,7 +51,8 @@
               HeadingSub Notes additionnelles
               TextBlockInput(
                 name="details"
-                v-model="details"
+                :value="details"
+                @input="details = $event"
               )
         ArrayButtonReg.row.buttons
             ButtonRegSecondary(close-modal) Annuler
@@ -82,7 +83,7 @@ export default {
     ButtonRegPrimary,
     ButtonRegSecondary,
     PickerSubject,
-    HeadingSub
+    HeadingSub,
   },
   props: {
     subject: {
@@ -113,7 +114,8 @@ export default {
       nextCourseOf: "schedule/nextCourseOf",
       setting: "schedule/setting",
       notesOf: "notes/notesOf",
-      allNotes: "notes/allNotes"
+      allNotes: "notes/allNotes",
+      subjectBySlug: "subjectBySlug"
     }),
     nextCourse() {
       if ("_isPlaceholder" in this.mutSubject) return "";
@@ -138,12 +140,12 @@ export default {
       return "";
     },
     defaultMax() {
-      let val = this.setting("default_max") || "";
+      let val = this.setting("grade_max").value
       this.mutMax = val
       return val
     },
     defaultWeight() {
-      let val = this.setting("default_weight") || "";
+      let val = this.setting("grade_weight").value
       this.mutWeight = val
       return val
     },
@@ -207,13 +209,14 @@ export default {
         }
 
         try {
-          const { data } = await this.$axios.post("/tests/", {
+          let { data } = await this.$axios.post("/tests/", {
             subject: this.mutSubject.slug,
             due: moment(this.mutDate, 'DD/MM/YYYY').format('YYYY-MM-DD'),
             room: this.mutRoom,
             created: moment().toISOString(),
             notes: this.selectedNotes,
-            details: this.details
+            details: this.details,
+            format: 'markdown'
           })
 
           const response = await this.$axios.post("/grades/", {
@@ -221,12 +224,14 @@ export default {
             maximum: this.mutMax,
             test: data.uuid
           })
-
+          data.subject = this.subjectBySlug(data.subject)
           this.$store.commit('homework/ADD_TEST', data)
           this.$store.commit('homework/ADD_GRADE', response.data)
           this.$toast.success(`Contrôle de ${this.mutSubject.name} ajouté!`)
+          // --- clear some fields
+          this.details = ""
           // --- close modal manually ---
-          document.getElementById(`modal_add-exercise`).classList.remove('opened')
+          document.getElementById(`modal_add-test`).classList.remove('opened')
         } catch (error) {
           this.$toast.error(`Erreur lors de l'ajout de l'exercice: ${error}`)
         }
