@@ -22,7 +22,7 @@ export const getters = {
                 value: defaultSetting.default   
             }
         }
-        return Object.assign({}, defaultSetting, userSetting.setting)
+        return Object.assign({}, defaultSetting, userSetting)
     },
     subjectBySlug: (state, getters) => (subjSlug) => {
         return state.subjects.find(subj => subj.slug === subjSlug)
