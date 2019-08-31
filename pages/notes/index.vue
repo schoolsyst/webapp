@@ -25,6 +25,7 @@
     HeadingSub.all-notes(has-inline-buttons)
       span.heading-text(v-if="currentCourse") Tout
       ArrayButtonFlat(inline)
+        //TODO: @keydown.enter open first note (when searchbox focused)
         InputFlat.search(
           icon="search"
           name="search"
@@ -41,7 +42,7 @@
     ArrayCardNoteFile
       CardNoteAdd(v-if="!currentCourse")
       CardNoteFile(
-        v-for="(card, i) in allCards"
+        v-for="(card, i) in searchedCards"
         :key="i"
         v-bind="card"
       )
@@ -52,6 +53,7 @@
 import axios from "axios";
 import slugify from "slugify";
 import moment from 'moment';
+import Fuse from 'fuse.js'
 import { mapState, mapGetters, mapMutations, mapActions } from "vuex";
 import TheHeading from "~/components/TheHeading.vue";
 import ArrayButtonFlat from "~/components/ArrayButtonFlat.vue";
@@ -106,7 +108,8 @@ export default {
       sortBy: "last_modified",
       newNoteName: "",
       // API DATA
-      cards: []
+      cards: [],
+      fuse: null
     };
   },
 
@@ -123,12 +126,25 @@ export default {
           note => note.subject.slug !== this.currentCourse.subject.slug
         );
       }
-      return this.notesToCards(notes)
+      let cards = this.notesToCards(notes)
+      this.fuse = new Fuse(cards, {
+        keys: ['name'],
+        id: 'uuid'
+      })
+      return cards
       
     },
     currentSubjectCards() {
       return this.notesToCards(this.notes).filter(card => card.subject.slug === this.currentCourseSubject.slug)
     },
+    searchedCards() {
+      if (this.searchText) {
+        let uuids = this.fuse.search(this.searchText)
+        return this.allCards.filter(card => uuids.includes(card.uuid))
+      } else {
+        return this.allCards
+      }
+    }
   },
 
   methods: {
