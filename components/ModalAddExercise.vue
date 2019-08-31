@@ -1,5 +1,4 @@
 <template lang="pug">
-//FIXME: Additionnal notes aren't sent to the DB
 .multimodal
     PickerSubject(parent-modal="add-exercise" @pick="pickSubject")
     BaseModal(name="add-exercise")
@@ -35,7 +34,7 @@
             )
         .row.notes
             HeadingSub Notes additionnelles
-            TextBlockInput(name="notes")
+            TextBlockInput(name="notes" v-model="notes")
         ArrayButtonReg.row.buttons
             ButtonRegSecondary(close-modal) Annuler
             ButtonRegPrimary(@mouseup.native="addExercise") Ajouter
@@ -85,6 +84,7 @@ export default {
       mutDate: "",
       mutRoom: "",
       exerciseName: "",
+      notes: ""
     };
   },
   computed: {
