@@ -5,15 +5,10 @@ export default async function({ store, redirect,app }) {
     // required settings
     // for the app to run smoothly
     let requiredSettings = [
-      "schedule/start",
-      "schedule/start",
-      "schedule/trimester2",
-      "schedule/trimester3",
-      "schedule/end",
-      "schedule/offdays",
-      "schedule/hours",
-      "defaults/grades/max",
-      "defaults/grades/weight"
+      "year_start",
+      "year_end",
+      "trimester_2_start",
+      "trimester_3_start",
     ];
 
     // Check if the user's settings contains
@@ -36,17 +31,14 @@ export default async function({ store, redirect,app }) {
       missingSetupSettings = keys.length < requiredSettings.length;
     }
 
+    let res
     // Check if the user has at least ONE subject registered
-    data = await axios.get("http://localhost:7000/api/subjects/", {
-      headers: { Authorization: store.$auth.$storage._state["_token.local"] }
-    });
-    let noSubjects = data.length < 1;
+    res = await app.$axios.get("http://localhost:7000/api/subjects/")
+    let noSubjects = res.data.length < 1;
 
     // Check if the user has at least ONE event in his schedule
-    data = await axios.get("http://localhost:7000/api/events/", {
-      headers: { Authorization: store.$auth.$storage._state["_token.local"] }
-    });
-    let scheduleIsEmpty = data.length < 1;
+    res = await app.$axios.get("http://localhost:7000/api/events/")
+    let scheduleIsEmpty = res.data.length < 1;
 
     // If any of the three checks has failed
     let notSettedUpProperly = missingSetupSettings || noSubjects || scheduleIsEmpty;
