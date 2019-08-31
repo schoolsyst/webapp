@@ -1,8 +1,6 @@
 <template lang="pug">
 //TODO: click to expand & show exercise notes, full title. Complete w/ the subject badge/dot
 //TODO: On expanded notes, linkify http[s]://domain.tld and also domain.tld if domain in ICANN domains.
-//TODO: Reset all fields after clicking "add" or "cancel"
-//FIXME: Additionnal notes aren't sent to the DB
 //TODO: expand less others when expanding this one (also for CardTest)
 li.ItemExercise(:class="{'expanded': expanded && !mutCompleted}")
   .non-expanded-content

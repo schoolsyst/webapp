@@ -1,4 +1,5 @@
 <template lang="pug">
+//FIXME: Additionnal notes aren't sent to the DB
 .multimodal
     PickerSubject(parent-modal="add-exercise" @pick="pickSubject")
     BaseModal(name="add-exercise")

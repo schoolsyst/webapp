@@ -1,4 +1,5 @@
 <template lang="pug">
+//TODO: Reset all fields after clicking "add" or "cancel"
 .multimodal
     PickerSubject(parent-modal="add-test" @pick="pickSubject")
     BaseModal(name="add-test")
