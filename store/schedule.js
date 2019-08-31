@@ -159,8 +159,7 @@ export const getters = {
   },
   upcomingCourse: (state, getters) => {
     let now = moment();
-    let courses = getters.coursesIn(moment(), moment().endOf('day'), true);
-    console.log(courses)
+    let courses = getters.coursesIn(moment(), moment().endOf('day'));
     if (courses.length) {
       courses = courses
         .filter(course => ptime(course.start).isAfter(now))
@@ -222,10 +221,11 @@ export const getters = {
   },
   offdays: (state, getters) => {
     let offdays;
-    let offdaySeries = getters
-      .setting("offdays").value // get offdays
-      .split("\n") // split by line
-      .forEach(offday => offday.replace("\r", "")); // fuck windows
+    let offdaySeries = getters.setting("offdays").value
+    if (!offdaySeries) return []
+    console.log(offdaySeries)
+    offdaySeries = offdaySeries.split("\n") // split by line
+                               .forEach(offday => offday.replace("\r", "")); // fuck windows
     for (const offdaySerie of offdaySeries) {
       // for each line
       if (offdaySerie.match(/.+\s*-\s*.+/)) {
