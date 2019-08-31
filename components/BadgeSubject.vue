@@ -1,9 +1,9 @@
 <template lang="pug">
-button.BadgeSubject(:style="{backgroundColor: color}" :title="name" @click="$emit('click')") {{abbreviation}}
+button.BadgeSubject(:style="{backgroundColor: color, color: textColor}" :title="name" @click="$emit('click')") {{abbreviation}}
 </template>
 
 <script>
-
+import chroma from 'chroma-js'
 export default {
     name: 'BadgeSubject',
     props: {
@@ -18,6 +18,11 @@ export default {
         name: {
             type: String,
             default() { return this.abbreviation === '...' ? 'Choisissez une matière...' : this.abbreviation }
+        }
+    },
+    computed: {
+        textColor() {
+            return chroma(this.color).get('lab.l') < 70 ? 'white' : 'black'
         }
     }
 }
