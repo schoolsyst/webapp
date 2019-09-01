@@ -1,6 +1,9 @@
 {
   "name": "schoolsyst-frontend",
   "version": "1.0.0",
+  "engines": {
+    "node":"8.10.0"
+  },
   "description": "Schoolsyst&#39;s frontend: a single-page web application built to be used offline and online.",
   "author": "Ewen Le Bihan",
   "private": true,
