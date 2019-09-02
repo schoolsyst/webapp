@@ -205,7 +205,7 @@ export default {
   top: -.1em
 +mobile
   .nomobile
-    display: none
+    display: none !important
 .ArrayButtonFlat
   display: grid
   grid-gap: 20px
