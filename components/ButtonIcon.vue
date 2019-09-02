@@ -1,5 +1,5 @@
 <template lang="pug">
-button.IconButton(@click="$emit('click')")
+button.ButtonIcon(@click="$emit('click')")
     i.material-icons-outlined.icon(:style="{color: color}")
         slot
 </template>
@@ -7,7 +7,7 @@ button.IconButton(@click="$emit('click')")
 <script>
 
 export default {
-    name: 'IconButton',
+    name: 'ButtonIcon',
     props: {
         color: {
             type: String,
