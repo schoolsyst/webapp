@@ -3,6 +3,13 @@
 //TODO: On expanded notes, linkify http[s]://domain.tld and also domain.tld if domain in ICANN domains.
 //TODO: expand less others when expanding this one (also for CardTest)
 li.ItemExercise(:class="{'expanded': expanded && !mutCompleted}")
+  ModalDialogConfirm(
+      :name="`delete-exercise-${uuid}`", 
+      @confirm="deleteExercise"
+      confirm-text="Supprimer",
+      confirm-role="danger"
+  )
+    | Confirmer supprimera l'exercise "{{name}}" définitivement
   .non-expanded-content
     .main-content(
       :data-exercise-id="uuid" 
@@ -20,22 +27,29 @@ li.ItemExercise(:class="{'expanded': expanded && !mutCompleted}")
     )
       i.material-icons.icon {{expanded ? 'expand_less' : 'expand_more'}}
   .expanded-content
-    textarea(v-model="mutNotes")
-    label(:for="`field_${uuid}-date`") À rendre pour le
-    input(type="date" :value="mutDue" :id="`field_${uuid}-date`")
+    label(:for="`field_${uuid}-notes`").notes-label Notes
+    textarea.notes(v-model="mutNotes", :id="`field_${uuid}-notes`")
+    .date-and-delete
+      .date
+        label(:for="`field_${uuid}-date`") À rendre pour le
+        input(type="date" v-model="mutDue" :id="`field_${uuid}-date`")
+      .delete
+        ButtonFlat(:open-modal="`confirm-delete-exercise-${uuid}`", open-at="center", icon="delete" small) Supprimer
 </template>
 
 <script>
 import BadgeSubject from "~/components/BadgeSubject.vue";
 import SubjectDot from '~/components/SubjectDot.vue'
 import ButtonFlat from '~/components/ButtonFlat.vue'
+import ModalDialogConfirm from '~/components/ModalDialogConfirm.vue'
 import moment from 'moment';
+import debounce from 'lodash.debounce'
 import { mapMutations } from 'vuex';
 
 export default {
   name: "ItemExercise",
   components: {
-    BadgeSubject, SubjectDot, ButtonFlat
+    BadgeSubject, SubjectDot, ButtonFlat, ModalDialogConfirm
   },
   props: {
     subject: Object,
@@ -61,7 +75,7 @@ export default {
     mutCompleted: this.completed,
     mutDue: this.due,
     mutNotes: this.notes,
-    expanded: true
+    expanded: false
   }},
 
   methods: {
@@ -92,7 +106,45 @@ export default {
         this.$toast.error(`Erreur lors de la synchronisation: ${error}`)
       }
     },
+    deleteExercise() {
+        console.log('deleting exercise...')
+        try {
+          this.$store.commit('homework/DELETE_TEST', this.uuid)
+          this.$axios.delete(`/exercises/${this.uuid}/`)
+          this.$toast.success(`Contrôle de ${this.subject.name} supprimé`)
+        } catch (error) {
+          this.$toast.error(`Erreur lors de la suppression: ${error}`)
+        }
+    },
 
+  },
+
+  watch: {
+    mutDue() {
+      try {
+        this.$store.commit('CHANGE_EXERCISE', this.uuid, {
+          due: this.mutDue
+        })
+        this.$axios.patch(`/exercises/${this.uuid}/`, {
+          due: this.mutDue
+        })
+      } catch (error) {
+        this.$toast.error(`Impossible de changer la date de cet exercice: ${error}`)
+      }
+    },
+    mutNotes: debounce(function(){
+      console.log('syncing notes')
+      try {
+        this.$store.commit('homework/CHANGE_EXERCISE', this.uuid, {
+          notes: this.mutNotes
+        })
+        this.$axios.patch(`/exercises/${this.uuid}/`, {
+          notes: this.mutNotes
+        })
+      } catch (error) {
+        this.$toast.error(`Impossible de changer les notes de cet exercice: ${error}`)
+      }
+    }, 1000),
   },
 
   mounted() {
@@ -121,11 +173,6 @@ export default {
 .ItemExercise
   //--- dimensions ---
   max-width: 90vw
-  //--- appearance ---
-  box-shadow: none
-  border-radius: 7.5px
-  //--- animations ---
-  transition: box-shadow 0.25s ease
 .non-expanded-content
   //====   items   ====
   display: flex
@@ -143,10 +190,41 @@ export default {
   padding: 0px
   //---  position  ---
   display: block
-  // position: absolute
-  // top: 70px
   //--- animations ---
   transition: height 0.25s ease
+  //====   items   ====
+  display: flex
+  flex-direction: column
+
+.date-and-delete
+  display: grid
+  grid-template-columns: 1fr 1fr
+  width: 100%
+  margin-left: 10px
+  margin-top: 15px
+.notes-label
+  text-transform: uppercase
+  text-align: left
+  font-weight: bold
+  letter-spacing: 1px
+  font-size: 20px
+  margin-bottom: 10px
+.delete, .date
+  align-items: center
+  display: flex
+.delete
+  justify-content: flex-end
+.date
+  font-size: 18px
+  label
+    margin-right: 10px
+
+.notes
+  width: 100%
+  background: var(--grey)
+  height: 150px
+  border-radius: 7.5px
+  padding: 10px
 
 .main-content
     //--- positioning ---
@@ -268,10 +346,10 @@ export default {
 // --- expanded ---
 .ItemExercise.expanded 
   &
-    +shadow(2) 
+    border-bottom: 3px solid #00000040
   .expanded-content
     padding: 10px
-    height: auto
+    height: 250px
     width: 100%
 
 </style>

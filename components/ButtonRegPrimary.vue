@@ -1,5 +1,5 @@
 <template lang="pug">
-BaseButtonReg.ButtonRegPrimary
+BaseButtonReg.ButtonRegPrimary(:role="role")
     slot
 </template>
 
@@ -11,6 +11,12 @@ export default {
     components: {
         BaseButtonReg
     },
+    props: {
+        role: {
+            type: String,
+            default: "normal"
+        }
+    }
 }
 </script>
 
@@ -19,8 +25,12 @@ export default {
 
 .ButtonRegPrimary
     background-color: var(--blue)
+    &[role="danger"]
+        background-color: var(--red)
     color: #ffffff
     &.inverted-colors
         background: #fff
         color: var(--blue)
+        &[role="danger"]
+            color: var(--red)
 </style>

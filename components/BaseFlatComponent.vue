@@ -1,5 +1,5 @@
 <template lang="pug">
-    li.BaseFlatComponent(:class="{'large-icon': largeIcon}")
+    li.BaseFlatComponent(:class="{'large-icon': largeIcon, 'small': small}")
         label.icon(:class="iconStyleClass" :for="labelFor") {{icon}}
         slot
 </template>
@@ -17,6 +17,10 @@ export default {
     labelFor: String,
     largeIcon: {
       type: Boolean,
+      default: false
+    },
+    small: {
+      type:Boolean,
       default: false
     },
   },
@@ -65,11 +69,7 @@ export default {
 
 .icon
     margin-right: 10px
-    +desktop
-        font-size: 36px
-    +mobile
-        font-size: 36px
-
+    font-size: 1.3em
 
 
 /* Select the elements inside <slot> */
@@ -85,6 +85,9 @@ export default {
     /* Smaller font-size for elements inside <slot> when the `inline` option is `true` */
     .ArrayButtonFlat.inline .BaseFlatComponent label + *
         font-size: 24px
+
+.BaseFlatComponent.small
+  font-size: 24px
 
 
 // Larger icon for text-less buttons

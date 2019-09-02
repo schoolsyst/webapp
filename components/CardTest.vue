@@ -5,7 +5,7 @@ div.CardTest(:style="{backgroundColor: subject.color, color: textColor}")
         @confirm="deleteTest"
         confirm-text="Supprimer"
     )
-        | Cette action n'est pas réversible.
+        | Confirmer supprimera ce contrôle définitivement
     .progress-infos
         span.subject-abbr {{subject.abbreviation}}
         span.percentage(v-if="totalProgressDisp !== '?'") {{totalProgressDisp}}%

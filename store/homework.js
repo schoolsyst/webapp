@@ -39,11 +39,7 @@ export const getters = {
     return getters.allTests.filter(test => moment(test.due, 'YYYY-MM-DD').isAfter(moment()));
   },
   ungradedTests(state, getters) {
-    let tests = getters.allTests;
-    for (const grade of getters.allGrades) {
-      tests = tests.filter(test => test.grades.uuid !== test.uuid);
-    }
-    return tests;
+    return getters.allTests.filter(test => !test.grades && !test.grades.length);
   },
   gradedTests(state, getters) {
     let tests = [];
@@ -197,8 +193,12 @@ export const mutations = {
     state.grades.push(grade)
   },
   DELETE_TEST(state, testUUID) {
-    let i = state.tests.indexOf(state.tests.find(t => t.uuid === testUUID))
-    state.tests.splice(i, 1)
+    //FIXME
+    state.tests = state.tests.filter(t => t.uuid !== testUUID)
+  },
+  CHANGE_EXERCISE(state, exerciseUUID, newExerciseData) {
+    let i = state.exercises.indexOf(state.exercises.find(e=>e.uuid===exerciseUUID))
+    Object.assign(state.exercises[i], newExerciseData)
   }
 };
 
