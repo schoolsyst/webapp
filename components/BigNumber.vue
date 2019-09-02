@@ -21,9 +21,8 @@ export default {
 
 
     props: {
-        value:{
-            type: Number,
-            required: true
+        value: {
+            default: '—'
         },
         sign: {
             // one of +, -, ±—or no sign indication.
