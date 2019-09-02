@@ -27,7 +27,7 @@ li.ItemExercise(:class="{'expanded': expanded && !mutCompleted}")
     )
       i.material-icons.icon {{expanded ? 'expand_less' : 'expand_more'}}
   .expanded-content
-    label(:for="`field_${uuid}-notes`").notes-label Notes
+    p.full-name {{name}}
     textarea.notes(v-model="mutNotes", :id="`field_${uuid}-notes`")
     .date-and-delete
       .date
@@ -202,13 +202,11 @@ export default {
   width: 100%
   margin-left: 10px
   margin-top: 15px
-.notes-label
-  text-transform: uppercase
-  text-align: left
-  font-weight: bold
-  letter-spacing: 1px
-  font-size: 20px
-  margin-bottom: 10px
+.full-name
+  text-align: center
+  // font-weight: bold
+  font-size: 18px
+  margin-bottom: 15px
 .delete, .date
   align-items: center
   display: flex
@@ -218,6 +216,8 @@ export default {
   font-size: 18px
   label
     margin-right: 10px
+    +phone
+      display: none // Not enough room on phones
 
 .notes
   width: 100%
@@ -230,7 +230,8 @@ export default {
     //--- positioning ---
     position: relative
     //--- dimensions  ---
-    max-width: 45vw
+    +desktop
+      max-width: 45vw
     //---   margins   ---
 
     //---  appearance ---
@@ -264,13 +265,20 @@ export default {
     //--- positioning ---
     
     //--- dimensions  ---
-    
+
     //---   margins   ---
 
     //---  appearance ---
 
     //---  animation  ---
     transition: background .125s ease
++phone 
+  .BadgeSubject
+    //--- dimensions ---
+    width: 60px
+    height: 40px
+    font-size: 24px
+
 .name
     //--- positioning ---
     margin-left: 15px
@@ -280,7 +288,7 @@ export default {
       max-width: 500px
       width: calc(100% - 100px)
     +phone
-      width: calc(100vw - 20px)
+      width: calc(100vw - 150px)
     //---   margins   ---
     
     //---  appearance ---
