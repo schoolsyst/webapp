@@ -47,10 +47,10 @@ export default {
 @import '~/assets/defaults'
 
 .PickerSubject
-    z-index: 2000
-/deep/ .modal-wrapper
+  /deep/ .modal-wrapper
+    z-index: 2000 !important
     grid-gap: 0
-    padding: 0
+    padding: 0 !important
     +shadow(3)
 
 // badges (default)
@@ -69,7 +69,7 @@ export default {
   background: transparent
 
 .BadgeSubject
-    border-radius: 0
+    border-radius: 0 !important // !important needed to overwrite it
 
 .BadgeSubject, .SubjectDot
     cursor: pointer
