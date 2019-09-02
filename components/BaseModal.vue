@@ -34,6 +34,7 @@ export default {
   methods: {
     close(element = null) {
       const modal = document.getElementById(`modal_${this.name}`);
+      if (modal === null) return
       modal.classList.remove("opened");
       modal.setAttribute("aria-hidden", "true");
       modal.setAttribute("aria-modal", "false");
@@ -50,6 +51,7 @@ export default {
   mounted() {
     const component = this;
     const modal = document.getElementById(`modal_${component.name}`);
+    if (modal === null) return
     const focusableEls = "button, a, input, textarea, select"
     const focusables = Array.from(modal.querySelectorAll(focusableEls));
     // console.group(`listening for clicks to open ${component.name} on:`)
