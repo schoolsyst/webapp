@@ -12,7 +12,7 @@
 .container
     MainGroup
         MainGroupLeft
-            TheHeading {{weekday}}
+            TheHeading {{date}}
             p.heading-detail 
                 | Semaine du {{scheduleNow.startOf('week').format('D/M')}} 
                 | au {{scheduleNow.endOf('week').format('D/M')}} 
@@ -58,7 +58,7 @@ export default {
 
     data() {
         return {
-            scheduleNow: moment()
+            scheduleNow: moment(),
         }
     },
 
@@ -66,19 +66,13 @@ export default {
         ...mapGetters({
             getWeekType: 'schedule/weekType' 
         }),
-        weekday() {
-            return [
-                'Lundi',
-                'Mardi',
-                'Mercredi',
-                'Jeudi',
-                'Vendredi',
-                'Samedi',
-                'Dimanche'
-            ][new Date(Date.now()).getDay()]
-        },
         weekType() {
             return this.getWeekType(this.scheduleNow.format('YYYY-MM-DD'))
+        },
+        date() {
+            moment.locale('fr')
+            let fmt = moment().format('dddd')
+            return fmt.charAt(0).toUpperCase() + fmt.substr(1)
         }
     },
 }
