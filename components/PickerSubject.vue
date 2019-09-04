@@ -45,9 +45,9 @@ export default {
 
 <style lang="sass" scoped>
 @import '~/assets/defaults'
-
+//!importants are needed to override the BaseModal's styling
 .PickerSubject
-  z-index: 2000
+  z-index: 2000 !important
 
 .PickerSubject
   /deep/ .modal-wrapper
