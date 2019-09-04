@@ -47,8 +47,10 @@ export default {
 @import '~/assets/defaults'
 
 .PickerSubject
+  z-index: 2000
+
+.PickerSubject
   /deep/ .modal-wrapper
-    z-index: 2000 !important
     grid-gap: 0
     padding: 0 !important
     +shadow(3)
