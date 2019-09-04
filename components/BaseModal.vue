@@ -33,7 +33,9 @@ export default {
   },
   methods: {
     close(element = null) {
+      console.log(`closing modal ${this.name}`)
       const modal = document.getElementById(`modal_${this.name}`);
+      console.log(modal)
       if (modal === null) return
       modal.classList.remove("opened");
       modal.setAttribute("aria-hidden", "true");
@@ -242,6 +244,7 @@ export default {
         justify-content: center
         align-items: center
     &.opened
+        //TODO: pass the opacity of this as a prop
         background: rgba(0,0,0,0.5)
         // backdrop-filter: blur(5px)
         opacity: 1
@@ -251,6 +254,7 @@ export default {
         background: transparent
         // backdrop-filter: blur(1px)
     z-index: 1000
+    //TODO: pass the duration of this as a prop
     transition: all .25s ease
 
 .modal-wrapper

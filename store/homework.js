@@ -122,7 +122,7 @@ export const getters = {
     let sorted  = arrayed.sort((a, b) => {
       let adate = moment(a[0], 'YYYY-MM-DD')
       let bdate = moment(b[0], 'YYYY-MM-DD')
-      return moment(adate).isAfter(bdate) ? 1 : -1
+      return adate.isAfter(bdate) ? 1 : -1
     })
     return sorted
   },

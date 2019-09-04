@@ -24,12 +24,12 @@ export default {
     align-items: center
     border-radius: 7.5px
     +desktop
-        padding: 20px 25px
+        padding: 25px 30px
     +mobile
-        padding: 15px 15px
+        padding: 22px
     min-width: 150px
     // max-height: 50px
-    font-size: 24px
+    font-size: 20px
     margin-right: 10px
     &::before
         right: 0

@@ -54,7 +54,7 @@ export const getters = {
     let start = getters.setting("year_start").value;
     // convert to week-of-year number, and get if its even or odd.
     // tested date will be [base] (Q1 or Q2) if its also even.
-    let startingWeekIsEven = moment(start).isoWeek() % 2 === 0;
+    let startingWeekIsEven = moment(start, 'DD/MM/YYYY').isoWeek() % 2 === 0;
     let other = base === "Q1" ? "Q2" : "Q1";
     return moment(date, 'YYYY-MM-DD').isoWeek() % 2 === 0 && startingWeekIsEven
       ? base
@@ -223,18 +223,21 @@ export const getters = {
     return getters.nextCourseOf(getters.currentCourse.subject);
   },
   offdays: (state, getters) => {
-    let offdays;
-    let offdaySeries = getters.setting("offdays").value
-    if (!offdaySeries) return []
-    console.log(offdaySeries)
+    let offdays = [];
+    let offdaySeries = getters.setting("offdays")
+    if (offdaySeries) offdaySeries = offdaySeries.value
+    else return []
+    if (offdaySeries) offdaySeries = offdaySeries.trim()
+    else return []
+
     offdaySeries = offdaySeries.split("\n") // split by line
-                               .forEach(offday => offday.replace("\r", "")); // fuck windows
+    //  .forEach(offday => offday.replace("\r", "")); // fuck windows
     for (const offdaySerie of offdaySeries) {
       // for each line
       if (offdaySerie.match(/.+\s*-\s*.+/)) {
         // if its a range (start date - end date)
         // get start & end: split by "-", trim spaces, parse as date
-        let [start, end] = offdaySerie.split("-").reduce(e => pdate(e.trim()));
+        let [start, end] = offdaySerie.split("-").map(o => moment(o, 'DD/MM/YYYY'))
         // iterate over each date
         while (start.isBefore(end)) {
           // add in the array
@@ -247,12 +250,19 @@ export const getters = {
       }
     }
     return offdays;
-  }
+  },
+  event: (state, getters) => (eventUUID) => {
+    return state.events.find(e => e.uuid === eventUUID)
+  },
 };
 
 export const mutations = {
   SET_EVENTS(state, events) {
     state.events = events;
+  },
+  CHANGE_EVENT(state, eventUUID, newEventData) {
+    let i = state.events.indexOf(state.events.find(e=>e.uuid===eventUUID))
+    Object.assign(state.events[i], newEventData)
   },
   SET_COURSES(state, courses) {
     state.courses = courses;

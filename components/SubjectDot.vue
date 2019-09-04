@@ -1,4 +1,6 @@
 <template lang="pug">
+//TODO: "clickable" boolean prop that controls the pointer aspect, 
+  or make a SubjectDotClickable? (<button> for non-clickable isn't very semantic...)
 button.SubjectDot(:style="{backgroundColor: bgcolor}", :title="name")
   i.icon.material-icons(v-if="color === 'unknown'") more_horiz
 </template>

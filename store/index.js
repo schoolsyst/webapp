@@ -15,11 +15,20 @@ export const getters = {
         let defaultSetting = getters.defaultSettings.find(setting => setting.key === settingKey)
         if (!defaultSetting) return null
         let userSetting = getters.allSettings.find(setting => setting.setting.key === settingKey)
+        // Convert to boolean
+        let defaultSettingDefault
+        if (defaultSetting.kind == 'boolean') {
+            defaultSettingDefault = defaultSetting.default === 'true' || defaultSetting.default === 'yes'
+        } else {
+            defaultSettingDefault = defaultSetting.default
+        }
         if (!userSetting) {
-            console.warn(`falling back to default value for setting ${settingKey}(=${defaultSetting.default})`)
+            // add quotes to know if convertion occured correctly
+            let q = typeof defaultSettingDefault === 'string' ? '"' : ''
+            console.warn(`falling back to default value for setting ${settingKey}(=${q}${defaultSettingDefault}${q})`)
             return {
                 ...defaultSetting,
-                value: defaultSetting.default
+                value: defaultSettingDefault
             }
         }
         return Object.assign({}, defaultSetting, userSetting)
