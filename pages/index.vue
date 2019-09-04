@@ -26,10 +26,9 @@
 
   TheHeading
     | {{now.format('dddd D MMM').capFirstChar()}}
-    //- Will be commented until the hour is refreshed, cuz it's missleading rn
-      | &mdash;{{now.format('HH')}}
-      span.anim--blink :
-      | {{now.format('mm')}}
+    | &mdash;{{now.format('HH')}}
+    span.anim--blink :
+    | {{now.format('mm')}}
   ArrayButtonFlat
     ButtonFlat(
       icon='edit', 
@@ -131,14 +130,23 @@ export default {
 
   computed: {
     ...mapGetters({
-      upcomingCourse: "schedule/upcomingCourse",
-      currentCourse: "schedule/currentCourse",
-      currentCourseSubject: "schedule/currentCourseSubject",
+      fUpcomingCourse: "schedule/upcomingCourse",
+      fCurrentCourse: "schedule/currentCourse",
+      fCurrentCourseSubject: "schedule/currentCourseSubject",
       setting: "setting",
       getGlobalMean: "homework/globalMean",
       notesOf: "notes/notesOf",
       pendingExercises: "homework/pendingExercises",
     }),
+    upcomingCourse() {
+      return this.fUpcomingCourse(this.now)
+    },
+    currentCourse() {
+      return this.fCurrentCourse(this.now)
+    },
+    currentCourseSubject() {
+      return this.fCurrentCourseSubject(this.now)
+    },
     //TODO: get globalMean from a getter
     globalMean() {
       let gradeMax = Number(this.setting("grade_max").value);
@@ -192,6 +200,9 @@ export default {
     String.prototype.capFirstChar = function() {
       return this.charAt(0).toUpperCase() + this.substr(1).toLowerCase();
     };
+    setInterval(() => {
+      this.now = moment()
+    }, 1000);
   },
 
 };

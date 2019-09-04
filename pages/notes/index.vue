@@ -115,10 +115,16 @@ export default {
 
   computed: {
     ...mapGetters({
-      currentCourse: "schedule/currentCourse",
+      fCurrentCourse: "schedule/currentCourse",
       notes: "notes/allNotes",
-      currentCourseSubject: 'schedule/currentCourseSubject'
+      fCurrentCourseSubject: 'schedule/currentCourseSubject'
     }),
+    currentCourse() {
+      return this.fCurrentCourse(this.now)
+    },
+    currentCourseSubject() {
+      return this.fCurrentCourseSubject(this.now)
+    },
     allCards() {
       let notes = this.notes;
       if (this.currentCourse) {

@@ -157,8 +157,8 @@ export const getters = {
       event => event.subject.slug === subjectSlug
     );
   },
-  upcomingCourse: (state, getters) => {
-    let now = moment();
+  upcomingCourse: (state, getters) => (now=null) => {
+    if(!now) now = moment();
     let courses = getters.coursesIn(moment(), moment().endOf('day'));
     if (courses.length) {
       courses = courses
@@ -169,8 +169,8 @@ export const getters = {
     }
     return null;
   },
-  currentCourse: (state, getters) => {
-    let now = moment();
+  currentCourse: (state, getters) => (now=null) => {
+    if(!now) now = moment();
     let courses = getters.coursesIn(moment().startOf('day'), moment().endOf('day'));
     if (courses.length) {
       courses = courses.filter(
@@ -183,9 +183,11 @@ export const getters = {
     if (courses.length) return courses[0];
     return null;
   },
-  currentCourseSubject: (state, getters) => {
-    if (getters.currentCourse) {
-      return getters.currentCourse.subject;
+  currentCourseSubject: (state, getters) => (now=null) => {
+    if(!now) now = moment();
+    if (getters.currentCourse(now)) {
+      let currentCourse = getters.currentCourse(now)
+      return currentCourse.subject;
     } else {
       return {
         color: "#000000",
@@ -213,8 +215,9 @@ export const getters = {
     );
     return courses[0];
   },
-  nextCourseOfCurrentSubject: (state, getters) => {
-    if (!getters.currentCourse) {
+  nextCourseOfCurrentSubject: (state, getters) => (now) => {
+    if(!now) now = moment();
+    if (!getters.currentCourse(now)) {
       return null;
     }
     return getters.nextCourseOf(getters.currentCourse.subject);
