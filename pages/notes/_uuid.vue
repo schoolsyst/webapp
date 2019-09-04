@@ -458,12 +458,9 @@ export default {
     }
     KBShortcuts('#editor', this.shortcuts)
 
-    // Rough scroll syncing
+    // Scroll mirror to bottom (because scroll is broken af)
     editor.addEventListener("scroll", event => {
-      let mirrorHeight = mirror.scrollHeight - mirror.clientHeight
-      let scrollVal = editor.scrollTop / editor.scrollHeight * mirrorHeight
-      console.log(editor.scrollTop, editor.scrollHeight, mirrorHeight, scrollVal)
-      mirror.scrollTop = scrollVal
+      mirror.scrollTop = mirror.scrollHeight
     });
 
     // Slide the navabr back in only a few seconds after to show that it's here
