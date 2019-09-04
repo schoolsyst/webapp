@@ -166,6 +166,10 @@
       background: #fff3;
     }
 
+    blockquote {
+      padding-left: 15px;
+      border-left: 7.5px solid var(--blue)
+    }
 </template>
 
 
