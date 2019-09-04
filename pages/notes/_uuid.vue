@@ -348,7 +348,7 @@ export default {
       this.$toast.show(
         "La note enregistrée ici est plus récente que celle du serveur, et a été restaurée."
       );
-      this.uploadToServer(moment().format(), local.content, true);
+      this.uploadToServer(local.content, true);
     } else {
       this.content = server.content;
     }
@@ -472,13 +472,14 @@ export default {
     let autosave = 5
 
     this.autosyncInterval = setInterval(() => {
-      this.$toast.info('Synchronisation automatique...')
+      this.$toast.info('Sauvegarde automatique...')
       this.sync()
     }, autosave * 60 * 1000);
   },
 
   beforeRouteLeave(to, from, next) {
     clearInterval(this.autosyncInterval)
+    this.sync(true)
     next()
   },
 
@@ -500,7 +501,7 @@ export default {
   },
 
   methods: {
-    async uploadToServer(last_modified, content, force = false, updateNoteName = false) {
+    async uploadToServer(content, force = false, updateNoteName = false) {
       // rate limitting
       if (moment().diff(this.lastSave, "seconds") < 5 && !force) {
         this.$toast.error(
@@ -513,7 +514,8 @@ export default {
       // request
       let errored = false;
       let requestData = {
-        last_modified, content
+        last_modified: moment().toISOString(), 
+        content
       }
       // update title
       if (updateNoteName) {
@@ -521,10 +523,10 @@ export default {
       }
       try {
         const { data } = await this.$axios.patch(`/notes/${this.uuid}/`, requestData);
-        this.$toast.success("Synchronisation réussie");
+        this.$toast.success(`Note "${data.name}" sauvegardée`);
       } catch (e) {
         errored = true;
-        this.$toast.error(`Erreur lors de la synchronisation: ${e}`);
+        this.$toast.error(`Erreur lors de la sauvegarde: ${e}`);
       }
       if (!errored) {
         // remove from localStorage if synced correctly to avoid
@@ -533,11 +535,11 @@ export default {
         window.localStorage.removeItem(`${this.uuid}--noteLastModified`);
       }
     },
-    sync() {
+    sync(force = false) {
       // update note name
       let noteName = document.getElementsByTagName('h1')[0].innerText
       this.name = noteName
-      this.uploadToServer(moment().toISOString(), this.content, false, noteName);
+      this.uploadToServer(this.content, force, noteName);
     },
     saveSource() {
       var element = document.createElement("a");
