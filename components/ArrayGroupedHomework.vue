@@ -89,7 +89,8 @@ export default {
                 // show the full thing
                 dayFmt = "dddd DD MMM YYYY";
             }
-            return m.diff(moment(), 'days') >= 3 ? m.format(dayFmt).replace('.', '') : '';
+            let daysDiff =  m.diff(moment(), 'days')
+            return daysDiff >= 3 && daysDiff !== 7 ? m.format(dayFmt).replace('.', '') : '';
         },
         formatDelta(date) {
             moment.locale("fr");
@@ -103,7 +104,8 @@ export default {
                 .fromNow(true)
                 .replace(/\d+ [hH]eures?/, "demain")
                 .replace("un jour", "demain")
-                .replace("2 jours", "après-demain");
+                .replace("2 jours", "après-demain")
+                .replace("7 jours", "dans une semaine")
         },
         showThisGroup(group) {
             let completedExercisesLength = group[1].exercises ? group[1].exercises.filter(ex => !ex.completed).length : 0
