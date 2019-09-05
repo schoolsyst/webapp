@@ -169,15 +169,15 @@ export default {
     exercises() {
       console.log(this.pendingExercises)
       let condition
-      // if we are Fri/Sat/Sun
-      if (moment().isoWeekday() >= 5) {
+      // if we are Thu/Fri/Sat/Sun
+      if (moment().isoWeekday() >= 4) {
         condition = (exo) => {
-          return moment(exo.due, 'YYYY-MM-DD').isSame(moment().add(1, 'week'), 'week')
+          return moment(exo.due, 'YYYY-MM-DD').isSame(moment().add(1, 'week'), 'week') || moment(exo.due, 'YYYY-MM-DD').isSame(moment(), 'week')
         }
       } else {
         condition = (exo) => moment(exo.due, 'YYYY-MM-DD').isSame(moment(), 'week')
       }
-      return this.pendingExercises.filter(condition)
+      return this.pendingExercises.filter(condition).sort(exo => moment(exo.due,'YYYY-MM-DD').isAfter(moment()) ? 1 : -1)
     },
   },
 
