@@ -26,7 +26,7 @@
 
   TheHeading
     | {{now.format('dddd D MMM').capFirstChar()}}
-    | &mdash;{{now.format('HH')}}
+    | &mdash; {{now.format('HH')}}
     span.anim--blink :
     | {{now.format('mm')}}
   ArrayButtonFlat
