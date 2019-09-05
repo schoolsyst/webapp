@@ -89,16 +89,17 @@ export default {
                 // show the full thing
                 dayFmt = "dddd DD MMM YYYY";
             }
-            return m.add(1, 'day').diff(moment(), 'days') >= 3 ? m.format(dayFmt).replace('.', '') : '';
+            return m.diff(moment(), 'days') >= 3 ? m.format(dayFmt).replace('.', '') : '';
         },
         formatDelta(date) {
             moment.locale("fr");
-            let m = moment(date).add(1, 'day');
-            if (m.diff(moment(), 'days') < 1) {
+            let m = moment(date);
+            if (m.date() === moment().date()) {
                 return "Bientôt"
             }
             return m
                 .fromNow(true)
+                .replace(/\d+ [hH]eures?/, "demain")
                 .replace("un jour", "demain")
                 .replace("2 jours", "après-demain");
         },
