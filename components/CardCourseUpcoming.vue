@@ -1,5 +1,5 @@
 <template lang="pug">
-    BaseCard(class="CardCourseUpcoming" :style="{backgroundColor: subject.color}")
+    BaseCard(class="CardCourseUpcoming" :style="{backgroundColor: subject.color, color: textColor}")
         h4.name {{subject.name}}
         div.room {{room}}
         time.remaining-time {{ timeRemaining.capFirstChar() }}
@@ -7,6 +7,7 @@
 
 <script>
 import moment from "moment";
+import chroma from "chroma-js"
 import BaseCard from "~/components/BaseCard.vue";
 
 export default {
@@ -46,7 +47,10 @@ export default {
     timeRemaining() {
       moment.locale("fr");
       return moment(this.start, "HH:mm").fromNow();
-    }
+    },
+    textColor() {
+      return chroma(this.subject.color).get('lab.l') < 70 ? 'white' : 'black'
+    },
   },
 
   created() {},
@@ -70,16 +74,19 @@ export default {
     padding: 10px
 
 .name 
-    color: white
+    // color: white
     font-size: 56px
+    line-height: 56px
+    +phone
+      line-height: 48px
+      font-size: 48px
     grid-column: 1/ span 2
     grid-row: 1
-    line-height: 56px
     height: 175px
 
 
 .room, .remaining-time 
-    color: white
+    // color: white
     font-size: 24px
     grid-row: 2
 
