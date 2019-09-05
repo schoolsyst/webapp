@@ -89,13 +89,15 @@ export default {
                 // show the full thing
                 dayFmt = "dddd DD MMM YYYY";
             }
-            return m.add(1, 'day').diff(moment(), 'days') >= 3 ? m.format(dayFmt).replace('.', '') : '';
+            return m.diff(moment(), 'days') >= 3 ? m.format(dayFmt).replace('.', '') : '';
         },
         formatDelta(date) {
             moment.locale("fr");
-            let m = moment(date).add(1, 'day');
-            if (m.diff(moment(), 'days') < 1) {
+            let m = moment(date)
+            if (m.diff(moment(), 'hours') < 12) {
                 return "Bientôt"
+            } else if (m.diff(moment(), 'hours') >= 12 && m.diff(moment(), 'hours') <= 24) {
+                return "Demain"
             }
             return m
                 .fromNow(true)
