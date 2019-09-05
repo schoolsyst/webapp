@@ -96,6 +96,8 @@ export default {
             let m = moment(date);
             if (m.date() === moment().date()) {
                 return "Bientôt"
+            } else if (m.diff(moment(), 'hours') >= 12 && m.diff(moment(), 'hours') <= 24) {
+                return "Demain"
             }
             return m
                 .fromNow(true)
