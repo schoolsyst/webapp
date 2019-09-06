@@ -59,16 +59,12 @@ export default {
     // '~/plugins/kbshortcuts.js'
   ],
   /*
-   ** Nuxt.js dev-modules
-   */
-  devModules: [],
-  /*
    ** Nuxt.js modules
    */
   modules: [
     // Doc: https://axios.nuxtjs.org/usage
     "@nuxtjs/axios",
-    // "@nuxtjs/pwa",
+    "@nuxtjs/pwa",
     "@nuxtjs/auth",
     "@nuxtjs/toast",
     "@nuxtjs/markdownit"
@@ -93,7 +89,6 @@ export default {
       "markdown-it-admonition",
       "markdown-it-abbr",
       "markdown-it-slack",
-      // 'markvis',
     ]
   },
   /*
