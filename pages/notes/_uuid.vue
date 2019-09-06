@@ -13,6 +13,7 @@
   //TODO: Jump to section
   //TODO: Search-and-replace
   //TODO: save scroll pos
+  //TODO: battery & hour & time remaining before end of course in status bar
 
 .container
   TheNavbar(slide-out).slid-out
