@@ -215,4 +215,8 @@ export default {
     padding-left: 0
   .heading-text
     padding-right: 20px
+
++mobile
+  .CardNoteAdd, .ButtonFloating
+    display: none
 </style>

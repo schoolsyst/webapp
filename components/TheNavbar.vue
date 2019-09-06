@@ -110,30 +110,31 @@ $nav-padding: 20px
     padding-bottom: 20px
   +mobile
     z-index: 100
-    .NavbarButton[href="/notes"]
+    .NavbarButton[href="/schedule"]
       display: none
 
-.TheNavbar.slide-out
-  // positioning
-  left: -95px
-  // dimensions
-  padding: $nav-padding
-  // appearance
-  background: #000
-  border-top-right-radius: 10px
-  border-bottom-right-radius: 10px
-  box-shadow: none
-  .NavbarButton
-    opacity: 0
-  // animations
-  transition: all 0.25s ease
-  .NavbarButton
-    transition: opacity 0.25s ease 0.25s
-  // reactions
-  &:hover, &:focus, &.slid-out
-    background: #ffffff
-    +shadow(3)
-    left: 0
++tablet
+  .TheNavbar.slide-out
+    // positioning
+    left: -95px
+    // dimensions
+    padding: $nav-padding
+    // appearance
+    background: #000
+    border-top-right-radius: 10px
+    border-bottom-right-radius: 10px
+    box-shadow: none
     .NavbarButton
-      opacity: 1
+      opacity: 0
+    // animations
+    transition: all 0.25s ease
+    .NavbarButton
+      transition: opacity 0.25s ease 0.25s
+    // reactions
+    &:hover, &:focus, &.slid-out
+      background: #ffffff
+      +shadow(3)
+      left: 0
+      .NavbarButton
+        opacity: 1
 </style>

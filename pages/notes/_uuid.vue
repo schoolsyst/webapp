@@ -75,7 +75,10 @@
     }
     .admonition.failure p,
     .admonition.danger p,
-    .admonition.bug p {
+    .admonition.bug p,
+    .admonition.failure ul li,
+    .admonition.danger ul li,
+    .admonition.bug ul li {
       color: white
     }
     .admonition.failure p:not(.admonition-title),
@@ -589,6 +592,20 @@ export default {
   height: calc(100vh - 200px)
   width: 100%
   max-width: 50vw
+
++mobile
+  .MainGroupRight
+    height: auto
+    max-width: 100vw
+  .MainGroupLeft
+    display: none
+  .container
+    overflow-y: scroll
+
+.BarFloating
+  +mobile
+    display: none
+
 #mirror
   height: 100%
   width: 100%
@@ -598,4 +615,10 @@ export default {
   font-size: 18px
   *
     word-break: everywhere
+
+  +mobile
+    height: auto
+    overflow: visible
+    & /deep/ h1
+      font-size: 48px !important
 </style>
