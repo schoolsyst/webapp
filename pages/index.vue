@@ -177,7 +177,7 @@ export default {
       } else {
         condition = (exo) => moment(exo.due, 'YYYY-MM-DD').isSame(moment(), 'week')
       }
-      return this.pendingExercises.filter(condition).sort(exo => moment(exo.due,'YYYY-MM-DD').isAfter(moment()) ? 1 : -1)
+      return this.pendingExercises.filter(condition).sort(exo => moment(exo.due,'YYYY-MM-DD').isBefore(moment()) ? 1 : -1)
     },
   },
 
