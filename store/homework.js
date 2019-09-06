@@ -38,6 +38,9 @@ export const getters = {
   dueTests(state, getters) {
     return getters.allTests.filter(test => moment(test.due, 'YYYY-MM-DD').isAfter(moment()));
   },
+  pastTests(state, getters) {
+    return getters.allTests.filter(test => moment(test.due, 'YYYY-MM-DD').isSameOrBefore(moment()));
+  },
   ungradedTests(state, getters) {
     return getters.allTests.filter(test => !test.grades && !test.grades.length);
   },

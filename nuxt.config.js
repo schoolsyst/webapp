@@ -33,7 +33,7 @@ export default {
       {
         src:
           "https://cdnjs.cloudflare.com/ajax/libs/bodymovin/5.5.7/lottie.min.js"
-      },
+      }
     ]
   },
   /*
@@ -88,7 +88,7 @@ export default {
       "markdown-it-plot",
       "markdown-it-admonition",
       "markdown-it-abbr",
-      "markdown-it-slack",
+      "markdown-it-slack"
     ]
   },
   /*
