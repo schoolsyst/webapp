@@ -108,7 +108,7 @@ $nav-padding: 20px
     +shadow(5)
     padding-top: 20px
     padding-bottom: 20px
-  +mobile
+  +phone
     z-index: 100
     .NavbarButton[href="/schedule"]
       display: none
