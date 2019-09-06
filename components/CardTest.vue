@@ -1,11 +1,11 @@
 <template lang="pug">
 div.CardTest(:style="{backgroundColor: subject.color, color: textColor}")
     ModalDialogConfirm(
-        name="delete-test", 
+        :name="`delete-test-${uuid}`", 
         @confirm="deleteTest"
         confirm-text="Supprimer"
     )
-        | Confirmer supprimera ce contrôle définitivement
+        | Confirmer supprimera ce contrôle de {{subject.name}} définitivement
     .progress-infos
         span.subject-abbr {{subject.abbreviation}}
         span.percentage(v-if="totalProgressDisp !== '?'") {{totalProgressDisp}}%
@@ -32,8 +32,8 @@ div.CardTest(:style="{backgroundColor: subject.color, color: textColor}")
             span.info {{room}}
         p.date
             |le 
-            span.info {{dateDisp}}
-        ButtonIcon(open-modal="confirm-delete-test", open-at="center", :color="textColor" title="Supprimer ce contrôle").delete-test delete
+            input(type="date" v-model="mutDate").info
+        ButtonIcon(:open-modal="`confirm-delete-test-${uuid}`", open-at="center", :color="textColor" title="Supprimer ce contrôle").delete-test delete
     button.expand(@click="expanded = !expanded")
         i.material-icons
             template(v-if="expanded") expand_less
@@ -74,16 +74,14 @@ export default {
 
     data() { 
         return {
-            expanded: false
+            expanded: false,
+            mutDate: this.due
         }
     },
 
     computed: {
         textColor(zone) {
             return chroma(this.subject.color).get('lab.l') < 70 ? 'white' : 'black'
-        },
-        dateDisp() {
-            return moment(this.due, 'YYYY-MM-DD').format('DD/MM/YYYY')
         },
         gradeMax() {
             if (this.grades.length) return this.grades[0].maximum
@@ -126,6 +124,19 @@ export default {
                 this.$toast.success(`Contrôle de ${this.subject.name} supprimé`)
             } catch (error) {
                 this.$toast.error(`Erreur lors de la suppression: ${error}`)
+            }
+        },
+    },
+
+    watch: {
+        async mutDate() {
+            try {
+                const { data } = await this.$axios.patch(`/tests/${this.uuid}`, {
+                    date: this.mutDate
+                })
+                this.$toast.success(`Date modifiée avec succès`)
+            } catch(error) {
+                this.$toast.error(`Erreur lors du changement de la date: ${error}`)
             }
         }
     }
@@ -195,7 +206,8 @@ export default {
     line-height 1.1
     font-size 18px
     padding-bottom 20px
-    span.info
+    .info
+        color inherit
         font-weight bold
         margin-right 10px
 
