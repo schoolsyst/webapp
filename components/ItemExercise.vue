@@ -2,7 +2,7 @@
 //TODO: click to expand & show exercise notes, full title. Complete w/ the subject badge/dot
 //TODO: On expanded notes, linkify http[s]://domain.tld and also domain.tld if domain in ICANN domains.
 //TODO: expand less others when expanding this one (also for CardTest)
-li.ItemExercise(:class="{'expanded': expanded && !mutCompleted}")
+li.ItemExercise(:class="{'expanded': expanded && !mutCompleted}" :data-exercise-id="uuid")
   ModalDialogConfirm(
       :name="`delete-exercise-${uuid}`", 
       @confirm="deleteExercise"
@@ -148,14 +148,14 @@ export default {
   },
 
   mounted() {
-    let item = document.querySelector(`[data-exercise-id="${this.uuid}"]`);
+    let item = document.querySelector(`.ItemExercise[data-exercise-id="${this.uuid}"] .main-content`);
     if (!item) return
     let badge = item.querySelector(".BadgeSubject, .SubjectDot");
     this.initialInnerHTML = badge.innerHTML;
 
     item.addEventListener("mouseover", event => {
       if (!item.classList.contains("completed")) {
-        badge.innerHTML = '<i class="material-icons">check</span>';
+        badge.innerHTML = '<i class="material-icons" style="color:white;">check</span>';
       }
     });
     item.addEventListener("mouseout", event => {
