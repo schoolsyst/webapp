@@ -14,7 +14,7 @@
 
   TheHeading Prises de notes
 
-  ButtonFloating(icon="add", open-modal="add-note", open-at="self") Nouvelle note...
+  ButtonFloating(icon="add", open-modal="add-note", open-at="self").new-note-fab Nouvelle note...
   MainGroup(full-size)
     template(v-if="currentCourse")
       HeadingSub {{currentCourse.subject.name}}
@@ -217,6 +217,6 @@ export default {
     padding-right: 20px
 
 +mobile
-  .CardNoteAdd, .ButtonFloating
+  .CardNoteAdd, .ButtonFloating.new-note-fab
     display: none
 </style>
