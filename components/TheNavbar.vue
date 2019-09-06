@@ -104,7 +104,8 @@ $nav-padding: 20px
     bottom: 0
     display: flex
     justify-content: space-around
-    background: var(--offset-blue)
+    background: white
+    +shadow(5)
     padding-top: 20px
     padding-bottom: 20px
   +mobile
