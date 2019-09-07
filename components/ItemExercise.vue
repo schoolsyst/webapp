@@ -81,17 +81,12 @@ export default {
   methods: {
     switchCompleteStatus() {
       let item = document.querySelector(`[data-exercise-id="${this.uuid}"]`)
-      // get the completed state from the DOM now, and invert it 
-      // (the changes are reflected on the DOM *after* the method has run)
-      // we need this because otherwise, syncCompletionStatus has no way
-      // of knowing the completed state to switch to.
-      let completed = !item.classList.contains('completed')
       this.mutCompleted = !this.mutCompleted
       // Remove icon from badge innerHTML 
       // TODO: maybe do this with a .switching class instead? (this removes focus, no good for accessibility)
       item.blur() // Remove focus automatically, removing weird styling conflicts 
       item.querySelector('.BadgeSubject, .SubjectDot').innerHTML = this.initialInnerHTML
-      this.syncCompletionStatus(completed)
+      this.syncCompletionStatus(this.mutCompleted)
     },
     async syncCompletionStatus(completed) {
       // don't sync too much (every 5 secs. max)
