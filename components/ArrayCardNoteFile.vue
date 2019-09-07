@@ -15,7 +15,8 @@ export default {
 .ArrayCardNoteFile 
     display: flex
     flex-wrap: wrap
-    justify-content: center
+    +mobile
+        justify-content: center
 
 
 /deep/ li
