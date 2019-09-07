@@ -1,16 +1,23 @@
 <template lang="pug">
+    //FIXME: does not update valueDisp when it has been modified by hand
     span.BigNumber
         span.sign(
             v-if="sign.trim()"  
             :contenteditable="writables.includes('sign' )"
+            @input="onInput($event)"
+            @blur="onBlur()"
             :style="{color: signColor}"
         ) {{sign}}
         span.value(
             :contenteditable="writables.includes('value')"
+            @input="onInput($event)"
+            @blur="onBlur()"
         ) {{valueDisp}}
         span.unit(
             v-if="unit.trim()"  
             :contenteditable="writables.includes('unit' )"
+            @input="onInput($event)"
+            @blur="onBlur()"
         ) {{unit}}
     </span>
 </template>
@@ -36,6 +43,10 @@ export default {
         writables: {
             type: Array,
             default: () => []
+        },
+        fixed: {
+            type: Number,
+            default: null
         }
     },
 
@@ -63,7 +74,10 @@ export default {
             }
         },
         valueDisp() {
-            let val = Number(this.value).toFixed(2)
+            let val = Number(this.value)
+            if (this.fixed !== null) {
+                val = val.toFixed(this.fixed)
+            }
             // if it wasn't able to convert to a number, or the value is null/undefined
             let isUndef = val === 'NaN' || this.value === null || isNaN(this.value)
 
@@ -72,13 +86,25 @@ export default {
     },
 
 
-    created() {
-
-    },
-
-
     methods: {
+        onInput($event) {
+            $event.target.innerText = $event.target.innerText.replace(/—/, () => '')
+            if (!$event.target.innerText.length || isNaN($event.target.innerText)) {
+                $event.target.innerText = '—'
+            }
 
+            let range = document.createRange();//Create a range (a range is a like the selection but invisible)
+            range.selectNodeContents($event.target);//Select the entire contents of the element with the range
+            range.collapse(false);//collapse the range to the end point. false means collapse to end rather than the start
+            let selection = window.getSelection();//get the selection object (allows you to change selection)
+            selection.removeAllRanges();//remove any selections already made
+            selection.addRange(range);//make the range you have just created the visible selectio
+
+            this.$emit('input', $event.target.innerText)
+        },
+        onBlur() {
+            document.getSelection().removeAllRanges()
+        }
     }
 }
 </script>
@@ -90,6 +116,9 @@ export default {
     line-height: 96px
     font-weight: 500
 
+input.value
+    max-width: 150px
+
 
 .value, .sign 
     font-size: 96px
@@ -99,10 +128,6 @@ export default {
     font-weight: 500
     font-size: 56px
     opacity: 0.25
-
-.sign
-
-
 
 +mobile
     .value, .sign 

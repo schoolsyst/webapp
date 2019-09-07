@@ -7,7 +7,7 @@
         HeadingSub Contrôles prévus
         ul.due-tests
           li(v-for="test in dueTests", :key="test.uuid") 
-            ItemGrade(v-bind="test", :editable-fields="['goal', 'maximum', 'weight']" :disabled-fields="['actual']")
+            ItemGrade(v-bind="test", :editable-fields="['goal', 'maximum', 'weight', 'expected']" :disabled-fields="['actual']")
         HeadingSub Contrôles rendus
         ul.due-tests
           li(v-for="test in pastTests", :key="test.uuid") 
