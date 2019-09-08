@@ -1,5 +1,4 @@
 <template lang="pug">
-//FIXME: sometimes the modification date is null (not shown atleast)
 //-
   COMPONENT TREE
   Excluding single-use components (TheHeading, TheNavbar, TheFooter,...)
@@ -13,7 +12,6 @@
   //TODO: Jump to section
   //TODO: Search-and-replace
   //TODO: save scroll pos
-  //TODO: battery & hour & time remaining before end of course in status bar
 
 .container
   ModalAddNote(:subject="currentCourseSubject")
@@ -24,7 +22,7 @@
   TheNavbar(slide-out).slid-out
   BarFloating
     ButtonIcon(@click="saveSource" title="Télécharger la source (.md)") archive
-    //TODO: Ripple effect when @click on sync btn
+    //TODO: Ripple effect when @click on sync btn or Ctrl-S
     ButtonIcon(@click="sync"        title="Synchroniser") import_export
     ButtonIcon(@click="savePDF" title="Télécharger le rendu (.pdf)") file_copy
   MainGroup

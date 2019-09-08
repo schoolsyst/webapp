@@ -5,7 +5,6 @@ export const state = () => ({
     requireInitialSetup: false,
     settings: [],
     defaultSettings: [],
-    user: {} //TODO: uncomment this to see if it still works
 })
 
 export const getters = { 

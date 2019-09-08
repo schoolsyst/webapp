@@ -47,7 +47,6 @@ export const getters = {
         return pdate(getters.setting("year_end").value);
     }
   },
-  //TODO: offdays getter
   weekType: (state, getters) => date => {
     // get base Q1/Q2
     let base = getters.setting("starting_week_type").value;
@@ -83,7 +82,9 @@ export const getters = {
     // start = start.subtract(1, 'day')
     // loop through every date between start and upto
     for (let current = start; current.isBefore(upto); current.add(1, "day")) {
-      //TODO: continue if date in getters.offdays
+      if (getters.offdays.map(d => d.toISOString()).includes(current.toISOString())) {
+        continue
+      }
       weekday = [
         "monday",
         "tuesday",

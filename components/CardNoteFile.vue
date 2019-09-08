@@ -1,7 +1,6 @@
 <template lang="pug">
     li.CardNoteFile
         ModalDialogConfirm(@confirm="deleteNote", confirm-text="Supprimer", :name="`delete-note-${uuid}`" confirm-role="danger") Confirmer supprimera la note "{{name}}" #[strong pour toujours]
-        //TODO: maybe context-menu to delete?
         //TODO: subject color overlay on hover
         nuxt-link(:to="`/notes/${uuid}`")
           BaseCard.card
