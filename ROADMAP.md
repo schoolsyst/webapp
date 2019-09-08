@@ -7,13 +7,9 @@
     - missing: edit notions to learn
 - [x] note-taking
     - missing: quick actions in editor 
-        - new chapter
         - jump to file of same subject
-        - add exercise/test
     - missing: status bar in editor 
         - battery level
-        - time
-        - time remaining till end of course)
 - [ ] basic settings (no fromatting, just key-value text inputs)
 
 ## Just after (Open Beta)
