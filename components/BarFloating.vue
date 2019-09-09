@@ -13,7 +13,6 @@ export default {
 <style lang="sass" scoped>
 @import '~/assets/defaults'
 
-//TODO: pushed down effect when clicked
 .BarFloating
     // # self
     // ## positioning
@@ -43,4 +42,11 @@ export default {
         font-size: 35px
         // ## appearance
         color: #ffffff
+
+// REACTIONS
+//---------------------------------------------------
+
+.BarFloating:focus
+    box-shadow: 7px 7px 0 rgba(19,137,253,.25)
+    transform: translate(calc(-50% + 3px), 3px)
 </style>
