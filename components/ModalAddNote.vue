@@ -30,6 +30,7 @@ import InputFlat from "~/components/InputFlat.vue";
 import ButtonFlat from "~/components/ButtonFlat.vue";
 import PickerSubject from "~/components/PickerSubject.vue";
 import moment from "moment";
+import { mapGetters } from 'vuex';
 
 export default {
   name: "ModalAddNote",
@@ -58,7 +59,11 @@ export default {
       mutSubject: this.subject
     };
   },
-  computed: {},
+  computed: {
+    ...mapGetters({
+      subjectBySlug: 'subjectBySlug'
+    })
+  },
   methods: {
     async addNote() {
       let errs = [];
@@ -83,6 +88,8 @@ export default {
           created: moment().toISOString(),
           last_modified: moment().toISOString()
         });
+        data.subject = this.subjectBySlug(data.subject)
+        this.$store.commit('notes/ADD_NOTE', data)
         this.$toast.success(
           `Note "${this.newNoteName}" créée`
         );
