@@ -18,8 +18,8 @@ div.CardTest(:style="{backgroundColor: subject.color, color: textColor}")
     p.details(v-if="details") {{details}}
     HeadingSub(v-if="notes.length") À apprendre
     ul.notes(:class="{'expanded': expanded}" v-if="notes.length")
-        li(v-for="note in notes" :key="note.uuid")
-            CardTestNoteItem(v-if="expanded", v-bind="note")
+        li(v-for="note in getNotes" :key="note.uuid")
+            CardTestNoteItem(v-if="expanded", v-bind="note" :test-uuid="uuid")
             template(v-else) {{ note.name }}
     //TODO: make the infos modifiable
     .infos(:class="{'opened': expanded}")
@@ -80,8 +80,15 @@ export default {
     },
 
     computed: {
+        ...mapGetters({
+           allNotes: 'notes/allNotes' 
+        }),
         textColor(zone) {
             return chroma(this.subject.color).get('lab.l') < 70 ? 'white' : 'black'
+        },
+        getNotes() {
+            let uuids = this.notes.map(n => n.uuid)
+            return this.allNotes.filter(n => uuids.includes(n.uuid))
         },
         gradeMax() {
             if (this.grades.length) return this.grades[0].maximum

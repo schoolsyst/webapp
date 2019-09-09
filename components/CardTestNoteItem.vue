@@ -2,7 +2,7 @@
 div.CardTestNoteItem
     .top
         span.name {{name}}
-        span.progress-percentage #[input(:value="mutProgress" @input="updateProgress($event.target.value); uploadProgress($event.target.value)")]%
+        span.progress-percentage #[input(:value="mutProgress" @input="updateProgress($event.target.value); uploadProgress()")]%
     .progress-bar-total(
         :class="{'undefined': mutProgress === '?', 'text-is-white': textIsWhite}"
     )
@@ -36,11 +36,12 @@ export default {
         name: String,
         learnt: Number,
         uuid: String,
-        subject: Object
+        subject: Object,
+        testUuid: String
     },
     data() {
         let progress 
-        if (this.learnt === -1 || this.learnt === undefined) {
+        if (this.learnt === -1 || this.learnt === undefined || this.learnt === null) {
             progress = '?'
         } else {
             progress = this.learnt * 100
@@ -65,13 +66,22 @@ export default {
     methods: {
         updateProgress(percentage) {
             this.mutProgress = percentage
-            let progress = percentage === '?' ? -1 : progress/100 // Divide by 100 if not "?" else -1
-            this.$store.commit('notes/SET_NOTE_PROGRESS', this.uuid, progress)
+            let progress = percentage === '?' ? null : percentage/100 // Divide by 100 if not "?" else null
+            this.$store.commit('notes/SET_NOTE_PROGRESS', {uuid: this.uuid, progress})
         },
 
-        uploadProgress: debounce((percentage) => {
-            console.log($nuxt)
-        })
+        async _uploadProgress() {
+            let progress = this.mutProgress === '?' ? null : this.mutProgress/100
+            try {
+                await this.$axios.patch(`/notes/${this.uuid}/`, {learnt: progress})
+                this.$toast.success(`Progrès mis à jour avec succès`)
+            } catch(error) {
+                this.$toast.error(`Erreur lors de la mise à jour du progrès: ${error}`)
+            }
+        },
+        uploadProgress: debounce(function() {
+            this._uploadProgress()
+        }, 500)
     }
 }
 </script>
