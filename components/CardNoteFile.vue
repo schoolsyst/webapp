@@ -1,31 +1,32 @@
 <template lang="pug">
-    <li class="CardNoteFile">
+    li.CardNoteFile
+        ModalDialogConfirm(@confirm="deleteNote", confirm-text="Supprimer", :name="`delete-note-${uuid}`" confirm-role="danger") Confirmer supprimera la note "{{name}}" #[strong pour toujours]
         //TODO: maybe context-menu to delete?
         //TODO: subject color overlay on hover
-        <nuxt-link :to="`/notes/${uuid}`">
-            <BaseCard class="card">
-                <p class="detail" v-html="detailDisp"></p>
-                <p class="content-preview">{{contentPreview}}</p>
-            </BaseCard>
-            h4.title 
-                SubjectDot(v-bind="subject")
-                span.title-text {{name}}
-        </nuxt-link>
+        nuxt-link(:to="`/notes/${uuid}`")
+          BaseCard.card
+              p.detail(v-html="detailDisp")
+              p.content-preview {{contentPreview}}
+
+        ButtonIcon.delete(:open-modal="`confirm-delete-note-${uuid}`" color="black") delete
+        nuxt-link(:to="`/notes/${uuid}`")
+          h4.title
+              SubjectDot(v-bind="subject")
+              span.title-text {{name}}
     </li>
 </template>
 
 <script>
 import BaseCard from "~/components/BaseCard.vue";
 import SubjectDot from "~/components/SubjectDot.vue";
+import ButtonIcon from '~/components/ButtonIcon.vue'
+import ModalDialogConfirm from '~/components/ModalDialogConfirm.vue'
 import moment from "moment";
 
 export default {
   name: "CardNoteFile",
 
-  components: {
-    BaseCard,
-    SubjectDot
-  },
+  components: {BaseCard, SubjectDot, ButtonIcon, ModalDialogConfirm},
 
   props: {
     detail: String,
@@ -65,13 +66,24 @@ export default {
 
   created() {},
 
-  methods: {}
+  methods: {
+    async deleteNote() {
+      try {
+        const { data } = await this.$axios.delete(`/notes/${this.uuid}`)
+        this.$store.commit('notes/DELETE_NOTE', this.uuid)
+        this.$toast.success(`Note supprimée`)
+      } catch(error) {
+        this.$toast.error(`Erreur lors la suppression de la note: ${error}`)
+      }
+    },
+  }
 };
 </script>
 
 <style lang="sass" scoped>
 @import '~/assets/defaults'
 .CardNoteFile 
+    position: relative
     height: 320px
     width: 220px
 
@@ -118,4 +130,19 @@ export default {
     line-height: 1.2
     max-height: 180px
     // overflow-wrap: anywhere
+
+.delete
+    position: absolute
+    bottom: 50px
+    right: 10px
+    //---------------------------------------------------
+    /deep/ .icon
+      font-size: 30px
+    //---------------------------------------------------
+    display: none
+
+//REACTIONS
+//---------------------------------------------------
+.CardNoteFile:hover .delete
+  display: block
 </style>

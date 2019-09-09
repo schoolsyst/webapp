@@ -19,26 +19,31 @@ export const getters = {
         if (note.length) return note[0]
         return null
     },
+    noteByUUID: (state, getters) => (uuid) => {
+        return state.notes.find(n => n.uuid === uuid)
+    }
 
 }
 
 export const mutations = { 
     SET_NOTES (state, notes) {
-        if (notes && typeof notes === 'object') {
+        if (notes) {
             state.notes = notes
         } else {
-            console.error(`Mutation aborted: given \`notes\` object is falsey`)
+            console.error(`Mutation aborted: given \`notes\` is falsey`)
         }
     },
     ADD_NOTE (state, note) {
         state.notes.push(note)
     },
-    REMOVE_NOTE (state, note) {
-        state.notes.indexOf  
+    DELETE_NOTE (state, uuid) {
+        state.notes = state.notes.filter(n => n.uuid !== uuid)
     },
-    SET_NOTE_PROGRESS (state, uuid, progress) {
-        if (progress = '?' 
-         || progress.isNaN() 
+    SET_NOTE_PROGRESS (state, args) {
+        let progress = args.progress
+        let uuid = args.uuid
+        if (progress === '?' 
+         || isNaN(progress)
          || progress === null 
          || progress === -1
         ) {
@@ -52,9 +57,17 @@ export const mutations = {
         let note = state.notes.find(n => n.uuid === uuid)
         if (!note) {
             console.error(`SET_NOTE_PROGRESS: Note with UUID "${uuid}" not found in the state.`)
-            return
+        } else {
+            note.learn = progress
+            state.notes = state.notes.filter(n => n.uuid !== uuid)
+            state.notes.push(note)
         }
-        state.notes[state.notes.indexOf(note)].learnt = progress
+    },
+    UPDATE_NOTE (state, { uuid, data }) {
+        let note = state.notes.find(n => n.uuid === uuid)
+        Object.assign(note, data)
+        state.notes = state.notes.filter(n => n.uuid !== uuid)
+        state.notes.push(note)
     }
  }
 
