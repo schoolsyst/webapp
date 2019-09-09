@@ -31,6 +31,7 @@
           name="search"
           placeholder="Rechercher un fichier"
           v-model="searchText"
+          maxlength="30"
         )
         DropdownFlat(
           icon="sort"
@@ -38,11 +39,11 @@
           :options="sortOptions"
           v-model="sortBy",
           @input="sortBy = $event.target.value"
-        ) Date de modification
+        )
     ArrayCardNoteFile
       CardNoteAdd(v-if="!currentCourse")
       CardNoteFile(
-        v-for="(card, i) in searchedCards"
+        v-for="(card, i) in searchedAndSortedCards"
         :key="i"
         v-bind="card"
       )
@@ -134,14 +135,17 @@ export default {
       }
       let cards = this.notesToCards(notes)
       this.fuse = new Fuse(cards, {
-        keys: ['name'],
-        id: 'uuid'
+        keys: ['name', 'content', 'subject.name'],
+        id: 'uuid',
+        shouldSort: false,
+        threshold: 0.2,
+        maxPatternLength: 32
       })
       return cards
       
     },
     currentSubjectCards() {
-      return this.notesToCards(this.notes).filter(card => card.subject.slug === this.currentCourseSubject.slug)
+      return this.notesToCards(this.notes).filter(card => card.subject.slug === this.currentCourseSubject.slug).sort((a, b) => moment(a.last_modified).isBefore(b.last_modified) ? 1 : -1)
     },
     searchedCards() {
       if (this.searchText) {
@@ -150,7 +154,10 @@ export default {
       } else {
         return this.allCards
       }
-    }
+    },
+    searchedAndSortedCards() {
+      return this.searchedCards.sort((a, b) => moment(a[this.sortBy]).isBefore(b[this.sortBy]) ? 1 : -1)
+    },
   },
 
   methods: {
