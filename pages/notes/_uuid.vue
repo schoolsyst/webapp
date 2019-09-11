@@ -1,5 +1,4 @@
 <template lang="pug">
-//FIXME: sometimes the modification date is null (not shown atleast)
 //-
   COMPONENT TREE
   Excluding single-use components (TheHeading, TheNavbar, TheFooter,...)
@@ -15,10 +14,15 @@
   //TODO: save scroll pos
 
 .container
+  ModalAddNote(:subject="currentCourseSubject")
+  ModalAddExercise(:subject="currentCourseSubject")
+  ModalAddTest(:subject="currentCourseSubject")
+
+
   TheNavbar(slide-out).slid-out
   BarFloating
     ButtonIcon(@click="saveSource" title="Télécharger la source (.md)") archive
-    //TODO: Ripple effect when @click on sync btn
+    //TODO: Ripple effect when @click on sync btn or Ctrl-S
     ButtonIcon(@click="sync"        title="Synchroniser") import_export
     ButtonIcon(@click="savePDF" title="Télécharger le rendu (.pdf)") file_copy
   MainGroup
@@ -26,6 +30,26 @@
       textarea#editor(v-model="content") 
     MainGroupRight(v-if="content")
       #mirror(v-html="$md.render(content)")
+    .bottom-bar
+      ul.status
+        li(v-if="timeRemaining", title="Temps avant la fin du cours") {{timeRemaining.format(`H[h]m`)}}
+        li {{now.format('HH:mm')}}
+      ArrayButtonFlat.actions
+        ButtonFlat(
+          icon='note_add', 
+          open-modal="add-note", 
+          open-at="self"
+        ) Nouveau chapitre
+        ButtonFlat(
+          icon='edit', 
+          open-modal="add-exercise", 
+          open-at="center"
+        ) Devoir
+        ButtonFlat(
+          icon='format_list_bulleted'
+          open-modal="add-test",
+          open-at="center"
+        ) Contrôle
   style.
     h2 {
       margin-top: 20px;
@@ -74,7 +98,10 @@
     }
     .admonition.failure p,
     .admonition.danger p,
-    .admonition.bug p {
+    .admonition.bug p,
+    .admonition.failure ul li,
+    .admonition.danger ul li,
+    .admonition.bug ul li {
       color: white
     }
     .admonition.failure p:not(.admonition-title),
@@ -188,6 +215,9 @@ import MainGroupLeft from "~/components/MainGroupLeft.vue";
 import MainGroupRight from "~/components/MainGroupRight.vue";
 import ButtonIcon from "~/components/ButtonIcon.vue";
 import BarFloating from "~/components/BarFloating.vue";
+import ModalAddExercise from "~/components/ModalAddExercise.vue";
+import ModalAddNote from "~/components/ModalAddNote.vue";
+import ModalAddTest from "~/components/ModalAddTest.vue";
 export default {
   layout: "bare",
   components: {
@@ -196,7 +226,12 @@ export default {
     MainGroupLeft,
     MainGroupRight,
     BarFloating,
-    ButtonIcon
+    ButtonIcon,
+    ArrayButtonFlat,
+    ButtonFlat,
+    ModalAddNote,
+    ModalAddExercise,
+    ModalAddTest,
   },
 
   async asyncData({ store, app, route }) {
@@ -226,6 +261,7 @@ export default {
     return {
       content: "Chargement...",
       lastSave: moment(),
+      now: moment(),
       autosyncInterval: null,
       shortcuts: [
         {
@@ -330,6 +366,9 @@ export default {
   },
 
   mounted() {
+    setInterval(() => {
+      this.now = moment()
+    }, 1000);
     let content;
     let editor = document.getElementById('editor')
     let mirror = document.getElementById('mirror')
@@ -496,8 +535,19 @@ export default {
 
   computed: {
     ...mapGetters({
-      note: "notes/note"
-    })
+      note: "notes/noteByUUID",
+      currentCourse: "schedule/currentCourse",
+      fCurrentCourseSubject: "schedule/currentCourseSubject",
+    }),
+    timeRemaining() {
+      let currentCourse = this.currentCourse(this.now)
+      if (!currentCourse) return null
+      let seconds = Math.abs(moment(currentCourse.end, 'HH:mm').diff(moment(), 'seconds'))
+      return moment().startOf('day').seconds(seconds)
+    },
+    currentCourseSubject() {
+      return this.fCurrentCourseSubject(this.now)
+    },
   },
 
   methods: {
@@ -539,6 +589,7 @@ export default {
       // update note name
       let noteName = document.getElementsByTagName('h1')[0].innerText
       this.name = noteName
+      this.$store.commit('notes/UPDATE_NOTE', {uuid: this.uuid, data: {name: this.name}})
       this.uploadToServer(this.content, force, noteName);
     },
     saveSource() {
@@ -588,6 +639,20 @@ export default {
   height: calc(100vh - 200px)
   width: 100%
   max-width: 50vw
+
++mobile
+  .MainGroupRight
+    height: auto
+    max-width: 100vw
+  .MainGroupLeft, .bottom-bar
+    display: none
+  .container
+    overflow-y: scroll
+
+.BarFloating
+  +mobile
+    display: none
+
 #mirror
   height: 100%
   width: 100%
@@ -597,4 +662,35 @@ export default {
   font-size: 18px
   *
     word-break: everywhere
+
+  +mobile
+    height: auto
+    overflow: visible
+    & /deep/ h1
+      font-size: 48px !important
+
+.status
+  position: fixed
+  bottom: 20px
+  right: 20px
+  //---------------------------------------------------
+  display: flex
+  li
+    font-size: 24px
+    //---------------------------------------------------
+    &:not(:last-child)
+      margin-right: 20px
+    //---------------------------------------------------
+    font-family: 'Roboto Mono', monospace
+    list-style: none
+
+.actions
+  position: fixed
+  bottom: 20px
+  left: 0px
+  //---------------------------------------------------
+  display: flex
+  li
+    font-size: 24px
+
 </style>

@@ -2,7 +2,7 @@
 //TODO: click to expand & show exercise notes, full title. Complete w/ the subject badge/dot
 //TODO: On expanded notes, linkify http[s]://domain.tld and also domain.tld if domain in ICANN domains.
 //TODO: expand less others when expanding this one (also for CardTest)
-li.ItemExercise(:class="{'expanded': expanded && !mutCompleted}")
+li.ItemExercise(:class="{'expanded': expanded && !mutCompleted}" :data-exercise-id="uuid")
   ModalDialogConfirm(
       :name="`delete-exercise-${uuid}`", 
       @confirm="deleteExercise"
@@ -81,17 +81,12 @@ export default {
   methods: {
     switchCompleteStatus() {
       let item = document.querySelector(`[data-exercise-id="${this.uuid}"]`)
-      // get the completed state from the DOM now, and invert it 
-      // (the changes are reflected on the DOM *after* the method has run)
-      // we need this because otherwise, syncCompletionStatus has no way
-      // of knowing the completed state to switch to.
-      let completed = !item.classList.contains('completed')
       this.mutCompleted = !this.mutCompleted
       // Remove icon from badge innerHTML 
       // TODO: maybe do this with a .switching class instead? (this removes focus, no good for accessibility)
       item.blur() // Remove focus automatically, removing weird styling conflicts 
       item.querySelector('.BadgeSubject, .SubjectDot').innerHTML = this.initialInnerHTML
-      this.syncCompletionStatus(completed)
+      this.syncCompletionStatus(this.mutCompleted)
     },
     async syncCompletionStatus(completed) {
       // don't sync too much (every 5 secs. max)
@@ -148,14 +143,14 @@ export default {
   },
 
   mounted() {
-    let item = document.querySelector(`[data-exercise-id="${this.uuid}"]`);
+    let item = document.querySelector(`.ItemExercise[data-exercise-id="${this.uuid}"] .main-content`);
     if (!item) return
     let badge = item.querySelector(".BadgeSubject, .SubjectDot");
     this.initialInnerHTML = badge.innerHTML;
 
     item.addEventListener("mouseover", event => {
       if (!item.classList.contains("completed")) {
-        badge.innerHTML = '<i class="material-icons">check</span>';
+        badge.innerHTML = '<i class="material-icons" style="color:white;">check</span>';
       }
     });
     item.addEventListener("mouseout", event => {

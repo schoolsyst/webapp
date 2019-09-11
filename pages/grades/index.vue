@@ -1,25 +1,22 @@
-<template>
-  <!-- COMPONENT TREE
-Excluding single-use components (TheHeading, TheNavbar, TheFooter,...)
+<template lang="pug">
+  div.container
+    TheHeading Notes
+    ArrayButtonFlat 
+    MainGroup.full-size
+      MainGroupLeft
+        HeadingSub Contrôles prévus
+        ul.due-tests
+          li(v-for="test in dueTests", :key="test.uuid") 
+            ItemGrade(v-bind="test", :editable-fields="['goal', 'maximum', 'weight', 'expected']" :disabled-fields="['actual']")
+        HeadingSub Contrôles rendus
+        ul.due-tests
+          li(v-for="test in pastTests", :key="test.uuid") 
+            ItemGrade(v-bind="test", :editable-fields="['goal', 'maximum', 'weight', 'expected', 'actual']")
 
-ArrayButtonFlat
-MainGroup
-    MainGroupLeft
-    MainGroupRight
-  -->
+      MainGroupRight
+        HeadingAlt Statistiques
+        p À venir!
 
-  <div class="container">
-    <TheHeading>Notes</TheHeading>
-    <ArrayButtonFlat></ArrayButtonFlat>
-    <MainGroup>
-      <MainGroupLeft>
-        <HeadingSub></HeadingSub>
-      </MainGroupLeft>
-      <MainGroupRight>
-        <HeadingSub></HeadingSub>
-      </MainGroupRight>
-    </MainGroup>
-  </div>
 </template>
 
 <script>
@@ -31,6 +28,9 @@ import MainGroup from "~/components/MainGroup.vue";
 import MainGroupLeft from "~/components/MainGroupLeft.vue";
 import MainGroupRight from "~/components/MainGroupRight.vue";
 import HeadingSub from "~/components/HeadingSub.vue";
+import HeadingAlt from '~/components/HeadingAlt.vue'
+import ItemGrade from '~/components/ItemGrade.vue'
+import moment from 'moment';
 
 export default {
   components: {
@@ -40,16 +40,28 @@ export default {
     MainGroup,
     MainGroupLeft,
     MainGroupRight,
-    HeadingSub
+    HeadingSub,
+    HeadingAlt,
+    ItemGrade,
   },
 
-  data() {
-    return {};
-  }
+  computed: {
+    ...mapGetters({
+      dueTests: "homework/dueTests",
+      pastTests: "homework/pastTests"
+    }),
+  },
+
 };
 </script>
 
-<style lang="sass" scoped>
-@import '~/assets/defaults'
+<style lang="stylus" scoped>
+.HeadingSub
+  margin-top 10px
 
+.due-tests
+  margin-top: 20px
+  display grid
+  grid-template-columns 1fr 1fr
+  grid-gap 30px
 </style>

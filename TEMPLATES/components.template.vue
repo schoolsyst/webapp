@@ -6,10 +6,17 @@
 
 export default {
     name: '#__NAME#',
+
+    components: {
+        #COMPONENTS#
+    },
+
+    props: {
+        #PROPS#
+    },
 }
 </script>
 
-<style lang="sass" scoped>
-@import '~/assets/defaults'
+<style lang="stylus" scoped>
 
 </style>

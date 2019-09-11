@@ -14,7 +14,11 @@ export default {
   components: {
     TheNavbar,
     TheFooter
-  }
+  },
+  mounted() {
+    // fix weird nuxt bug where the exercises+test arrays are duped outside of the #__nuxt container
+    document.querySelectorAll('body > *:not(#__nuxt)').forEach(e => e.remove())
+  },
 };
 </script>
 

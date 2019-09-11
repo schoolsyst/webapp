@@ -38,6 +38,9 @@ export const getters = {
   dueTests(state, getters) {
     return getters.allTests.filter(test => moment(test.due, 'YYYY-MM-DD').isAfter(moment()));
   },
+  pastTests(state, getters) {
+    return getters.allTests.filter(test => moment(test.due, 'YYYY-MM-DD').isSameOrBefore(moment()));
+  },
   ungradedTests(state, getters) {
     return getters.allTests.filter(test => !test.grades && !test.grades.length);
   },
@@ -126,16 +129,20 @@ export const getters = {
     })
     return sorted
   },
+  test: (state, getters) => (uuid) => {
+    return state.tests.find(t => t.uuid === uuid)
+  },
   
 };
 
 export const mutations = {
-  UPDATE_GRADE(state, uuid, newGrade) {
+  UPDATE_GRADE(state, args) {
+    let { uuid, data } = args
     // Get grade
-    grade = state.grades.filter(grade => grade.uuid === uuid)[0];
+    let grade = state.grades.find(grade => grade.uuid === uuid);
 
     // Compute new grade
-    Object.assign(grade, newGrade);
+    Object.assign(grade, data);
 
     // Remove the original grade
     state.grades = state.grades.filter(grade => grade.uuid !== uuid);
@@ -143,31 +150,33 @@ export const mutations = {
     // Add the modified grade
     state.grades.push(grade);
   },
-  UPDATE_EXERCISE(state, uuid, newExercise) {
+  UPDATE_EXERCISE(state, args) {
+    let { uuid, data } = args
     // Get exercise
-    exercise = state.grades.filter(exercise => exercise.uuid === uuid)[0];
+    let exercise = state.exercises.find(exercise => exercise.uuid === uuid);
 
     // Compute new exercise
-    Object.assign(exercise, newExercise);
+    Object.assign(exercise, data);
 
     // Remove the original exercise
-    state.grades = state.grades.filter(exercise => exercise.uuid !== uuid);
+    state.exercises = state.exercises.filter(exercise => exercise.uuid !== uuid);
 
     // Add the modified exercise
-    state.grades.push(exercise);
+    state.exercises.push(exercise);
   },
-  UPDATE_TEST(state, uuid, newTest) {
+  UPDATE_TEST(state, args) {
+    let { uuid, data } = args
     // Get test
-    test = state.grades.filter(test => test.uuid === uuid)[0];
+    let test = state.tests.find(test => test.uuid === uuid);
 
     // Compute new test
-    Object.assign(test, newTest);
+    Object.assign(test, data);
 
     // Remove the original test
-    state.grades = state.grades.filter(test => test.uuid !== uuid);
+    state.tests = state.tests.filter(test => test.uuid !== uuid);
 
     // Add the modified test
-    state.grades.push(test);
+    state.tests.push(test);
   },
   SET_TESTS(state, tests) {
     state.tests = tests;

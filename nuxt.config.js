@@ -33,7 +33,7 @@ export default {
       {
         src:
           "https://cdnjs.cloudflare.com/ajax/libs/bodymovin/5.5.7/lottie.min.js"
-      },
+      }
     ]
   },
   /*
@@ -59,16 +59,12 @@ export default {
     // '~/plugins/kbshortcuts.js'
   ],
   /*
-   ** Nuxt.js dev-modules
-   */
-  devModules: [],
-  /*
    ** Nuxt.js modules
    */
   modules: [
     // Doc: https://axios.nuxtjs.org/usage
     "@nuxtjs/axios",
-    // "@nuxtjs/pwa",
+    "@nuxtjs/pwa",
     "@nuxtjs/auth",
     "@nuxtjs/toast",
     "@nuxtjs/markdownit"
@@ -92,8 +88,7 @@ export default {
       "markdown-it-plot",
       "markdown-it-admonition",
       "markdown-it-abbr",
-      "markdown-it-slack",
-      // 'markvis',
+      "markdown-it-slack"
     ]
   },
   /*

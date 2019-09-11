@@ -8,7 +8,8 @@ BaseFlatComponent.InputFlat(:class="`input_${name}`" :icon="icon" :icon-style="i
         :type="type",
         :value="inputVal"
         @input="inputVal = $event.target.value; $emit('input', $event.target.value)",
-        :autofocus="autofocus ? 'autofocus' : 'no'"
+        :autofocus="autofocus ? 'autofocus' : 'no'",
+        :maxlength="maxlength"
     )
 </template>
 
@@ -38,7 +39,11 @@ export default {
     autofocus: {
       type: Boolean,
       default: false
-    }
+    },
+    maxlength: {
+      type: String,
+      default: false
+    },
   },
 
   data() {

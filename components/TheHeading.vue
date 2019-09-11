@@ -15,7 +15,7 @@ export default {
 .TheHeading
     font-weight: 100
     +mobile
-        font-size: 64px
+        font-size: 48px
         margin-bottom: 5px
     +desktop 
         font-size: 96px

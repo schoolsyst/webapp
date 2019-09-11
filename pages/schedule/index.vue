@@ -88,6 +88,7 @@ export default {
         return {
             scheduleNow: moment(),
             now: moment(),
+            //TODO: dynamically determine PX_PER_MIN & EVENT_WIDTH to fit neatly into 100vh & 2/3*100vw
             PX_PER_MIN: 1.45, // height: 2 pixels / minute of the event duration
             EVENT_WIDTH: 175, //in pixels
             clickedEvent: {}

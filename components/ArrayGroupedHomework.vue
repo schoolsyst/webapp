@@ -89,20 +89,23 @@ export default {
                 // show the full thing
                 dayFmt = "dddd DD MMM YYYY";
             }
-            return m.diff(moment(), 'days') >= 3 ? m.format(dayFmt).replace('.', '') : '';
+            let daysDiff =  m.diff(moment(), 'days')
+            return daysDiff >= 3 && daysDiff !== 7 ? m.format(dayFmt).replace('.', '') : '';
         },
         formatDelta(date) {
             moment.locale("fr");
-            let m = moment(date)
-            if (m.diff(moment(), 'hours') < 12) {
+            let m = moment(date);
+            if (m.date() === moment().date()) {
                 return "Bientôt"
             } else if (m.diff(moment(), 'hours') >= 12 && m.diff(moment(), 'hours') <= 24) {
                 return "Demain"
             }
             return m
                 .fromNow(true)
+                .replace(/\d+ [hH]eures?/, "demain")
                 .replace("un jour", "demain")
-                .replace("2 jours", "après-demain");
+                .replace("2 jours", "après-demain")
+                .replace("7 jours", "dans une semaine")
         },
         showThisGroup(group) {
             let completedExercisesLength = group[1].exercises ? group[1].exercises.filter(ex => !ex.completed).length : 0

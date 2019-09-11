@@ -1,9 +1,10 @@
+import flatten from 'lodash.flatten'
+
 export const state = () => ({
     subjects: [],
     requireInitialSetup: false,
     settings: [],
     defaultSettings: [],
-    user: {} //TODO: uncomment this to see if it still works
 })
 
 export const getters = { 
@@ -87,17 +88,18 @@ export const actions = {
             commit('notes/SET_NOTES', res.data)
             console.log(`${res.data.length} note(s) set.`)
 
-            res = await app.$axios.get("/tests/")
-            commit("homework/SET_TESTS", res.data)
-            console.log(`${res.data.length} test(s) set.`)
-
+            
             res = await app.$axios.get('/exercises/')
             commit('homework/SET_EXERCISES', res.data)
             console.log(`${res.data.length} exercise(s) set.`)
 
-            res = await app.$axios.get('/grades/')
-            commit('homework/SET_GRADES', res.data)
-            console.log(`${res.data.length} grade(s) set.`)
+            res = await app.$axios.get("/tests/")
+            commit("homework/SET_TESTS", res.data)
+            console.log(`${res.data.length} test(s) set.`)
+            
+            let grades = flatten(res.data.map(test => test.grades))
+            commit('homework/SET_GRADES', grades)
+            console.log(`${grades.length} grade(s) set.`)
         } catch (error) {
             console.error(error)
         }
