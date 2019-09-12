@@ -1,24 +1,5 @@
 <template lang="pug">
 
-//-
-  COMPONENT TREE
-  Excluding single-use components (TheHeading, TheNavbar, TheFooter,...)
-  And modals
-
-  ArrayButtonFlat
-    ButtonFlat ×4
-  MainGroup
-    MainGroupLeft
-      HeadingSub
-      CardCourseUpcoming
-      HeadingSub
-      CardHomeworkUpcoming
-    MainGroupRight
-      HeadingSub
-      BigNumber
-      HeadingSub
-      BigNumber
-
 .container
   ModalAddNote(:subject="currentCourseSubject")
   ModalAddExercise(:subject="currentCourseSubject")
@@ -30,22 +11,22 @@
     span.anim--blink :
     | {{now.format('mm')}}
   ArrayButtonFlat
-    ButtonFlat(
+    li: ButtonFlat(
       icon='edit', 
       open-modal="add-exercise", 
       open-at="center"
     ) Devoir
-    ButtonFlat.nomobile(
+    li: ButtonFlat.nomobile(
       icon='note_add', 
       open-modal="add-note", 
       open-at="self"
     ) Nouveau chapitre
-    ButtonFlat(
+    li: ButtonFlat(
       icon='format_list_bulleted'
       open-modal="add-test",
       open-at="center"
     ) Contrôle
-    ButtonFlat.nomobile(
+    li: ButtonFlat.nomobile(
       icon='insert_drive_file',
       @click.native="openCurrentSubjectLatestNote",
       :class="{'disabled': !currentCourse}"
@@ -66,8 +47,7 @@
         HeadingSub(has-inline-buttons)
           | Devoirs de la semaine
           ArrayButtonFlat(inline)
-              ButtonFlat(icon="arrow_forward")
-                nuxt-link.goto-homework(to="/homework") Voir tout
+              li: ButtonFlat(icon="arrow_forward"): nuxt-link.goto-homework(to="/homework") Voir tout
         ArrayItemExercise
           ItemExercise(v-for="exercise in exercises", :key="exercise.uuid" v-bind="exercise")
     MainGroupRight

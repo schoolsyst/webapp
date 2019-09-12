@@ -30,14 +30,15 @@
       HeadingAlt(has-inline-buttons) Exercices&nbsp;
         ButtonFlat(open-modal="add-exercise", open-at="center" icon="add" inline large-icon)
       ArrayButtonFlat
-        input(type="checkbox", v-model="showCompleted")#field_show-completed
-        label(for="field_show-completed") Voir les exercices terminés
+        li
+          input(type="checkbox", v-model="showCompleted")#field_show-completed
+          label(for="field_show-completed") Voir les exercices terminés
       ArrayGroupedHomework(:groups="groupedHomework", show="exercises", :show-completed="showCompleted")
     MainGroupRight
       HeadingAlt(has-inline-buttons) Contrôles
         ButtonFlat(open-modal="add-test", open-at="center" icon="add" inline large-icon)
       ArrayButtonFlat
-        DropdownFlat(
+        li: DropdownFlat(
           :options="sortingOptions"
           icon="sort"
           v-model="sortBy"

@@ -1,5 +1,5 @@
 <template lang="pug">
-    li.BaseFlatComponent(:class="{'large-icon': largeIcon, 'small': small}")
+    .BaseFlatComponent(:class="{'large-icon': largeIcon, 'small': small}")
         label.icon(:class="iconStyleClass" :for="labelFor") {{icon}}
         slot
 </template>

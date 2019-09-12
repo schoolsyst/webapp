@@ -28,7 +28,7 @@ li.ItemExercise(:class="{'expanded': expanded && !mutCompleted}" :data-exercise-
       i.material-icons.icon {{expanded ? 'expand_less' : 'expand_more'}}
   .expanded-content
     p.full-name {{name}}
-    textarea.notes(v-model="mutNotes", :id="`field_${uuid}-notes`")
+    textarea.notes(v-model="mutNotes", :id="`field_${uuid}-notes`", cols=0, rows=0)
     .date-and-delete
       .date
         label(:for="`field_${uuid}-date`") À rendre pour le
@@ -39,17 +39,20 @@ li.ItemExercise(:class="{'expanded': expanded && !mutCompleted}" :data-exercise-
 
 <script>
 import BadgeSubject from "~/components/BadgeSubject.vue";
-import SubjectDot from '~/components/SubjectDot.vue'
-import ButtonFlat from '~/components/ButtonFlat.vue'
-import ModalDialogConfirm from '~/components/ModalDialogConfirm.vue'
-import moment from 'moment';
-import debounce from 'lodash.debounce'
-import { mapMutations } from 'vuex';
+import SubjectDot from "~/components/SubjectDot.vue";
+import ButtonFlat from "~/components/ButtonFlat.vue";
+import ModalDialogConfirm from "~/components/ModalDialogConfirm.vue";
+import moment from "moment";
+import debounce from "lodash.debounce";
+import { mapMutations } from "vuex";
 
 export default {
   name: "ItemExercise",
   components: {
-    BadgeSubject, SubjectDot, ButtonFlat, ModalDialogConfirm
+    BadgeSubject,
+    SubjectDot,
+    ButtonFlat,
+    ModalDialogConfirm
   },
   props: {
     subject: Object,
@@ -65,92 +68,109 @@ export default {
     mnml: {
       type: Boolean,
       default: false
-    },
+    }
   },
 
-  data() { return {
-    badgeHasCheckmark: false,
-    initialInnerHTML: '',
-    lastCompletionSync: null,
-    mutCompleted: this.completed,
-    mutDue: this.due,
-    mutNotes: this.notes,
-    expanded: false
-  }},
+  data() {
+    return {
+      badgeHasCheckmark: false,
+      initialInnerHTML: "",
+      lastCompletionSync: null,
+      mutCompleted: this.completed,
+      mutDue: this.due,
+      mutNotes: this.notes,
+      expanded: false
+    };
+  },
 
   methods: {
     switchCompleteStatus() {
-      let item = document.querySelector(`[data-exercise-id="${this.uuid}"]`)
-      this.mutCompleted = !this.mutCompleted
-      // Remove icon from badge innerHTML 
+      let item = document.querySelector(`[data-exercise-id="${this.uuid}"]`);
+      this.mutCompleted = !this.mutCompleted;
+      // Remove icon from badge innerHTML
       // TODO: maybe do this with a .switching class instead? (this removes focus, no good for accessibility)
-      item.blur() // Remove focus automatically, removing weird styling conflicts 
-      item.querySelector('.BadgeSubject, .SubjectDot').innerHTML = this.initialInnerHTML
-      this.syncCompletionStatus(this.mutCompleted)
+      item.blur(); // Remove focus automatically, removing weird styling conflicts
+      item.querySelector(
+        ".BadgeSubject, .SubjectDot"
+      ).innerHTML = this.initialInnerHTML;
+      this.syncCompletionStatus(this.mutCompleted);
     },
     async syncCompletionStatus(completed) {
       // don't sync too much (every 5 secs. max)
-      if (this.lastCompletionSync) console.log(moment().diff(this.lastCompletionSync, 'seconds'))
-      if (this.lastCompletionSync && moment().diff(this.lastCompletionSync, 'seconds') < 3) return
+      if (this.lastCompletionSync)
+        console.log(moment().diff(this.lastCompletionSync, "seconds"));
+      if (
+        this.lastCompletionSync &&
+        moment().diff(this.lastCompletionSync, "seconds") < 3
+      )
+        return;
 
       try {
-        const { data } = await this.$axios.patch(`/exercises/${this.uuid}/`, { completed })
-        this.lastCompletionSync = moment()
-        console.log()
-      } catch(error) {
-        this.$toast.error(`Erreur lors de la synchronisation: ${error}`)
+        const { data } = await this.$axios.patch(`/exercises/${this.uuid}/`, {
+          completed
+        });
+        this.lastCompletionSync = moment();
+        console.log();
+      } catch (error) {
+        this.$toast.error(`Erreur lors de la synchronisation: ${error}`);
       }
     },
     deleteExercise() {
-        console.log('deleting exercise...')
-        try {
-          this.$store.commit('homework/DELETE_TEST', this.uuid)
-          this.$axios.delete(`/exercises/${this.uuid}/`)
-          this.$toast.success(`Contrôle de ${this.subject.name} supprimé`)
-        } catch (error) {
-          this.$toast.error(`Erreur lors de la suppression: ${error}`)
-        }
-    },
-
+      console.log("deleting exercise...");
+      try {
+        this.$store.commit("homework/DELETE_TEST", this.uuid);
+        this.$axios.delete(`/exercises/${this.uuid}/`);
+        this.$toast.success(`Contrôle de ${this.subject.name} supprimé`);
+      } catch (error) {
+        this.$toast.error(`Erreur lors de la suppression: ${error}`);
+      }
+    }
   },
 
   watch: {
     mutDue() {
       try {
-        this.$store.commit('CHANGE_EXERCISE', this.uuid, {
+        this.$store.commit("CHANGE_EXERCISE", this.uuid, {
           due: this.mutDue
-        })
+        });
         this.$axios.patch(`/exercises/${this.uuid}/`, {
           due: this.mutDue
-        })
+        });
       } catch (error) {
-        this.$toast.error(`Impossible de changer la date de cet exercice: ${error}`)
+        this.$toast.error(
+          `Impossible de changer la date de cet exercice: ${error}`
+        );
       }
     },
-    mutNotes: debounce(function(){
-      console.log('syncing notes')
+    mutNotes: debounce(function() {
+      console.log("syncing notes");
       try {
-        this.$store.commit('homework/CHANGE_EXERCISE', this.uuid, {
+        this.$store.commit("homework/CHANGE_EXERCISE", this.uuid, {
           notes: this.mutNotes
-        })
+        });
         this.$axios.patch(`/exercises/${this.uuid}/`, {
           notes: this.mutNotes
-        })
+        });
       } catch (error) {
-        this.$toast.error(`Impossible de changer les notes de cet exercice: ${error}`)
+        this.$toast.error(
+          `Impossible de changer les notes de cet exercice: ${error}`
+        );
       }
-    }, 1000),
+    }, 1000)
   },
 
   mounted() {
-    let item = document.querySelector(`.ItemExercise[data-exercise-id="${this.uuid}"] .main-content`);
-    if (!item) return
+    let item = document.querySelector(
+      `.ItemExercise[data-exercise-id="${this.uuid}"] .main-content`
+    );
+    if (!item) return;
     let badge = item.querySelector(".BadgeSubject, .SubjectDot");
     this.initialInnerHTML = badge.innerHTML;
 
     item.addEventListener("mouseover", event => {
       if (!item.classList.contains("completed")) {
-        badge.innerHTML = '<i class="material-icons" style="color:white;">check</span>';
+        badge.innerHTML =
+          '<i class="material-icons" style="color:white;">check</span>';
       }
     });
     item.addEventListener("mouseout", event => {
@@ -158,7 +178,7 @@ export default {
         badge.innerHTML = this.initialInnerHTML;
       }
     });
-  },
+  }
 };
 </script>
 
