@@ -74,12 +74,13 @@ export default {
             }
         },
         valueDisp() {
+            let valIsNull = this.value === null
             let val = Number(this.value)
             if (this.fixed !== null) {
                 val = val.toFixed(this.fixed)
             }
             // if it wasn't able to convert to a number, or the value is null/undefined
-            let isUndef = val === 'NaN' || this.value === null || isNaN(this.value)
+            let isUndef = val === 'NaN' || this.value === null || isNaN(this.value) || valIsNull
 
             return isUndef ? '—' : val
         }
