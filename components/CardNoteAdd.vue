@@ -29,7 +29,7 @@ export default {
     &:hover
         cursor: pointer
 
-.card 
+.card /deep/
     background: var(--offset-blue)
     height: 270px
     width: 100%

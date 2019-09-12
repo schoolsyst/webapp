@@ -176,6 +176,9 @@ export default {
             pointer-events none
             opacity .25
 
+.ItemGrade > *:not(.BaseModal)
+    width 500px
+
 .BigNumber
     margin-top: -5px
     & /deep/ .value
@@ -206,6 +209,8 @@ export default {
         font-weight bold
 
 .name
+    margin-left 10px
+    //---------------------------------------------------
     font-size 24px
     white-space nowrap
     overflow hidden
