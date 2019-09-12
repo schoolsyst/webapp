@@ -1,12 +1,18 @@
 <template lang="pug">
 div.ItemGrade
+    ModalDialogConfirm(:name="`delete-grade-${uuid}`" @confirm="deleteGrade" confirm-role="danger")
+        | Confirmer supprimera cette note pour toujours (mais pas le contrôle associé)
+
     .name-area
         SubjectDot.subject(v-bind="subject")
-        label.grade-max(:for="`grade-max-${uuid}`") /
-        input.grade-max(:id="`grade-max-${uuid}`" v-model="mutMaximum")
-        label.grade-weight(:for="`grade-weight-${uuid}`") ×
-        input.grade-weight(:id="`grade-weight-${uuid}`" v-model="mutWeight")
         h5.name {{testName}}
+        .grade-max-field 
+            label.grade-max(:for="`grade-max-${uuid}`") /
+            input.grade-max(:id="`grade-max-${uuid}`" v-model="mutMaximum")
+        .grade-weight-field 
+            label.grade-weight(:for="`grade-weight-${uuid}`") ×
+            input.grade-weight(:id="`grade-weight-${uuid}`" v-model="mutWeight")
+        ButtonIcon.delete(:open-modal="`confirm-delete-grade-${uuid}`" open-at="center" color="black") delete
     ul.grades
         li(:class="{'disabled': isDisabled('goal')}")
             LabelFlat Objectif
@@ -16,14 +22,14 @@ div.ItemGrade
                 @input="mutGoal = $event"
                 :unit="unit"
             )
-        li(:class="{'disabled': isDisabled('expected')}")
-            LabelFlat Espérée
-            BigNumber(
-                :writables="isEditable('expected') ? ['value'] : []"
-                :value="isDisabled('expected') ? null : properGrade(mutExpected)"
-                @input="mutExpected = $event"
-                :unit="unit"
-            )
+        //- li(:class="{'disabled': isDisabled('expected')}")
+        //-     LabelFlat Espérée
+        //-     BigNumber(
+        //-         :writables="isEditable('expected') ? ['value'] : []"
+        //-         :value="isDisabled('expected') ? null : properGrade(mutExpected)"
+        //-         @input="mutExpected = $event"
+        //-         :unit="unit"
+        //-     )
         li(:class="{'disabled': isDisabled('actual')}")
             LabelFlat Finale
             BigNumber(
@@ -42,11 +48,13 @@ import SubjectDot from '~/components/SubjectDot.vue'
 import BadgeSubject from '~/components/BadgeSubject.vue'
 import BigNumber from '~/components/BigNumber.vue'
 import LabelFlat from '~/components/LabelFlat.vue'
+import ButtonIcon from '~/components/ButtonIcon.vue'
+import ModalDialogConfirm from '~/components/ModalDialogConfirm.vue'
 export default {
     name: 'ItemGrade',
 
     components: {
-        BadgeSubject, BigNumber, LabelFlat, SubjectDot
+        BadgeSubject, BigNumber, LabelFlat, SubjectDot, ButtonIcon, ModalDialogConfirm
     },
 
     props: {
@@ -93,9 +101,6 @@ export default {
         unit() {
             return this.mutMaximum === 100 ? '%' : `/${this.mutMaximum}`
         },
-        mnml() {
-            return this.setting('mnml_mode')
-        }
     },
 
     methods: {
@@ -106,23 +111,29 @@ export default {
             return this.disabledFields.includes(field)
         },
         properGrade(grade) {
-            return grade * this.mutMaximum
+            return grade === null ? null : grade * this.mutMaximum
         },
         absoluteGrade(grade) {
             return grade / this.grade.maximum
         },
         async updateGrade() {
             try {
-                await this.$axios.patch(`/grades/${this.grades[0].uuid}`, {
-                    weight: mutWeight,
-                    maximum: mutMaximum,
-                    goal: mutGoal,
-                    expected: mutExpected,
-                    actual: mutActual,
+                await this.$axios.patch(`/grades/${this.grades[0].uuid}/`, {
+                    weight: this.mutWeight,
+                    maximum: this.mutMaximum,
+                    goal: this.absoluteGrade(this.mutGoal),
+                    actual: this.absoluteGrade(this.mutActual),
                 })
                 //TODO: change in vuex state
             } catch(error) {
                 this.$toast.error(`Erreur lors de la modification: ${error}`)
+            }
+        },
+        async deleteGrade() {
+            try {
+                await this.$axios.delete(`/grades/${this.grades[0].uuid}/`)
+            } catch (error) {
+                this.$toast.error(`Erreur lors de la suppression de ${this.testName}: ${error}`)
             }
         }
     },
@@ -136,13 +147,13 @@ export default {
             this.updateGrade()
         }, 1000),
 
-        mutGoal: debounce(function() {
-            this.updateGrade()
-        }, 1000),
+        // mutGoal: debounce(function() {
+        //     this.updateGrade()
+        // }, 1000),
 
-        mutExpected: debounce(function() {
+        mutGoal() {
             this.updateGrade()
-        }, 1000),
+        },
 
         mutActual: debounce(function() {
             this.updateGrade()
@@ -155,7 +166,7 @@ export default {
 <style lang="stylus" scoped>
 .grades
     display grid
-    grid-template-columns repeat(3, 1fr)
+    grid-template-columns repeat(2, 1fr)
     li:not(:last-child)
         margin-right 20px
     li
@@ -180,30 +191,28 @@ export default {
     font-weight normal
 
 .name-area
-    display flex
-    align-items center
+    // max-width 33vw
+    display grid
+    grid-template-columns 50px 1fr 50px 25px 25px
+    grid-gap 10px
+    & > *
+        display flex
+        align-items center
     input, label
         font-size 26px
     label
         opacity 0.5
     input
         font-weight bold
-    input.grade-max
-        max-width 50px
-    input.grade-weight
-        max-width 25px
-
-.subject
-    margin-right: 15px
 
 .name
-    margin-left 10px
-    //---------------------------------------------------
-    max-width 33vw
     font-size 24px
     white-space nowrap
     overflow hidden
     text-overflow ellipsis
     //---------------------------------------------------
     font-weight normal
+
+.delete /deep/ .icon
+    font-size: 28px
 </style>
