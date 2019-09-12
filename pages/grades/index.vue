@@ -2,20 +2,17 @@
   div.container
     TheHeading Notes
     ArrayButtonFlat 
-    MainGroup.full-size
+    MainGroup
       MainGroupLeft
         HeadingSub Contrôles prévus
-        ul.due-tests
+        ul.due-tests.tests
           li(v-for="test in dueTests", :key="test.uuid") 
             ItemGrade(v-bind="test", :editable-fields="['goal', 'maximum', 'weight', 'expected']" :disabled-fields="['actual']")
+      MainGroupRight
         HeadingSub Contrôles rendus
-        ul.due-tests
+        ul.done-tests.tests
           li(v-for="test in pastTests", :key="test.uuid") 
             ItemGrade(v-bind="test", :editable-fields="['goal', 'maximum', 'weight', 'expected', 'actual']")
-
-      MainGroupRight
-        HeadingAlt Statistiques
-        p À venir!
 
 </template>
 
@@ -59,9 +56,6 @@ export default {
 .HeadingSub
   margin-top 10px
 
-.due-tests
-  margin-top: 20px
-  display grid
-  grid-template-columns 1fr 1fr
-  grid-gap 30px
+.tests
+  margin-top 20px
 </style>
