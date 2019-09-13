@@ -31,5 +31,5 @@ export default {
 <style lang="sass">
 //WARNING: _NOT_ SCOPED!
 body.layoutBare
-  overflow: hidden
+  overflow-x: hidden
 </style>

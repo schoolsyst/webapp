@@ -1,7 +1,6 @@
 <template lang="pug">
   div.container
     TheHeading Notes
-    ArrayButtonFlat 
     MainGroup
       MainGroupLeft
         HeadingSub Contrôles prévus

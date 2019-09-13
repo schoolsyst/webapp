@@ -69,12 +69,10 @@ export default {
   props: {
     subject: {
       type: Object,
-      default: () => {
-        return {
-          color: "black",
-          abbreviation: "...",
-          _isPlaceholder: true
-        };
+      default: {
+        color: "black",
+        abbreviation: "...",
+        _isPlaceholder: true
       }
     }
   },

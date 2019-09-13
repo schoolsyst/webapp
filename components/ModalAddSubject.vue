@@ -1,6 +1,6 @@
 <template lang="pug">
-BaseModal.ModalAddSubject
-    CardSubject(v-bind="subject")
+BaseModal.ModalAddSubject(name="add-subject")
+    CardSubject.editing(v-bind="subject" @editing-finished="addSubject")
 </template>
 
 <script>
@@ -16,9 +16,16 @@ export default {
     props: {
         subject: Object
     },
+
+    methods: {
+        addSubject() {
+            document.querySelector('#modal_add-subject').classList.remove('opened')
+        },
+    },
 }
 </script>
 
 <style lang="stylus" scoped>
-
+.BaseModal /deep/ .modal-wrapper
+    padding: 0 // <CardSubject> already takes care of the padding
 </style>

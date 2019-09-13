@@ -88,7 +88,8 @@ export default {
       "markdown-it-plot",
       "markdown-it-admonition",
       "markdown-it-abbr",
-      "markdown-it-slack"
+      "markdown-it-slack",
+      // "markdown-it-chat-formatter"
     ]
   },
   /*
