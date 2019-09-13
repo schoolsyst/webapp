@@ -20,7 +20,7 @@ export default {
 
 
 /deep/ li
-    margin-top: 10px
+    margin-top: 25px
     margin-right: 30px
     width: 200px
     min-width: 200px

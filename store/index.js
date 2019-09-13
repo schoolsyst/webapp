@@ -56,7 +56,7 @@ export const mutations = {
 
 export const actions = {
     async nuxtServerInit({commit}, {app}) {
-        console.group('nuxtServerInit')
+        console.group('----[ nuxtServerInit ]----')
         let res
         
         try {
