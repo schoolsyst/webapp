@@ -110,8 +110,8 @@ $nav-padding: 20px
     padding-bottom: 20px
   +phone
     z-index: 100
-    .NavbarButton[href="/schedule"]
-      display: none
+    // .NavbarButton[href="/schedule"]
+    //   display: none
 
 +tablet
   .TheNavbar.slide-out
