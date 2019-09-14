@@ -16,10 +16,10 @@ export default {
           process.env.npm_package_description ||
           ""
       },
-     { name: "apple-mobile-web-app-title", content: "Schoolsyst" },
-     { name: "application-name", content: "Schoolsyst" },
-     { name: "msapplication-TileColor", content: "#2d89ef" },
-     { name: "theme-color", content: "#1389df" },
+      { name: "apple-mobile-web-app-title", content: "Schoolsyst" },
+      { name: "application-name", content: "Schoolsyst" },
+      { name: "msapplication-TileColor", content: "#2d89ef" },
+      { name: "theme-color", content: "#1389df" }
     ],
     link: [
       { rel: "icon", type: "image/x-icon", href: "/favicon.ico" },
@@ -32,11 +32,25 @@ export default {
         href:
           "https://fonts.googleapis.com/css?family=Material+Icons|Material+Icons+Outlined"
       },
-      { rel: "apple-touch-icon",  sizes: "180x180",  href: "/apple-touch-icon.png" },
-      { rel: "icon",  type: "image/png",  sizes: "32x32",  href: "/favicon-32x32.png" },
-      { rel: "icon",  type: "image/png",  sizes: "16x16",  href: "/favicon-16x16.png" },
-      { rel: "manifest",  href: "/site.webmanifest" },
-      { rel: "mask-icon",  href: "/safari-pinned-tab.svg",  color: "#1389fd" },
+      {
+        rel: "apple-touch-icon",
+        sizes: "180x180",
+        href: "/apple-touch-icon.png"
+      },
+      {
+        rel: "icon",
+        type: "image/png",
+        sizes: "32x32",
+        href: "/favicon-32x32.png"
+      },
+      {
+        rel: "icon",
+        type: "image/png",
+        sizes: "16x16",
+        href: "/favicon-16x16.png"
+      },
+      { rel: "manifest", href: "/site.webmanifest" },
+      { rel: "mask-icon", href: "/safari-pinned-tab.svg", color: "#1389fd" }
     ],
     script: [
       {
@@ -59,7 +73,8 @@ export default {
     "~/assets/reset.sass",
     "~/assets/defaults.sass",
     // Fonts
-    "~/assets/fonts/Manrope/import.css"
+    "~/assets/fonts/Manrope/import.css",
+    "~/assets/fonts/FantasqueSansMono/import.css"
   ],
   /*
    ** Plugins to load before mounting the App
@@ -93,11 +108,20 @@ export default {
       "markdown-it-sup",
       "markdown-it-footnote",
       "markdown-it-checkbox",
-      "markdown-it-math",
+      [
+        "markdown-it-math",
+        {
+          renderingOptions: {
+            decimalMark: ",",
+            colSep: ';',
+            rowSep: ';;',
+          }
+        }
+      ],
       "markdown-it-plot",
       "markdown-it-admonition",
       "markdown-it-abbr",
-      "markdown-it-slack",
+      "markdown-it-slack"
       // "markdown-it-chat-formatter"
     ]
   },
@@ -155,13 +179,14 @@ export default {
 
   pwa: {
     meta: {
-      name: 'Schoolsyst',
-      author: 'Mx3',
-      description: 'A complete, centralized school management system made for students, by a student.',
-      theme_color: '#ffffff',
-      lang: 'fr',
+      name: "Schoolsyst",
+      author: "Mx3",
+      description:
+        "A complete, centralized school management system made for students, by a student.",
+      theme_color: "#ffffff",
+      lang: "fr",
       //Needed to make sure it works w/ iOS, will do testing (See: https://medium.com/@firt/dont-use-ios-web-app-meta-tag-irresponsibly-in-your-progressive-web-apps-85d70f4438cb)
-      nativeUI: true,
+      nativeUI: true
     }
   }
 };
