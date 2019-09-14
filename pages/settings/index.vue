@@ -8,10 +8,14 @@
         MainGroupRight
 
 .container
+    ModalAddSubject(:subject="newSubject" no-edit-button)
+
     TheHeading Réglages
     ArrayButtonFlat
-        ButtonFlat(@click="$router.push('/logout')" icon="power_off")
+        ButtonFlat(@click="$router.push('/logout')" icon="power_settings_new")
             nuxt-link(to="/logout") Déconnexion
+        ButtonFlat(icon="build")
+            nuxt-link(to="/setup") Configuration initiale
     MainGroup
         MainGroupLeft
             template(v-for="(settings, namespace) in groupedSettings")
@@ -20,6 +24,11 @@
                     .field(v-for="setting in settings")
                         label(:for="`field_${setting.key.replace('_', '-')}`") {{setting.name}}
                         textarea(:id="`field_${setting.key.replace('_', '-')}`") {{getSetting(setting.key)}}
+        MainGroupRight
+            HeadingSub Matières
+            ArrayCardSubject
+                li: ButtonLargeFlat(icon="plus", open-modal="add-subject", open-at="self") Ajouter une {{ subjects.length ? 'autre' : 'matière'}}
+                li(v-for="subject in subjects" :key="subject.uuid"): CardSubject(v-bind="subject")
 
 </template>
 
@@ -34,6 +43,11 @@ import MainGroup from '~/components/MainGroup.vue'
 import MainGroupLeft from '~/components/MainGroupLeft.vue'
 import MainGroupRight from '~/components/MainGroupRight.vue'
 import HeadingSub from '~/components/HeadingSub.vue'
+import CardSubject from '~/components/CardSubject.vue'
+import ModalAddSubject from '~/components/ModalAddSubject.vue'
+import ButtonLargeFlat from '~/components/ButtonLargeFlat.vue'
+import ArrayCardSubject from '~/components/ArrayCardSubject.vue'
+
 
 export default {
     components: {
@@ -44,11 +58,16 @@ export default {
         MainGroupLeft,
         MainGroupRight,
         HeadingSub,
+        ModalAddSubject,
+        CardSubject,
+        ButtonLargeFlat,
+        ArrayCardSubject,
     },
     computed: {
         ...mapGetters({
             defaultSettings: 'defaultSettings',
-            setting: 'setting'
+            setting: 'setting',
+            subjects: 'subjects',
         }),
         groupedSettings() {
             return groupBy(this.defaultSettings, 'namespace')
