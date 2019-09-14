@@ -1,6 +1,7 @@
 {
   "name": "schoolsyst-frontend",
   "version": "1.0.0",
+  "license": "MIT",
   "engines": {
     "node": "8.10.0"
   },

@@ -142,5 +142,17 @@ export default {
      ** You can extend webpack config here
      */
     extend(config, ctx) {}
+  },
+
+  pwa: {
+    meta: {
+      name: 'Schoolsyst',
+      author: 'Mx3',
+      description: 'A complete, centralized school management system made for students, by a student.',
+      theme_color: '#ffffff',
+      lang: 'fr',
+      //Needed to make sure it works w/ iOS, will do testing (See: https://medium.com/@firt/dont-use-ios-web-app-meta-tag-irresponsibly-in-your-progressive-web-apps-85d70f4438cb)
+      nativeUI: true,
+    }
   }
 };
