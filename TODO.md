@@ -4,6 +4,7 @@ Variouts todos that don't belong in a specific file
 - [ ] Reorganize component styles by sections w/ `//---section comments---`
 - [ ] SASS -> Stylus
 - [ ] chroma -> tinycolor2
+    - [ ] use `tinycolor.mostReadable(..., ['black', 'white'])` instead of `tinycolor.isDark() ? 'white' : 'black'`
 - [ ] fusejs -> wade
 - [ ] moment -> dayjs
 - [x] Move all $axios.get calls to nuxtServerInit
