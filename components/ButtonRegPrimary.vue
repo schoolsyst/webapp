@@ -1,5 +1,5 @@
 <template lang="pug">
-BaseButtonReg.ButtonRegPrimary(:role="role")
+BaseButtonReg.ButtonRegPrimary(:role="role" :icon="icon" @click="$emit('click')")
     slot
 </template>
 
@@ -15,7 +15,11 @@ export default {
         role: {
             type: String,
             default: "normal"
-        }
+        },
+        icon: {
+            type: String,
+            default: ''
+        },
     }
 }
 </script>

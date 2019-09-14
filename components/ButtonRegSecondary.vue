@@ -1,5 +1,5 @@
 <template lang="pug">
-BaseButtonReg.ButtonRegSecondary
+BaseButtonReg.ButtonRegSecondary(@click="$emit('click')" :icon="icon")
     slot
 </template>
 
@@ -11,6 +11,13 @@ export default {
   components: {
     BaseButtonReg
   },
+
+  props: {
+    icon: {
+      type: String,
+      default: ''
+    }
+  }
 };
 </script>
 
