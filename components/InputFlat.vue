@@ -41,7 +41,7 @@ export default {
       default: false
     },
     maxlength: {
-      type: String,
+      type: [String, Boolean],
       default: false
     },
   },
