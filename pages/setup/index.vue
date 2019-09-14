@@ -29,7 +29,7 @@
         input#field_trimester3start(type="date", required, v-model="trimester3start", name="trimester3start")
 
       .field
-        label(for="field_yearEnd") Fin de l'année scolaire
+        label(for="field_yearEnd") Début des vacances d'été
         input#field_yearEnd(type="date", required, v-model="yearEnd", name="yearEnd")
 
       .field.left-and-right
@@ -40,11 +40,11 @@
 
     p
       | Ensuite, il faut définir deux petits réglages par défaut pour les notes
-      | La note maximale est particulièrement importante, elle détermine ce qui est
+      | L'unité des notes est particulièrement importante, elle détermine ce qui est
       | utilisé pour montrer la moyenne. En France—bien sûr—ce sera souvent 20.
       .fields
         .field
-          label(for="field_gradeMax") Note maximale par défaut
+          label(for="field_gradeMax") Unité des notes
           input#field_gradeMax(type="number", required, v-model="gradeMax", name="gradeMax")
 
         .field
@@ -86,6 +86,7 @@ import CardSubject from '~/components/CardSubject.vue'
 import ModalAddSubject from '~/components/ModalAddSubject.vue'
 import ButtonLargeFlat from '~/components/ButtonLargeFlat.vue'
 import ArrayCardSubject from '~/components/ArrayCardSubject.vue'
+import moment from 'moment'
 
 export default {
     middleware: ['auth'],
@@ -108,13 +109,13 @@ export default {
     data() {
         return {
           startOnQ1: true,
-          offdays: '',
-          trimester2start: '',
-          trimester3start: '',
-          yearStart: '',
-          yearEnd: '',
-          gradeMax: 20,
-          gradeWeight: 1,
+          offdays: this.$store.getters.setting('offdays').value,
+          trimester2start: this.toDDMMYYYY(this.$store.getters.setting('trimester_2_start').value),
+          trimester3start: this.toDDMMYYYY(this.$store.getters.setting('trimester_3_start').value),
+          yearStart: this.toDDMMYYYY(this.$store.getters.setting('year_start').value),
+          yearEnd: this.toDDMMYYYY(this.$store.getters.setting('year_end').value),
+          gradeMax: this.$store.getters.setting('grade_max').value,
+          gradeWeight: this.$store.getters.setting('grade_weight').value,
           hours: '',
           newSubject: {
             color: '#fff',
@@ -127,7 +128,7 @@ export default {
 
     computed: {
       ...mapGetters({
-        setting: 'settings/setting',
+        setting: 'setting',
         subjects: 'subjects'
       })
     },
@@ -135,7 +136,11 @@ export default {
     methods: {
       finishSetup() {
         console.log('lololololprgjojzogo')
-      }
+        this.$router.push('/')
+      },
+      toDDMMYYYY(YYYYMMDD) {
+        moment(YYYYMMDD, 'YYYY-MM-DD').format('DD/MM/YYYY')
+      },
     }
 }
 </script>
@@ -180,7 +185,7 @@ export default {
     &:not(.left-and-right)
       align-items: center
     &.left-and-right
-      height: 200px
+      height: 250px
     &:not(.left-and-right) label
       align-items: center
     &.left-and-right label
@@ -193,7 +198,7 @@ export default {
     white-space: pre-line
     font-size: 48px
     // text-align: center
-    margin-bottom: 20px
+    margin-top: 20px
 
   p
     padding-bottom: 20px
@@ -232,7 +237,7 @@ p
   opacity: 0.5
 
 textarea
-  height: 200px
+  height: 250px
   padding-top: 20px
 
 input[type="date"]
