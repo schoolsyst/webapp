@@ -5,7 +5,7 @@
         p.logo-subtitle 
             |by 
             a(href="https://mx3creations.com") Mx3
-        p.version #[code v0.0.15]
+        p.version #[code alpha v0.0.281]
     </footer>
 </template>
 
@@ -53,7 +53,7 @@ export default {
     //---   margins   ---
     margin-top: 20px
     //---  appearance ---
-    font-family: 'Roboto Mono', monospace
+    font-family: 'Fantasque Sans Mono', 'Roboto Mono', monospace
     font-weight: 100
     color: #ffffff
     //---  animation  ---
