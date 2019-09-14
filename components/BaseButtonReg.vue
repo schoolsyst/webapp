@@ -1,6 +1,6 @@
 <template lang="pug">
 button.BaseButtonReg(:type="type" @click="$emit('click')")
-    i.material-icons(v-if="icon") {{icon}}
+    i.material-icons-outlined.icon(v-if="icon") {{icon}}
     slot
 </template>
 
@@ -53,4 +53,9 @@ export default {
         right: 5px
     &::after
         left: 5px
+    .icon
+        font-family: 'Material Icons'
+
+.icon
+    margin-right: 5px
 </style>
