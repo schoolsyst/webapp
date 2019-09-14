@@ -177,7 +177,7 @@ export default {
 .CardSubject
   width 600px
   max-width 100%
-  padding 15px 20px
+  padding 15px 20px !important
   height: 300px
   @media (max-width: 1000px)
     height: 400px
@@ -207,6 +207,7 @@ export default {
 input
   font-size 36px
   padding-bottom: 5px //Correct 'g'/'q's being cut off
+  width: 200px
 
 //TODO: make a new <LabelFlat> (call it <LabelAlt>)
 .LabelFlat
