@@ -16,10 +16,10 @@ export default {
           process.env.npm_package_description ||
           ""
       },
-     { name: "apple-mobile-web-app-title", content="Schoolsyst" },
-     { name: "application-name", content="Schoolsyst" },
-     { name: "msapplication-TileColor", content="#2d89ef" },
-     { name: "theme-color", content="#1389df" },
+     { name: "apple-mobile-web-app-title", content: "Schoolsyst" },
+     { name: "application-name", content: "Schoolsyst" },
+     { name: "msapplication-TileColor", content: "#2d89ef" },
+     { name: "theme-color", content: "#1389df" },
     ],
     link: [
       { rel: "icon", type: "image/x-icon", href: "/favicon.ico" },
