@@ -12,6 +12,6 @@ export default {
 
 <style lang="stylus" scoped>
 li
-    margin-top: 20px
+    margin-top: 15px
     max-width 100%
 </style>

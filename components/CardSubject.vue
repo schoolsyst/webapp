@@ -177,13 +177,13 @@ export default {
 .CardSubject
   width 600px
   max-width 100%
-  padding 20px
+  padding 15px 20px
   height: 300px
   @media (max-width: 1000px)
     height: 400px
   overflow hidden
   &:not(.editing)
-    height 75px
+    height 60px
   transition height 0.25s ease
 
 .confirm-delete /deep/ .message
@@ -252,10 +252,17 @@ input
     font-size: 36px
 
 .name
-  font-size: 28px
+  height 75px
+    @media (max-width: 1000px)
+      height: 60px
+  input
+    font-size: 28px
+    @media (max-width: 1000px)
+      font-size: 20px
   margin-bottom: 20px
   font-weight bold
   display grid
+  
   align-items center
   grid-template-columns calc(100% - 36px) 36px
 
