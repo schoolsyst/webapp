@@ -1,16 +1,30 @@
 <template lang="pug">
 BaseCard.CardSubject(:style="{backgroundColor: mutColor, color: textColor}", :class="{editing}")
+  //TODO: type in the name of the subject to confirm deletion
+  ModalDialogConfirm.confirm-delete(:name="`delete-subject-${uuid}`" confirm-role="danger" confirm-text="Supprimer" @confirm="editing = false; $emit('editing-finished', subject); deleteSubject()")
+    | Supprimer cette matière supprimera #[strong tout] ce qui était en lien avec:
+    br
+    | &nbsp; &bull; devoirs, #[br]
+    | &nbsp; &bull; contrôles, #[br]
+    | &nbsp; &bull; évenements dans l'emploi du temps et #[br]
+    | &nbsp; &bull; prises de notes #[br]
+    br
+    | Cette action est #[strong irréversible]
   p.name 
     input(v-model="mutName" placeholder="Nom de la matière...")
     //-TODO: close button reverts values to those passed in props
-    ButtonIcon.edit-button(@click="editing = !editing" :color="textColor") {{ editing ? 'close' : 'edit' }}
+    ButtonIcon.edit-button(@click="toggleAndCancel()" :color="textColor" v-if="uuid !== 'new' && !noEditButton") {{ editing ? 'close' : 'edit' }}
   .row
     .field
       LabelFlat Abbreviation*
-      input.abbreviation(maxlength="3" :value="abbreviation" @input="mutAbbreviation = $event" placeholder="ABC")
+      input.abbreviation(maxlength="3" v-model="mutAbbreviation" placeholder="ABC")
     .field
       LabelFlat Couleur*
-      PickerColor.color(v-model="mutColor" :color="textColor" :modal-id="uuid")
+      PickerColor.color(
+        v-model="mutColor"
+        :color="textColor"
+        :modal-id="uuid"
+      )
     .field
       LabelFlat Objectif
       BigNumber.grade-goal(
@@ -34,7 +48,8 @@ BaseCard.CardSubject(:style="{backgroundColor: mutColor, color: textColor}", :cl
         unit="kg"
       )
   .button-row
-    ButtonIcon.confirm-button(@click="editing = false; $emit('editing-finished', subject)" :color="textColor") check
+    ButtonIcon.delete-button(:open-modal="`confirm-delete-subject-${uuid}`" open-at="center" :color="textColor" v-if="uuid !== 'new'") delete
+    ButtonIcon.confirm-button(@click="editing = false; $emit('editing-finished', subject); uploadChanges()" :color="textColor") check
 </template>
 
 <script>
@@ -42,10 +57,13 @@ import BigNumber from "~/components/BigNumber.vue";
 import ButtonIcon from "~/components/ButtonIcon.vue";
 import LabelFlat from "~/components/LabelFlat.vue";
 import PickerColor from "~/components/PickerColor.vue";
+import ModalDialogConfirm from '~/components/ModalDialogConfirm.vue'
 import BaseCard from "~/components/BaseCard.vue";
 import InputFlat from '~/components/InputFlat.vue'
 import { mapGetters } from 'vuex';
 import tinycolor from 'tinycolor2'
+import debounce from 'lodash.debounce'
+import slugify from 'slugify'
 
 export default {
   name: "CardSubject",
@@ -56,7 +74,8 @@ export default {
     LabelFlat,
     InputFlat,
     PickerColor,
-    BaseCard
+    ModalDialogConfirm,
+    BaseCard,
   },
 
   props: {
@@ -66,7 +85,12 @@ export default {
     grade_goal: Number,
     room: String,
     physical_weight: Number,
-    abbreviation: String
+    abbreviation: String,
+    slug: String,
+    noEditButton: {
+      type: Boolean,
+      default: false
+    },
   },
 
   data() {
@@ -76,7 +100,7 @@ export default {
       mutName: this.name,
       mutGrade_goal: this.grade_goal,
       mutRoom: this.room,
-      mutPhysical_weight: this.physical_weight,
+      mutPhysical_weight: this.physical_weight || 0,
       mutAbbreviation: this.abbreviation,
     }
   },
@@ -98,7 +122,51 @@ export default {
         grade_goal: isNaN(this.mutGrade_goal) ? null : (Number(this.mutGrade_goal) / this.gradeUnit),
         room: this.mutRoom,
         physical_weight: this.mutPhysical_weight,
-        abbreviation: this.mutAbbreviation,
+        abbreviation: this.mutAbbreviation.toLowerCase(),
+        slug: this.slug || slugify(`${this.$auth.user.username}--${this.mutName}`).toLowerCase()
+      }
+    },
+  },
+
+  methods: {
+    toggleAndCancel() {
+      if (this.editing) {
+        this.mutColor = this.$props.color
+        this.mutName = this.$props.name
+        this.mutGrade_goal = this.$props.grade_goal
+        this.mutRoom = this.$props.room
+        this.mutPhysical_weight = this.$props.physical_weight
+        this.mutAbbreviation = this.$props.abbreviation
+        this.mutSlug = this.$props.slug
+      }
+      this.editing = !this.editing
+    },
+    uploadChanges: debounce(function() {
+      try {
+        let res;
+        if (this.uuid === 'new') {
+          res = this.$axios.post(`/subjects/`, this.subject)
+          this.$store.commit('ADD_SUBJECT', res.data)
+        } else {
+          res = this.$axios.patch(`/subjects/${this.uuid}/`, this.subject)
+          this.$store.commit('UPDATE_SUBJECT', {uuid: this.uuid, data: res.data})
+        }
+      } catch (error) {
+        let verb
+        if (this.uuid === 'new') {
+          verb = 'création'
+        } else {
+          verb = 'modification'
+        }
+        this.$toast.error(`Erreur lors de la ${verb} de la matière: ${error}`)
+      }
+    }, 500),
+    deleteSubject() {
+      try {
+        this.$axios.delete(`subjects/${this.uuid}/`)
+        this.$store.commit('DELETE_SUBJECT', this.uuid)
+      } catch (error) {
+        this.$toast.error(`Erreur lors de la suppression de la matière: ${error}`)
       }
     }
   }
@@ -108,12 +176,18 @@ export default {
 <style lang="stylus" scoped>
 .CardSubject
   width 600px
+  max-width 100%
   padding 20px
   height: 275px
+  @media (max-width: 1000px)
+    height: 400px
   overflow hidden
   &:not(.editing)
     height 75px
   transition height 0.25s ease
+
+.confirm-delete /deep/ .message
+  text-align left
 
 // Fix some colors
 .BigNumber /deep/ *, input
@@ -143,21 +217,33 @@ input
 .row
   display grid
   grid-template-columns repeat(3, 200px)
+  @media (max-width 1000px)
+    grid-template-columns repeat(2, 50%)
   grid-gap 10px
   margin-top: 25px
 
 .button-row
   position relative
 
-.confirm-button
+.confirm-button, .delete-button
   position absolute
+.confirm-button
   right 0
   top -40px
+  @media (max-width 1000px)
+    top calc(-40px + 40px)
   & /deep/ .icon
     font-size: 48px
+.delete-button
+  left 0px
+  top -30px
+  @media (max-width 1000px)
+    top calc(-30px + 40px)
+  & /deep/ .icon
+    font-size: 32px
 
 .edit-button /deep/ .icon
-  font-size: 36px
+    font-size: 36px
 
 .name
   font-size: 32px

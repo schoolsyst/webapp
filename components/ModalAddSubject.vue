@@ -1,6 +1,6 @@
 <template lang="pug">
 BaseModal.ModalAddSubject(name="add-subject")
-    CardSubject.editing(v-bind="subject" @editing-finished="addSubject")
+    CardSubject.editing(v-bind="subject" @editing-finished="addSubject" :no-edit-button="noEditButton")
 </template>
 
 <script>
@@ -14,7 +14,11 @@ export default {
     },
 
     props: {
-        subject: Object
+        subject: Object,
+        noEditButton: {
+            type: Boolean,
+            default: false
+        },
     },
 
     methods: {

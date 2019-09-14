@@ -66,6 +66,9 @@ export default {
         // - NUMBERxNUMBER: from a given position
         modal.classList.remove("centered"); // clear previous open position state
         let openAt = e.getAttribute("open-at") || "center";
+        if (window.innerWidth <= 1000) {
+          openAt = "center"
+        }
         let wrapper = modal.querySelector(".modal-wrapper");
         const setPos = coords => {
           wrapper.style.left = wrapper.style.right = wrapper.style.top = wrapper.style.bottom = // clean everything
@@ -113,6 +116,12 @@ export default {
             modal.classList.add("centered");
             break;
           }
+          
+          case "self.rightof": {
+            let { top, left, width, height } = e.getBoundingClientRect();
+            setPos({left: left+width+5, top})
+            break;
+          }
 
           case "self.center.horizontal": {
             let { top, left, width, height } = e.getBoundingClientRect();
@@ -122,7 +131,7 @@ export default {
             
             setPos({ top, left: window.innerWidth/2 - contentWidth/2});
 
-            break;
+              break;
           }
 
           case "self.center.vertical": {

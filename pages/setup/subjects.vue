@@ -1,7 +1,7 @@
 <template lang="pug">
 .container
   TheHeading Rentrez vos matières
-  ModalAddSubject(:subject="newSubject")
+  ModalAddSubject(:subject="newSubject" no-edit-button)
   MainGroup(full-size)
     ArrayCardSubject
         li: ButtonLargeFlat(icon="plus", open-modal="add-subject", open-at="self.center.horizontal") Ajouter une {{ subjects.length ? 'autre' : 'matière'}}
@@ -43,7 +43,7 @@ export default {
     data() { return {
         newSubject: {
             color: '#fff',
-            name: 'Nom de la matière...',
+            name: '',
             physical_weight: null,
             uuid: 'new' //for the modzl-id prop on <PickerColor>
         }

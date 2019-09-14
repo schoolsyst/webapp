@@ -52,6 +52,18 @@ export const mutations = {
     SET_SETTINGS (state, settings) {
         state.settings = settings
     },
+    ADD_SUBJECT (state, data) {
+        state.subjects.push(data)
+    },
+    UPDATE_SUBJECT (state, { uuid, data }) {
+        let subject = state.subjects.find(s => s.uuid === uuid)
+        state.subjects = state.subjects.filter(s => s.uuid !== uuid)
+        Object.assign(subject, data)
+        state.subjects.push(subject)
+    },
+    DELETE_SUBJECT (state, uuid) {
+        state.subjects = state.subjects.filter(s => s.uuid !== uuid)
+    }
 }
 
 export const actions = {
