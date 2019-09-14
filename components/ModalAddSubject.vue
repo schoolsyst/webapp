@@ -1,6 +1,6 @@
 <template lang="pug">
 BaseModal.ModalAddSubject(name="add-subject")
-    CardSubject.editing(v-bind="subject" @editing-finished="addSubject" :no-edit-button="noEditButton")
+    CardSubject(editing v-bind="subject" @editing-finished="addSubject" :no-edit-button="noEditButton")
 </template>
 
 <script>

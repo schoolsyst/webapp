@@ -11,7 +11,7 @@ BaseCard.CardSubject(:style="{backgroundColor: mutColor, color: textColor}", :cl
     br
     | Cette action est #[strong irréversible]
   p.name 
-    input(v-model="mutName" placeholder="Nom de la matière...")
+    input.name-input(v-model="mutName" placeholder="Nom de la matière..." :readonly="!editing")
     //-TODO: close button reverts values to those passed in props
     ButtonIcon.edit-button(@click="toggleAndCancel()" :color="textColor" v-if="uuid !== 'new' && !noEditButton") {{ editing ? 'close' : 'edit' }}
   .row
@@ -79,7 +79,10 @@ export default {
   },
 
   props: {
-    color: String,
+    color: {
+      type: String,
+      default: '#000000'
+    },
     name: String,
     uuid: String,
     grade_goal: Number,
@@ -91,6 +94,10 @@ export default {
       type: Boolean,
       default: false
     },
+    editing: {
+      type: Boolean,
+      default: false
+    }
   },
 
   data() {
@@ -177,14 +184,14 @@ export default {
 .CardSubject
   width 600px
   max-width 100%
-  padding 15px 20px !important
+  padding 10px 20px !important
   height: 300px
   @media (max-width: 1000px)
     height: 400px
   overflow hidden
   &:not(.editing)
     height 60px
-  transition height 0.25s ease
+  transition all 0.25s ease
 
 .confirm-delete /deep/ .message
   text-align left
@@ -204,7 +211,7 @@ export default {
         line-height calc(2/3 * 36px)
         opacity: 1
 
-input
+input:not(.name-input)
   font-size 36px
   padding-bottom: 5px //Correct 'g'/'q's being cut off
   width: 200px
@@ -256,7 +263,7 @@ input
   height 75px
     @media (max-width: 1000px)
       height: 60px
-  input
+  input, p
     font-size: 28px
     @media (max-width: 1000px)
       font-size: 20px
