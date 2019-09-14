@@ -35,17 +35,17 @@
         li(v-if="timeRemaining", title="Temps avant la fin du cours") {{timeRemaining.format(`H[h]m`)}}
         li {{now.format('HH:mm')}}
       ArrayButtonFlat.actions
-        ButtonFlat(
+        li: ButtonFlat(
           icon='note_add', 
           open-modal="add-note", 
           open-at="self"
         ) Nouveau chapitre
-        ButtonFlat(
+        li: ButtonFlat(
           icon='edit', 
           open-modal="add-exercise", 
           open-at="center"
         ) Devoir
-        ButtonFlat(
+        li: ButtonFlat(
           icon='format_list_bulleted'
           open-modal="add-test",
           open-at="center"
@@ -123,12 +123,13 @@
     }
 
     ul {
-      padding-left: 15px;
-      list-style: disc;
+      padding-left: 30px;
+      list-style: circle;
     }
 
-    ul li {
-      list-style: '• '
+    #mirror ul li {
+      list-style: circle !important;
+      margin-bottom: 10px;
     }
 
     dd {
@@ -630,7 +631,7 @@ export default {
   padding-left: 20px // Remove conflict with navbar handle
   height: 100%
   width: 100%
-  font-family: 'Roboto Mono', monospace
+  font-family: 'Fantasque Sans Mono', 'Roboto Mono', monospace
   font-weight: 300
   font-size: 18px
   line-height: 1.2
@@ -687,10 +688,10 @@ export default {
 .actions
   position: fixed
   bottom: 20px
-  left: 0px
+  left: -15px
   //---------------------------------------------------
   display: flex
-  li
+  li .ButtonFlat
     font-size: 24px
 
 </style>
