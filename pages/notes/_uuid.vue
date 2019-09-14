@@ -22,13 +22,14 @@
   TheNavbar(slide-out).slid-out
   BarFloating
     ButtonIcon(@click="saveSource" title="Télécharger la source (.md)") archive
-    //TODO: Ripple effect when @click on sync btn or Ctrl-S
+    //TODO: White transparent overlay on <BarFloating> bg to indicate uploading progress
     ButtonIcon(@click="sync"        title="Synchroniser") import_export
+    ButtonIcon(@click="toggleViewMode", title="Changer la vue") {{viewModeIcon}}
     ButtonIcon(@click="savePDF" title="Télécharger le rendu (.pdf)") file_copy
-  MainGroup
-    MainGroupLeft
+  MainGroup(:full-size="viewMode !== 'both'")
+    MainGroupLeft(v-if="viewMode !== 'rendered'")
       textarea#editor(v-model="content") 
-    MainGroupRight(v-if="content")
+    MainGroupRight(v-if="content && viewMode !== 'source'")
       #mirror(v-html="$md.render(content)")
     .bottom-bar
       ul.status
@@ -51,6 +52,9 @@
           open-at="center"
         ) Contrôle
   style.
+    body {
+      overflow: hidden
+    },
     h2 {
       margin-top: 20px;
       margin-bottom: 5px;
@@ -264,6 +268,7 @@ export default {
       lastSave: moment(),
       now: moment(),
       autosyncInterval: null,
+      viewMode: 'both',
       shortcuts: [
         {
             name: "Gras",
@@ -549,9 +554,22 @@ export default {
     currentCourseSubject() {
       return this.fCurrentCourseSubject(this.now)
     },
+    viewModeIcon() {
+      return {
+        'both': 'web',
+        'rendered': 'web_asset',
+        'source': 'subject'
+      }[this.viewMode]
+    }
   },
 
   methods: {
+    toggleViewMode() {
+      const modes = ['both', 'rendered', 'source']
+      const clampIdx = (idx) => idx < 0 ? 2 : (idx > 2 ? 0 : idx)
+      let currentIdx = modes.indexOf(this.viewMode)
+      this.viewMode = modes[clampIdx(currentIdx+1)]
+    },
     async uploadToServer(content, force = false, updateNoteName = false) {
       // rate limitting
       if (moment().diff(this.lastSave, "seconds") < 5 && !force) {
@@ -639,7 +657,12 @@ export default {
   margin-top: 0
   height: calc(100vh - 200px)
   width: 100%
-  max-width: 50vw
+.MainGroup.full-size
+  .MainGroupLeft, .MainGroupRight
+    max-width: 60vw
+    margin-left: 50%
+    transform: translateX(-50%)
+
 
 +mobile
   .MainGroupRight
