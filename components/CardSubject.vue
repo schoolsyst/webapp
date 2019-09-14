@@ -178,7 +178,7 @@ export default {
   width 600px
   max-width 100%
   padding 20px
-  height: 275px
+  height: 300px
   @media (max-width: 1000px)
     height: 400px
   overflow hidden
@@ -195,7 +195,7 @@ export default {
 
 .BigNumber
     margin-top: -5px
-    line-height 36px
+    line-height 36px !important
     & /deep/ .value
         height 36px
         font-size 36px
@@ -208,11 +208,12 @@ input
   font-size 36px
   padding-bottom: 5px //Correct 'g'/'q's being cut off
 
+//TODO: make a new <LabelFlat> (call it <LabelAlt>)
 .LabelFlat
-  text-transform none
-  opacity 1
-  font-weight normal
-  font-size: 22px
+  text-transform none !important
+  opacity 1 !important
+  font-weight normal !important
+  font-size: 22px !important
 
 .row
   display grid
@@ -228,16 +229,21 @@ input
 .confirm-button, .delete-button
   position absolute
 .confirm-button
-  right 0
-  top -40px
+  @media (min-width 1001px)
+    right 0px
+    top -20px
   @media (max-width 1000px)
+    right 0
     top calc(-40px + 40px)
   & /deep/ .icon
     font-size: 48px
+
 .delete-button
-  left 0px
-  top -30px
+  @media (min-width 1001px)
+    right 65px
+    top -10px
   @media (max-width 1000px)
+    left 0px
     top calc(-30px + 40px)
   & /deep/ .icon
     font-size: 32px
@@ -246,7 +252,7 @@ input
     font-size: 36px
 
 .name
-  font-size: 32px
+  font-size: 28px
   margin-bottom: 20px
   font-weight bold
   display grid
