@@ -73,16 +73,21 @@
       font-weight: normal;
     }
     p {
-      line-height: 1.3;
+      line-height: 1.5;
       margin: 10px 0;
     }
     code {
       color: var(--blue);
-      line-height: 1.2
+      line-height: 1.2;
     }
     .footnotes-sep {
-      opacity: .75
-      margin-top: 10px
+      opacity: .75;
+      margin-top: 10px;
+    }
+    .footnotes-sep::before {
+      content: 'Notes de bas de page';
+      position: relative;
+      bottom: 30px;
     }
     .admonition {
       background: var(--offset-blue);
@@ -93,12 +98,12 @@
     .admonition-title {
       color: var(--blue);
       font-size: 24px;
-      font-weight: bold
+      font-weight: bold;
     }
     .admonition.failure,
     .admonition.danger,
     .admonition.bug {
-      background: var(--red)
+      background: var(--red);
     }
     .admonition.failure p,
     .admonition.danger p,
@@ -200,7 +205,7 @@
 
     blockquote {
       padding-left: 15px;
-      border-left: 7.5px solid var(--blue)
+      border-left: 7.5px solid var(--blue);
     }
 </template>
 
