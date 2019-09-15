@@ -1,9 +1,9 @@
 <template lang="pug">
 .Schedule
     ModalCardEvent(v-bind="clickedEvent")
-    .schedule-container(:style="{height: longestDayHeight + 'px'}")
+    .schedule-container
         .now-line(:style="{top: nowLineTop, display: nowLineDisplay}"): span.now-line-time {{now.format('HH:mm')}}
-        .schedule
+        .schedule(:style="{height: (lastCourseEnd - firstCourseStart) * pixelPerMinute + 'px'}")
             .schedule-day(
                 v-for="events in eventsOfDays"
                 :key="events.day"
@@ -29,7 +29,7 @@
 
 <script>
 import moment from 'moment';
-import chroma from 'chroma-js'
+import tinycolor from 'tinycolor2'
 import { mapState, mapGetters, mapMutations, mapActions } from 'vuex'
 //-------------------------------------------------------------------
 import TheHeading from '~/components/TheHeading.vue'
@@ -61,7 +61,8 @@ export default {
     data() {
         return {
             clickedEvent: {},
-            eventWidth: 175
+            eventWidth: 175,
+            mobileEventWidth: 100
         }
     },
 
@@ -121,21 +122,11 @@ export default {
             return false
             return !!this.setting('mnml_mode')
         },
-        longestDayHeight() {
-            let heightMap = this.eventsOfDays.map(day => day.events.map(event => {
-                return this.getTop(event, true)
-            }))
-            console.log(heightMap)
-            return Math.max(...heightMap)
-        }
     },
 
     mounted() {
         if (window.innerWidth <= 1000) {
-            let calculated = Math.floor((window.innerWidth - 10) / this.eventsOfDays.length)
-            let minimum = 50
-            console.log(`<Schedule> choosing eventWidth between ${[calculated, minimum]}: ${Math.max(calculated, minimum)}`)
-            this.eventWidth = Math.max(calculated, minimum)
+            this.eventWidth = this.mobileEventWidth
         }
     },
 
@@ -156,7 +147,7 @@ export default {
             return (['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'].indexOf(event.day) * this.eventWidth).toString() + 'px'
         },
         getTextColor(event) {
-            return chroma(event.subject.color).get('lab.l') < 70 ? 'white' : 'black'
+            return tinycolor(event.subject.color).isDark() ? 'white' : 'black'
         },
         openModal(event) {
             delete event.id // Conflicts with the BaseModal's id system (the event's id replaces the one used by the modal)
@@ -169,8 +160,7 @@ export default {
 <style lang="sass" scoped>
 @import '~/assets/defaults'
 .schedule-container
-    width: 100vw
-    overflow-x: scroll
+    overflow-x: auto
 .mnml .event
     .subject, .room
         opacity: 0
@@ -180,11 +170,13 @@ export default {
     margin-right: 50px
     font-size: 24px
 .schedule
-    overflow-x: scroll
+    position: relative
+    height: 100vh
 .schedule-day
     display: flex
     position: absolute
 .event
+    z-index: -1
     cursor: pointer
     position: absolute
     display: flex
