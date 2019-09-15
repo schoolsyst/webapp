@@ -57,7 +57,7 @@ export default {
   align-items: center
 
 .NavbarButton i 
-    font-size: calc((100vw - 30px) / 6 / 1.5 - 5px)
+    font-size: calc((100vw - 30px) / 6 / 1.5 - 10px)
     // The automatic font-size becomes ridiculously high for vw >= 500
     @media (min-width: 450px)
       font-size: 40px
