@@ -1,28 +1,29 @@
-<template>
-  <!-- COMPONENT TREE
-Excluding single-use components (TheHeading, TheNavbar, TheFooter,...)
-
-ArrayButtonFlat
-MainGroup
-    MainGroupLeft
-    MainGroupRight
-  -->
-
-  <div class="container">
-    <TheHeading>Sac</TheHeading>
-    <ArrayButtonFlat></ArrayButtonFlat>
-    <MainGroup>
-      <MainGroupLeft>
-        <HeadingSub></HeadingSub>
-      </MainGroupLeft>
-      <MainGroupRight>
-        <HeadingSub></HeadingSub>
-      </MainGroupRight>
-    </MainGroup>
+<template lang="pug">
+  .container
+    TheHeading Sac
+    ArrayButtonFlat
+    MainGroup
+      MainGroupLeft
+        HeadingSub À ajouter
+        ul.subjects.toadd
+          li(v-for="subject in subjectsToAdd")
+            SubjectDot(v-if="mnml" v-bind="subject")
+            BadgeSubject(v-else v-bind="subject")
+        HeadingSub À enlever
+        ul.subjects.toremove
+          li(v-for="subject in subjectsToRemove")
+            SubjectDot(v-if="mnml" v-bind="subject")
+            BadgeSubject(v-else v-bind="subject")
+      MainGroupRight
+        HeadingSub Journée de demain
+        BigNumber(value="3" unit="heures")
+        p 18:03—20:03
+    
   </div>
 </template>
 
 <script>
+import moment from 'moment'
 import { mapState, mapGetters, mapMutations, mapActions } from "vuex";
 import TheHeading       from "~/components/TheHeading.vue";
 import ArrayButtonFlat  from "~/components/ArrayButtonFlat.vue";
@@ -31,6 +32,9 @@ import MainGroup        from "~/components/MainGroup.vue";
 import MainGroupLeft    from "~/components/MainGroupLeft.vue";
 import MainGroupRight   from "~/components/MainGroupRight.vue";
 import HeadingSub       from "~/components/HeadingSub.vue";
+import BigNumber        from '~/components/BigNumber.vue';
+import SubjectDot from '~/components/SubjectDot.vue';
+import BadgeSubject from '~/components/BadgeSubject.vue';
 
 export default {
   components: {
@@ -40,11 +44,29 @@ export default {
     MainGroup,
     MainGroupLeft,
     MainGroupRight,
-    HeadingSub
+    HeadingSub,
+    BigNumber,
+    SubjectDot,
+    BadgeSubject
   },
 
   data() {
-    return {};
+    return {
+      mnml: false
+    };
+  },
+
+  computed: {
+    ...mapGetters({
+      subjectsToAddFor: 'schedule/subjectsToAddFor',
+      subjectsToRemoveFor: 'schedule/subjectsToRemoveFor'
+    }),
+    subjectsToAdd() {
+      return this.subjectsToAddFor(moment().add(1, 'day'))
+    },
+    subjectsToRemove() {
+      return this.subjectsToRemoveFor(moment().add(1, 'day'))
+    },
   }
 };
 </script>
@@ -52,4 +74,9 @@ export default {
 <style lang="sass" scoped>
 @import '~/assets/defaults'
 
+ul.subjects
+  display: grid
+  grid-template-columns: repeat(4, 100px)
+  margin-top: 10px
+  grid-gap: 15px
 </style>

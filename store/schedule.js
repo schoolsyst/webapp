@@ -81,7 +81,7 @@ export const getters = {
     // EDIT: this should turn it into an inclusive range
     // start = start.subtract(1, 'day')
     // loop through every date between start and upto
-    for (let current = start; current.isBefore(upto); current.add(1, "day")) {
+    for (let current = start; current.isSameOrBefore(upto); current.add(1, "day")) {
       if (getters.offdays.map(d => d.toISOString()).includes(current.toISOString())) {
         continue
       }
@@ -203,7 +203,6 @@ export const getters = {
   nextCourseOf: (state, getters) => subjectSlug => {
     const tomorrow = moment().add(1, "days");
     // get courses that are after tomorrow
-    // FIXME: shouldn't also get courses from today
     let courses = getters.coursesIn(tomorrow, moment().add(2, "weeks"));
     if (!courses.length) return null;
     // console.log(courses.map(c => c.date.format('D/M/Y')))
@@ -254,6 +253,38 @@ export const getters = {
   },
   event: (state, getters) => (eventUUID) => {
     return state.events.find(e => e.uuid === eventUUID)
+  },
+  subjectsToAddFor: (state, getters) => (date, today=null) => {
+    console.group('subjectsToAdd')
+    let weekdays = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday']
+    // Get today 
+    let dateCopy = date.clone()
+    today = today || dateCopy.subtract(1, 'day') //Subtracting from date directly would mutate it
+    console.log(`for window ${today.format('YYYY-MM-DD')}->${date.format('YYYY-MM-DD')}`)
+    // Get today subjects
+    let allSubjects = getters.coursesIn(today, date)
+    let todaySubjects = allSubjects.filter(c => {
+      console.log(c.day,today.isoWeekday())
+      return c.day === weekdays[today.isoWeekday()-1]
+    }).map(c => c.subject)
+    let dateSubjects  = allSubjects.filter(c => c.day === weekdays[date.isoWeekday()-1]).map(c => c.subject)
+    console.log(todaySubjects)
+    // Get `date` subjexts
+    // let dateSubjects  = getters.coursesIn(date, date).map(c => c.subject)
+    // console.log(dateSubjects)
+    // Get diff
+    console.groupEnd()
+    // return dateSubjects.filter(s => !todaySubjects.map(s => s.uuid).includes(s.uuid))
+  },
+  subjectsToRemoveFor: (state, getters) => (date, today=null) => {
+    // Get today 
+    today = today || date.subtract(1, 'day')
+    // Get today subjects
+    // let todaySubjects = getters.coursesIn(today, today).map(c => c.subject)
+    // Get `date` subjexts
+    // let dateSubjects  = getters.coursesIn(date, date).map(c => c.subject)
+    // Get diff
+    // return todaySubjects.filter(s => !dateSubjects.map(s => s.uuid).includes(s.uuid))
   },
 };
 
