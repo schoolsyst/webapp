@@ -3,7 +3,7 @@ button.BadgeSubject(:style="{backgroundColor: color, color: textColor}" :title="
 </template>
 
 <script>
-import chroma from 'chroma-js'
+import tinycolor from 'tinycolor2'
 export default {
     name: 'BadgeSubject',
     props: {
@@ -22,7 +22,7 @@ export default {
     },
     computed: {
         textColor() {
-            return chroma(this.color).get('lab.l') < 70 ? 'white' : 'black'
+            return tinycolor(this.color).isDark() ? 'white' : 'black'
         }
     }
 }

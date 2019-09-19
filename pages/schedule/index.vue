@@ -26,7 +26,6 @@
 
 <script>
 import moment from 'moment';
-import chroma from 'chroma-js'
 import { mapState, mapGetters, mapMutations, mapActions } from 'vuex'
 //-------------------------------------------------------------------
 import TheHeading from '~/components/TheHeading.vue'

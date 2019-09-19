@@ -3,8 +3,9 @@ Variouts todos that don't belong in a specific file
 
 - [ ] Reorganize component styles by sections w/ `//---section comments---`
 - [ ] SASS -> Stylus
-- [ ] chroma -> tinycolor2
+- [x] chroma -> tinycolor2
 - [ ] fusejs -> wade
 - [ ] moment -> dayjs
 - [x] Move all $axios.get calls to nuxtServerInit
-- [ ] /homework/: use <<Note name>> in the additionnal notes to create a link to that note
+- [ ] /homework/: use `<<Note name>>` in the additionnal notes to create a link to that note
+- [ ] When getting test names from description, take only first line of desc & trim it.

@@ -49,7 +49,7 @@ export default {
       return moment(this.start, "HH:mm").fromNow();
     },
     textColor() {
-      return chroma(this.subject.color).get('lab.l') < 70 ? 'white' : 'black'
+      return tinycolor(this.subject.color).isDark() ? 'white' : 'black'
     },
   },
 

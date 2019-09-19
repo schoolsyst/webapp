@@ -27,7 +27,7 @@ div.CardTestNoteItem
 </template>
 
 <script>
-import chroma from 'chroma-js'
+import tinycolor from 'tinycolor2'
 import debounce from 'lodash.debounce'
 //-------------------------------
 export default {

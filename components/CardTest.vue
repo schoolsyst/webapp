@@ -45,7 +45,7 @@ div.CardTest(:style="{backgroundColor: subject.color, color: textColor}")
 <script>
 import { mapGetters } from 'vuex';
 import moment from 'moment'
-import chroma from 'chroma-js'
+import tinycolor from 'tinycolor2'
 //-----------------------------------
 import CardTestNoteItem from '~/components/CardTestNoteItem.vue'
 import ModalDialogConfirm from '~/components/ModalDialogConfirm.vue'
@@ -84,7 +84,7 @@ export default {
            allNotes: 'notes/allNotes' 
         }),
         textColor(zone) {
-            return chroma(this.subject.color).get('lab.l') < 70 ? 'white' : 'black'
+            return tinycolor(this.subject.color).isDark() ? 'white' : 'black'
         },
         getNotes() {
             let uuids = this.notes.map(n => n.uuid)
