@@ -164,6 +164,8 @@ export default {
 </script>
 
 <style lang="stylus" scoped>
+//TODO: @mobile don't put grade max/weight on the same level as the name (not enough space)
+//TODO: @mobile reduce <BigNumber> font-size
 .grades
     display grid
     grid-template-columns repeat(2, 1fr)
@@ -178,6 +180,9 @@ export default {
 
 .ItemGrade > *:not(.BaseModal)
     width 500px
+    @media (max-width: 1000px) {
+        width auto
+    }
 
 .BigNumber
     margin-top: -5px
@@ -214,7 +219,7 @@ export default {
     font-size 24px
     white-space nowrap
     overflow hidden
-    text-overflow ellipsis
+    text-overflow ellipsis //FIXME
     //---------------------------------------------------
     font-weight normal
 
