@@ -81,6 +81,8 @@ export default {
 ul.subjects
   display: grid
   grid-template-columns: repeat(4, 100px)
+  +phone
+    grid-template-columns: repeat(3, 100px)
   margin-top: 10px
   grid-gap: 15px
 </style>
