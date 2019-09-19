@@ -63,6 +63,8 @@ export const getters = {
   currentWeekType: (state, getters) => getters.weekType(moment()),
 
   coursesIn: (state, getters) => (start, upto, debug = null) => {
+  // FIXME: SHOULD NOT MUTATE THE FUCKIN DATE PASSED TO IT! HOW DUMB AM I?
+  // FIXME: coursesIn doesn't work when start == upto
     // setup vars
     /* if (debug) {
       debugger
@@ -254,38 +256,69 @@ export const getters = {
   event: (state, getters) => (eventUUID) => {
     return state.events.find(e => e.uuid === eventUUID)
   },
+  //TODO: Remove duplicate code between subjectsToAddFor and subjectsToRemoveFor
   subjectsToAddFor: (state, getters) => (date, today=null) => {
     console.group('subjectsToAdd')
     let weekdays = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday']
     // Get today 
     let dateCopy = date.clone()
-    today = today || dateCopy.subtract(1, 'day') //Subtracting from date directly would mutate it
+    today = today || dateCopy.subtract(1, 'day') //Subtracting from `date` directly would mutate it
+
     console.log(`for window ${today.format('YYYY-MM-DD')}->${date.format('YYYY-MM-DD')}`)
-    // Get today subjects
-    let allSubjects = getters.coursesIn(today, date)
-    let todaySubjects = allSubjects.filter(c => {
-      console.log(c.day,today.isoWeekday())
-      return c.day === weekdays[today.isoWeekday()-1]
-    }).map(c => c.subject)
-    let dateSubjects  = allSubjects.filter(c => c.day === weekdays[date.isoWeekday()-1]).map(c => c.subject)
-    console.log(todaySubjects)
-    // Get `date` subjexts
-    // let dateSubjects  = getters.coursesIn(date, date).map(c => c.subject)
-    // console.log(dateSubjects)
-    // Get diff
+    // Get today & date subjects
+    let todayCopy = today.clone()
+    let allSubjects = getters.coursesIn(todayCopy, date)
+    
+    let todaySubjects = allSubjects.filter(c => c.day === weekdays[today.isoWeekday()-1]).map(c => c.subject)
+    let dateSubjects  = allSubjects.filter(c => c.day === weekdays[date .isoWeekday()-1]).map(c => c.subject)
+    
+    let diff = dateSubjects.filter(s => !todaySubjects.map(s => s.uuid).includes(s.uuid))
+    console.log(diff.map(s => s.name))
     console.groupEnd()
-    // return dateSubjects.filter(s => !todaySubjects.map(s => s.uuid).includes(s.uuid))
+    return diff
   },
   subjectsToRemoveFor: (state, getters) => (date, today=null) => {
+    console.group('subjectsToRemove')
+    let weekdays = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday']
     // Get today 
-    today = today || date.subtract(1, 'day')
-    // Get today subjects
-    // let todaySubjects = getters.coursesIn(today, today).map(c => c.subject)
-    // Get `date` subjexts
-    // let dateSubjects  = getters.coursesIn(date, date).map(c => c.subject)
-    // Get diff
-    // return todaySubjects.filter(s => !dateSubjects.map(s => s.uuid).includes(s.uuid))
+    let dateCopy = date.clone()
+    today = today || dateCopy.subtract(1, 'day') //Subtracting from `date` directly would mutate it
+
+    console.log(`for window ${today.format('YYYY-MM-DD')}->${date.format('YYYY-MM-DD')}`)
+    // Get today & date subjects
+    let todayCopy = today.clone()
+    let allSubjects = getters.coursesIn(todayCopy, date)
+    
+    let todaySubjects = allSubjects.filter(c => c.day === weekdays[today.isoWeekday()-1]).map(c => c.subject)
+    let dateSubjects  = allSubjects.filter(c => c.day === weekdays[date .isoWeekday()-1]).map(c => c.subject)
+    
+    let diff = todaySubjects.filter(s => !dateSubjects.map(s => s.uuid).includes(s.uuid))
+    console.log(diff.map(s => s.name))
+    console.groupEnd()
+    return diff
   },
+  hoursCountFor: (state, getters) => (date) => {
+    /* NOTE: Doing a two-days interval and taking only one because coursesIn does not support (date, date) yet (dates must be different)
+    When this is fixed, this code will be a lot less ridiculous */
+    console.group(`hoursCountFor: ${date.format('YYYY-MM-DD')}`)
+    let weekdays = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday']
+    // Get today 
+    let dateCopy = date.clone()
+    let today = dateCopy.subtract(1, 'day') //Subtracting from `date` directly would mutate it
+
+    let todayCopy = today.clone()
+    let allSubjects = getters.coursesIn(todayCopy, date)
+    
+    let courses   = allSubjects.filter(c => c.day === weekdays[date .isoWeekday()-1])
+    console.log(courses)
+    let durations = courses.map(c => moment.duration(moment(c.end, 'HH:mm').diff(moment(c.start, 'HH:mm'))).as('hours'))
+    console.log(durations)
+    let total     = durations.reduce((acc,cur)=>acc+cur)
+    console.log(total)
+
+    console.groupEnd()
+    return Math.round(Math.abs(total))
+  }
 };
 
 export const mutations = {

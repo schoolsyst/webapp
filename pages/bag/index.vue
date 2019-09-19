@@ -16,8 +16,8 @@
             BadgeSubject(v-else v-bind="subject")
       MainGroupRight
         HeadingSub Journée de demain
-        BigNumber(value="3" unit="heures")
-        p 18:03—20:03
+        BigNumber(:value="tomorrowHoursCount" unit="heures" sign="~")
+        //TODO: Time of start & end of day
     
   </div>
 </template>
@@ -59,7 +59,8 @@ export default {
   computed: {
     ...mapGetters({
       subjectsToAddFor: 'schedule/subjectsToAddFor',
-      subjectsToRemoveFor: 'schedule/subjectsToRemoveFor'
+      subjectsToRemoveFor: 'schedule/subjectsToRemoveFor',
+      hoursCountFor: 'schedule/hoursCountFor'
     }),
     subjectsToAdd() {
       return this.subjectsToAddFor(moment().add(1, 'day'))
@@ -67,6 +68,9 @@ export default {
     subjectsToRemove() {
       return this.subjectsToRemoveFor(moment().add(1, 'day'))
     },
+    tomorrowHoursCount() {
+      return this.hoursCountFor(moment().add(1, 'day'))
+    }
   }
 };
 </script>
