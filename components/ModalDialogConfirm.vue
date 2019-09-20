@@ -2,9 +2,13 @@
 BaseModal.ModalDialogConfirm(:name="`confirm-${name}`", show-close-button)
     p.heading {{heading}}
     p.message: slot
-    ArrayButtonReg.buttons
+    ArrayButtonReg.buttons(v-if="!challengeOpened")
         ButtonRegSecondary(close-modal) {{cancelText}}
-        ButtonRegPrimary(@click.native="confirmAndClose", :role="confirmRole") {{confirmText}}
+        ButtonRegPrimary(@click.native="challenge ? startChallenge() : confirmAndClose()", :role="confirmRole") {{confirmText}}
+    .challenge(:class="{'errored': challengeError}" v-else)
+        LabelFlat {{challengeMessage}}
+        InputFlat(type="text" v-model="challengeInput")
+        ButtonIcon(@click="challenge(challengeInput) ? confirmAndClose() : challengeError = true") check
 </template>
 
 <script>
@@ -12,9 +16,12 @@ import ButtonRegPrimary from '~/components/ButtonRegPrimary.vue'
 import ButtonRegSecondary from '~/components/ButtonRegSecondary.vue'
 import ArrayButtonReg from '~/components/ArrayButtonReg.vue'
 import BaseModal from '~/components/BaseModal.vue'
+import LabelFlat from '~/components/LabelFlat.vue'
+import InputFlat from '~/components/InputFlat.vue'
+import ButtonIcon from '~/components/ButtonIcon.vue'
 export default {
     name: 'ModalDialogConfirm',
-    components: {ButtonRegPrimary,ButtonRegSecondary,BaseModal,ArrayButtonReg},
+    components: {ButtonRegPrimary,ButtonRegSecondary,BaseModal,ArrayButtonReg,LabelFlat,InputFlat,ButtonIcon},
     props: {
         heading: {
             type: String,
@@ -32,12 +39,37 @@ export default {
             type: String,
             default: "normal"
         },
-        name: String
+        name: String,
+        challenge: {
+            type: [Boolean, Function],
+            default: false
+        },
+        challengeMessage: {
+            type: String,
+            default: ''
+        }
+    },
+    data() {
+        return {
+            challengeInput: '',
+            challengeOpened: false,
+            challengeError: false,
+        }
     },
     methods: {
         confirmAndClose() {
+            this.endChallenge()
             this.$emit('confirm')
             document.querySelector(`#modal_confirm-${this.name}`).classList.remove('opened')
+        },
+        startChallenge() {
+            console.log(`[MODAL confirm-${name}] starting challenge`)
+            this.challengeError = false
+            this.challengeOpened = true
+        },
+        endChallenge() {
+            this.challengeOpened = false
+            this.challengeError = false
         }
     }
 }
@@ -57,4 +89,6 @@ export default {
     margin-bottom 20px
 .message
     line-height 1.2
+.challenge.errored
+    background var(--red)
 </style>

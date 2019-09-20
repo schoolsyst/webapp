@@ -1,12 +1,19 @@
 <template lang="pug">
 BaseCard.CardSubject(:style="{backgroundColor: mutColor, color: textColor}", :class="{editing}")
   //TODO: type in the name of the subject to confirm deletion
-  ModalDialogConfirm.confirm-delete(:name="`delete-subject-${uuid}`" confirm-role="danger" confirm-text="Supprimer" @confirm="editing = false; $emit('editing-finished', subject); deleteSubject()")
+  ModalDialogConfirm.confirm-delete(
+    :name="`delete-subject-${uuid}`" 
+    confirm-role="danger" 
+    confirm-text="Supprimer" 
+    challenge-message="Pour confirmer, écrivez le nom de la matière"
+    :challenge="(input) => input === name"
+    @confirm="editing = false; $emit('editing-finished', subject); deleteSubject()"
+  )
     | Supprimer cette matière supprimera #[strong tout] ce qui était en lien avec:
     br
     | &nbsp; &bull; devoirs, #[br]
     | &nbsp; &bull; contrôles, #[br]
-    | &nbsp; &bull; évenements dans l'emploi du temps et #[br]
+    | &nbsp; &bull; évenements dans l'emploi du temps #[br]
     | &nbsp; &bull; prises de notes #[br]
     br
     | Cette action est #[strong irréversible]
@@ -102,7 +109,6 @@ export default {
 
   data() {
     return {
-      editing: false,
       mutColor: this.color,
       mutName: this.name,
       mutGrade_goal: this.grade_goal,
@@ -154,9 +160,11 @@ export default {
         if (this.uuid === 'new') {
           res = this.$axios.post(`/subjects/`, this.subject)
           this.$store.commit('ADD_SUBJECT', res.data)
+          this.$toast.success(`Matière "${res.data.name}" ajoutée`)
         } else {
           res = this.$axios.patch(`/subjects/${this.uuid}/`, this.subject)
           this.$store.commit('UPDATE_SUBJECT', {uuid: this.uuid, data: res.data})
+          this.$toast.success(`Matière "${res.data.name}" modifiée`)
         }
       } catch (error) {
         let verb
