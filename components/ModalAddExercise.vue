@@ -72,6 +72,7 @@ export default {
       default: {
         color: "black",
         abbreviation: "...",
+        name: "Veuillez sélectionner une matière…",
         _isPlaceholder: true
       }
     }
