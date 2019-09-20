@@ -48,6 +48,20 @@ export const getters = {
         return pdate(getters.setting("year_end").value);
     }
   },
+  trimester: (state, getters) => date => {
+    let trimesterFound = false
+    let testingTrimester = 1
+    while (!trimesterFound && testingTrimester <= 3) {
+      let start = getters.trimesterStart(testingTrimester)
+      let end   = getters.trimesterStart(testingTrimester+1)
+
+      trimesterFound = date.isBetween(start, end)
+      if (trimesterFound) return testingTrimester
+
+      testingTrimester++
+    }
+    return 3
+  },
   weekType: (state, getters) => date => {
     // get base Q1/Q2
     let base = getters.setting("starting_week_type").value;
@@ -195,12 +209,15 @@ export const getters = {
     } else {
       return {
         color: "#000000",
-        name: "...",
+        name: "Veuillez sélectionner une matière…",
         abbreviation: "...",
         slug: "...",
         _isPlaceholder: true
       };
     }
+  },
+  currentTrimester: (state, getters) => {
+    return getters.trimester(moment())
   },
   // note: doesn't get other courses in the same day as currentSubject
   nextCourseOf: (state, getters) => subjectSlug => {

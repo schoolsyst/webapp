@@ -13,7 +13,6 @@
 ul.ArrayGroupedHomework
     li(v-for="(group, i) in groups" :key="i")
         //TODO: showThisGroup as a computed property, separate into a component "GroupedHomework"
-        //
         HeadingSub(v-if="showThisGroup(group) && showHeaders")
             span.date {{ formatDate(group[0]) }}
             span.sep(v-if="formatDate(group[0])") &mdash;

@@ -52,9 +52,10 @@
           ItemExercise(v-for="exercise in exercises", :key="exercise.uuid" v-bind="exercise")
     MainGroupRight
       HeadingSub moyenne
-      BigNumber(v-bind="globalMean" :fixed="2")
+      BigNumber(v-bind="mean" :fixed="2")
       HeadingSub Évolution
-      BigNumber(v-bind="evolution")
+      p La moyenne était de {{meanBeforeLastGrade || '—'}}/20 avant la dernière note
+      BigNumber(v-bind="evolution"  :fixed="2", :unit="`% (${Math.round(mean.value - meanBeforeLastGrade) || '—'})`")
   </template>
 
 <script>
@@ -104,7 +105,7 @@ export default {
     moment.locale("fr");
     return {
       addExerciseModal: false,
-      now: moment()
+      now: moment(),
     };
   },
 
@@ -114,10 +115,14 @@ export default {
       fCurrentCourse: "schedule/currentCourse",
       fCurrentCourseSubject: "schedule/currentCourseSubject",
       setting: "setting",
-      getGlobalMean: "homework/globalMean",
+      currentTrimesterMean: "homework/currentTrimesterMean",
+      currentTrimesterGradesEvolution: "homework/currentTrimesterGradesEvolution",
       notesOf: "notes/notesOf",
       pendingExercises: "homework/pendingExercises",
     }),
+    gradeMax() {
+      return Number(this.setting("grade_max").value)
+    },
     upcomingCourse() {
       return this.fUpcomingCourse(this.now)
     },
@@ -127,20 +132,42 @@ export default {
     currentCourseSubject() {
       return this.fCurrentCourseSubject(this.now)
     },
-    //TODO: get globalMean from a getter
-    globalMean() {
-      let gradeMax = Number(this.setting("grade_max").value);
+    mean() {
       return {
-        value: this.getGlobalMean(false) * gradeMax,
-        unit: `/${gradeMax}`
+        value: this.currentTrimesterMean * this.gradeMax,
+        unit: `/${this.gradeMax}`
       };
     },
-    //TODO: evolution calculations
     evolution() {
+      let sgn
+      let { relativeDiff } = this.currentTrimesterGradesEvolution
+      if (relativeDiff > 1) {
+        sgn = '+'
+      } else if(relativeDiff < 1) {
+        sgn = '-'
+      } else {
+        sgn = ''
+      }
       return {
-        value: NaN,
-        unit: "%"
-      };
+        value: Math.abs(relativeDiff * 100),
+        sign: sgn
+      }
+    },
+    evolutionVerb() {
+      switch (this.evolution.sign) {
+        case "+":
+          return 'gagné'
+
+        case "-":
+          return 'perdu'
+
+        default:
+          return 'perdu/gagné'
+      }
+    },
+    meanBeforeLastGrade() {
+      let { meanThen } = this.currentTrimesterGradesEvolution
+      return meanThen * this.gradeMax
     },
     timeTilEndOfCurrentCourse() {
       return moment().to(moment(this.currentCourse.end, 'hh:mm'), true)

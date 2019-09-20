@@ -11,19 +11,24 @@ export const getters = {
   allGrades(state, getters) {
     return state.grades;
   },
-  gradesOf: (state, getters) => subjectOrTrimester => {
+  gradesOf: (state, getters, rootState, rootGetters) => (subjectOrTrimester) => {
     // its a trimester: get the date boundary for the requested trimester
-    if (typeof subjectOrTrimester === Number) {
-      start = getters.trimesterStartDate(subjectOrTrimester);
+    if (typeof subjectOrTrimester === 'number') {
+      let start = rootGetters['schedule/trimesterStart'](subjectOrTrimester);
       // get the end (aka the start of the next one, or the end of the year)
-      end = getters.trimesterStartDate(subjectOrTrimester + 1);
+      let end = rootGetters['schedule/trimesterStart'](subjectOrTrimester + 1);
+
+      console.log(`[gradesOf] start=${start} end=${end}`)
 
       return state.grades.filter(
-        grade => grade.added >= start && grade.added <= end
+        grade => {
+          let added = moment(grade.added, 'YYYY-MM-DD')
+          return added.isSameOrAfter(start) && added.isSameOrBefore(end)
+        }
       );
       // its a subject
     } else {
-      return state.grades.filter(grade => grade.subject.slug === subject.slug);
+      return getters.allTests.filter(t => t.subject.uuid === subjectOrTrimester).map(t => t.grades[0]);
     }
   },
   gradesIn: (state, getters) => (from, upto) => {
@@ -31,7 +36,38 @@ export const getters = {
       grade => grade.added >= from && grade.added <= upto
     );
   },
+  latestGrade: (state, getters) => (grades=null) => {
+    grades = grades || getters.allGrades
+    let sorted = grades.filter(g => !isNaN(g.actual) && g.actual!==null)
+                       .sort((a,b) => moment(a.added, 'YYYY-MM-DD').isBefore(moment(b.added, 'YYYY-MM-DD')) ? 1 : -1)
+    return sorted.length ? sorted[0] : null
+  },
+  gradesEvolution: (state, getters) => (grades=null) => {
+    // Get a grades array, default to all grades
+    grades = grades || getters.allGrades
+    // Get the latest grade, if we can't find it, return NaN
+    let latestGrade = getters.latestGrade(grades)
+    if (!latestGrade) return NaN
+    
+    // Get mean of "now"
+    let meanNow = getters.meanOfGrades(grades)
+    // Get an array of grades that contains all of them but the last one
+    // If this array is empty, return NaN: there's nothing to compare the mean against.
+    let gradesExceptLast = grades.filter(g => g.uuid !== latestGrade.uuid)
+    if (!gradesExceptLast.length) return NaN
+    // Get mean of "then" (all the provided grades but the last one)
+    let meanThen = getters.meanOfGrades(gradesExceptLast)
+    
+    // Compute the relative difference between the two means
+    let relativeDiff = (meanNow - meanThen) / meanThen
 
+    // Also return the two means, could be useful for an absolute difference 
+    // or simply displaying the mean before the latest grade
+    return {relativeDiff, meanThen, meanNow}
+  },
+  currentTrimesterGradesEvolution(state, getters) {
+    return getters.gradesEvolution(getters.currentTrimesterGrades)
+  },
   allTests(state, getters) {
     return state.tests;
   },
@@ -51,44 +87,32 @@ export const getters = {
     }
     return tests;
   },
-  meanOf: (state, getters, rootState, rootGetters) => (
-    subjectOrTrimester,
-    applyGradeMax = true
-  ) => {
+  meanOfGrades: (state, getters) => grades => {
+    let vals = grades.map(g => g.actual).filter(v => !isNaN(v) && v!==null)
+    if (!vals.length) return NaN
+    let sum = vals.reduce((acc, cur) => acc+cur)
+    return sum / vals.length
+  },
+  meanOf: (state, getters, rootState, rootGetters) => (subjectOrTrimester) => {
     // get an array containing the grade values from the requested subject/trimester
     let grades = getters.gradesOf(subjectOrTrimester);
-    if (!grades.length) return null;
-    grades = grades.map(grade => grade.value);
-    if (!grades.length) return null;
-    // calculate the mean
-    let mean = grades.reduce((acc, val) => acc + val) / grades.length;
-
-    // NOTE: all grades are in [0;1], this option allows to give out the
-    // "correct" value, according to the user's settings (default_max)
-    // eg. percentage grades would have a default_max of 100
-    if (applyGradeMax) {
-      let gradeMax = rootGetters.setting("default_max");
-      mean *= gradeMax;
-    }
+    let mean = getters.meanOfGrades(grades)
     return mean;
   },
-  globalMean: (state, getters, rootState, rootGetters) => (applyGradeMax=true) => {
+  globalMean: (state, getters, rootState, rootGetters) => {
     console.group('globalMean')
     let grades = getters.allGrades.map(grade => grade.actual).filter(actual => !isNaN(actual) && actual !== null);
-    console.log(grades)
-    if (!grades.length) return 0; // prevent division by zero & reduce empty array
-    let sum = grades.reduce((acc, val) => acc + val);
-    let mean = sum / grades.length;
-
-    // See `store/homework.js#getters.meanOf`
-    if (applyGradeMax) {
-      let gradeMax = rootGetters.setting("default_max");
-      mean *= gradeMax;
-    }
+    let mean = getters.meanOfGrades(grades)
     console.groupEnd()
     return mean;
   },
-  currentTrimesterGlobalMean(state, getters) {},
+  currentTrimesterGrades(state, getters, rootState, rootGetters) {
+    return getters.gradesOf(rootGetters['schedule/currentTrimester'])
+  },
+  currentTrimesterMean(state, getters) {
+    console.log(getters.currentTrimesterGrades)
+    return getters.meanOfGrades(getters.currentTrimesterGrades)
+  },
 
   allExercises(state, getters) {
     return state.exercises;
