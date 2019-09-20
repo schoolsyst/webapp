@@ -2,12 +2,15 @@
 .Schedule(:class="{'mnml': mnmlMode}")
     ModalCardEvent(v-bind="clickedEvent")
     .schedule-container
-        .now-line(:style="{top: nowLineTop, display: nowLineDisplay}"): span.now-line-time {{now.format('HH:mm')}}
+        //- .now-line(:style="{top: nowLineTop, display: nowLineDisplay}"): span.now-line-time {{now.format('HH:mm')}}
         .schedule(:style="{height: totalHeight + 'px'}")
             .schedule-day(
                 v-for="events in eventsOfDays"
                 :key="events.day"
             )
+                //- .now-line(
+                //-     :style="{top: nowLineTop, display: nowLineDisplay}",
+                //- )
                 .event(
                     v-for="ev in events.events"
                     :key="ev.start"
@@ -15,7 +18,7 @@
                         backgroundColor: ev.subject.color, \
                         height: getHeight(ev), \
                         top: getTop(ev), \
-                        left: getLeft(ev), \
+                        right: getRight(ev), \
                         width: eventWidth.toString() + 'px', \
                         color: getTextColor(ev),\
                     }"
@@ -32,28 +35,15 @@ import moment from 'moment';
 import tinycolor from 'tinycolor2'
 import { mapState, mapGetters, mapMutations, mapActions } from 'vuex'
 //-------------------------------------------------------------------
-import TheHeading from '~/components/TheHeading.vue'
-import ArrayButtonFlat from '~/components/ArrayButtonFlat.vue'
-import ButtonFlat from '~/components/ButtonFlat.vue'
-import MainGroup from '~/components/MainGroup.vue'
-import MainGroupLeft from '~/components/MainGroupLeft.vue'
-import MainGroupRight from '~/components/MainGroupRight.vue'
-import HeadingSub from '~/components/HeadingSub.vue'
-import ArrayItemScheduleMutation from '~/components/ArrayItemScheduleMutation.vue'
-import ItemScheduleMutation from '~/components/ItemScheduleMutation.vue'
-import BarFloating from '~/components/BarFloating.vue'
-import EventSchedule from '~/components/EventSchedule.vue'
-import LineScheduleNow from '~/components/LineScheduleNow.vue'
-import ButtonLargeFlat from '~/components/ButtonLargeFlat.vue'
 import ModalCardEvent from '~/components/ModalCardEvent.vue'
 
 export default {
-    components: { ModalCardEvent, },
+    components: { ModalCardEvent,},
 
     props: {
         pixelPerMinute: {
             type: Number,
-            default: 1.2
+            default: 1.4
         },
         now: Object
     },
@@ -62,7 +52,9 @@ export default {
         return {
             clickedEvent: {},
             eventWidth: 135,
-            mobileEventWidth: 100
+            mobileEventWidth: 100,
+            weekdaysWithEvents: [],
+            daynames: ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday']
         }
     },
 
@@ -94,11 +86,11 @@ export default {
         eventsOfDays(day) {
             let ofDay = (day) => this.events.filter(e => e.day === day)
             let days = []
-            let daynames = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday']
-            daynames.forEach(day => {
+            let self = this
+            this.daynames.forEach(day => {
                 days.push({
                     day: day,
-                    dayindex: daynames.indexOf(day),
+                    dayindex: self.daynames.indexOf(day),
                     events: ofDay(day)
                 })
             })
@@ -140,8 +132,8 @@ export default {
             let value = Math.abs((start - this.firstCourseStart(this.events) / 60) * this.pixelPerMinute)
             return number ? value : value.toString() + 'px'
         },
-        getLeft(event) {
-            return (['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'].indexOf(event.day) * this.eventWidth).toString() + 'px'
+        getRight(event) {
+            return (['monday', 'tuesday', 'wednesday', 'thursday', 'friday'].reverse().indexOf(event.day) * this.eventWidth).toString() + 'px'
         },
         getTextColor(event) {
             return tinycolor(event.subject.color).isDark() ? 'white' : 'black'
@@ -171,7 +163,6 @@ export default {
     height: 100vh
 .schedule-day
     display: flex
-    position: absolute
 .event
     z-index: -1
     cursor: pointer
@@ -182,9 +173,11 @@ export default {
     flex-direction: column
     .subject
         text-transform: uppercase
+        // opacity: 0.5
+        display: none
     .subject, .room
         font-weight: bold
-        font-size: 18px
+        font-size: 16px
         line-height: 24px
         +mobile
             font-weight: normal
