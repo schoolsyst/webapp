@@ -36,21 +36,25 @@
         li(v-if="timeRemaining", title="Temps avant la fin du cours") {{timeRemaining.format(`H[h]m`)}}
         li {{now.format('HH:mm')}}
       ArrayButtonFlat.actions
-        li: ButtonFlat(
-          icon='note_add', 
+        //TODO: label-less icon, a bit bigger
+        li: ButtonIcon(
           open-modal="add-note", 
-          open-at="self"
-        ) Nouveau chapitre
-        li: ButtonFlat(
-          icon='edit', 
+          open-at="self",
+          title="Nouveau chapitre"
+          color="black"
+        ) note_add
+        li: ButtonIcon(
           open-modal="add-exercise", 
-          open-at="center"
-        ) Devoir
-        li: ButtonFlat(
-          icon='format_list_bulleted'
+          open-at="self",
+          title="Nouveau devoir"
+          color="black"
+        ) edit
+        li: ButtonIcon(
           open-modal="add-test",
-          open-at="center"
-        ) Contrôle
+          open-at="self",
+          title="Nouveau contrôle"
+          color="black"
+        ) format_list_bulleted
   style.
     body {
       overflow: hidden
@@ -715,11 +719,16 @@ export default {
 
 .actions
   position: fixed
-  bottom: 20px
-  left: -15px
+  bottom: 25px
   //---------------------------------------------------
   display: flex
-  li .ButtonFlat
-    font-size: 24px
+  li 
+    &:not(:last-child)
+      margin-right: 30px
+    .ButtonIcon
+      font-size: 30px
+      &:hover /deep/ .icon
+        color: var(--blue) !important
+      
 
 </style>
