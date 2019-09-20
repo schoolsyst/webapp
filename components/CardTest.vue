@@ -46,6 +46,7 @@ div.CardTest(:style="{backgroundColor: subject.color, color: textColor}")
 import { mapGetters } from 'vuex';
 import moment from 'moment'
 import tinycolor from 'tinycolor2'
+import debounce from 'lodash.debounce'
 //-----------------------------------
 import CardTestNoteItem from '~/components/CardTestNoteItem.vue'
 import ModalDialogConfirm from '~/components/ModalDialogConfirm.vue'
@@ -136,16 +137,17 @@ export default {
     },
 
     watch: {
-        async mutDate() {
+        mutDate: debounce(async function() {
             try {
                 const { data } = await this.$axios.patch(`/tests/${this.uuid}`, {
-                    date: this.mutDate
+                    due: this.mutDate
                 })
+                this.$store.commit('homework/UPDATE_TEST', this.uuid, {due: this.mutDate})
                 this.$toast.success(`Date modifiée avec succès`)
             } catch(error) {
                 this.$toast.error(`Erreur lors du changement de la date: ${error}`)
             }
-        }
+        }, 500)
     }
 }
 </script>
@@ -186,24 +188,25 @@ export default {
     display grid
     grid-template-columns repeat(2, 50%)
     height 45px
-    background rgba(255, 255, 255, 0.5)
+    background #fff8
 .progress-infos
     height 0
-    overflow visible
-    position absolute
+    position relative
     padding 2.5px 7.5px
     color black
+    width 100%
+    background #fff8
 .percentage, .subject-abbr
-    position relative
-    top 5px
+    position absolute
+    top 7.5px
     font-size: 30px
     font-family: 'Roboto Mono', monospace
 .percentage
-    left: 10px
+    right 15px
     text-align: right
 .subject-abbr
     text-transform: uppercase
-
+    left 15px
 .details
     opacity: 0.75
 .infos
