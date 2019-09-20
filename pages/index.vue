@@ -52,7 +52,7 @@
           ItemExercise(v-for="exercise in exercises", :key="exercise.uuid" v-bind="exercise")
     MainGroupRight
       HeadingSub moyenne
-      BigNumber(v-bind="globalMean")
+      BigNumber(v-bind="globalMean" :fixed="2")
       HeadingSub Évolution
       BigNumber(v-bind="evolution")
   </template>
@@ -131,7 +131,7 @@ export default {
     globalMean() {
       let gradeMax = Number(this.setting("grade_max").value);
       return {
-        value: this.getGlobalMean || NaN,
+        value: this.getGlobalMean(false) * gradeMax,
         unit: `/${gradeMax}`
       };
     },

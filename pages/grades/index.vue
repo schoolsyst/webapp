@@ -5,12 +5,12 @@
       MainGroupLeft
         HeadingSub Contrôles prévus
         ul.due-tests.tests
-          li(v-for="test in dueTests", :key="test.uuid") 
+          li(v-for="test in dueTests", :key="test.uuid" v-if="test.grades.length") 
             ItemGrade(v-bind="test", :editable-fields="['goal', 'maximum', 'weight', 'expected']" :disabled-fields="['actual']")
       MainGroupRight
         HeadingSub Contrôles rendus
         ul.done-tests.tests
-          li(v-for="test in pastTests", :key="test.uuid") 
+          li(v-for="test in pastTests", :key="test.uuid" v-if="test.grades.length && !test.grades[0].actual") 
             ItemGrade(v-bind="test", :editable-fields="['goal', 'maximum', 'weight', 'expected', 'actual']")
 
 </template>

@@ -87,7 +87,7 @@ export default {
 
     computed: {
         ...mapGetters({
-            setting: 'setting'
+            setting: 'setting',
         }),
         testName() {
             if (this.notes.length) {
@@ -201,7 +201,7 @@ export default {
 .name-area
     // max-width 33vw
     display grid
-    grid-template-columns 50px 1fr 50px 25px 25px
+    grid-template-columns 50px 1fr 50px 75px 25px
     grid-gap 10px
     & > *
         display flex

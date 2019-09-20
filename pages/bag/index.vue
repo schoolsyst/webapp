@@ -2,7 +2,7 @@
   .container
     TheHeading Sac
     ArrayButtonFlat
-    MainGroup
+    MainGroup(v-if="tomorrowHoursCount")
       MainGroupLeft
         HeadingSub À ajouter
         ul.subjects.toadd
@@ -17,7 +17,9 @@
       MainGroupRight
         HeadingSub Journée de demain
         BigNumber(:value="tomorrowHoursCount" unit="heures" sign="~")
-        //TODO: Time of start & end of day
+        span.bighour {{  }}
+    MainGroup(full-size v-else)
+      p.centered trql, t'a pas cours demain!
     
   </div>
 </template>
@@ -85,4 +87,11 @@ ul.subjects
     grid-template-columns: repeat(3, 100px)
   margin-top: 10px
   grid-gap: 15px
+
+.MainGroup.full-size
+  display: flex
+  justify-content: center
+  align-items: center
+  .centered
+    font-size: 44px
 </style>

@@ -72,17 +72,20 @@ export const getters = {
     }
     return mean;
   },
-  globalMean: (state, getters) => (applyGradeMax=true) => {
-    let grades = getters.allGrades.map(grade => grade.value);
+  globalMean: (state, getters, rootState, rootGetters) => (applyGradeMax=true) => {
+    console.group('globalMean')
+    let grades = getters.allGrades.map(grade => grade.actual).filter(actual => !isNaN(actual) && actual !== null);
+    console.log(grades)
     if (!grades.length) return 0; // prevent division by zero & reduce empty array
     let sum = grades.reduce((acc, val) => acc + val);
     let mean = sum / grades.length;
 
     // See `store/homework.js#getters.meanOf`
     if (applyGradeMax) {
-      let gradeMax = getters.setting("default_max");
+      let gradeMax = rootGetters.setting("default_max");
       mean *= gradeMax;
     }
+    console.groupEnd()
     return mean;
   },
   currentTrimesterGlobalMean(state, getters) {},

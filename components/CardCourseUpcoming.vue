@@ -7,7 +7,6 @@
 
 <script>
 import moment from "moment";
-import chroma from "chroma-js"
 import BaseCard from "~/components/BaseCard.vue";
 
 export default {

@@ -1,9 +1,9 @@
 <template lang="pug">
-.Schedule
+.Schedule(:class="{'mnml': mnmlMode}")
     ModalCardEvent(v-bind="clickedEvent")
     .schedule-container
         .now-line(:style="{top: nowLineTop, display: nowLineDisplay}"): span.now-line-time {{now.format('HH:mm')}}
-        .schedule(:style="{height: (lastCourseEnd - firstCourseStart) * pixelPerMinute + 'px'}")
+        .schedule(:style="{height: totalHeight + 'px'}")
             .schedule-day(
                 v-for="events in eventsOfDays"
                 :key="events.day"
@@ -53,7 +53,7 @@ export default {
     props: {
         pixelPerMinute: {
             type: Number,
-            default: 1.45
+            default: 1.2
         },
         now: Object
     },
@@ -61,7 +61,7 @@ export default {
     data() {
         return {
             clickedEvent: {},
-            eventWidth: 175,
+            eventWidth: 135,
             mobileEventWidth: 100
         }
     },
@@ -70,24 +70,19 @@ export default {
         ...mapGetters({
             coursesIn: 'schedule/coursesIn',
             event: 'schedule/event',
-            setting: 'setting'
+            setting: 'setting',
+            firstCourseStart: 'schedule/firstCourseStart',
+            lastCourseEnd: 'schedule/lastCourseEnd',
         }),
-        firstCourseStart() {
-            return Math.min(...this.events.map(ev => {
-                let st = moment(ev.start, 'HH:mm:ss')
-                return st.diff(moment('00:00:00', 'HH:mm:ss'), 'minutes')
-            }))
-        },
-        lastCourseEnd() {
-            return Math.max(...this.events.map(ev => {
-                let st = moment(ev.end, 'HH:mm:ss')
-                return st.diff(moment('00:00:00', 'HH:mm:ss'), 'minutes')
-            }))
-        },
         date() {
             moment.locale('fr')
             let fmt = moment(this.now).format('dddd')
             return fmt.charAt(0).toUpperCase() + fmt.substr(1)
+        },
+        totalHeight() {
+            let start = this.firstCourseStart(this.events) / 60
+            let end   = this.lastCourseEnd(this.events) / 60
+            return (end - start) * this.pixelPerMinute
         },
         events() {
             let otherWeekType = this.getWeekType === 'Q1' ? 'Q2' : 'Q1'
@@ -111,12 +106,14 @@ export default {
             return days
         },
         nowLineTop() {
-            let nowMins = moment(this.now).diff(moment('00:00:00', 'HH:mm:ss'), 'minutes')
-            return Math.abs((nowMins - this.firstCourseStart) * this.pixelPerMinute).toString() + 'px'
+            let nowMins = this.now.diff(moment('00:00:00', 'HH:mm:ss'), 'minutes')
+            console.log(this.firstCourseStart(this.events) / 60)
+            return Math.abs((nowMins - (this.firstCourseStart(this.events) / 60)) * this.pixelPerMinute).toString() + 'px'
         },
         nowLineDisplay() {
-            let nowMins = moment(this.now).diff(moment('00:00:00', 'HH:mm:ss'), 'minutes')
-            return nowMins <= this.lastCourseEnd ? '' : 'none'
+            let nowMins = this.now.diff(moment('00:00:00', 'HH:mm:ss'), 'minutes')
+            return true
+            return nowMins <= this.lastCourseEnd(this.events) / 60 ? '' : 'none'
         },
         mnmlMode() {
             return false
@@ -140,7 +137,7 @@ export default {
         },
         getTop(event, number=false) {
             let start = moment(event.start, 'HH:mm:ss').diff(moment('00:00:00', 'HH:mm:ss'), 'minutes')
-            let value = Math.abs((start - this.firstCourseStart) * this.pixelPerMinute)
+            let value = Math.abs((start - this.firstCourseStart(this.events) / 60) * this.pixelPerMinute)
             return number ? value : value.toString() + 'px'
         },
         getLeft(event) {

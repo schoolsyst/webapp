@@ -1,4 +1,5 @@
 // FIXME: don't cache "nextCourse"-related getters.
+// TODO: remove moment-range dependency
 // CLARIFICATION: event(s) vs course(s)
 // - events are "base" events as returned by the /events/ API endpoint.
 //   They describe a normal week of the year
@@ -313,12 +314,25 @@ export const getters = {
     console.log(courses)
     let durations = courses.map(c => moment.duration(moment(c.end, 'HH:mm').diff(moment(c.start, 'HH:mm'))).as('hours'))
     console.log(durations)
+    if (!durations.length) return 0
     let total     = durations.reduce((acc,cur)=>acc+cur)
     console.log(total)
 
     console.groupEnd()
     return Math.round(Math.abs(total))
-  }
+  },
+  firstCourseStart: (start, getters) => (events) => {
+    return Math.min(...events.map(ev => {
+        let st = moment(ev.start, 'HH:mm:ss')
+        return st.diff(moment('00:00:00', 'HH:mm:ss'), 'seconds')
+    }))
+  },
+  lastCourseEnd: (start, getters) => (events) => {
+    return Math.max(...events.map(ev => {
+        let st = moment(ev.end, 'HH:mm:ss')
+        return st.diff(moment('00:00:00', 'HH:mm:ss'), 'seconds')
+    }))
+  },
 };
 
 export const mutations = {
@@ -347,4 +361,4 @@ export const mutations = {
 };
 
 export const actions = {
-};
+}

@@ -9,8 +9,7 @@
         MainGroupLeft
         MainGroupRight
 
-.container(:class="{'mnml': mnmlMode}")
-    ModalCardEvent(v-bind="clickedEvent")
+.container
     MainGroup
         MainGroupLeft
             TheHeading {{date}}
@@ -90,5 +89,10 @@ export default {
 .HeadingSub 
     margin-right: 50px
     font-size: 24px
+.Schedule
+    width: 100%
++desktop
+    .MainGroup
+        grid-template-columns: 2fr 3fr
 </style>
 
