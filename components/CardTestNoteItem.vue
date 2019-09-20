@@ -52,7 +52,7 @@ export default {
     },
     computed: {
         textIsWhite() {
-            return chroma(this.subject.color).get('lab.l') < 70
+            return tinycolor(this.subject.color).isDark()
         },
 
         progressWidth() {
