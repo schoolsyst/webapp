@@ -1,6 +1,6 @@
 <template lang="pug">
     <footer class="TheFooter">
-        OverlayLoadingLogo(animate-when="scroll-into-view")
+        OverlayLoadingLogo(animate-when="scrolled-into-view")
         h6.logo-title schoolsyst
         p.logo-subtitle 
             |by 
