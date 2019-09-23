@@ -2,7 +2,6 @@ import flatten from 'lodash.flatten'
 
 export const state = () => ({
     subjects: [],
-    requireInitialSetup: false,
     settings: [],
     defaultSettings: [],
 })
@@ -29,13 +28,23 @@ export const getters = {
             console.warn(`falling back to default value for setting ${settingKey}(=${q}${defaultSettingDefault}${q})`)
             return {
                 ...defaultSetting,
-                value: defaultSettingDefault
+                value: defaultSettingDefault,
+                _is_default: true
             }
         }
-        return Object.assign({}, defaultSetting, userSetting)
+        return Object.assign({}, defaultSetting, userSetting, {_is_default: false})
     },
     subjectBySlug: (state, getters) => (subjSlug) => {
         return state.subjects.find(subj => subj.slug === subjSlug)
+    },
+    requireInitialSetup(state, getters) {
+        let ret 
+        // Crude check, if not subjects or no settings are set, 
+        // we obviously require a setup
+        ret = !(state.subjects.length && state.settings.length)
+        if(ret) return true
+
+        ret = getters.setting('year_start')._is_default || getters.setting('year_end')._is_default
     },
 }
 

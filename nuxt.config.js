@@ -141,7 +141,7 @@ export default {
       login: "/login",
       logout: "/login",
       callback: false,
-      home: "/"
+      home: false,
     },
     strategies: {
       local: {
