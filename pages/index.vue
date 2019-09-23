@@ -146,7 +146,7 @@ export default {
       } else if(relativeDiff < 1) {
         sgn = '-'
       } else {
-        sgn = ''
+        sgn = ' '
       }
       return {
         value: Math.abs(relativeDiff * 100),
