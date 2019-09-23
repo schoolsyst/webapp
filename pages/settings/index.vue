@@ -23,7 +23,11 @@
                     HeadingSub {{namespace}}
                     .field(v-for="setting in settings")
                         label(:for="`field_${setting.key.replace('_', '-')}`") {{setting.name}}
-                        textarea(:id="`field_${setting.key.replace('_', '-')}`") {{getSetting(setting.key)}}
+                        template(v-if="setting.kind === 'choices'")
+                            select(:id="`field_${setting.key.replace('_', '-')}`")
+                                option(v-for="choice in setting.choices.split(',')" :selected="choice === setting.default") {{choice}}
+                        template(v-else)
+                            textarea(:id="`field_${setting.key.replace('_', '-')}`") {{getSetting(setting.key)}}
         MainGroupRight
             HeadingSub Matières
             ArrayCardSubject
