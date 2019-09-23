@@ -1,5 +1,5 @@
 <template lang="pug">
-BaseCard.CardSubject(:style="{backgroundColor: mutColor, color: textColor}", :class="{editing}")
+BaseCard.CardSubject(:style="{backgroundColor: mutColor, color: textColor}", :class="{isEditing}")
   //TODO: type in the name of the subject to confirm deletion
   ModalDialogConfirm.confirm-delete(
     :name="`delete-subject-${uuid}`" 
@@ -7,7 +7,7 @@ BaseCard.CardSubject(:style="{backgroundColor: mutColor, color: textColor}", :cl
     confirm-text="Supprimer" 
     challenge-message="Pour confirmer, écrivez le nom de la matière"
     :challenge="(input) => input === name"
-    @confirm="editing = false; $emit('editing-finished', subject); deleteSubject()"
+    @confirm="isEditing = false; $emit('editing-finished', subject); deleteSubject()"
   )
     | Supprimer cette matière supprimera #[strong tout] ce qui était en lien avec:
     br
@@ -18,9 +18,9 @@ BaseCard.CardSubject(:style="{backgroundColor: mutColor, color: textColor}", :cl
     br
     | Cette action est #[strong irréversible]
   p.name 
-    input.name-input(v-model="mutName" placeholder="Nom de la matière..." :readonly="!editing")
+    input.name-input(v-model="mutName" placeholder="Nom de la matière..." :readonly="!isEditing")
     //-TODO: close button reverts values to those passed in props
-    ButtonIcon.edit-button(@click="toggleAndCancel()" :color="textColor" v-if="uuid !== 'new' && !noEditButton") {{ editing ? 'close' : 'edit' }}
+    ButtonIcon.edit-button(@click="toggleAndCancel()" :color="textColor" v-if="uuid !== 'new' && !noEditButton") {{ isEditing ? 'close' : 'edit' }}
   .row
     .field
       LabelFlat Abbreviation*
@@ -56,7 +56,7 @@ BaseCard.CardSubject(:style="{backgroundColor: mutColor, color: textColor}", :cl
       )
   .button-row
     ButtonIcon.delete-button(:open-modal="`confirm-delete-subject-${uuid}`" open-at="center" :color="textColor" v-if="uuid !== 'new'") delete
-    ButtonIcon.confirm-button(@click="editing = false; $emit('editing-finished', subject); uploadChanges()" :color="textColor") check
+    ButtonIcon.confirm-button(@click="isEditing = false; $emit('editing-finished', subject); uploadChanges()" :color="textColor") check
 </template>
 
 <script>
@@ -115,6 +115,7 @@ export default {
       mutRoom: this.room,
       mutPhysical_weight: this.physical_weight || 0,
       mutAbbreviation: this.abbreviation,
+      isEditing: this.editing
     }
   },
   
@@ -143,7 +144,7 @@ export default {
 
   methods: {
     toggleAndCancel() {
-      if (this.editing) {
+      if (this.isEditing) {
         this.mutColor = this.$props.color
         this.mutName = this.$props.name
         this.mutGrade_goal = this.$props.grade_goal
@@ -152,7 +153,7 @@ export default {
         this.mutAbbreviation = this.$props.abbreviation
         this.mutSlug = this.$props.slug
       }
-      this.editing = !this.editing
+      this.isEditing = !this.isEditing
     },
     uploadChanges: debounce(function() {
       try {
@@ -197,7 +198,7 @@ export default {
   @media (max-width: 1000px)
     height: 400px
   overflow hidden
-  &:not(.editing)
+  &:not(.isEditing)
     height 60px
   transition all 0.25s ease
 
