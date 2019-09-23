@@ -22,7 +22,7 @@ export default {
     // ↑ take at most… |         |    |
     //                 |         |    |--> Compensate for margins on root container
     //                 |         |--> *One* character length (see the <.text> font-size):
-    //                 |              text-overflow: ellipsis uses the single-char triple-dot ('…'), not 3 full stops ('...')
+    //                 |              `text-overflow: ellipsis` uses the single-char triple-dot ('…'), not 3 full stops ('...')
     //                 |--> The entire screen
     overflow: hidden
     +desktop
