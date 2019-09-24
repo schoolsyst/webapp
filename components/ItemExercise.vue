@@ -19,6 +19,7 @@ li.ItemExercise(:class="{'expanded': expanded && !mutCompleted}" :data-exercise-
       tabindex="0"
     )
       SubjectDot(v-bind="subject" v-if="mnml")
+      //FIXME: BadgeSubjet shouldn't be able to shrink in width
       BadgeSubject(v-bind="subject" v-else)
       h4.name {{name}}
     button.expand(

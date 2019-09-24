@@ -46,6 +46,7 @@
       template(v-else)
         HeadingSub(has-inline-buttons)
           | Devoirs de la semaine
+          //FIXME: Sort by date due
           ArrayButtonFlat(inline)
               li: ButtonFlat(icon="arrow_forward"): nuxt-link.goto-homework(to="/homework") Voir tout
         ArrayItemExercise
