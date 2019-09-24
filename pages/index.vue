@@ -61,6 +61,7 @@
 <script>
 import axios from "axios";
 import moment from "moment";
+import tinycolor from 'tinycolor2'
 import groupBy from 'lodash.groupby';
 import { mapState, mapGetters, mapMutations, mapActions } from "vuex";
 //-------------------------------------------------------
