@@ -1,17 +1,9 @@
 <template lang="pug">
-//-
-  COMPONENT TREE
-  Excluding single-use components (TheHeading, TheNavbar, TheFooter,...)
-
-  ArrayButtonFlat
-  MainGroup
-    MainGroupLeft
-    MainGroupRight
-  //TODO: synchronized scrolling
-  //TODO: button to upload source file to textarea
-  //TODO: Jump to section
-  //TODO: Search-and-replace
-  //TODO: save scroll pos
+//TODO: synchronized scrolling
+//TODO: button to upload || drag'n'drop source file to textarea
+//TODO: Jump to section
+//TODO: Search-and-replace
+//TODO: save scroll pos
 
 .container
   ModalAddNote(:subject="currentCourseSubject")
@@ -28,7 +20,7 @@
     ButtonIcon(@click="savePDF" title="Télécharger le rendu (.pdf)") file_copy
   MainGroup(:full-size="viewMode !== 'both'")
     MainGroupLeft(v-if="viewMode !== 'rendered'")
-      textarea#editor(v-model="content") 
+      textarea#editor(v-model="content" :disabled="locked") 
     MainGroupRight(v-if="content && viewMode !== 'source'")
       #mirror(v-html="$md.render(content)")
     .bottom-bar
@@ -259,6 +251,7 @@ export default {
       let { uuid } = route.params;
       const { data } = await app.$axios.get(`/notes/${uuid}/`);
       return {
+        locked: false,
         name: data.name,
         subject: data.subject,
         created: data.created,
@@ -280,6 +273,7 @@ export default {
   data() {
     return {
       content: "Chargement...",
+      locked: true,
       lastSave: moment(),
       now: moment(),
       autosyncInterval: null,
