@@ -1,5 +1,7 @@
 <template lang="pug">
 
+//FIXME: Needs reload after logging out to log back in 
+
 .container
   //-
     .error(v-if="errors") 
