@@ -6,6 +6,7 @@
 </template>
 
 <script>
+import tinycolor from 'tinycolor2'
 import moment from "moment";
 import BaseCard from "~/components/BaseCard.vue";
 
