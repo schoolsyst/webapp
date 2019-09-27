@@ -19,10 +19,10 @@
 - [ ] setup page
 - [ ] schedule
 - [ ] fancy settings
-- [ ] initial beta
 - [ ] dark mode (see at the bottom of this document)
 
 ## Less-important features (Release)
+- [ ] presentation website @ schoolsyst.com, application @ app.schoolsyst.com & API @ api.schoolsyst.com & API docs @ dev.schoolsyst.com
 - [x] custom markdown theme
     - missing: `\<ol>`s
 - [ ] grades (stats)

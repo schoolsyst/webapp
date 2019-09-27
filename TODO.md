@@ -11,3 +11,9 @@ Variouts todos that don't belong in a specific file
 - [ ] When getting test names from description, take only first line of desc & trim it.
 - [ ] Controles prévus: sort by due date, only show 5 grades and show more... btn
 - [ ] "La moyenne était de 17.1/20 avant la dernière note" ~> "La moyenne était de 17.1/20 avant la dernière note (x/20 en matière)" & put in Tooltip component: info icon with title attribute (as slot ?)
+- [ ] Reduce font size@mobile BigNumber
+- [ ] Other homework group "Late" for uncompleted but due in the past homework
+- [ ] Special <ItemExercise> <ItemExerciseLate> that provides 3 btns on hover: resched, delete, and complete
+- [ ] /sac/  attention contrôle de ... Demain prendre matériel adapté
+- [ ] /bag/ Dismissable (w/ `__hidden__` setting initially set to true) notice when Monday is next day to say it assumes that the bag wasn't emptied in the weekend
+    - [ ] Other setting to switch to mode where it assumes the contrary ?
