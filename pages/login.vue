@@ -7,7 +7,7 @@
       p Identifiant ou mot de passe erroné
 
   .centered.login(v-if="loggingIn")
-    OverlayLoadingLogo
+    OverlayLoadingLogo(animation="animate-in")
     form(method="post" @submit.prevent="login")
       .field
           //TODO: remember username
@@ -77,6 +77,7 @@
                       name="email",
                       icon="email",
                       @input="email = $event"
+                      required
                   )
 
               .buttons
@@ -126,7 +127,9 @@ export default {
 
   methods: {
     async login() {
+      let res = null
       try {
+        console.log('heeeeey')
         this.$toast.show(`Connexion en cours...`);
         await this.$auth.loginWith("local", {
           data: {
@@ -134,30 +137,33 @@ export default {
             password: this.password
           }
         });
-        console.log(this.$auth.loggedIn)
+        this.$router.push('logged-in/')
         this.$toast.success(`Connexion réussie. Redirection...`);
       } catch (e) {
-        this.$toast.error(`${e}`);
+        this.$toast.error(`Mot de passe ou non d'utilisateur incorrect`);
       }
     },
     async register() {
         try {
           this.$toast.show(`Inscription en cours...`);
+          if (!this.username || !this.email || !this.password) {
+            this.$toast.error('Tout les champs sont obligatoires: veuillez les compléter.')
+            return
+          }
           await this.$axios.post('/users/', {
             username: this.username,
-            email: `${this.username}@gmail.com`,
+            email: this.email,
             password: this.password,
           });
           this.$toast.success(`Inscription réussie.`);
           try {
-            this.$toast.show(`Connexion en cours...`);
             await this.$auth.loginWith('local', {
               data: {
                 username: this.username,
                 password: this.password
               }
             });
-            this.$toast.success(`Connexion réussie.`);
+            this.$router.push('/setup')
           } catch (e) {
             this.$toast.error(`${e}`);
           }

@@ -19,6 +19,7 @@ li.ItemExercise(:class="{'expanded': expanded && !mutCompleted}" :data-exercise-
       tabindex="0"
     )
       SubjectDot(v-bind="subject" v-if="mnml")
+      //FIXME: BadgeSubjet shouldn't be able to shrink in width
       BadgeSubject(v-bind="subject" v-else)
       h4.name {{name}}
     button.expand(
@@ -31,7 +32,7 @@ li.ItemExercise(:class="{'expanded': expanded && !mutCompleted}" :data-exercise-
     textarea.notes(v-model="mutNotes", :id="`field_${uuid}-notes`", cols=0, rows=0)
     .date-and-delete
       .date
-        label(:for="`field_${uuid}-date`") À rendre pour le
+        label(:for="`field_${uuid}-date`") À faire pour le
         input(type="date" v-model="mutDue" :id="`field_${uuid}-date`")
       .delete
         ButtonFlat(:open-modal="`confirm-delete-exercise-${uuid}`", open-at="center", icon="delete" small) Supprimer

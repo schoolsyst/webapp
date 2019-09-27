@@ -1,16 +1,19 @@
 <template lang="pug">
 .container
-  TheHeading Déconnexion...
+  OverlayLoadingLogo(animation="loop")
+  h1 À plus!
+  p Déconnexion en cours...
 </template>
 
 <script>
-import TheHeading from '~/components/TheHeading.vue'
+import OverlayLoadingLogo from '~/components/OverlayLoadingLogo.vue'
 export default {
-    components: {
-        TheHeading,
-    },
-
+    layout: 'bare',
+    components: {OverlayLoadingLogo},
     mounted() {
+        //Clear vuex data
+        this.$store.replaceState({})
+        //Logout
         this.$auth.logout()
     },
 }
@@ -19,4 +22,13 @@ export default {
 <style lang="sass" scoped>
 @import '~/assets/defaults'
 
+.container
+    display: flex
+    justify-content: center
+    align-items: center
+    flex-direction: column
+
+    p 
+        margin-top: 10px
+        opacity: 0.25
 </style>
