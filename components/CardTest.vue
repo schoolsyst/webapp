@@ -6,14 +6,14 @@ div.CardTest(:style="{backgroundColor: subject.color, color: textColor}")
         confirm-text="Supprimer"
     )
         | Confirmer supprimera ce contrôle de {{subject.name}} définitivement
-    .progress-infos
-        span.subject-abbr {{subject.abbreviation}}
-        span.percentage(v-if="totalProgressDisp !== '?'") {{totalProgressDisp}}%
     .top-bar
         .progress(
             :data-progress="totalProgress" 
             :style="{width: `calc(100% * ${totalProgress})`}"
         )
+        .progress-infos
+            span.subject-abbr {{subject.abbreviation}}
+            span.percentage(v-if="totalProgressDisp !== '?'") {{totalProgressDisp}}%
 
     p.details(v-if="details") {{details}}
     HeadingSub(v-if="notes.length") À apprendre
@@ -120,7 +120,7 @@ export default {
 
         totalProgressDisp() {
             if (this.totalProgress === -1) return '?'
-            return this.totalProgress * 100
+            return Math.round(this.totalProgress * 100)
         }
     },
 
@@ -184,18 +184,19 @@ export default {
 .top-bar
     background rgba(255,255,255,0.5)
     width: 100%
+    height: 45px
 .progress
     display grid
     grid-template-columns repeat(2, 50%)
     height 45px
     background #fff8
 .progress-infos
-    height 0
+    height 45px
+    top -45px
     position relative
     padding 2.5px 7.5px
     color black
     width 100%
-    background #fff8
 .percentage, .subject-abbr
     position absolute
     top 7.5px
