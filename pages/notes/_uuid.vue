@@ -248,6 +248,12 @@ export default {
     ModalAddTest,
   },
 
+  head() {
+    return {
+      title: `[${this.subject.abbreviation.toUpperCase()}] ${this.name}`
+    }
+  },
+
   async asyncData({ store, app, route }) {
     try {
       let { uuid } = route.params;

@@ -41,6 +41,12 @@ export default {
     ItemGrade,
   },
 
+  head() {
+    return {
+      title: 'Moyennes & notes'
+    }
+  },
+
   computed: {
     ...mapGetters({
       dueTests: "homework/dueTests",

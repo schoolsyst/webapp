@@ -51,6 +51,11 @@ export default {
     SubjectDot,
     BadgeSubject
   },
+  head() {
+    return {
+      title: 'Cartable'
+    }
+  },
 
   data() {
     return {

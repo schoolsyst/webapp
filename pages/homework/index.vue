@@ -81,6 +81,12 @@ export default {
     ArrayGroupedHomework
   },
 
+  head() {
+    return {
+      title: 'Devoirs'
+    }
+  },
+
   data() {
     return {
       sortBy: "due",

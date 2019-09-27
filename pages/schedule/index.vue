@@ -58,6 +58,12 @@ export default {
         Schedule
     },
 
+    head() {
+        return {
+            title: 'Emploi du temps'
+        }
+    },
+
     data() {
         return {
             scheduleNow: moment(),

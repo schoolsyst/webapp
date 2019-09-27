@@ -1,13 +1,4 @@
 <template lang="pug">
-//-COMPONENT TREE
-  Excluding single-use components (TheHeading, TheNavbar, TheFooter,...)
-
-  ArrayButtonFlat
-  MainGroup
-      MainGroupLeft
-          HeadingSub
-
-          HeadingSub
 
 <div class="container">
   ModalAddNote(:subject="currentCourseSubject", :newNoteName="newNoteName")
@@ -56,6 +47,7 @@ import slugify from "slugify";
 import moment from 'moment';
 import Fuse from 'fuse.js'
 import { mapState, mapGetters, mapMutations, mapActions } from "vuex";
+//------------------------------------------------------------------------
 import TheHeading from "~/components/TheHeading.vue";
 import ArrayButtonFlat from "~/components/ArrayButtonFlat.vue";
 import ButtonFlat from "~/components/ButtonFlat.vue";
@@ -112,6 +104,12 @@ export default {
       cards: [],
       fuse: null
     };
+  },
+
+  head() {
+    return {
+      title: 'Prises de notes',
+    }
   },
 
   computed: {
