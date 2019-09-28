@@ -56,7 +56,7 @@
       BigNumber(v-bind="mean" :fixed="2")
       HeadingSub Évolution
       p La moyenne était de {{meanBeforeLastGrade || '—'}}/20 avant la dernière note
-      BigNumber(v-bind="evolution"  :fixed="2", :unit="`% (${Math.round(mean.value - meanBeforeLastGrade) || '—'})`")
+      BigNumber(v-bind="evolution"  :fixed="2", :unit="`% (${(mean.value - meanBeforeLastGrade > 0) ? '+' : ''}${Math.round(mean.value - meanBeforeLastGrade) || '—'})`")
   </template>
 
 <script>
