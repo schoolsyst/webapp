@@ -117,9 +117,8 @@ export default {
       }
     },
     deleteExercise() {
-      console.log("deleting exercise...");
       try {
-        this.$store.commit("homework/DELETE_TEST", this.uuid);
+        this.$store.commit("homework/DELETE_EXERCISE", this.uuid);
         this.$axios.delete(`/exercises/${this.uuid}/`);
         this.$toast.success(`Contrôle de ${this.subject.name} supprimé`);
       } catch (error) {

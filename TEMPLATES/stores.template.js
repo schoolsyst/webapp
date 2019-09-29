@@ -1,4 +1,5 @@
 export const state = () => ({
+//Don't forget to add new state objects to the module's CLEAR_ALL!
     #__NAME#: []
 })
 

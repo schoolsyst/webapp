@@ -10,9 +10,9 @@ import OverlayLoadingLogo from '~/components/OverlayLoadingLogo.vue'
 export default {
     layout: 'bare',
     components: {OverlayLoadingLogo},
-    mounted() {
+    async mounted() {
         //Clear vuex data
-        this.$store.replaceState({})
+        await this.$store.dispatch('clearAllData')
         //Logout
         this.$auth.logout()
     },
