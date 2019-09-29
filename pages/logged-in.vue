@@ -5,9 +5,9 @@
 </template>
 
 <script>
-//--- essentials ---
 import { mapstore, mapGetters, mapMutations, mapActions } from 'vuex'
-//--- components ---
+import flatten from 'lodash.flatten'
+//---------------------------------------------------
 import OverlayLoadingLogo from '~/components/OverlayLoadingLogo.vue'
 
 export default {
