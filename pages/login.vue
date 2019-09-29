@@ -1,12 +1,13 @@
 <template lang="pug">
 
-//FIXME: Needs reload after logging out to log back in 
-
 .container
   //-
     .error(v-if="errors") 
       i.material-icons warning
       p Identifiant ou mot de passe erroné
+  .logging-in(v-show="loading")
+    OverlayLoadingLogo(animation="loop")
+    h1 Connexion...
 
   .centered.login(v-if="loggingIn")
     OverlayLoadingLogo(animation="animate-in")
@@ -124,6 +125,7 @@ export default {
       username: "",
       password: "",
       loggingIn: true,
+      loading: false,
     };
   },
 
@@ -132,6 +134,7 @@ export default {
       let res = null
       try {
         console.log('heeeeey')
+        this.loading = true
         this.$toast.show(`Connexion en cours...`);
         await this.$auth.loginWith("local", {
           data: {
@@ -239,4 +242,12 @@ export default {
 +mobile
   .InputFlat
     font-size: 24px
+
+.logging-in
+  height: 100vh
+  width: 100vw
+  display: flex
+  justify-content: center
+  align-items: center
+  flex-direction: column
 </style>
