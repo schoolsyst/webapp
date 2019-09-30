@@ -614,11 +614,11 @@ export default {
       }
     },
     sync(force = false) {
-      // update note name
-      let noteName = document.getElementsByTagName('h1')[0].innerText
-      this.name = noteName
-      this.$store.commit('notes/UPDATE_NOTE', {uuid: this.uuid, data: {name: this.name}})
-      this.uploadToServer(this.content, force, noteName);
+      // FIXME: update note name is fucked up, gets a h1 from anywhere (even the dashboard's h1 sometimes)
+      // let noteName = document.getElementsByTagName('h1')[0].innerText
+      // this.name = noteName
+      // this.$store.commit('notes/UPDATE_NOTE', {uuid: this.uuid, data: {name: this.name}})
+      this.uploadToServer(this.content, force, this.notes);
     },
     saveSource() {
       var element = document.createElement("a");
