@@ -91,7 +91,8 @@ export default {
     "@nuxtjs/pwa",
     "@nuxtjs/auth",
     "@nuxtjs/toast",
-    // "@nuxtjs/markdownit"
+    "@nuxtjs/toast",
+    "@nuxtjs/markdownit"
   ],
   /*
    ** Markdown-it configuration
@@ -102,7 +103,28 @@ export default {
     injected: true,
     breaks: true,
     linkify: true,
-    typographer: true
+    typographer: true,
+    use: [
+      "markdown-it-deflist",
+      "markdown-it-sup",
+      "markdown-it-footnote",
+      "markdown-it-checkbox",
+      [
+        "markdown-it-math",
+        {
+          renderingOptions: {
+            decimalMark: ",",
+            colSep: ';',
+            rowSep: ';;',
+          }
+        }
+      ],
+      "markdown-it-plot",
+      "markdown-it-admonition",
+      "markdown-it-abbr",
+      "markdown-it-slack",
+      // "markdown-it-chat-formatter"
+    ]
   },
   /*
    ** Toasts
