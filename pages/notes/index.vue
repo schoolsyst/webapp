@@ -108,7 +108,7 @@ export default {
 
   head() {
     return {
-      title: 'Prises de notes',
+      title: `${this.fmtExercisesDueCount}Prises de notes`,
     }
   },
 
@@ -116,8 +116,14 @@ export default {
     ...mapGetters({
       fCurrentCourse: "schedule/currentCourse",
       notes: "notes/allNotes",
-      fCurrentCourseSubject: 'schedule/currentCourseSubject'
+      fCurrentCourseSubject: 'schedule/currentCourseSubject',
+      pendingExercises: "homework/pendingExercises",
     }),
+    fmtExercisesDueCount() {
+      if (this.pendingExercises.length)
+        return `(${this.pendingExercises.length}) `;
+      return "";
+    },
     currentCourse() {
       return this.fCurrentCourse(this.now)
     },

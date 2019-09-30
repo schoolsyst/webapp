@@ -140,7 +140,7 @@ export const getters = {
     );
   },
   pendingExercises(state, getters) {
-    return getters.dueExercises.filter(exercise => !exercise.completed);
+    return getters.dueExercisesOrToday.filter(exercise => !exercise.completed);
   },
   uncompleteExercises(state, getters) {
     return getters.allExercises.filter(exercise => !exercise.completed);

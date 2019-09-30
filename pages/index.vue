@@ -111,6 +111,12 @@ export default {
     };
   },
 
+  head() {
+    return {
+      title: `${this.fmtExercisesDueCount}Schoolsyst`
+    };
+  },
+
   computed: {
     ...mapGetters({
       fUpcomingCourse: "schedule/upcomingCourse",
@@ -122,6 +128,11 @@ export default {
       notesOf: "notes/notesOf",
       pendingExercises: "homework/pendingExercises",
     }),
+    fmtExercisesDueCount() {
+      if (this.pendingExercises.length)
+        return `(${this.pendingExercises.length}) `;
+      return "";
+    },
     gradeMax() {
       return Number(this.setting("grade_max").value)
     },

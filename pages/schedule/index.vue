@@ -60,7 +60,7 @@ export default {
 
     head() {
         return {
-            title: 'Emploi du temps'
+            title: `${this.fmtExercisesDueCount}Emploi du temps`
         }
     },
 
@@ -75,7 +75,13 @@ export default {
     computed: {
         ...mapGetters({
             getWeekType: 'schedule/weekType',
+            pendingExercises: "homework/pendingExercises",
         }),
+        fmtExercisesDueCount() {
+            if (this.pendingExercises.length)
+                return `(${this.pendingExercises.length}) `;
+            return "";
+        },
         weekType() {
             return this.getWeekType(this.scheduleNow.format('YYYY-MM-DD'))
         },

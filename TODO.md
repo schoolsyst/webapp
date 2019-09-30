@@ -17,3 +17,5 @@ Variouts todos that don't belong in a specific file
 - [ ] /sac/  attention contrôle de ... Demain prendre matériel adapté
 - [ ] /bag/ Dismissable (w/ `__hidden__` setting initially set to true) notice when Monday is next day to say it assumes that the bag wasn't emptied in the weekend
     - [ ] Other setting to switch to mode where it assumes the contrary ?
+- [x] all pages with layout=default: page title to "(x) Page title" where x is the num. of homework for tomorrow
+    - [ ] Needs to be: "(x&y)" where y is the number of tests for tomorrow and x is the number of exercises for tomorrow. show ":)" when y+x==0

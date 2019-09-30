@@ -24,9 +24,9 @@ import MainGroup from "~/components/MainGroup.vue";
 import MainGroupLeft from "~/components/MainGroupLeft.vue";
 import MainGroupRight from "~/components/MainGroupRight.vue";
 import HeadingSub from "~/components/HeadingSub.vue";
-import HeadingAlt from '~/components/HeadingAlt.vue'
-import ItemGrade from '~/components/ItemGrade.vue'
-import moment from 'moment';
+import HeadingAlt from "~/components/HeadingAlt.vue";
+import ItemGrade from "~/components/ItemGrade.vue";
+import moment from "moment";
 
 export default {
   components: {
@@ -38,29 +38,36 @@ export default {
     MainGroupRight,
     HeadingSub,
     HeadingAlt,
-    ItemGrade,
+    ItemGrade
   },
 
   head() {
     return {
-      title: 'Moyennes & notes'
-    }
+      title: `${this.fmtExercisesDueCount}Moyennes & notes`
+    };
   },
 
   computed: {
     ...mapGetters({
       dueTests: "homework/dueTests",
-      pastTests: "homework/pastTests"
+      pastTests: "homework/pastTests",
+      pendingExercises: "homework/pendingExercises"
     }),
-  },
-
+    fmtExercisesDueCount() {
+      if (this.pendingExercises.length)
+        return `(${this.pendingExercises.length}) `;
+      return "";
+    }
+  }
 };
 </script>
 
 <style lang="stylus" scoped>
-.HeadingSub
-  margin-top 10px
+.HeadingSub {
+  margin-top: 10px;
+}
 
-.tests
-  margin-top 20px
+.tests {
+  margin-top: 20px;
+}
 </style>

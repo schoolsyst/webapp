@@ -67,12 +67,23 @@ export default {
         ButtonLargeFlat,
         ArrayCardSubject,
     },
+    head() {
+        return {
+            title: `${this.fmtExercisesDueCount}Réglages`
+        };
+    },
     computed: {
         ...mapGetters({
             defaultSettings: 'defaultSettings',
             setting: 'setting',
             subjects: 'subjects',
+            pendingExercises: "homework/pendingExercises"
         }),
+        fmtExercisesDueCount() {
+            if (this.pendingExercises.length)
+                return `(${this.pendingExercises.length}) `;
+            return "";
+        },  
         groupedSettings() {
             return groupBy(this.defaultSettings, 'namespace')
         },
@@ -90,15 +101,19 @@ export default {
 }
 </script>
 
-<style lang="stylus" scoped>
+<style lang="sass" scoped>
+@import '~/assets/defaults'
+
 .field
-    display flex
-    align-items center
-    margin-bottom 20px
+    display: flex
+    +mobile
+        flex-direction: column
+    align-items: center
+    margin-bottom: 20px
     label
-        width 300px
+        width: 300px
     textarea
-        padding 10px
-        background var(--grey)
-        border-radius 7.5px
+        padding: 10px
+        background: var(--grey)
+        border-radius: 7.5px
 </style>

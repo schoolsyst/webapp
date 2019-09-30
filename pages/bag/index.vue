@@ -25,18 +25,18 @@
 </template>
 
 <script>
-import moment from 'moment'
+import moment from "moment";
 import { mapState, mapGetters, mapMutations, mapActions } from "vuex";
-import TheHeading       from "~/components/TheHeading.vue";
-import ArrayButtonFlat  from "~/components/ArrayButtonFlat.vue";
-import ButtonFlat       from "~/components/ButtonFlat.vue";
-import MainGroup        from "~/components/MainGroup.vue";
-import MainGroupLeft    from "~/components/MainGroupLeft.vue";
-import MainGroupRight   from "~/components/MainGroupRight.vue";
-import HeadingSub       from "~/components/HeadingSub.vue";
-import BigNumber        from '~/components/BigNumber.vue';
-import SubjectDot from '~/components/SubjectDot.vue';
-import BadgeSubject from '~/components/BadgeSubject.vue';
+import TheHeading from "~/components/TheHeading.vue";
+import ArrayButtonFlat from "~/components/ArrayButtonFlat.vue";
+import ButtonFlat from "~/components/ButtonFlat.vue";
+import MainGroup from "~/components/MainGroup.vue";
+import MainGroupLeft from "~/components/MainGroupLeft.vue";
+import MainGroupRight from "~/components/MainGroupRight.vue";
+import HeadingSub from "~/components/HeadingSub.vue";
+import BigNumber from "~/components/BigNumber.vue";
+import SubjectDot from "~/components/SubjectDot.vue";
+import BadgeSubject from "~/components/BadgeSubject.vue";
 
 export default {
   components: {
@@ -53,8 +53,8 @@ export default {
   },
   head() {
     return {
-      title: 'Cartable'
-    }
+      title: `${this.fmtExercisesDueCount}Cartable`
+    };
   },
 
   data() {
@@ -65,18 +65,24 @@ export default {
 
   computed: {
     ...mapGetters({
-      subjectsToAddFor: 'schedule/subjectsToAddFor',
-      subjectsToRemoveFor: 'schedule/subjectsToRemoveFor',
-      hoursCountFor: 'schedule/hoursCountFor'
+      subjectsToAddFor: "schedule/subjectsToAddFor",
+      subjectsToRemoveFor: "schedule/subjectsToRemoveFor",
+      hoursCountFor: "schedule/hoursCountFor",
+      pendingExercises: "homework/pendingExercises"
     }),
+    fmtExercisesDueCount() {
+      if (this.pendingExercises.length)
+        return `(${this.pendingExercises.length}) `;
+      return "";
+    },
     subjectsToAdd() {
-      return this.subjectsToAddFor(moment().add(1, 'day'))
+      return this.subjectsToAddFor(moment().add(1, "day"));
     },
     subjectsToRemove() {
-      return this.subjectsToRemoveFor(moment().add(1, 'day'))
+      return this.subjectsToRemoveFor(moment().add(1, "day"));
     },
     tomorrowHoursCount() {
-      return this.hoursCountFor(moment().add(1, 'day'))
+      return this.hoursCountFor(moment().add(1, "day"));
     }
   }
 };

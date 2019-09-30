@@ -50,7 +50,7 @@
 <script>
 import { mapState, mapGetters, mapMutations, mapActions } from "vuex";
 import groupBy from "lodash.groupby";
-import moment from 'moment';
+import moment from "moment";
 //-----------------------------------------------
 import TheHeading from "~/components/TheHeading.vue";
 import ArrayButtonFlat from "~/components/ArrayButtonFlat.vue";
@@ -63,7 +63,7 @@ import HeadingAlt from "~/components/HeadingAlt.vue";
 import DropdownFlat from "~/components/DropdownFlat.vue";
 import ModalAddExercise from "~/components/ModalAddExercise.vue";
 import ModalAddTest from "~/components/ModalAddTest.vue";
-import ArrayGroupedHomework from '~/components/ArrayGroupedHomework.vue'
+import ArrayGroupedHomework from "~/components/ArrayGroupedHomework.vue";
 
 export default {
   components: {
@@ -83,8 +83,8 @@ export default {
 
   head() {
     return {
-      title: 'Devoirs'
-    }
+      title: `${this.fmtExercisesDueCount}Devoirs`
+    };
   },
 
   data() {
@@ -106,8 +106,14 @@ export default {
       allExercises: "homework/allExercises",
       uncompleteExercises: "homework/uncompleteExercises",
       tests: "homework/dueTests",
-      groupedHomework: "homework/groupedHomework"
+      groupedHomework: "homework/groupedHomework",
+      pendingExercises: "homework/pendingExercises"
     }),
+    fmtExercisesDueCount() {
+      if (this.pendingExercises.length)
+        return `(${this.pendingExercises.length}) `;
+      return "";
+    }
   }
 };
 </script>
