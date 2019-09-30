@@ -8,7 +8,8 @@
             @blur="onBlur()"
             :style="{color: signColor}"
         )
-            i.material-icons {{sign == '+' ? 'add' : 'remove'}}
+            i.material-icons(v-if="sign === '+' || sign === '-'") {{sign == '+' ? 'add' : 'remove'}}
+            span(v-else) {{sign}}
         span.value(
             :contenteditable="writables.includes('value')"
             @input="onInput($event)"
@@ -33,8 +34,7 @@ export default {
             default: '—'
         },
         sign: {
-            // one of +, -, ±—or no sign indication.
-            validator: function(value){ return value.match(/\+|-|±| /) },
+            type: String,
             default: ' '
         },
         unit: {
