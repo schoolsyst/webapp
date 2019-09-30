@@ -143,9 +143,9 @@ export default {
     evolution() {
       let sgn
       let { relativeDiff } = this.currentTrimesterGradesEvolution
-      if (relativeDiff > 1) {
+      if (relativeDiff > 0) {
         sgn = '+'
-      } else if(relativeDiff < 1) {
+      } else if(relativeDiff < 0) {
         sgn = '-'
       } else {
         sgn = ' '

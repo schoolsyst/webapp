@@ -65,7 +65,7 @@ export const getters = {
     let meanThen = getters.meanOfGrades(gradesExceptLast);
 
     // Compute the relative difference between the two means
-    let relativeDiff = (meanThen - meanNow) / meanThen
+    let relativeDiff = (meanNow - meanThen) / meanThen
 
     // Also return the two means, could be useful for an absolute difference
     // or simply displaying the mean before the latest grade
