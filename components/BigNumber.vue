@@ -7,7 +7,8 @@
             @input="onInput($event)"
             @blur="onBlur()"
             :style="{color: signColor}"
-        ) {{sign}}
+        )
+            i.material-icons {{sign == '+' ? 'add' : 'remove'}}
         span.value(
             :contenteditable="writables.includes('value')"
             @input="onInput($event)"
@@ -121,9 +122,11 @@ input.value
     max-width: 150px
 
 
-.value, .sign 
+.value, .sign
     font-size: 96px
 
+.sign .material-icons
+    font-size: 72px
 
 .unit 
     font-weight: 500
