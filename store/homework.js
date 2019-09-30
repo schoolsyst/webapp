@@ -134,6 +134,11 @@ export const getters = {
       moment(exercise.due, "YYYY-MM-DD").isAfter(moment())
     );
   },
+  dueExercisesOrToday(state, getters) {
+    return getters.allExercises.filter(exercise =>
+      moment(exercise.due, 'YYYY-MM-DD').isSameOrAfter(moment(), 'day')
+    );
+  },
   pendingExercises(state, getters) {
     return getters.dueExercises.filter(exercise => !exercise.completed);
   },
@@ -141,7 +146,7 @@ export const getters = {
     return getters.allExercises.filter(exercise => !exercise.completed);
   },
   groupedHomework(state, getters) {
-    let exercises = getters.dueExercises;
+    let exercises = getters.dueExercisesOrToday
     let tests = getters.dueTests;
     let grouppedExs = groupBy(exercises, "due");
     let grouppedTests = groupBy(tests, "due");

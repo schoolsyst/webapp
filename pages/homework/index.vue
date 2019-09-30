@@ -103,8 +103,8 @@ export default {
     ...mapGetters({
       subjects: "subjects",
       currentCourseSubject: "schedule/currentCourseSubject",
-      allExercises: "homework/dueExercises",
-      uncompleteExercises: "homework/pendingExercises",
+      allExercises: "homework/allExercises",
+      uncompleteExercises: "homework/uncompleteExercises",
       tests: "homework/dueTests",
       groupedHomework: "homework/groupedHomework"
     }),

@@ -17,7 +17,7 @@ ul.ArrayGroupedHomework
             span.date {{ formatDate(group[0]) }}
             span.sep(v-if="formatDate(group[0])") &mdash;
             span.delta {{ formatDelta(group[0]) }}
-        ArrayItemExercise(v-if="show === 'exercises' || show === 'both'")
+        ArrayItemExercise(v-if="showThisGroup(group) && (show === 'exercises' || show === 'both')")
             ItemExercise(
                 v-for="(exercise, i) in group[1].exercises" :key="i" 
                 v-bind="exercise",
@@ -100,34 +100,28 @@ export default {
     formatDelta(date) {
       moment.locale("fr");
       let m = moment(date);
-      if (m.date() === moment().date()) {
-        return "Bientôt";
-      } else if (
-        m.diff(moment(), "hours") >= 12 &&
-        m.diff(moment(), "hours") <= 24
-      ) {
-        return "Demain";
-      }
-      return m
-        .fromNow(true)
-        .replace(/\d+ [hH]eures?/, "demain")
+      return m.set({hours: 0, minutes: 0, seconds: 0})
+        .from(moment().set({hours: 0, minutes: 0, seconds: 0}), true)
+        .replace("quelques secondes", "aujourd'hui")
         .replace("un jour", "demain")
         .replace("2 jours", "après-demain")
         .replace("7 jours", "dans une semaine");
     },
     showThisGroup(group) {
-      let completedExercisesLength = group[1].exercises
+      let uncompletedExercisesLength = group[1].exercises
         ? group[1].exercises.filter(ex => !ex.completed).length
         : 0;
-      console.log(completedExercisesLength);
       let testsLength = group[1].tests ? group[1].tests.length : 0;
+
+      if (this.formatDelta(group[0]) == "aujourd'hui" && !uncompletedExercisesLength)
+        return false
 
       let type =
         (this.show === "exercises" && group[1].exercises) ||
         (this.show === "tests" && group[1].tests) ||
         this.show === "both";
       let done =
-        this.showCompleted || completedExercisesLength + testsLength > 0;
+        this.showCompleted || uncompletedExercisesLength + testsLength > 0;
       return type && done;
     }
   }
