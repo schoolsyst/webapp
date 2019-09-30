@@ -230,7 +230,7 @@ export default {
   display: grid
   grid-gap: 20px
   +mobile
-    grid-template-columns: repeat(2, max-content)
+    grid-template-columns: repeat(4, max-content)
 .ArrayItemExercise
   margin-top: 10px
 </style>
