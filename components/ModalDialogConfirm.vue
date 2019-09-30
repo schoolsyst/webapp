@@ -6,9 +6,11 @@ BaseModal.ModalDialogConfirm(:name="`confirm-${name}`", show-close-button)
         ButtonRegSecondary(close-modal) {{cancelText}}
         ButtonRegPrimary(@click.native="challenge ? startChallenge() : confirmAndClose()", :role="confirmRole") {{confirmText}}
     .challenge(:class="{'errored': challengeError}" v-else)
-        LabelFlat {{challengeMessage}}
-        InputFlat(type="text" v-model="challengeInput")
-        ButtonIcon(@click="challenge(challengeInput) ? confirmAndClose() : challengeError = true") check
+        LabelFlat(:for="`confirm-${name}-challenge`") {{challengeMessage}}
+        .inputs
+            ButtonIcon(@click="challengeOpened = false; challengeInput = ''" color="black") arrow_back
+            InputFlat(type="text" v-model="challengeInput" :name="`confirm-${name}-challenge`")
+            ButtonIcon(@click="challenge(challengeInput) ? confirmAndClose() : challengeError = true" color="black") check
 </template>
 
 <script>
@@ -70,7 +72,15 @@ export default {
         endChallenge() {
             this.challengeOpened = false
             this.challengeError = false
-        }
+        },
+    },
+
+    watch: {
+        challengeInput() {
+            if (!this.challengeInput) {
+                this.challengeError = false
+            }
+        },
     }
 }
 </script>
@@ -89,6 +99,27 @@ export default {
     margin-bottom 20px
 .message
     line-height 1.2
-.challenge.errored
+.challenge.errored .InputFlat /deep/ input
     background var(--red)
+    color white
+.challenge
+    overflow hidden
+    .inputs
+        display flex
+        align-items center
+        justify-content center
+    label
+        margin-bottom: 15px
+        margin-top: 25px
+        color black
+    .InputFlat
+        // padding: 0
+        max-width calc(3/4 * 500px)
+    .InputFlat /deep/ input
+        background rgba(0,0,0,0.05)
+        border-radius 7.5px
+    .ButtonIcon
+    .ButtonIcon /deep/ button
+        width: 30px
+
 </style>

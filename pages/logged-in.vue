@@ -5,9 +5,9 @@
 </template>
 
 <script>
-//--- essentials ---
 import { mapstore, mapGetters, mapMutations, mapActions } from 'vuex'
-//--- components ---
+import flatten from 'lodash.flatten'
+//---------------------------------------------------
 import OverlayLoadingLogo from '~/components/OverlayLoadingLogo.vue'
 
 export default {
@@ -75,12 +75,10 @@ export default {
       })
     },
 
-    mounted() {
-      setTimeout(() => {
-        if (this.requireInitialSetup) this.$router.push('/setup')
-        else this.$router.push('/')
-      }, 2000);
-      // this.$router.push('/')
+    async mounted() {
+      this.$store.dispatch('nuxtServerInit')
+      if (this.requireInitialSetup()) this.$router.push('/setup')
+      else this.$router.push('/')
     },
 }
 </script>

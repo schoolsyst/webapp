@@ -9,7 +9,7 @@
   "author": "Ewen Le Bihan",
   "private": true,
   "scripts": {
-    "dev": "nuxt",
+    "dev": "nuxt --port 7777",
     "build": "nuxt build",
     "start": "nuxt start",
     "generate": "nuxt generate",

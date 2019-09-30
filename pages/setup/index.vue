@@ -122,6 +122,11 @@ export default {
         ArrayCardSubject,
     },
 
+    // fetch({app, store}) {
+    //   const {data} = app.$axios.get('/settings/')
+    //   store.commit('SET_SETTINGS', data)
+    // },
+
     data() {
         return {
           startOnQ1: true,
