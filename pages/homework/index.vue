@@ -83,7 +83,7 @@ export default {
 
   head() {
     return {
-      title: `${this.fmtExercisesDueCount}Devoirs`
+      title: `${this.pageTitleCounter}Devoirs`
     };
   },
 
@@ -107,13 +107,9 @@ export default {
       uncompleteExercises: "homework/uncompleteExercises",
       tests: "homework/dueTests",
       groupedHomework: "homework/groupedHomework",
-      pendingExercises: "homework/pendingExercises"
+      pendingExercises: "homework/pendingExercises",
+      pageTitleCounter: "homework/pageTitleCounter",
     }),
-    fmtExercisesDueCount() {
-      if (this.pendingExercises.length)
-        return `(${this.pendingExercises.length}) `;
-      return "";
-    }
   }
 };
 </script>

@@ -1,5 +1,6 @@
 import moment from "moment";
 import groupBy from "lodash.groupby";
+import { get } from "https";
 
 export const state = () => ({
   //Don't forget to add new state objects to the module's CLEAR_ALL!
@@ -80,6 +81,11 @@ export const getters = {
   dueTests(state, getters) {
     return getters.allTests.filter(test =>
       moment(test.due, "YYYY-MM-DD").isAfter(moment())
+    );
+  },
+  dueTestsOrToday(state, getters) {
+    return getters.allTests.filter(test =>
+      moment(test.due, 'YYYY-MM-DD').isSameOrAfter(moment(), 'day')
     );
   },
   pastTests(state, getters) {
@@ -175,7 +181,15 @@ export const getters = {
   },
   test: (state, getters) => uuid => {
     return state.tests.find(t => t.uuid === uuid);
-  }
+  },
+  pageTitleCounter(state, getters) {
+    let isTomorrowOrToday = x => moment(x.due, 'YYYY-MM-DD').set({hours:0,minutes:0,seconds:0}).diff(moment().set({hours:0,minutes:0,seconds:0}), 'days') <= 1
+    let testsCount = getters.dueTestsOrToday.filter(t => isTomorrowOrToday(t)).length
+    let exercisesCount = getters.dueExercisesOrToday.filter(t => isTomorrowOrToday(t)).length
+    if (testsCount+exercisesCount > 0)
+        return `${exercisesCount}|${testsCount} `;
+    return "";
+  },  
 };
 
 export const mutations = {

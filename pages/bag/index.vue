@@ -53,7 +53,7 @@ export default {
   },
   head() {
     return {
-      title: `${this.fmtExercisesDueCount}Cartable`
+      title: `${this.pageTitleCounter}Cartable`
     };
   },
 
@@ -68,13 +68,8 @@ export default {
       subjectsToAddFor: "schedule/subjectsToAddFor",
       subjectsToRemoveFor: "schedule/subjectsToRemoveFor",
       hoursCountFor: "schedule/hoursCountFor",
-      pendingExercises: "homework/pendingExercises"
+      pageTitleCounter: "homework/pageTitleCounter"
     }),
-    fmtExercisesDueCount() {
-      if (this.pendingExercises.length)
-        return `(${this.pendingExercises.length}) `;
-      return "";
-    },
     subjectsToAdd() {
       return this.subjectsToAddFor(moment().add(1, "day"));
     },

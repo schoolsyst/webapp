@@ -69,7 +69,7 @@ export default {
     },
     head() {
         return {
-            title: `${this.fmtExercisesDueCount}Réglages`
+            title: `${this.pageTitleCounter}Réglages`
         };
     },
     computed: {
@@ -77,13 +77,8 @@ export default {
             defaultSettings: 'defaultSettings',
             setting: 'setting',
             subjects: 'subjects',
-            pendingExercises: "homework/pendingExercises"
+            pageTitleCounter: "homework/pageTitleCounter"
         }),
-        fmtExercisesDueCount() {
-            if (this.pendingExercises.length)
-                return `(${this.pendingExercises.length}) `;
-            return "";
-        },  
         groupedSettings() {
             return groupBy(this.defaultSettings, 'namespace')
         },

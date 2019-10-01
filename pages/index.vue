@@ -113,7 +113,7 @@ export default {
 
   head() {
     return {
-      title: `${this.fmtExercisesDueCount}Schoolsyst`
+      title: `${this.pageTitleCounter}Schoolsyst`
     };
   },
 
@@ -126,13 +126,9 @@ export default {
       currentTrimesterMean: "homework/currentTrimesterMean",
       currentTrimesterGradesEvolution: "homework/currentTrimesterGradesEvolution",
       notesOf: "notes/notesOf",
+      pageTitleCounter: "homework/pageTitleCounter",
       pendingExercises: "homework/pendingExercises",
     }),
-    fmtExercisesDueCount() {
-      if (this.pendingExercises.length)
-        return `(${this.pendingExercises.length}) `;
-      return "";
-    },
     gradeMax() {
       return Number(this.setting("grade_max").value)
     },

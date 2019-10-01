@@ -108,7 +108,7 @@ export default {
 
   head() {
     return {
-      title: `${this.fmtExercisesDueCount}Prises de notes`,
+      title: `${this.pageTitleCounter}Prises de notes`,
     }
   },
 
@@ -117,13 +117,8 @@ export default {
       fCurrentCourse: "schedule/currentCourse",
       notes: "notes/allNotes",
       fCurrentCourseSubject: 'schedule/currentCourseSubject',
-      pendingExercises: "homework/pendingExercises",
+      pageTitleCounter: "homework/pageTitleCounter",
     }),
-    fmtExercisesDueCount() {
-      if (this.pendingExercises.length)
-        return `(${this.pendingExercises.length}) `;
-      return "";
-    },
     currentCourse() {
       return this.fCurrentCourse(this.now)
     },

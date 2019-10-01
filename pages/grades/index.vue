@@ -43,7 +43,7 @@ export default {
 
   head() {
     return {
-      title: `${this.fmtExercisesDueCount}Moyennes & notes`
+      title: `${this.pageTitleCounter}Moyennes & notes`
     };
   },
 
@@ -51,13 +51,8 @@ export default {
     ...mapGetters({
       dueTests: "homework/dueTests",
       pastTests: "homework/pastTests",
-      pendingExercises: "homework/pendingExercises"
+      pageTitleCounter: "homework/pageTitleCounter"
     }),
-    fmtExercisesDueCount() {
-      if (this.pendingExercises.length)
-        return `(${this.pendingExercises.length}) `;
-      return "";
-    }
   }
 };
 </script>
