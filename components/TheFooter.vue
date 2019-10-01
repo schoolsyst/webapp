@@ -5,7 +5,7 @@
         p.logo-subtitle 
             |by 
             a(href="https://mx3creations.com") Mx3
-        p.version #[code alpha v0.0.281]
+        p.version #[code alpha v0.0.666]
     </footer>
 </template>
 
