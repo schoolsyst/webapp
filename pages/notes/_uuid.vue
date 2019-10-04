@@ -203,6 +203,10 @@
       padding-left: 15px;
       border-left: 7.5px solid var(--blue);
     }
+
+    #mirror img {
+      max-width: 100%;
+    }
 </template>
 
 
