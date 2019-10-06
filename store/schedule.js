@@ -9,6 +9,7 @@
 //   week of the year.
 import Moment from "moment";
 import { extendMoment } from "moment-range";
+import uniqBy from "lodash.uniqby";
 const moment = extendMoment(Moment);
 
 const ptime = time => moment(time, "HH:mm:ss");
@@ -331,6 +332,7 @@ export const getters = {
     let diff = dateSubjects.filter(
       s => !todaySubjects.map(s => s.uuid).includes(s.uuid)
     );
+    diff = uniqBy(diff, 'uuid')
     console.log(diff.map(s => s.name));
     console.groupEnd();
     return diff;
@@ -367,6 +369,7 @@ export const getters = {
     let diff = todaySubjects.filter(
       s => !dateSubjects.map(s => s.uuid).includes(s.uuid)
     );
+    diff = uniqBy(diff, 'uuid')
     console.log(diff.map(s => s.name));
     console.groupEnd();
     return diff;
