@@ -192,7 +192,8 @@ export default {
 <style lang="stylus" scoped>
 .CardSubject
   width 600px
-  max-width 100%
+
+  max-width calc(100% - 40px)
   padding 10px 20px !important
   height: 300px
   @media (max-width: 1000px)
