@@ -234,6 +234,12 @@
     hr.footnotes-sep {
       margin-top: 100px;
     }
+
+    #mirror h1 {
+      text-align: center;
+      font-size: 36px;
+      margin: 50px 0;
+    }
 </template>
 
 
