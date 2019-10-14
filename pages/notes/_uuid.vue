@@ -207,6 +207,39 @@
     #mirror img {
       max-width: 100%;
     }
+
+    #mirror dl {
+      display: grid;
+      grid-template-columns: max-content max-content
+    }
+
+    #mirror dl dd {
+      grid-column: 2;
+      margin-top: 0px;
+    }
+
+    #mirror dt {
+      grid-column: 1;
+      margin-top: 0px;
+    }
+
+    #mirror dd::before {
+      content: none;
+    }
+
+    #mirror dt strong {
+      color: var(--blue);
+    }
+
+    hr.footnotes-sep {
+      margin-top: 100px;
+    }
+
+    #mirror h1 {
+      text-align: center;
+      font-size: 36px;
+      margin: 50px 0;
+    }
 </template>
 
 
