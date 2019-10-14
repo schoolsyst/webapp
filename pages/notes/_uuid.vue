@@ -217,7 +217,7 @@
       grid-column: 2;
       margin-top: 0px;
     }
-    
+
     #mirror dt {
       grid-column: 1;
       margin-top: 0px;
@@ -229,6 +229,10 @@
 
     #mirror dt strong {
       color: var(--blue);
+    }
+
+    hr.footnotes-sep {
+      margin-top: 100px;
     }
 </template>
 
