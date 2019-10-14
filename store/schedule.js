@@ -1,464 +1,293 @@
-// FIXME: don't cache "nextCourse"-related getters.
-// TODO: remove moment-range dependency
-// CLARIFICATION: event(s) vs course(s)
-// - events are "base" events as returned by the /events/ API endpoint.
-//   They describe a normal week of the year
-// - courses are events, with deletions, additions and offdays applied.
-//   They have a `date` attribute instead of a `day` (day of the week)
-//   They describe a *particular* week, and thus are tied to a date range, a specific
-//   week of the year.
-import Moment from "moment";
-import { extendMoment } from "moment-range";
-import uniqBy from "lodash.uniqby";
-const moment = extendMoment(Moment);
+/*
+ CLARIFICATION: event(s) vs course(s)
+ - events are "base" events as returned by the /events/ API endpoint.
+   They describe a normal week of the year
+ - courses are events, with deletions, additions and offdays applied.
+   They have a `date` attribute and describe a *particular* week, 
+   and thus are tied to a date range, a specific week of the year.
+*/
 
-const ptime = time => moment(time, "HH:mm:ss");
-const pdate = date => moment(date, ["DD/MM/YYYY", "YYYY-MM-DD"]);
+// Use moment-range
+import { firstBy } from "thenby";
+import {
+  startOfWeek,
+  endOfWeek,
+  getISODay,
+  getISOWeek,
+  isWithinInterval,
+  eachDayOfInterval,
+  isBefore,
+  isSameDay,
+  parse,
+  isDate,
+  format,
+} from "date-fns";
 
 export const state = () => ({
-  //Don't forget to add new state objects to the module's CLEAR_ALL!
-  additions: [],
-  deletions: [],
   events: [],
-  currentCourse: {},
-  upcomingCourse: {}
+  mutations: []
 });
 
+const parseEventDates = (event) => ({
+  ...event,
+  //                                  ↓ filler date required by date-fns.
+  start: parse(event.start, "HH:mm", new Date()),
+  end: parse(event.end, "HH:mm", new Date())
+})
+
 export const getters = {
-  allEvents(state, getters) {
-    return state.events;
+  events: (state, getters) => state.events,
+  event: (state, getters) => (value, prop = "uuid") =>
+    getters.events.find(o => o[prop] === value) || null,
+  mutations: (state, getters) => state.mutations,
+  mutation: (state, getters) => (value, prop = "uuid") =>
+    getters.mutations.find(o => o[prop] === value) || null,
+  course: (state, getters) => (value, prop = "uuid") =>
+    getters.courses.find(o => o[prop] === value) || null,
+  trimester: (state, getters, rootState, rootGetters) => idx => {
+    /*
+     *  Returns an Interval to test dates against using isWithinInterval(date, Interval)
+     */
+    // Bounds
+    let yearStart = rootGetters["settings/value"]("year_start");
+    let trimester2start = rootGetters["settings/value"]("trimester_2_start");
+    let trimester3start = rootGetters["settings/value"]("trimester_3_start");
+    let yearEnd = rootGetters["settings/value"]("year_end");
+    // Ranges
+    let trimester1 = { start: yearStart, end: trimester2start };
+    let trimester2 = { start: trimester2start, end: trimester3start };
+    let trimester3 = { start: trimester3start, end: yearEnd };
+    // Choose which interval to return
+    if (idx === 1) return trimester1;
+    if (idx === 2) return trimester2;
+    if (idx === 3) return trimester3;
+    // Invalid index
+    throw `Trimester #${idx} does not exist.`
   },
-  allAdditions(state, getters) {
-    return state.additions;
+  isOffday: (state, getters, rootState, rootGetters) => date => {
+    /* Check if the given `date` is an offday, by using the
+     * `offdays` setting.
+     */
+    // Loop through each date/dateinterval in the `offdays` settings
+    rootGetters["settings/value"]("offdays").forEach(dateOrInterval => {
+      if (isDate(dateOrInterval)) {
+        // If it's a regular date, check if they're the same day
+        if (isSameDay(date, dateOrInterval)) return true;
+      } else {
+        // If it's a range, check if the given date is within it
+        try {
+          if (isWithinInterval(date, dateOrInterval)) return true;
+        } catch (error) {
+          console.error(error)
+        }
+      }
+    });
+    /* At this point, if no value was returned, it means that
+     * nothing was found in the list of offdays: return false
+     */
+    return false;
   },
-  allDeletions(state) {
-    return state.deletions;
-  },
-  setting(state, getters, rootState, rootGetters) {
-    return rootGetters.setting;
-  },
-  trimesterStart: (state, getters, rootState, rootGetters) => trimester => {
-    switch (trimester) {
-      case 1:
-        return pdate(getters.setting("year_start").value);
-      case 2:
-        return pdate(getters.setting("trimester_2_start").value);
-      case 3:
-        return pdate(getters.setting("trimester_3_start").value);
-      // This is intentional, see the rest of the getter function to know why
-      case 4:
-        return pdate(getters.setting("year_end").value);
+  currentTrimester: (state, getters, rootState) => {
+    /* Returns the index of the current trimester.
+     * Returns null if the current date is outside any trimester
+     */
+    let now = rootState.now
+    let t1 = getters.trimester(1);
+    let t2 = getters.trimester(2);
+    let t3 = getters.trimester(3);
+    try {
+      if (isWithinInterval(now, t1)) return 1;
+      if (isWithinInterval(now, t2)) return 2;
+      if (isWithinInterval(now, t3)) return 3;
+    } catch (error) {
+      console.error(error)
+      console.error({t1, t2, t3, now})
     }
+    return null;
   },
-  trimester: (state, getters) => date => {
-    let trimesterFound = false;
-    let testingTrimester = 1;
-    while (!trimesterFound && testingTrimester <= 3) {
-      let start = getters.trimesterStart(testingTrimester);
-      let end = getters.trimesterStart(testingTrimester + 1);
-
-      trimesterFound = date.isBetween(start, end);
-      if (trimesterFound) return testingTrimester;
-
-      testingTrimester++;
+  mutationsOf: (state, getters, rootState) => ({ event, date }) => {
+    /* Provided an event and a date, returns either a schedule mutation object
+     * or null if no mutation matches the arguments given.
+     */
+    let mutations = getters.mutations;
+    if (event) {
+      // Filter by the given event.
+      mutations = mutations.filter(o => o.event.uuid === event.uuid);
     }
-    return 3;
+    if (date) {
+      /* Filter with the provided date, whether the events are...
+       * - rescheduled to that week, or
+       * - deleted from that week
+       */
+      mutations = mutations.filter(o => {
+        let ret = false;
+        // If the mutation's deleted field is not null, compare deletion date & current date
+        if (o.deleted) ret = isSameDay(o.deleted, date);
+        // If the mutation's rescheduled field is not null, compare reschedule date & current date
+        if (o.rescheduled) ret = ret || isSameDay(o.rescheduled, date);
+        return ret;
+      });
+    }
+    return mutations;
   },
-  weekType: (state, getters) => date => {
+  currrentWeekMutations: (state, getters, rootState) => {
+    let mutations = [];
+    let week = {
+      start: startOfWeek(rootState.now),
+      end: endOfWeek(rootState.now)
+    };
+    eachDayOfInterval(week).forEach(day => {
+      let mutationsOfDay = getters.mutationsOf({ date: day, event: null });
+      mutations = [...mutations, ...mutationsOfDay]
+    });
+  },
+  orderCourses: (state, getters, rootState, rootGetters) => courses =>
+    /* Sort courses objects by day & starting date
+     */
+    [...courses].sort(
+      firstBy("day").thenBy((o1, o2) => isBefore(o1.start, o2.start))
+    ),
+
+  coursesIn: (state, getters, rootState, rootGetters) => (start, end) => {
+    let courses = [];
+    for (let day of eachDayOfInterval({ start, end })) {
+      // If this day is an offday, it doesn't contain any events
+      if (getters.isOffday(day)) continue;
+      // Get the events for that day
+      let events = getters.events.filter(
+        o =>
+          o.day === getISODay(day) &&
+          [getters.weekType(day), "BOTH"].includes(o.week_type)
+      );
+      // Loop through the events
+      events.forEach(event => {
+        // Handle mutations
+        let mutations = getters.mutationsOf(event, day);
+        /* getters.mutationsOf returns an array of mutations, but here we only want one.
+         * Since two mutations should never be on the same event & same day anyway, we just take
+         * the array's first item (or set to null if no mutations were found.)
+         */
+        let mutation = mutations.length
+          ? mutations[0]
+          : { deleted: null, rescheduled: null };
+        courses.push({
+          ...event,
+          ...mutation,
+          date: day
+        });
+      });
+    }
+    return courses
+  },
+  courses: (state, getters, rootState) =>
+    /* Gets courses in the current week.
+     */
+    getters.coursesIn(startOfWeek(rootState.now), endOfWeek(rootState.now)),
+  weekType: (state, getters, rootState, rootGetters) => date => {
+    //TODO: explain this better, can't understand the logic I've written (it works tho)
     // get base Q1/Q2
-    let base = getters.setting("starting_week_type").value;
-    let start = getters.setting("year_start").value;
+    let base = rootGetters["settings/value"]("starting_week_type");
+    let start = rootGetters["settings/value"]("year_start");
     // convert to week-of-year number, and get if its even or odd.
     // tested date will be [base] (Q1 or Q2) if its also even.
-    let startingWeekIsEven = moment(start, "DD/MM/YYYY").isoWeek() % 2 === 0;
+    let startingWeekIsEven = getISOWeek(start) % 2 === 0;
     let other = base === "Q1" ? "Q2" : "Q1";
-    return moment(date, "YYYY-MM-DD").isoWeek() % 2 === 0 && startingWeekIsEven
-      ? base
-      : other;
+    return getISOWeek(date) % 2 === 0 && startingWeekIsEven ? base : other;
   },
+  currentCourse: (state, getters, rootState, rootGetters) => {
+    let course = getters.courses.find(
+      o =>
+        // Is the same week day
+        isSameDay(o.date, rootState.now) &&
+        // Has started before now
+        isBefore(o.start, rootState.now) &&
+        // Hasn't finished yet or finished right this (mili)second
+        isAfter(o.end, rootState.now)
+    );
+    return course === undefined ? null : course;
+  },
+  nextCourses: (state, getters, rootState, rootGetters) => {
+    let courses = getters.courses.filter(
+      o =>
+        // Is the same week day
+        isSameDay(o.date, rootState.now) &&
+        // Hasn't started yet
+        isAfter(o.end, rootState.now)
+    );
+    // Make sure the events are sorted
+    courses = getters.orderCourses(courses);
+    // Get the soonest courses or null
+    return courses;
+  },
+  nextCoursesOf: (state, getters, rootState, rootGetters) => (value, what) => {
+    let nextCourses = getters.nextCourses;
+    if (!nextCourses.length) return null;
+    switch (what) {
+      case "subject":
+        return nextCourses.filter(o => o.subject.uuid === value);
 
-  currentWeekType: (state, getters) => getters.weekType(moment()),
-
-  coursesIn: (state, getters) => (start, upto, debug = null) => {
-    // FIXME: SHOULD NOT MUTATE THE FUCKIN DATE PASSED TO IT! HOW DUMB AM I?
-    // FIXME: coursesIn doesn't work when start == upto
-    // setup vars
-    /* if (debug) {
-      debugger
-    } */
-
-    let computedEvents = [];
-    let baseEvents = getters.allEvents;
-    let deletions = getters.allDeletions;
-    let additions = getters.allAdditions;
-    let dates = [];
-    let weekday, deleted, added, weekType;
-    if (baseEvents.length < 1) return [];
-
-    if (debug) console.log(start.format("D/M/Y"), "->", upto.format("D/M/Y"));
-    // inclusive range, since we check for isBefore (and not isBefore && isSame, lot more costly)
-    // EDIT: this should turn it into an inclusive range
-    // start = start.subtract(1, 'day')
-    // loop through every date between start and upto
-    for (
-      let current = start;
-      current.isSameOrBefore(upto);
-      current.add(1, "day")
-    ) {
-      if (
-        getters.offdays
-          .map(d => d.toISOString())
-          .includes(current.toISOString())
-      ) {
-        continue;
-      }
-      weekday = [
-        "monday",
-        "tuesday",
-        "wednesday",
-        "thursday",
-        "friday",
-        "saturday",
-        "sunday"
-      ][current.isoWeekday() - 1];
-
-      weekType = getters.weekType(current);
-      if (debug)
-        console.log(`${current.format("D/M/Y")}#${weekday}:${weekType}`);
-      let dayBaseEvents = baseEvents.filter(ev => {
-        return (
-          ev.day === weekday &&
-          (ev.week_type === "both" || ev.week_type === weekType)
-        );
-      });
-      if (debug)
-        console.log(
-          dayBaseEvents.map(
-            e => `${e.subject.abbreviation.toUpperCase()}@${e.start}`
-          )
-        );
-
-      // loop through the events of that weekday
-      for (const baseEvent of dayBaseEvents) {
-        // if we have at least one deletion for this event
-        if (deletions.length) {
-          deleted =
-            deletions.filter(deletion => deletion.event.id === baseEvent.id)
-              .length >= 1;
-        } else {
-          deleted = false;
-        }
-        computedEvents.push({
-          ...baseEvent,
-          deleted,
-          date: current.format("DD/MM/YYYY"),
-          _date: current,
-          added: false
-        });
-      }
-
-      if (additions.length) {
-        // loop thourgh the ADDED events of that weekday
-        for (const addedEvent of additions.filter(event =>
-          pdate(event.current).isSame(current)
-        )) {
-          computedEvents.push({
-            ...addedEvent,
-            day: weekday,
-            weekType: weekType,
-            added: true,
-            deleted: false
-          });
-        }
-      }
+      default:
+        return null;
     }
-    return computedEvents;
-  },
-  coursesInCurrentWeek: (state, getters) => {
-    console.group("coursesInCurrentWeek");
-    console.log(
-      "from " +
-        moment()
-          .startOf("week")
-          .format("dddd MM YYYY") +
-        " to " +
-        moment()
-          .endOf("week")
-          .format("dddd MM YYYY")
-    );
-    console.groupEnd();
-    return getters.coursesIn(moment().startOf("week"), moment().endOf("week"));
-  },
-  eventsOf: (state, getters) => subjectSlug => {
-    return getters.allEvents.filter(
-      event => event.subject.slug === subjectSlug
-    );
-  },
-  upcomingCourse: (state, getters) => (now = null) => {
-    if (!now) now = moment();
-    let courses = getters.coursesIn(moment(), moment().endOf("day"));
-    if (courses.length) {
-      courses = courses
-        .filter(course => ptime(course.start).isAfter(now))
-        .sort((a, b) => (ptime(a.start).isAfter(ptime(b.start)) ? 1 : -1)); // sort by start date
-
-      if (courses.length) return courses[0];
-    }
-    return null;
-  },
-  currentCourse: (state, getters) => (now = null) => {
-    if (!now) now = moment();
-    let courses = getters.coursesIn(
-      moment().startOf("day"),
-      moment().endOf("day")
-    );
-    if (courses.length) {
-      courses = courses.filter(
-        course =>
-          ptime(course.start).isSameOrBefore(moment()) &&
-          ptime(course.end).isAfter(moment())
-      );
-      if (courses.length) return courses[0];
-    }
-
-    if (courses.length) return courses[0];
-    return null;
-  },
-  currentCourseSubject: (state, getters) => (now = null) => {
-    if (!now) now = moment();
-    if (getters.currentCourse(now)) {
-      let currentCourse = getters.currentCourse(now);
-      return currentCourse.subject;
-    } else {
-      return {
-        color: "#000000",
-        name: "Veuillez sélectionner une matière…",
-        abbreviation: "...",
-        slug: "...",
-        _isPlaceholder: true
-      };
-    }
-  },
-  currentTrimester: (state, getters) => {
-    return getters.trimester(moment());
-  },
-  // note: doesn't get other courses in the same day as currentSubject
-  nextCourseOf: (state, getters) => subjectSlug => {
-    const tomorrow = moment().add(1, "days");
-    // get courses that are after tomorrow
-    let courses = getters.coursesIn(tomorrow, moment().add(2, "weeks"));
-    if (!courses.length) return null;
-    // console.log(courses.map(c => c.date.format('D/M/Y')))
-    // and match the requested subject
-    courses = courses.filter(course => course.subject.slug === subjectSlug);
-    if (!courses.length) return null;
-    // and sort them by ascending date
-    courses = courses.sort((a, b) =>
-      pdate(a.date).isAfter(pdate(b.date)) ? 1 : -1
-    );
-    return courses[0];
-  },
-  nextCourseOfCurrentSubject: (state, getters) => now => {
-    if (!now) now = moment();
-    if (!getters.currentCourse(now)) {
-      return null;
-    }
-    return getters.nextCourseOf(getters.currentCourse.subject);
-  },
-  offdays: (state, getters) => {
-    let offdays = [];
-    let offdaySeries = getters.setting("offdays");
-    if (offdaySeries) offdaySeries = offdaySeries.value;
-    else return [];
-    if (offdaySeries) offdaySeries = offdaySeries.trim();
-    else return [];
-
-    offdaySeries = offdaySeries.split("\n"); // split by line
-    //  .forEach(offday => offday.replace("\r", "")); // fuck windows
-    for (const offdaySerie of offdaySeries) {
-      // for each line
-      if (offdaySerie.match(/.+\s*-\s*.+/)) {
-        // if its a range (start date - end date)
-        // get start & end: split by "-", trim spaces, parse as date
-        let [start, end] = offdaySerie
-          .split("-")
-          .map(o => moment(o, "DD/MM/YYYY"));
-        // iterate over each date
-        while (start.isBefore(end)) {
-          // add in the array
-          offdays.push(start);
-          start = start.add(1, "day");
-        }
-      } else {
-        // add in the array
-        offdays.push(pdate(offdaySerie));
-      }
-    }
-    return offdays;
-  },
-  event: (state, getters) => eventUUID => {
-    return state.events.find(e => e.uuid === eventUUID);
-  },
-  //TODO: Remove duplicate code between subjectsToAddFor and subjectsToRemoveFor
-  subjectsToAddFor: (state, getters) => (date, today = null) => {
-    console.group("subjectsToAdd");
-    let weekdays = [
-      "monday",
-      "tuesday",
-      "wednesday",
-      "thursday",
-      "friday",
-      "saturday",
-      "sunday"
-    ];
-    // Get today
-    let dateCopy = date.clone();
-    today = today || dateCopy.subtract(1, "day"); //Subtracting from `date` directly would mutate it
-
-    console.log(
-      `for window ${today.format("YYYY-MM-DD")}->${date.format("YYYY-MM-DD")}`
-    );
-    // Get today & date subjects
-    let todayCopy = today.clone();
-    let allSubjects = getters.coursesIn(todayCopy, date);
-
-    let todaySubjects = allSubjects
-      .filter(c => c.day === weekdays[today.isoWeekday() - 1])
-      .map(c => c.subject);
-    let dateSubjects = allSubjects
-      .filter(c => c.day === weekdays[date.isoWeekday() - 1])
-      .map(c => c.subject);
-
-    let diff = dateSubjects.filter(
-      s => !todaySubjects.map(s => s.uuid).includes(s.uuid)
-    );
-    diff = uniqBy(diff, 'uuid')
-    console.log(diff.map(s => s.name));
-    console.groupEnd();
-    return diff;
-  },
-  subjectsToRemoveFor: (state, getters) => (date, today = null) => {
-    console.group("subjectsToRemove");
-    let weekdays = [
-      "monday",
-      "tuesday",
-      "wednesday",
-      "thursday",
-      "friday",
-      "saturday",
-      "sunday"
-    ];
-    // Get today
-    let dateCopy = date.clone();
-    today = today || dateCopy.subtract(1, "day"); //Subtracting from `date` directly would mutate it
-
-    console.log(
-      `for window ${today.format("YYYY-MM-DD")}->${date.format("YYYY-MM-DD")}`
-    );
-    // Get today & date subjects
-    let todayCopy = today.clone();
-    let allSubjects = getters.coursesIn(todayCopy, date);
-
-    let todaySubjects = allSubjects
-      .filter(c => c.day === weekdays[today.isoWeekday() - 1])
-      .map(c => c.subject);
-    let dateSubjects = allSubjects
-      .filter(c => c.day === weekdays[date.isoWeekday() - 1])
-      .map(c => c.subject);
-
-    let diff = todaySubjects.filter(
-      s => !dateSubjects.map(s => s.uuid).includes(s.uuid)
-    );
-    diff = uniqBy(diff, 'uuid')
-    console.log(diff.map(s => s.name));
-    console.groupEnd();
-    return diff;
-  },
-  hoursCountFor: (state, getters) => date => {
-    /* NOTE: Doing a two-days interval and taking only one because coursesIn does not support (date, date) yet (dates must be different)
-    When this is fixed, this code will be a lot less ridiculous */
-    console.group(`hoursCountFor: ${date.format("YYYY-MM-DD")}`);
-    let weekdays = [
-      "monday",
-      "tuesday",
-      "wednesday",
-      "thursday",
-      "friday",
-      "saturday",
-      "sunday"
-    ];
-    // Get today
-    let dateCopy = date.clone();
-    let today = dateCopy.subtract(1, "day"); //Subtracting from `date` directly would mutate it
-
-    let todayCopy = today.clone();
-    let allSubjects = getters.coursesIn(todayCopy, date);
-
-    let courses = allSubjects.filter(
-      c => c.day === weekdays[date.isoWeekday() - 1]
-    );
-    console.log(courses);
-    let durations = courses.map(c =>
-      moment
-        .duration(moment(c.end, "HH:mm").diff(moment(c.start, "HH:mm")))
-        .as("hours")
-    );
-    console.log(durations);
-    if (!durations.length) return 0;
-    let total = durations.reduce((acc, cur) => acc + cur);
-    console.log(total);
-
-    console.groupEnd();
-    return Math.round(Math.abs(total));
-  },
-  firstCourseStart: (start, getters) => events => {
-    return Math.min(
-      ...events.map(ev => {
-        let st = moment(ev.start, "HH:mm:ss");
-        return st.diff(moment("00:00:00", "HH:mm:ss"), "seconds");
-      })
-    );
-  },
-  lastCourseEnd: (start, getters) => events => {
-    return Math.max(
-      ...events.map(ev => {
-        let st = moment(ev.end, "HH:mm:ss");
-        return st.diff(moment("00:00:00", "HH:mm:ss"), "seconds");
-      })
-    );
   }
 };
 
 export const mutations = {
-  CLEAR_ALL(state) {
-    state.additions = [];
-    state.deletions = [];
-    state.events = [];
-    state.currentCourse = {};
-    state.upcomingCourse = {};
+  SET_EVENTS: (state, events) => {
+    /* Turns dates in moment objects when setting events.
+     */
+    state.events = events.map(o => parseEventDates(o))
   },
-  SET_EVENTS(state, events) {
-    state.events = events;
+  ADD_EVENT: (state, event) => state.events.push(event),
+  DEL_EVENT: (state, uuid) =>
+    (state.events = state.events.filter(o => o.uuid !== uuid)),
+  PATCH_EVENT: (state, uuid, modifications) => {
+    // Get the requested event's index in the state array
+    let idx = state.events.map(o => o.uuid).indexOf(uuid);
+    // Apply modifications
+    Object.assign(state.events[idx], modifications);
   },
-  CHANGE_EVENT(state, eventUUID, newEventData) {
-    let i = state.events.indexOf(state.events.find(e => e.uuid === eventUUID));
-    Object.assign(state.events[i], newEventData);
-  },
-  SET_COURSES(state, courses) {
-    state.courses = courses;
-  },
-  SET_ADDITIONS(state, additions) {
-    state.additions = additions;
-  },
-  SET_DELETIONS(state, deletions) {
-    state.deletions = deletions;
+  SET_MUTATIONS: (state, mutations) => (state.mutations = mutations),
+  ADD_MUTATION: (state, mutation) => state.mutations.push(subject),
+  DEL_MUTATION: (state, uuid) =>
+    (state.mutations = state.mutations.filter(o => o.uuid !== uuid)),
+  PATCH_MUTATION: (state, uuid, modifications) => {
+    // Get the requested mutation's index in the state array
+    let idx = state.mutations.map(o => o.uuid).indexOf(uuid);
+    // Apply modifications
+    Object.assign(state.mutations[idx], modifications);
   }
-  /*  UPDATE_EVENT(state, courseId, newCourse) {
-    let course = state.getters
-      .allEvents()
-      .filter(event => event.id === courseId)[0];
-    Object.assign(course, newCourse);
-  }, */
 };
 
-export const actions = {};
+export const actions = {
+  async loadEvents({ commit, getters }) {
+    try {
+      const { data } = await this.$axios.get(`/events/`);
+      console.log(`[from API] GET /events/: OK`);
+      if (data)
+        commit("SET_EVENTS", data.map(o => getters.eventParsedDates(o)));
+    } catch (error) {
+      console.error(`[from API] GET /events/: Error`);
+      try {
+        console.error(error.response.data);
+      } catch (_) {
+        console.error(error);
+      }
+    }
+  },
+
+  async loadMutations({ commit }) {
+    try {
+      const { data } = await this.$axios.get(`/events-mutations/`);
+      console.log(`[from API] GET /events-mutations/: OK`);
+      if (data) commit("SET_MUTATIONS", data);
+    } catch (error) {
+      console.error(`[from API] GET /events-mutations/: Error`);
+      try {
+        console.error(error.response.data);
+      } catch (_) {
+        console.error(error);
+      }
+    }
+  }
+};

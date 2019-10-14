@@ -1,0 +1,217 @@
+// Use the moment-range addon
+import groupBy from "lodash.groupby";
+import { parse, parseISO, startOfDay, format } from "date-fns";
+
+export const state = () => ({
+  settings: []
+});
+
+const parsedValue = (
+  value,
+  { type, multiple, positive },
+  recursionLevel = 0 //<-- Debug purposes only
+) => {
+  /* Considers the setting's type to determine how to parse a value.
+   * If the type is not known, returns the value as-is.
+   *
+   * @param value: the setting's value to parse
+   * @params {...} : different properties of a SettingDefinition object.
+   */
+  let parsed;
+
+  if (multiple) {
+    // Handle multiple values
+    parsed = value
+      .split("\n") //split by newlines
+      .map(v => v.replace('\r', '')) // remove windows fuckeries
+      .map(v =>
+        //parse each value                  ↓ Prevents ∞ recursion
+        parsedValue(v, { type, multiple: false, positive }, recursionLevel + 1)
+      );
+  } else {
+    // Handle single values
+    switch (type) {
+      case "BOOLEAN":
+        parsed = value === "true";
+        break;
+
+      case "DATE":
+        parsed = parseISO(value);
+        break;
+
+      case "TIME":
+        parsed = parse(value, "HH:mm", new Date());
+        break;
+
+      case "DATETIME":
+        parsed = parseISO(value);
+        break;
+
+      case "DATERANGE":
+        // Gets the start and stop dates.
+        let dates = value.split(" - ");
+        // Parse each date
+        dates = dates.map(date =>
+          parsedValue(
+            date,
+            {
+              type: "DATE",
+              multiple: false,
+              positive: false
+            },
+            recursionLevel + 1
+          )
+        );
+        // If we don't have exactly two dates (start - stop), sets to the first date only. Else, create the range.
+        parsed =
+          dates.length === 2
+            ? { start: dates[0], end: dates[1] }
+            : (parsed = dates[0]);
+        break;
+
+      case "TIMERANGE":
+        //TODO
+        throw {
+          name: "NotImplementedError",
+          message: "TIMERANGE setting types are not available yet."
+        };
+        break;
+
+      case "JSON":
+        parsed = JSON.parse(value);
+        break;
+
+      case "FLOAT":
+        parsed = positive ? Math.abs(parseFloat(value)) : parseFloat(value);
+        break;
+
+      case "INTEGER":
+        parsed = positive ? Math.abs(parseInt(value)) : parseInt(value);
+        break;
+
+      case "TEXT":
+      case "SELECT":
+        parsed = value.trim();
+        break;
+
+      default:
+        parsed = value;
+    }
+  }
+  return parsed;
+};
+
+export const getters = {
+  all: (state, getters) => state.settings,
+  one: (state, getters) => (propval, prop = "key") =>
+    state.settings.find(o => o[prop] === propval) || null,
+  value: (state, getters) => (propval, prop = "key") => {
+    let setting = getters.one(propval, prop);
+    if (setting === null) throw `No setting with ${prop}=${propval}`;
+    return setting.value;
+  },
+  group: (state, getters) => (settings, { removeHidden }) => {
+    /* Groups `settings` by category.
+     * `removeHidden`: when set to true, categories that match the regex pattern below
+     * get filtered out of the returned array:
+     * ^__.+__$
+     */
+    if (removeHidden) settings = settings.filter(o => !o.category.match(/^__.+__$/));
+    settings = groupBy(settings, "category");
+    return settings;
+  },
+  grouped: (state, getters) =>
+    getters.group(getters.all, { removeHidden: true })
+};
+
+export const mutations = {
+  SET_SETTINGS: (state, { definitions, settings }) => {
+    /* Set settings for the user, by combining a setting definition (SettinDefinition in the backend)
+     * and a value (Setting.value in the backend)
+     */
+    definitions.forEach(definition => {
+      let value, setting;
+      // Attempt to get the user's value for this setting definition
+      setting = settings.find(o => o.setting.key === definition.key);
+      // Set `value` property: if setting is undefined, fallback to the default
+      // value, else use the one on the found setting
+      let isDefaultValue = setting === undefined;
+      if (isDefaultValue) {
+        value = definition.default;
+      } else {
+        value = setting.value;
+      }
+      // Convert to the appropriate JS representation of the value
+      value = parsedValue(value, definition);
+      /* Adds the definition to the state as a setting object + the value prop
+       * and a bool to tell if the setting is set to the default value.
+       */
+      let hydratedDefinition = { ...definition, value, isDefaultValue };
+      state.settings.push(hydratedDefinition);
+    });
+  },
+  ADD_SETTING: (state, setting) => state.settings.push(subject),
+  DEL_SETTING: (state, uuid) =>
+    (state.settings = state.settings.filter(o => o.uuid !== uuid)),
+  PATCH_SETTING: (state, uuid, modifications) => {
+    // Get the requested setting's index in the state array
+    let idx = state.settings.map(o => o.uuid).indexOf(uuid);
+    // Apply modifications
+    Object.assign(state.settings[idx], modifications);
+  }
+};
+
+export const actions = {
+  async fetchSettings({ commit }) {
+    try {
+      const { data } = await this.$axios.get(`/settings/`);
+      console.log(`[from API] GET /settings/: OK`);
+      return data;
+    } catch (error) {
+      console.error(`[from API] GET /settings/: Error`);
+      try {
+        console.error(error.response.data);
+      } catch (_) {
+        console.error(error);
+      }
+      return null;
+    }
+  },
+  async fetchDefinitions({ commit }) {
+    try {
+      const { data } = await this.$axios.get(`/settings-definitions/`);
+      console.log(`[from API] GET /settings-definitions/: OK`);
+      return data;
+    } catch (error) {
+      console.error(`[from API] GET /settings-definitions/: Error`);
+      try {
+        console.error(error.response.data);
+      } catch (_) {
+        console.error(error);
+      }
+      return null;
+    }
+  },
+  async loadSettings({ commit, state, dispatch }) {
+    /* Computes the settings that should be used (state.settings)
+     * from definitions and 'raw' settings returned directly by the API in fetchSettings
+     */
+    const definitions = (await dispatch("fetchDefinitions")) || [];
+    const settings = (await dispatch("fetchSettings")) || [];
+    commit("SET_SETTINGS", { definitions, settings });
+  },
+  async postSetting({ commit }, setting) {
+    try {
+      const { data } = await this.$axios.post("/settings/", setting);
+      if (data) commit("ADD_SETTING", data);
+      console.log(`[from API] POST /settings/: OK`);
+    } catch (error) {
+      console.error("[from API] POST /settings/: Error");
+      try {
+        console.error(error.response.data);
+      } catch (_) {
+        console.error(error);
+      }
+    }
+  }
+};

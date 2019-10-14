@@ -9,6 +9,7 @@
 <script>
 import TheNavbar from "~/components/TheNavbar.vue";
 import TheFooter from "~/components/TheFooter.vue";
+import moment from 'moment';
 
 export default {
   components: {
@@ -18,6 +19,9 @@ export default {
   mounted() {
     // fix weird nuxt bug where the exercises+test arrays are duped outside of the #__nuxt container
     document.querySelectorAll('body > *:not(#__nuxt)').forEach(e => e.remove())
+    setInterval(() => {
+      this.$store.commit("UPDATE_TIME", moment())
+    }, 1000);
   },
 };
 </script>
@@ -26,7 +30,7 @@ export default {
 @import '~/assets/defaults'
 
 // Keep footer outta the first page
-.container
+.TheNavbar + div
   min-height: 100vh
 
 /* DESKTOP */
