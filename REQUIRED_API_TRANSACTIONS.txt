@@ -30,7 +30,7 @@
 
 ---schedule---
 √ GET current event (and current subject consequently)
-GET subject's next event
+√ GET subject's next event
 √ GET next event or null
 √ GET current trimester
 √ GET time remainig before end of current event
@@ -45,13 +45,12 @@ GET subjects to add for tomorrow
 GET subjects to remove for tomorrow
 
 ---notes---
-POST notes
+√ POST notes
 GET current subject latest note
 GET learndata of current subject
-SORTER notes by last_modified (or last_opened?)
+√ SORTER notes by last_modified (or last_opened?)
 SEARCHER notes by... 
     - title
     - subject
-GET notes of current subject
-POST notes
-GET note by UUID
+√ GET notes of current subject
+√ GET note by UUID

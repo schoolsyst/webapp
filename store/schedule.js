@@ -20,20 +20,34 @@ import {
   isSameDay,
   parse,
   isDate,
-  format,
+  isAfter,
+  setMinutes,
+  setSeconds,
+  setHours,
+  endOfDay,
+  startOfDay,
 } from "date-fns";
 
 export const state = () => ({
   events: [],
-  mutations: []
+  mutations: [],
 });
 
-const parseEventDates = (event) => ({
+const parseTime = (timeStr, date) => {
+  if (typeof timeStr !== "string") return timeStr;
+  let [h, m, s] = timeStr.split(":").map(o => parseInt(o));
+  setHours(date, h);
+  setMinutes(date, m);
+  setSeconds(date, s);
+  return date;
+};
+
+const parseEventDates = event => ({
   ...event,
-  //                                  ↓ filler date required by date-fns.
-  start: parse(event.start, "HH:mm", new Date()),
-  end: parse(event.end, "HH:mm", new Date())
-})
+  // I created a custom "parseTime" function because date-fns' parse() yields Invalid Date
+  start: parseTime(event.start, event.date),
+  end: parseTime(event.end, event.date),
+});
 
 export const getters = {
   events: (state, getters) => state.events,
@@ -62,7 +76,7 @@ export const getters = {
     if (idx === 2) return trimester2;
     if (idx === 3) return trimester3;
     // Invalid index
-    throw `Trimester #${idx} does not exist.`
+    throw `Trimester #${idx} does not exist.`;
   },
   isOffday: (state, getters, rootState, rootGetters) => date => {
     /* Check if the given `date` is an offday, by using the
@@ -78,7 +92,7 @@ export const getters = {
         try {
           if (isWithinInterval(date, dateOrInterval)) return true;
         } catch (error) {
-          console.error(error)
+          console.error(error);
         }
       }
     });
@@ -91,7 +105,7 @@ export const getters = {
     /* Returns the index of the current trimester.
      * Returns null if the current date is outside any trimester
      */
-    let now = rootState.now
+    let now = rootState.now;
     let t1 = getters.trimester(1);
     let t2 = getters.trimester(2);
     let t3 = getters.trimester(3);
@@ -100,8 +114,8 @@ export const getters = {
       if (isWithinInterval(now, t2)) return 2;
       if (isWithinInterval(now, t3)) return 3;
     } catch (error) {
-      console.error(error)
-      console.error({t1, t2, t3, now})
+      console.error(error);
+      console.error({ t1, t2, t3, now });
     }
     return null;
   },
@@ -134,11 +148,11 @@ export const getters = {
     let mutations = [];
     let week = {
       start: startOfWeek(rootState.now),
-      end: endOfWeek(rootState.now)
+      end: endOfWeek(rootState.now),
     };
     eachDayOfInterval(week).forEach(day => {
       let mutationsOfDay = getters.mutationsOf({ date: day, event: null });
-      mutations = [...mutations, ...mutationsOfDay]
+      mutations = [...mutations, ...mutationsOfDay];
     });
   },
   orderCourses: (state, getters, rootState, rootGetters) => courses =>
@@ -173,11 +187,11 @@ export const getters = {
         courses.push({
           ...event,
           ...mutation,
-          date: day
+          date: day,
         });
       });
     }
-    return courses
+    return courses;
   },
   courses: (state, getters, rootState) =>
     /* Gets courses in the current week.
@@ -229,14 +243,16 @@ export const getters = {
       default:
         return null;
     }
-  }
+  },
+  tomorrowCourses: (state, getters, rootState, rootGetters) =>
+    getters.coursesIn(startOfDay(rootState.now), endOfDay(rootState.now)),
 };
 
 export const mutations = {
   SET_EVENTS: (state, events) => {
     /* Turns dates in moment objects when setting events.
      */
-    state.events = events.map(o => parseEventDates(o))
+    state.events = events.map(o => parseEventDates(o));
   },
   ADD_EVENT: (state, event) => state.events.push(event),
   DEL_EVENT: (state, uuid) =>
@@ -256,7 +272,7 @@ export const mutations = {
     let idx = state.mutations.map(o => o.uuid).indexOf(uuid);
     // Apply modifications
     Object.assign(state.mutations[idx], modifications);
-  }
+  },
 };
 
 export const actions = {
@@ -264,8 +280,7 @@ export const actions = {
     try {
       const { data } = await this.$axios.get(`/events/`);
       console.log(`[from API] GET /events/: OK`);
-      if (data)
-        commit("SET_EVENTS", data.map(o => getters.eventParsedDates(o)));
+      if (data) commit("SET_EVENTS", data.map(o => parseEventDates(o)));
     } catch (error) {
       console.error(`[from API] GET /events/: Error`);
       try {
@@ -289,5 +304,5 @@ export const actions = {
         console.error(error);
       }
     }
-  }
+  },
 };

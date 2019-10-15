@@ -1,8 +1,13 @@
 import { firstBy } from "thenby";
-import { isBefore, isWithinInterval, parseISO } from "date-fns";
+import { isBefore, isWithinInterval, parseISO, parse } from "date-fns";
 
 export const state = () => ({
-  grades: []
+  grades: [],
+});
+
+const parseGradeDates = grade => ({
+  ...grade,
+  added: parseISO(grade.added),
 });
 
 export const getters = {
@@ -61,20 +66,12 @@ export const getters = {
     getters.mean(getters.currentTrimester);
   },
   currentTrimesterEvolution: (state, getters, rootState, rootGetters) =>
-    getters.evolution(getters.currentTrimester)
+    getters.evolution(getters.currentTrimester),
 };
 
 export const mutations = {
-  SET_GRADES: (state, grades) => {
-    let _grades = [];
-    grades.forEach(grade => {
-      _grades.push({
-        ...grade,
-        added: parseISO(grade.added)
-      });
-    });
-    state.grades = _grades;
-  },
+  SET_GRADES: (state, grades) =>
+    (state.grades = grades.map(o => parseGradeDates(o))),
   ADD_GRADE: (state, grade) => state.grades.push(subject),
   DEL_GRADE: (state, uuid) =>
     (state.grades = state.grades.filter(o => o.uuid !== uuid)),
@@ -83,7 +80,7 @@ export const mutations = {
     let idx = state.grades.map(o => o.uuid).indexOf(uuid);
     // Apply modifications
     Object.assign(state.grades[idx], modifications);
-  }
+  },
 };
 
 export const actions = {
@@ -110,5 +107,5 @@ export const actions = {
       console.error(`[from API] POST /grades/: Error`);
       console.error(error.response.data);
     }
-  }
+  },
 };

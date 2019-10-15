@@ -1,9 +1,9 @@
 // Use the moment-range addon
 import groupBy from "lodash.groupby";
-import { parse, parseISO, startOfDay, format } from "date-fns";
+import { parseISO, parse } from "date-fns";
 
 export const state = () => ({
-  settings: []
+  settings: [],
 });
 
 const parsedValue = (
@@ -23,7 +23,7 @@ const parsedValue = (
     // Handle multiple values
     parsed = value
       .split("\n") //split by newlines
-      .map(v => v.replace('\r', '')) // remove windows fuckeries
+      .map(v => v.replace("\r", "")) // remove windows fuckeries
       .map(v =>
         //parse each value                  ↓ Prevents ∞ recursion
         parsedValue(v, { type, multiple: false, positive }, recursionLevel + 1)
@@ -36,11 +36,15 @@ const parsedValue = (
         break;
 
       case "DATE":
-        parsed = parseISO(value);
+        if (value.match(/\//g)) {
+          parsed = parse(value, "dd/MM/yyyy", new Date());
+        } else {
+          parsed = parseISO(value);
+        }
         break;
 
       case "TIME":
-        parsed = parse(value, "HH:mm", new Date());
+        parsed = parse(value, "HH:mm:ss", new Date());
         break;
 
       case "DATETIME":
@@ -57,7 +61,7 @@ const parsedValue = (
             {
               type: "DATE",
               multiple: false,
-              positive: false
+              positive: false,
             },
             recursionLevel + 1
           )
@@ -73,7 +77,7 @@ const parsedValue = (
         //TODO
         throw {
           name: "NotImplementedError",
-          message: "TIMERANGE setting types are not available yet."
+          message: "TIMERANGE setting types are not available yet.",
         };
         break;
 
@@ -82,11 +86,11 @@ const parsedValue = (
         break;
 
       case "FLOAT":
-        parsed = positive ? Math.abs(parseFloat(value)) : parseFloat(value);
+        parsed = parseFloat(value);
         break;
 
       case "INTEGER":
-        parsed = positive ? Math.abs(parseInt(value)) : parseInt(value);
+        parsed = parseInt(value);
         break;
 
       case "TEXT":
@@ -98,6 +102,7 @@ const parsedValue = (
         parsed = value;
     }
   }
+  if (typeof parsed === "number" && positive) parsed = Math.abs(parsed);
   return parsed;
 };
 
@@ -107,7 +112,10 @@ export const getters = {
     state.settings.find(o => o[prop] === propval) || null,
   value: (state, getters) => (propval, prop = "key") => {
     let setting = getters.one(propval, prop);
-    if (setting === null) throw `No setting with ${prop}=${propval}`;
+    if (setting === null)
+      throw `No setting with ${prop}=${propval}. Available ${prop}s: ${getters.all.map(
+        o => o[prop]
+      )}`;
     return setting.value;
   },
   group: (state, getters) => (settings, { removeHidden }) => {
@@ -116,12 +124,13 @@ export const getters = {
      * get filtered out of the returned array:
      * ^__.+__$
      */
-    if (removeHidden) settings = settings.filter(o => !o.category.match(/^__.+__$/));
+    if (removeHidden)
+      settings = settings.filter(o => !o.category.match(/^__.+__$/));
     settings = groupBy(settings, "category");
     return settings;
   },
   grouped: (state, getters) =>
-    getters.group(getters.all, { removeHidden: true })
+    getters.group(getters.all, { removeHidden: true }),
 };
 
 export const mutations = {
@@ -158,7 +167,7 @@ export const mutations = {
     let idx = state.settings.map(o => o.uuid).indexOf(uuid);
     // Apply modifications
     Object.assign(state.settings[idx], modifications);
-  }
+  },
 };
 
 export const actions = {
@@ -213,5 +222,5 @@ export const actions = {
         console.error(error);
       }
     }
-  }
+  },
 };

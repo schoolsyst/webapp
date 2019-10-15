@@ -65,7 +65,6 @@ export const actions = {
   },
 
   async nuxtServerInit({ dispatch }) {
-    // throw {name: 'TODO', message: "Go see https://date-fns.org/docs/Getting-Started to replace momentjs! Immutability = no headaches :D"}
     await dispatch("settings/loadSettings");
     await dispatch("loadSubjects");
     await dispatch("homework/loadHomework");

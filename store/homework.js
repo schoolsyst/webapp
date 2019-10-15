@@ -6,6 +6,11 @@ export const state = () => ({
   homework: []
 });
 
+const parseHomeworkDates = homework => ({
+  ...homework,
+  due: parseISO(homework.due)
+})
+
 export const getters = {
   all: (state, getters) => getters.order(state.homework),
   one: (state, getters) => (value, prop = "uuid") =>
@@ -43,9 +48,7 @@ export const getters = {
 
 export const mutations = {
   SET_HOMEWORKS: (state, homeworks) =>
-    (state.homeworks = homeworks.forEach(
-      o => (o.due = parseISO(o.due))
-    )),
+    state.homeworks = homeworks.map(o => parseHomeworkDates(o)),
   ADD_HOMEWORK: (state, homework) => state.homeworks.push(subject),
   DEL_HOMEWORK: (state, uuid) =>
     (state.homeworks = state.homeworks.filter(o => o.uuid !== uuid)),
