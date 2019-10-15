@@ -31,6 +31,11 @@ export const getters = {
     // ↓ Makes a copy of grades to avoid mutating
     return [...grades].sort(firstBy((o1, o2) => isBefore(o1, o2)));
   },
+  format: (state, getters, rootState, rootGetters) => value => {
+    let unit = rootGetters["settings/value"]("grade_max");
+    unit = unit === 100 ? "%" : `/${unit}`;
+    return { value, unit };
+  },
   mean: (state, getters) => grades => {
     grades = grades.filter(o => o.obtained !== null);
     if (!grades.length) return null;
