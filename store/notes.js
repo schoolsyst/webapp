@@ -18,8 +18,13 @@ export const getters = {
   all: (state, getters) => state.notes,
   one: (state, getters) => (value, prop = "uuid") =>
     getters.notes.find(o => o[prop] === value) || null,
-  of: (state, getters) => (value, what = "subject") =>
-    getters.notes.all.filter(o => (o[what] = value)),
+  of: (state, getters) => (value, what = "subject") => {
+    if (what === "subject") {
+      return getters.notes.all.filter(o => o.subject.uuid === value);
+    } else {
+      return getters.notes.all.filter(o => o[what] === value);
+    }
+  },
   currentSubject: (state, getters, rootState, rootGetters) => {
     let currentCourse = rootGetters["schedule/currentCourse"];
     if (currentCourse === null) return null;
