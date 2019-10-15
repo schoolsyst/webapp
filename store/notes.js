@@ -191,4 +191,29 @@ export const actions = {
       }
     }
   },
+  async saveNote(
+    { dispatch, getters, rootState },
+    uuid,
+    content = null,
+    force = false
+  ) {
+    try {
+      const clientNoteContent = content || getters.note(uuid).content;
+      // If we are force-saving, no need to do any checks.
+      if (!force) {
+        // Check if the note's content is not "Chargement..." or an empty string
+        if (clientNoteContent === "Chargement..." || clientNoteContent === "")
+          throw {
+            name: "CheckError",
+            message: `Error while checking content of note #${uuid}: The note's content is equal to "${clientNoteContent}".`
+          };
+      }
+      dispatch("patchNote", uuid, {
+        content: clientNoteContent,
+        modified: rootState.now
+      });
+    } catch (error) {
+      console.error(`[macro-action] saveNote error: ${error}`);
+    }
+  }
 };
