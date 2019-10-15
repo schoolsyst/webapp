@@ -81,5 +81,38 @@ export const actions = {
       const { data } = await this.$axios.post(`/homework/`, homework);
       if (data) commit("ADD_HOMEWORK", homework);
     } catch (error) {}
+  },
+
+  async deleteHomework({ commit }, uuid) {
+    try {
+      const { data } = await this.$axios.delete(`/homeworks/${uuid}`);
+      if (data) commit("DEL_HOMEWORK", uuid);
+      console.log(`[from API] DELETE /homeworks/${uuid}: OK`);
+    } catch (error) {
+      console.error(`[from API] DELETE /homeworks/${uuid}: Error`);
+      try {
+        console.error(error.response.data);
+      } catch (_) {
+        console.error(error);
+      }
+    }
+  },
+
+  async patchHomework({ commit }, uuid, modifications) {
+    try {
+      const { data } = await this.$axios.patch(
+        `/homeworks/${uuid}`,
+        modifications
+      );
+      if (data) commit("PATCH_HOMEWORK", uuid, data);
+      console.log(`[from API] PATCH /homeworks/${uuid}: OK`);
+    } catch (error) {
+      console.error(`[from API] PATCH /homeworks/${uuid}: Error`);
+      try {
+        console.error(error.response.data);
+      } catch (_) {
+        console.error(error);
+      }
+    }
   }
 };

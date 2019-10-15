@@ -9,11 +9,11 @@ export const getters = {
   subjects: (state, getters) => state.subjects,
   subject: (state, getters) => (value, prop = "uuid") =>
     state.subjects.find(o => o[prop] === value) || null,
-  /* Why `(_ = 0) =>` ? To turn the getter into a function
+  /* Why `=> () =>` ? To turn the getter into a function
    * and therefore prevent caching.
    */
-  requireInitialSetup: (state, getters, rootState, rootGetters) => (_ = 0) => {
-    let settings = rootGetters["settings/settings"];
+  requireInitialSetup: (state, getters, rootState, rootGetters) => () => {
+    let settings = rootGetters["settings/all"];
     // Non-optional settings that haven't been set by the user are considered "bad".
     let badSettings = settings.filter(o => o.isDefaultSetting && !o.optional);
     return badSettings.length > 0;
@@ -54,8 +54,9 @@ export const actions = {
     try {
       const { data } = await this.$axios.post(`/subjects/`, subject);
       if (data) commit("ADD_SUBJECT", data);
+      console.log("[from API] POST /subjects/: OK");
     } catch (error) {
-      console.log(`[from API] POST /subjects/: Error`);
+      console.error(`[from API] POST /subjects/: Error`);
       try {
         console.error(error.response.data);
       } catch (_) {
@@ -64,7 +65,39 @@ export const actions = {
     }
   },
 
-  async nuxtServerInit({ dispatch }) {
+  async patchSubject({ commit }, uuid, modifications) {
+    try {
+      const { data } = await this.$axios.patch(
+        `/subjects/${uuid}/`,
+        modifications
+      );
+      if (data) commit("PATCH_SUBJECT", uuid, data);
+      console.log(`[from API] PATCH /subjects/${uuid}/: OK`);
+    } catch (error) {
+      console.error(`[from API] PATCH /subjects/${uuid}/: Error`);
+      try {
+        console.error(error.response.data);
+      } catch (_) {
+        console.error(error);
+      }
+    }
+  },
+
+  async deleteSubject({ commit }, uuid) {
+    try {
+      const { data } = await this.$axios.delete(`/subjects/${uuid}/`);
+      if (data) commit("DEL_SUBJECT", uuid);
+      console.log(`[from API] DELETE /subjects/${uuid}/: OK`);
+    } catch (error) {
+      console.error(`[from API] DELETE /subjects/${uuid}/: Error`);
+      try {
+        console.error(error.response.data);
+      } catch (_) {
+        console.error(error);
+      }
+    }
+  },
+  async loadAll({ dispatch }) {
     await dispatch("settings/loadSettings");
     await dispatch("loadSubjects");
     await dispatch("homework/loadHomework");
@@ -72,5 +105,9 @@ export const actions = {
     await dispatch("schedule/loadEvents");
     await dispatch("schedule/loadMutations");
     await dispatch("notes/loadNotes");
+  },
+
+  async nuxtServerInit({ dispatch }) {
+    await dispatch("loadAll");
   }
 };

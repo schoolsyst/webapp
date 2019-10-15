@@ -223,4 +223,35 @@ export const actions = {
       }
     }
   },
+  async patchSetting({ commit }, uuid, modifications) {
+    try {
+      const { data } = await this.$axios.patch(
+        `/settings/${uuid}`,
+        modifications
+      );
+      if (data) commit("PATCH_SETTING", uuid, data);
+      console.log(`[from API] PATCH /settings/${uuid}: OK`);
+    } catch (error) {
+      console.error(`[from API] PATCH /settings/${uuid}: Error`);
+      try {
+        console.error(error.response.data);
+      } catch (_) {
+        console.error(error);
+      }
+    }
+  },
+  async deleteSetting({ commit }, uuid) {
+    try {
+      const { data } = await this.$axios.delete(`/settings/${uuid}`);
+      if (data) commit("DEL_SETTING", uuid);
+      console.log(`[from API] DELETE /settings/${uuid}: OK`);
+    } catch (error) {
+      console.error(`[from API] DELETE /settings/${uuid}: Error`);
+      try {
+        console.error(error.response.data);
+      } catch (_) {
+        console.error(error);
+      }
+    }
+  }
 };

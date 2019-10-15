@@ -305,4 +305,100 @@ export const actions = {
       }
     }
   },
+
+  async postEvent({ commit }, event) {
+    try {
+      const { data } = await this.$axios.post(`/events/`, event);
+      if (data) commit("ADD_EVENT", data);
+      console.log("[from API] POST /events/: OK");
+    } catch (error) {
+      console.error(`[from API] POST /events/: Error`);
+      try {
+        console.error(error.response.data);
+      } catch (_) {
+        console.error(error);
+      }
+    }
+  },
+
+  async postMutation({ commit }, mutation) {
+    try {
+      const { data } = await this.$axios.post(`/events-mutations/`, mutation);
+      if (data) commit("ADD_MUTATION", data);
+      console.log("[from API] POST /events-mutations/: OK");
+    } catch (error) {
+      console.error(`[from API] POST /events-mutations/: Error`);
+      try {
+        console.error(error.response.data);
+      } catch (_) {
+        console.error(error);
+      }
+    }
+  },
+
+  async patchEvent({ commit }, uuid, modifications) {
+    try {
+      const { data } = await this.$axios.patch(
+        `/events/${uuid}`,
+        modifications
+      );
+      if (data) commit("PATCH_EVENT", uuid, data);
+      console.log(`[from API] PATCH /events/${uuid}: OK`);
+    } catch (error) {
+      console.error(`[from API] PATCH /events/${uuid}: Error`);
+      try {
+        console.error(error.response.data);
+      } catch (_) {
+        console.error(error);
+      }
+    }
+  },
+
+  async patchMutation({ commit }, uuid, modifications) {
+    try {
+      const { data } = await this.$axios.patch(
+        `/events-mutations/${uuid}`,
+        modifications
+      );
+      if (data) commit("PATCH_MUTATION", uuid, data);
+      console.log(`[from API] PATCH /events-mutations/${uuid}: OK`);
+    } catch (error) {
+      console.error(`[from API] PATCH /events-mutations/${uuid}: Error`);
+      try {
+        console.error(error.response.data);
+      } catch (_) {
+        console.error(error);
+      }
+    }
+  },
+
+  async deleteEvent({ commit }, uuid) {
+    try {
+      const { data } = await this.$axios.delete(`/events/${uuid}`);
+      if (data) commit("DEL_EVENT", uuid);
+      console.log(`[from API] DELETE /events/${uuid}: OK`);
+    } catch (error) {
+      console.error(`[from API] DELETE /events/${uuid}: Error`);
+      try {
+        console.error(error.response.data);
+      } catch (_) {
+        console.error(error);
+      }
+    }
+  },
+
+  async deleteMutation({ commit }, uuid) {
+    try {
+      const { data } = await this.$axios.delete(`/events-mutations/${uuid}`);
+      if (data) commit("DEL_MUTATION", uuid);
+      console.log(`[from API] DELETE /events-mutations/${uuid}: OK`);
+    } catch (error) {
+      console.error(`[from API] DELETE /events-mutations/${uuid}: Error`);
+      try {
+        console.error(error.response.data);
+      } catch (_) {
+        console.error(error);
+      }
+    }
+  }
 };

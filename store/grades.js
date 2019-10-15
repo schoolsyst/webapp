@@ -108,4 +108,35 @@ export const actions = {
       console.error(error.response.data);
     }
   },
+  async patchGrade({ commit }, uuid, modifications) {
+    try {
+      const { data } = await this.$axios.patch(
+        `/grades/${uuid}`,
+        modifications
+      );
+      if (data) commit("PATCH_GRADE", uuid, data);
+      console.log(`[from API] PATCH /grades/${uuid}: OK`);
+    } catch (error) {
+      console.error(`[from API] PATCH /grades/${uuid}: Error`);
+      try {
+        console.error(error.response.data);
+      } catch (_) {
+        console.error(error);
+      }
+    }
+  },
+  async deleteGrade({ commit }, uuid) {
+    try {
+      const { data } = await this.$axios.delete(`/grades/${uuid}`);
+      if (data) commit("DEL_GRADE", uuid);
+      console.log(`[from API] DELETE /grades/${uuid}: OK`);
+    } catch (error) {
+      console.error(`[from API] DELETE /grades/${uuid}: Error`);
+      try {
+        console.error(error.response.data);
+      } catch (_) {
+        console.error(error);
+      }
+    }
+  }
 };
