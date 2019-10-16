@@ -5,14 +5,22 @@
 </template>
 
 <script>
+import { toDate } from "date-fns";
+
 export default {
-  components: {
+  head() {
+    return {
+      bodyAttrs: {
+        class: "layoutBare"
+      }
+    };
   },
-  head() { return {
-    bodyAttrs: {
-      class: 'layoutBare'
-    }
-  }}
+  created() {
+    setInterval(() => {
+      this.$store.now = toDate(Date.now());
+      console.log(`[updateTime] ${this.$store.now}`);
+    }, 1000);
+  }
 };
 </script>
 

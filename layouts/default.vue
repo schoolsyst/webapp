@@ -9,7 +9,7 @@
 <script>
 import TheNavbar from "~/components/TheNavbar.vue";
 import TheFooter from "~/components/TheFooter.vue";
-import moment from 'moment';
+import { toDate } from "date-fns";
 
 export default {
   components: {
@@ -18,11 +18,11 @@ export default {
   },
   mounted() {
     // fix weird nuxt bug where the exercises+test arrays are duped outside of the #__nuxt container
-    document.querySelectorAll('body > *:not(#__nuxt)').forEach(e => e.remove())
+    document.querySelectorAll("body > *:not(#__nuxt)").forEach(e => e.remove());
     setInterval(() => {
-      this.$store.commit("UPDATE_TIME", moment())
+      this.$store.now = toDate(Date.now());
     }, 1000);
-  },
+  }
 };
 </script>
 
