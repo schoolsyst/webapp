@@ -176,7 +176,7 @@ export default {
     },
     meanBeforeLastGrade() {
       let { meanThen } = this.currentTrimesterGradesEvolution
-      return meanThen * this.gradeMax
+      return (meanThen * this.gradeMax).toFixed(2).replace(/0+$/, '')
     },
     timeTilEndOfCurrentCourse() {
       return moment().to(moment(this.currentCourse.end, 'hh:mm'), true)
