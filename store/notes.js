@@ -44,6 +44,23 @@ export const getters = {
     if (sorted.length) return sorted[0];
     return null;
   },
+  learndatasOf: (state, getters) => (value, prop = "note") => {
+    switch (prop) {
+      case "note":
+        return state.learndatas.filter(o =>
+          // If the requested note's UUID is in
+          // the array of UUIDs of notes linked to that learndata
+          o.notes.map(n => n.uuid).includes(value)
+        );
+
+      case "subject":
+        return state.learndatas.filter(o => o.subject.uuid === value);
+
+      default:
+        console.error(`[notes/learndatasOf] Unrecognized prop: ${prop}`);
+        return [];
+    }
+  },
 };
 
 export const mutations = {
@@ -205,15 +222,15 @@ export const actions = {
         if (clientNoteContent === "Chargement..." || clientNoteContent === "")
           throw {
             name: "CheckError",
-            message: `Error while checking content of note #${uuid}: The note's content is equal to "${clientNoteContent}".`
+            message: `Error while checking content of note #${uuid}: The note's content is equal to "${clientNoteContent}".`,
           };
       }
       dispatch("patchNote", uuid, {
         content: clientNoteContent,
-        modified: rootState.now
+        modified: rootState.now,
       });
     } catch (error) {
       console.error(`[macro-action] saveNote error: ${error}`);
     }
-  }
+  },
 };

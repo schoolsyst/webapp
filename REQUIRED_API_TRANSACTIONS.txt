@@ -40,14 +40,14 @@
 √    COMP current week's deletions (mutations' deleted dates)
 √    COMP current week's additions (mutations' rescheduled dates)
 √ GET mutations for current week
-GET events of tomorrow (.length==0?)
-GET subjects to add for tomorrow
-GET subjects to remove for tomorrow
+√ GET events of tomorrow (.length==0?)
+√ GET subjects to add for tomorrow
+√ GET subjects to remove for tomorrow
 
 ---notes---
 √ POST notes
-GET current subject latest note
-GET learndata of current subject
+√ GET current subject latest note
+√ GET learndata of current subject
 √ SORTER notes by last_modified (or last_opened?)
 SEARCHER notes by... 
     - title
