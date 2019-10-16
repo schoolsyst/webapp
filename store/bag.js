@@ -6,7 +6,7 @@ export const store = () => ({});
 export const getters = {
   _subjects: (state, getters, rootState, rootGetters) => (today = null) => {
     // Get days
-    const today = today || rootState.now;
+    today = today || rootState.now;
     const tomorrow = addDays(now, 1);
     // Get courses for theses days
     const todayCourses = rootGetters["coursesIn"](
