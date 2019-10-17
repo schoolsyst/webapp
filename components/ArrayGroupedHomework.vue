@@ -104,8 +104,8 @@ export default {
         .from(moment().set({hours: 0, minutes: 0, seconds: 0}), true)
         .replace("quelques secondes", "aujourd'hui")
         .replace("un jour", "demain")
-        .replace("2 jours", "après-demain")
-        .replace("7 jours", "dans une semaine");
+        .replace(/^2 jours/, "après-demain")
+        .replace(/^7 jours/, "dans une semaine");
     },
     showThisGroup(group) {
       let uncompletedExercisesLength = group[1].exercises
