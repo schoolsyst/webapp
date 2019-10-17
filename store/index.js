@@ -1,4 +1,5 @@
 import { toDate } from "date-fns";
+import tinycolor from "tinycolor2";
 
 export const state = () => ({
   subjects: [],
@@ -17,7 +18,12 @@ export const getters = {
     // Non-optional settings that haven't been set by the user are considered "bad".
     let badSettings = settings.filter(o => o.isDefaultSetting && !o.optional);
     return badSettings.length > 0;
-  }
+  },
+  textColor: (state, getters) => backgroundColor =>
+    /* Returns the corresponding text color most visible
+     * on backgroundColor: either 'black' or 'white'.
+     */
+    tinycolor(backgroundColor).isLight() ? "black" : "white"
 };
 
 export const mutations = {
