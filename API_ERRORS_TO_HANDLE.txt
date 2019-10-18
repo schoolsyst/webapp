@@ -1,0 +1,18 @@
+ALL
+
+- Token has expired
+- Wrong token
+
+/homework/
+
+- Name length >= 300
+- No name
+- Due date in the past? (when adding new only)
+- Progress !∈ [0;1]
+
+/grades/
+
+- name length >= 300
+- obtained/expected/goal !∈ [0;1]
+- unit/weight < 0
+
