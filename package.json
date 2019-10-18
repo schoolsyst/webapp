@@ -24,6 +24,7 @@
     "@nuxtjs/toast": "^3.2.1",
     "date-fns": "^2.4.1",
     "fuse.js": "^3.4.5",
+    "js-search": "^1.4.3",
     "jwt-decode": "^2.2.0",
     "lodash.debounce": "^4.0.8",
     "lodash.flatten": "^4.4.0",

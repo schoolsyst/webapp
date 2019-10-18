@@ -1,6 +1,6 @@
 import { firstBy, thenBy } from "thenby";
 import { isBefore, parseISO } from "date-fns";
-import consolaGlobalInstance from "consola";
+import JsSearch from "js-search";
 
 export const state = () => ({
   notes: [],
@@ -232,5 +232,25 @@ export const actions = {
     } catch (error) {
       console.error(`[macro-action] saveNote error: ${error}`);
     }
+  },
+  initNotesSearch({ getters }, indexes = ["name", "subject.name"]) {
+    // Init search
+    let search = new JsSearch.search("uuid");
+    // Add indexes
+    indexes.forEach(index => search.addIndex(index));
+    // Add datasets
+    search.addDocuments(getters.notes);
+    // Return the object to search with
+  },
+  searchNotes({ getters }, searcher, query, apply = null) {
+    /* Uses the object returned by `initNotesSearch` to search queries against.
+     * @param searcher: The JsSearch.search object
+     * @param query: the string to search the dataset against
+     * @param apply: a function that receives the note's uuid and returns a value,
+     *               the returned arary of matches will be mapped with the result of this function.
+     *               `getters.note` by default.
+     */
+    apply |= getters.note;
+    return searcher.search(query).map(uuid => apply(uuid));
   },
 };
