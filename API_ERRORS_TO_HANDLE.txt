@@ -16,3 +16,41 @@ ALL
 - obtained/expected/goal !∈ [0;1]
 - unit/weight < 0
 
+/notes/
+
+- Unknown format
+- name length >= 300
+
+/learndata/
+
+- name length >= 300
+
+/setting/
+- value:
+  run parseValue(throwErrors=true) & catch error messages
+
+/events/
+- start is after end
+- overlapping event found (day==, week_type== or ==both, start—end== )
+
+/events-mutations/
+- course already deleted
+- can't reschedule here, not empty (option to delete the other course(s) / trim their start/end to fit rescheduled course)
+
+/users/
+
+- username too long
+- username already taken
+- password too weak:
+  - too familiar
+  - no numbers
+  - no lowercase chars
+- email already taken
+
+/subjects/
+
+- unvalid color
+- name length >= 300
+- abbreviation length >= 3
+- goal !∈ [0;1]
+- weight < 0
