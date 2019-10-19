@@ -18,7 +18,7 @@ export default {
   created() {
     setInterval(() => {
       this.$store.now = toDate(Date.now());
-      console.log(`[updateTime] ${this.$store.now}`);
+      // console.log(`[updateTime] ${this.$store.now}`);
     }, 1000);
   }
 };
