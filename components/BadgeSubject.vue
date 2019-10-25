@@ -3,23 +3,27 @@ button.BadgeSubject(:style="{backgroundColor: color, color: textColor}" :title="
 </template>
 
 <script>
-import tinycolor from 'tinycolor2'
+import tinycolor from "tinycolor2"
 export default {
-    name: 'BadgeSubject',
-    props: {
-        abbreviation: {
-            type:String,
-            default:'...'
-        },
-        color: {
-            type:String,
-            default:'#000000'
-        },
-        name: {
-            type: String,
-            default() { return this.abbreviation === '...' ? 'Choisissez une matière...' : this.abbreviation }
-        }
+  name: "BadgeSubject",
+  props: {
+    abbreviation: {
+      type: String,
+      default: "...",
     },
+    color: {
+      type: String,
+      default: "#000000",
+    },
+    name: {
+      type: String,
+      default() {
+        return this.abbreviation === "..."
+          ? "Choisissez une matière..."
+      },
+          : this.abbreviation
+    },
+  },
     computed: {
         ...mapGetters({
             textColor

@@ -4,9 +4,8 @@ div.BarFloating
 </template>
 
 <script>
-
 export default {
-    name: 'BarFloating',
+  name: "BarFloating",
 }
 </script>
 

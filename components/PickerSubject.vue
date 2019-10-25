@@ -20,10 +20,10 @@ BaseModal.PickerSubject(:name="`${parentModal}-subject-picker`" :class="{'dots':
 </template>
 
 <script>
-import BaseModal from "~/components/BaseModal.vue";
-import BadgeSubject from "~/components/BadgeSubject.vue";
-import SubjectDot from "~/components/SubjectDot.vue";
-import { mapGetters } from "vuex";
+import BaseModal from "~/components/BaseModal.vue"
+import BadgeSubject from "~/components/BadgeSubject.vue"
+import SubjectDot from "~/components/SubjectDot.vue"
+import { mapGetters } from "vuex"
 
 export default {
   name: "PickerSubject",
@@ -32,15 +32,15 @@ export default {
     parentModal: String,
     dots: {
       type: Boolean,
-      default: false
-    }
+      default: false,
+    },
   },
   computed: {
     ...mapGetters({
-      subjects: "subjects"
-    })
+      subjects: "subjects",
+    }),
   },
-};
+}
 </script>
 
 <style lang="sass" scoped>

@@ -5,19 +5,20 @@
 </template>
 
 <script>
-
 export default {
-    name: 'ButtonFloating',
-    props: {
-        icon: String,
-        iconStyle: String
-    },
+  name: "ButtonFloating",
+  props: {
+    icon: String,
+    iconStyle: String,
+  },
 
-    computed: {
-        iconClass() {
-            return 'material-icons' + (this.iconStyle === 'baseline' ? '' : '-outlined')
-        }
-    }
+  computed: {
+    iconClass() {
+      return (
+        "material-icons" + (this.iconStyle === "baseline" ? "" : "-outlined")
+      )
+    },
+  },
 }
 </script>
 

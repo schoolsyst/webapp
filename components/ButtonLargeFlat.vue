@@ -9,8 +9,8 @@
 
 <script>
 export default {
-  name: "ButtonLargeFlat"
-};
+  name: "ButtonLargeFlat",
+}
 </script>
 
 <style lang="sass" scoped>

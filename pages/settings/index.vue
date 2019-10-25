@@ -37,62 +37,61 @@
 </template>
 
 <script>
-import { mapState, mapGetters, mapMutations, mapActions } from 'vuex'
-import groupBy from 'lodash.groupby'
+import { mapState, mapGetters, mapMutations, mapActions } from "vuex"
+import groupBy from "lodash.groupby"
 //-----------------------------------------------------------------
-import TheHeading from '~/components/TheHeading.vue'
-import ArrayButtonFlat from '~/components/ArrayButtonFlat.vue'
-import ButtonFlat from '~/components/ButtonFlat.vue'
-import MainGroup from '~/components/MainGroup.vue'
-import MainGroupLeft from '~/components/MainGroupLeft.vue'
-import MainGroupRight from '~/components/MainGroupRight.vue'
-import HeadingSub from '~/components/HeadingSub.vue'
-import CardSubject from '~/components/CardSubject.vue'
-import ModalAddSubject from '~/components/ModalAddSubject.vue'
-import ButtonLargeFlat from '~/components/ButtonLargeFlat.vue'
-import ArrayCardSubject from '~/components/ArrayCardSubject.vue'
-
+import TheHeading from "~/components/TheHeading.vue"
+import ArrayButtonFlat from "~/components/ArrayButtonFlat.vue"
+import ButtonFlat from "~/components/ButtonFlat.vue"
+import MainGroup from "~/components/MainGroup.vue"
+import MainGroupLeft from "~/components/MainGroupLeft.vue"
+import MainGroupRight from "~/components/MainGroupRight.vue"
+import HeadingSub from "~/components/HeadingSub.vue"
+import CardSubject from "~/components/CardSubject.vue"
+import ModalAddSubject from "~/components/ModalAddSubject.vue"
+import ButtonLargeFlat from "~/components/ButtonLargeFlat.vue"
+import ArrayCardSubject from "~/components/ArrayCardSubject.vue"
 
 export default {
-    components: {
-        TheHeading,
-        ArrayButtonFlat,
-        ButtonFlat,
-        MainGroup,
-        MainGroupLeft,
-        MainGroupRight,
-        HeadingSub,
-        ModalAddSubject,
-        CardSubject,
-        ButtonLargeFlat,
-        ArrayCardSubject,
-    },
-    head() {
-        return {
-            title: `${this.pageTitleCounter}Réglages`
-        };
-    },
-    computed: {
-        ...mapGetters({
-            defaultSettings: 'defaultSettings',
-            setting: 'setting',
-            subjects: 'subjects',
-            pageTitleCounter: "homework/pageTitleCounter"
-        }),
-        groupedSettings() {
-            return groupBy(this.defaultSettings, 'namespace')
-        },
-    },
-    methods: {
-        getSetting(key) {
-            try {
-                return this.setting(key).value
-            } catch(error) {
-                console.warn(`Cannot find setting ${key}`)
-                return null
-            }
-        }
+  components: {
+    TheHeading,
+    ArrayButtonFlat,
+    ButtonFlat,
+    MainGroup,
+    MainGroupLeft,
+    MainGroupRight,
+    HeadingSub,
+    ModalAddSubject,
+    CardSubject,
+    ButtonLargeFlat,
+    ArrayCardSubject,
+  },
+  head() {
+    return {
+      title: `${this.pageTitleCounter}Réglages`,
     }
+  },
+  computed: {
+    ...mapGetters({
+      defaultSettings: "defaultSettings",
+      setting: "setting",
+      subjects: "subjects",
+      pageTitleCounter: "homework/pageTitleCounter",
+    }),
+    groupedSettings() {
+      return groupBy(this.defaultSettings, "namespace")
+    },
+  },
+  methods: {
+    getSetting(key) {
+      try {
+        return this.setting(key).value
+      } catch (error) {
+        console.warn(`Cannot find setting ${key}`)
+        return null
+      }
+    },
+  },
 }
 </script>
 

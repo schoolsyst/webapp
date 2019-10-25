@@ -5,8 +5,8 @@ ul.ArrayItemExercise
 
 <script>
 export default {
-  name: "ArrayItemExercise"
-};
+  name: "ArrayItemExercise",
+}
 </script>
 
 <style lang="sass" scoped>

@@ -45,40 +45,40 @@ nav.TheNavbar(:class="{'slide-out': slideOut}", tabindex="1")
 </template>
 
 <script>
-import NavbarButton from "~/components/NavbarButton.vue";
+import NavbarButton from "~/components/NavbarButton.vue"
 
 export default {
   name: "TheNavbar",
 
   components: {
-    NavbarButton
+    NavbarButton,
   },
 
   props: {
     slideOut: {
       type: Boolean,
-      default: false
-    }
+      default: false,
+    },
   },
 
   updated() {
     // Fix the work_outline icon
-    let badIcon = document.querySelector("nav a.bad-icon");
+    let badIcon = document.querySelector("nav a.bad-icon")
 
-      badIcon.addEventListener('mouseover', event => {
-        if (!badIcon.classList.contains("current-page")) {
-          badIcon.querySelector("i").innerText = "work";
-        }
-      });
-      badIcon.addEventListener('mouseout', event => {
-        if (!badIcon.classList.contains("current-page")) {
-          badIcon.querySelector("i").innerText = "work_outline";
-        }
-      });
+    badIcon.addEventListener("mouseover", (event) => {
+      if (!badIcon.classList.contains("current-page")) {
+        badIcon.querySelector("i").innerText = "work"
+      }
+    })
+    badIcon.addEventListener("mouseout", (event) => {
+      if (!badIcon.classList.contains("current-page")) {
+        badIcon.querySelector("i").innerText = "work_outline"
+      }
+    })
   },
 
-  methods: {}
-};
+  methods: {},
+}
 </script>
 
 <style lang="sass" scoped>

@@ -11,16 +11,16 @@ export default {
   props: {
     color: {
       type: String,
-      default: 'unknown'
+      default: "unknown",
     },
-    name: String
+    name: String,
   },
   computed: {
     bgcolor() {
-      return this.color === 'unknown' ? 'black' : this.color
-    }
-  }
-};
+      return this.color === "unknown" ? "black" : this.color
+    },
+  },
+}
 </script>
 
 <style lang="sass" scoped>

@@ -5,7 +5,7 @@
 </template>
 
 <script>
-import BaseCard from '~/components/BaseCard.vue'
+import BaseCard from "~/components/BaseCard.vue"
 
 export default {
 	name: 'CardEmpty',

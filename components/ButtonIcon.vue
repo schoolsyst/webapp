@@ -5,22 +5,24 @@ button.ButtonIcon(@click="$emit('click')")
 </template>
 
 <script>
-
 export default {
-    name: 'ButtonIcon',
-    props: {
-        color: {
-            type: String,
-            default: 'white'
-        }
-    }
+  name: "ButtonIcon",
+  props: {
+    color: {
+      type: String,
+      default: "white",
+    },
+  },
 }
 </script>
 
 <style lang="stylus" scoped>
-.icon
-    font-size: 36px
-.icon:hover, .icon:focus
-    font-family 'Material Icons'
-    outline none
+.icon {
+  font-size: 36px;
+}
+
+.icon:hover, .icon:focus {
+  font-family: 'Material Icons';
+  outline: none;
+}
 </style>

@@ -97,15 +97,15 @@
 </template>
 
 <script>
-import axios from "axios";
-import { mapState, mapGetters, mapMutations, mapActions } from "vuex";
-import ArrayButtonReg from "~/components/ArrayButtonReg.vue";
-import ButtonRegPrimary from "~/components/ButtonRegPrimary.vue";
-import InputFlat from "~/components/InputFlat.vue";
-import TheHeading from "~/components/TheHeading.vue";
-import OverlayLoadingLogo from "~/components/OverlayLoadingLogo.vue";
-import ButtonFlat from "~/components/ButtonFlat.vue";
-import ButtonRegSecondary from '~/components/ButtonRegSecondary.vue'
+import axios from "axios"
+import { mapState, mapGetters, mapMutations, mapActions } from "vuex"
+import ArrayButtonReg from "~/components/ArrayButtonReg.vue"
+import ButtonRegPrimary from "~/components/ButtonRegPrimary.vue"
+import InputFlat from "~/components/InputFlat.vue"
+import TheHeading from "~/components/TheHeading.vue"
+import OverlayLoadingLogo from "~/components/OverlayLoadingLogo.vue"
+import ButtonFlat from "~/components/ButtonFlat.vue"
+import ButtonRegSecondary from "~/components/ButtonRegSecondary.vue"
 
 export default {
   middleware: false,
@@ -117,7 +117,7 @@ export default {
     ButtonFlat,
     InputFlat,
     TheHeading,
-    OverlayLoadingLogo
+    OverlayLoadingLogo,
   },
 
   data() {
@@ -126,66 +126,72 @@ export default {
       password: "",
       loggingIn: true,
       loading: false,
-    };
+    }
   },
 
   methods: {
     async login() {
       let res = null
       try {
-        console.log('heeeeey')
+        // console.log("heeeeey")
         this.loading = true
-        this.$toast.show(`Connexion en cours...`);
+        this.$toast.show(`Connexion en cours...`)
         await this.$auth.loginWith("local", {
           data: {
             username: this.username,
-            password: this.password
-          }
-        });
-        this.$router.push('logged-in/')
-        this.$toast.success(`Connexion réussie. Redirection...`);
+            password: this.password,
+          },
+        })
+        this.$router.push("logged-in/")
+        this.$toast.success(`Connexion réussie. Redirection...`)
       } catch (e) {
-        this.$toast.error(`Mot de passe ou non d'utilisateur incorrect`);
+        this.$toast.error(`Mot de passe ou non d'utilisateur incorrect`)
       }
     },
     async register() {
+      try {
+        this.$toast.show(`Inscription en cours...`)
+        if (!this.username || !this.email || !this.password) {
+          this.$toast.error(
+            "Tout les champs sont obligatoires: veuillez les compléter."
+          )
+          return
+        }
+        await this.$axios.post("/users/", {
+          username: this.username,
+          email: this.email,
+          password: this.password,
+        })
+        this.$toast.success(`Inscription réussie.`)
         try {
-          this.$toast.show(`Inscription en cours...`);
-          if (!this.username || !this.email || !this.password) {
-            this.$toast.error('Tout les champs sont obligatoires: veuillez les compléter.')
-            return
-          }
-          await this.$axios.post('/users/', {
-            username: this.username,
-            email: this.email,
-            password: this.password,
-          });
-          this.$toast.success(`Inscription réussie.`);
-          try {
-            await this.$auth.loginWith('local', {
-              data: {
-                username: this.username,
-                password: this.password
-              }
-            });
-            this.$router.push('/setup')
-          } catch (e) {
-            this.$toast.error(`${e}`);
-          }
+          await this.$auth.loginWith("local", {
+            data: {
+              username: this.username,
+              password: this.password,
+            },
+          })
+          this.$router.push("/setup")
         } catch (e) {
-          this.errors = e.response.data;
-          if (this.errors.username) {
-            // TODO messages d'erreurs de l'API en français
-            if (this.errors.username.includes('A user with that username already exists.'))
-              this.$toast.error(`Ce nom d'utilisateur existe déjà`)
-          } else {
-            this.$toast.error(`Inscription ratée.`);
-          }
+          this.$toast.error(`${e}`)
+        }
+      } catch (e) {
+        this.errors = e.response.data
+        if (this.errors.username) {
+          // TODO messages d'erreurs de l'API en français
+          if (
+            this.errors.username.includes(
+              "A user with that username already exists."
+            )
+          )
+            this.$toast.error(`Ce nom d'utilisateur existe déjà`)
+        } else {
+          this.$toast.error(`Inscription ratée.`)
         }
       }
+    },
   },
   computed: {},
-};
+}
 </script>
 
 <style lang="sass" scoped>

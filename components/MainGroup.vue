@@ -11,20 +11,20 @@ export default {
   props: {
     fullSize: {
       type: Boolean,
-      default: false
-    }
+      default: false,
+    },
   },
 
   data() {
-    return {};
+    return {}
   },
 
   computed: {},
 
   created() {},
 
-  methods: {}
-};
+  methods: {},
+}
 </script>
 
 <style lang="sass" scoped>

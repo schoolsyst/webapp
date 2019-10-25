@@ -5,23 +5,23 @@
 </template>
 
 <script>
-import { toDate } from "date-fns";
+import { toDate } from "date-fns"
 
 export default {
   head() {
     return {
       bodyAttrs: {
-        class: "layoutBare"
-      }
-    };
+        class: "layoutBare",
+      },
+    }
   },
   created() {
     setInterval(() => {
-      this.$store.now = toDate(Date.now());
-      // console.log(`[updateTime] ${this.$store.now}`);
-    }, 1000);
-  }
-};
+      this.$store.now = toDate(Date.now())
+      // // console.log(`[updateTime] ${this.$store.now}`)
+    }, 1000)
+  },
+}
 </script>
 
 <style scoped lang="sass">

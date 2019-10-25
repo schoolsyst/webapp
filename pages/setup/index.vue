@@ -89,147 +89,154 @@
 </template>
 
 <script>
-import { mapState, mapGetters, mapMutations, mapActions } from 'vuex'
-import TheHeading from '~/components/TheHeading.vue'
-import MainGroup from '~/components/MainGroup.vue'
-import MainGroupLeft from '~/components/MainGroupLeft.vue'
-import MainGroupRight from '~/components/MainGroupRight.vue'
-import HeadingSub from '~/components/HeadingSub.vue'
-import ArrayButtonReg from '~/components/ArrayButtonReg.vue'
-import ButtonRegPrimary from '~/components/ButtonRegPrimary.vue'
-import ButtonRegSecondary from '~/components/ButtonRegSecondary.vue'
-import CardSubject from '~/components/CardSubject.vue'
-import ModalAddSubject from '~/components/ModalAddSubject.vue'
-import ButtonLargeFlat from '~/components/ButtonLargeFlat.vue'
-import ArrayCardSubject from '~/components/ArrayCardSubject.vue'
-import moment, { relativeTimeRounding } from 'moment'
+import { mapState, mapGetters, mapMutations, mapActions } from "vuex"
+import TheHeading from "~/components/TheHeading.vue"
+import MainGroup from "~/components/MainGroup.vue"
+import MainGroupLeft from "~/components/MainGroupLeft.vue"
+import MainGroupRight from "~/components/MainGroupRight.vue"
+import HeadingSub from "~/components/HeadingSub.vue"
+import ArrayButtonReg from "~/components/ArrayButtonReg.vue"
+import ButtonRegPrimary from "~/components/ButtonRegPrimary.vue"
+import ButtonRegSecondary from "~/components/ButtonRegSecondary.vue"
+import CardSubject from "~/components/CardSubject.vue"
+import ModalAddSubject from "~/components/ModalAddSubject.vue"
+import ButtonLargeFlat from "~/components/ButtonLargeFlat.vue"
+import ArrayCardSubject from "~/components/ArrayCardSubject.vue"
+import moment, { relativeTimeRounding } from "moment"
 
 export default {
-    middleware: ['auth'],
-    layout: 'bare',
-    components: {
-        TheHeading,
-        MainGroup,
-        MainGroupLeft,
-        MainGroupRight,
-        HeadingSub,
-        ArrayButtonReg,
-        ButtonRegPrimary,
-        ButtonRegSecondary,
-        ModalAddSubject,
-        CardSubject,
-        ButtonLargeFlat,
-        ArrayCardSubject,
-    },
+  middleware: ["auth"],
+  layout: "bare",
+  components: {
+    TheHeading,
+    MainGroup,
+    MainGroupLeft,
+    MainGroupRight,
+    HeadingSub,
+    ArrayButtonReg,
+    ButtonRegPrimary,
+    ButtonRegSecondary,
+    ModalAddSubject,
+    CardSubject,
+    ButtonLargeFlat,
+    ArrayCardSubject,
+  },
 
-    // fetch({app, store}) {
-    //   const {data} = app.$axios.get('/settings/')
-    //   store.commit('SET_SETTINGS', data)
-    // },
+  // fetch({app, store}) {
+  //   const {data} = app.$axios.get('/settings/')
+  //   store.commit('SET_SETTINGS', data)
+  // },
 
-    data() {
-        return {
-          startOnQ1: true,
-          offdays: this.$store.getters.setting('offdays').value,
-          trimester2start: this.toYMD(this.$store.getters.setting('trimester_2_start').value),
-          trimester3start: this.toYMD(this.$store.getters.setting('trimester_3_start').value),
-          yearStart: this.toYMD(this.$store.getters.setting('year_start').value),
-          yearEnd: this.toYMD(this.$store.getters.setting('year_end').value),
-          gradeMax: this.$store.getters.setting('grade_max').value,
-          gradeWeight: this.$store.getters.setting('grade_weight').value,
-          hours: '',
-          newSubject: {
-            color: '#fff',
-            name: '',
-            physical_weight: null,
-            uuid: 'new' //for the modzl-id prop on <PickerColor>
-          },
-        }
-    },
-
-    computed: {
-      ...mapGetters({
-        setting: 'setting',
-        subjects: 'subjects'
-      }),
-      settingsHere() {
-        return [
-          {
-            key: 'offdays',
-            value: this.offdays,
-          },
-          {
-            key: 'trimester_2_start',
-            value: this.toDMY(this.trimester2start),
-          },
-          {
-            key: 'trimester_3_start',
-            value: this.toDMY(this.trimester3start),
-          },
-          {
-            key: 'year_start',
-            value: this.toDMY(this.yearStart),
-          },
-          {
-            key: 'year_end',
-            value: this.toDMY(this.yearEnd),
-          },
-          {
-            key: 'grade_max',
-            value: this.gradeMax,
-          },
-          {
-            key: 'grade_weight',
-            value: this.gradeWeight,
-          },
-        ]
+  data() {
+    return {
+      startOnQ1: true,
+      offdays: this.$store.getters.setting("offdays").value,
+      trimester2start: this.toYMD(
+        this.$store.getters.setting("trimester_2_start").value
+      ),
+      trimester3start: this.toYMD(
+        this.$store.getters.setting("trimester_3_start").value
+      ),
+      yearStart: this.toYMD(this.$store.getters.setting("year_start").value),
+      yearEnd: this.toYMD(this.$store.getters.setting("year_end").value),
+      gradeMax: this.$store.getters.setting("grade_max").value,
+      gradeWeight: this.$store.getters.setting("grade_weight").value,
+      hours: "",
+      newSubject: {
+        color: "#fff",
+        name: "",
+        physical_weight: null,
+        uuid: "new", //for the modzl-id prop on <PickerColor>
       },
-    },
-
-    methods: {
-      finishSetup() {
-        if (!this.subjects.length) this.$toast.error('Veuillez ajouter vos matières')
-        else if ( 
-          !(  this.dt(this.yearStart).isBefore(this.dt(this.trimester2start))
-          &&  this.dt(this.trimester2start).isBefore(this.dt(this.trimester3start))
-          &&  this.dt(this.trimester3start).isBefore(this.dt(this.yearEnd))
-         )) 
-          this.$toast.error(`Vos dates ne sont pas dans le bon ordre`)
-        else {
-          let res
-          try {
-            this.settingsHere.forEach(async s => {
-              // Try to `PATCH`. If we get an error, it's most likely because the
-              // setting does not exist yet for this user: `POST` it
-              try {
-                res = await this.$axios.patch(`/settings/${s.key}/`, {
-                  value: s.value,
-                })
-              } catch (error) {
-                res = await this.$axios.post(`/settings/`, {
-                  value: s.value,
-                  setting: s.key,
-                  user: this.$auth.user.id
-                })
-              }
-              this.$store.commit('SET_SETTING', res.data)
-            });
-            this.$router.push('/')
-          } catch (error) {
-            
-          }
-        }
-      },
-      toYMD(DMY) {
-        return moment(DMY, 'DD/MM/YYYY').format('YYYY-MM-DD')
-      },
-      toDMY(YMD) {
-        return moment(DMY, 'YYYY-MM-DD').format('DD/MM/YYYY')
-      },
-      dt(YMD) {
-        return moment(YMD, 'YYYY-MM-DD')
-      }
     }
+  },
+
+  computed: {
+    ...mapGetters({
+      setting: "setting",
+      subjects: "subjects",
+    }),
+    settingsHere() {
+      return [
+        {
+          key: "offdays",
+          value: this.offdays,
+        },
+        {
+          key: "trimester_2_start",
+          value: this.toDMY(this.trimester2start),
+        },
+        {
+          key: "trimester_3_start",
+          value: this.toDMY(this.trimester3start),
+        },
+        {
+          key: "year_start",
+          value: this.toDMY(this.yearStart),
+        },
+        {
+          key: "year_end",
+          value: this.toDMY(this.yearEnd),
+        },
+        {
+          key: "grade_max",
+          value: this.gradeMax,
+        },
+        {
+          key: "grade_weight",
+          value: this.gradeWeight,
+        },
+      ]
+    },
+  },
+
+  methods: {
+    finishSetup() {
+      if (!this.subjects.length)
+        this.$toast.error("Veuillez ajouter vos matières")
+      else if (
+        !(
+          this.dt(this.yearStart).isBefore(this.dt(this.trimester2start)) &&
+          this.dt(this.trimester2start).isBefore(
+            this.dt(this.trimester3start)
+          ) &&
+          this.dt(this.trimester3start).isBefore(this.dt(this.yearEnd))
+        )
+      )
+        this.$toast.error(`Vos dates ne sont pas dans le bon ordre`)
+      else {
+        let res
+        try {
+          this.settingsHere.forEach(async (s) => {
+            // Try to `PATCH`. If we get an error, it's most likely because the
+            // setting does not exist yet for this user: `POST` it
+            try {
+              res = await this.$axios.patch(`/settings/${s.key}/`, {
+                value: s.value,
+              })
+            } catch (error) {
+              res = await this.$axios.post(`/settings/`, {
+                value: s.value,
+                setting: s.key,
+                user: this.$auth.user.id,
+              })
+            }
+            this.$store.commit("SET_SETTING", res.data)
+          })
+          this.$router.push("/")
+        } catch (error) {}
+      }
+    },
+    toYMD(DMY) {
+      return moment(DMY, "DD/MM/YYYY").format("YYYY-MM-DD")
+    },
+    toDMY(YMD) {
+      return moment(DMY, "YYYY-MM-DD").format("DD/MM/YYYY")
+    },
+    dt(YMD) {
+      return moment(YMD, "YYYY-MM-DD")
+    },
+  },
 }
 </script>
 

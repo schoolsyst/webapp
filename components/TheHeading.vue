@@ -6,8 +6,8 @@
 
 <script>
 export default {
-  name: "TheHeading"
-};
+  name: "TheHeading",
+}
 </script>
 
 <style lang="sass" scoped>

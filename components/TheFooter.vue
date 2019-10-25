@@ -10,14 +10,15 @@
 </template>
 
 <script>
-import HeadingSub from '~/components/HeadingSub.vue'
-import OverlayLoadingLogo from '~/components/OverlayLoadingLogo.vue'
+import HeadingSub from "~/components/HeadingSub.vue"
+import OverlayLoadingLogo from "~/components/OverlayLoadingLogo.vue"
 export default {
-    name: 'TheFooter',
+  name: "TheFooter",
 
-    components: {
-        HeadingSub, OverlayLoadingLogo
-    }
+  components: {
+    HeadingSub,
+    OverlayLoadingLogo,
+  },
 }
 </script>
 
@@ -78,17 +79,6 @@ export default {
     
     //---  appearance ---
     color: #ffffff
-    //---  animation  ---
-    a::after
-        //--- positioning ---
-        
-        //--- dimensions  ---
-        
-        //---   margins   ---
-        
-        //---  appearance ---
-        
-        //---  animation  ---
 .version
     //--- positioning ---
     position: absolute

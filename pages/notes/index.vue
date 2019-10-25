@@ -42,26 +42,26 @@
 </template>
 
 <script>
-import axios from "axios";
-import slugify from "slugify";
-import moment from 'moment';
-import Fuse from 'fuse.js'
-import { mapState, mapGetters, mapMutations, mapActions } from "vuex";
+import axios from "axios"
+import slugify from "slugify"
+import moment from "moment"
+import Fuse from "fuse.js"
+import { mapState, mapGetters, mapMutations, mapActions } from "vuex"
 //------------------------------------------------------------------------
-import TheHeading from "~/components/TheHeading.vue";
-import ArrayButtonFlat from "~/components/ArrayButtonFlat.vue";
-import ButtonFlat from "~/components/ButtonFlat.vue";
-import InputFlat from "~/components/InputFlat.vue";
-import DropdownFlat from "~/components/DropdownFlat.vue";
-import MainGroup from "~/components/MainGroup.vue";
-import MainGroupLeft from "~/components/MainGroupLeft.vue";
-import MainGroupRight from "~/components/MainGroupRight.vue";
-import HeadingSub from "~/components/HeadingSub.vue";
-import ArrayCardNoteFile from "~/components/ArrayCardNoteFile.vue";
-import CardNoteFile from "~/components/CardNoteFile.vue";
-import ButtonFloating from "~/components/ButtonFloating.vue";
-import ModalAddNote from "~/components/ModalAddNote.vue";
-import CardNoteAdd from '~/components/CardNoteAdd.vue'
+import TheHeading from "~/components/TheHeading.vue"
+import ArrayButtonFlat from "~/components/ArrayButtonFlat.vue"
+import ButtonFlat from "~/components/ButtonFlat.vue"
+import InputFlat from "~/components/InputFlat.vue"
+import DropdownFlat from "~/components/DropdownFlat.vue"
+import MainGroup from "~/components/MainGroup.vue"
+import MainGroupLeft from "~/components/MainGroupLeft.vue"
+import MainGroupRight from "~/components/MainGroupRight.vue"
+import HeadingSub from "~/components/HeadingSub.vue"
+import ArrayCardNoteFile from "~/components/ArrayCardNoteFile.vue"
+import CardNoteFile from "~/components/CardNoteFile.vue"
+import ButtonFloating from "~/components/ButtonFloating.vue"
+import ModalAddNote from "~/components/ModalAddNote.vue"
+import CardNoteAdd from "~/components/CardNoteAdd.vue"
 
 export default {
   layout: "default",
@@ -79,15 +79,14 @@ export default {
     ArrayCardNoteFile,
     CardNoteFile,
     ModalAddNote,
-    CardNoteAdd
+    CardNoteAdd,
   },
 
   computed: {
     ...mapGetters({
-      token: "auth/token"
-    })
+      token: "auth/token",
+    }),
   },
-
 
   data() {
     return {
@@ -96,14 +95,14 @@ export default {
       sortOptions: [
         { value: "last_modified", name: "Date de modification" },
         { value: "created", name: "Date de création" },
-        { value: "subject", name: "Matière" }
+        { value: "subject", name: "Matière" },
       ],
       sortBy: "last_modified",
       newNoteName: "",
       // API DATA
       cards: [],
-      fuse: null
-    };
+      fuse: null,
+    }
   },
 
   head() {
@@ -116,7 +115,7 @@ export default {
     ...mapGetters({
       fCurrentCourse: "schedule/currentCourse",
       notes: "notes/allNotes",
-      fCurrentCourseSubject: 'schedule/currentCourseSubject',
+      fCurrentCourseSubject: "schedule/currentCourseSubject",
       pageTitleCounter: "homework/pageTitleCounter",
     }),
     currentCourse() {
@@ -126,78 +125,84 @@ export default {
       return this.fCurrentCourseSubject(this.now)
     },
     allCards() {
-      let notes = this.notes;
+      let notes = this.notes
       if (this.currentCourse) {
         notes = notes.filter(
-          note => note.subject.slug !== this.currentCourse.subject.slug
-        );
+          (note) => note.subject.slug !== this.currentCourse.subject.slug
+        )
       }
       let cards = this.notesToCards(notes)
       this.fuse = new Fuse(cards, {
-        keys: ['name', 'content', 'subject.name'],
-        id: 'uuid',
+        keys: ["name", "content", "subject.name"],
+        id: "uuid",
         shouldSort: false,
         threshold: 0.2,
-        maxPatternLength: 32
+        maxPatternLength: 32,
       })
       return cards
-      
     },
     currentSubjectCards() {
-      return this.notesToCards(this.notes).filter(card => card.subject.slug === this.currentCourseSubject.slug).sort((a, b) => moment(a.last_modified).isBefore(b.last_modified) ? 1 : -1)
+      return this.notesToCards(this.notes)
+        .filter((card) => card.subject.slug === this.currentCourseSubject.slug)
+        .sort((a, b) =>
+          moment(a.last_modified).isBefore(b.last_modified) ? 1 : -1
+        )
     },
     searchedCards() {
       if (this.searchText) {
         let uuids = this.fuse.search(this.searchText)
-        return this.allCards.filter(card => uuids.includes(card.uuid))
+        return this.allCards.filter((card) => uuids.includes(card.uuid))
       } else {
         return this.allCards
       }
     },
     searchedAndSortedCards() {
-      return this.searchedCards.sort((a, b) => moment(a[this.sortBy]).isBefore(b[this.sortBy]) ? 1 : -1)
+      return this.searchedCards.sort((a, b) =>
+        moment(a[this.sortBy]).isBefore(b[this.sortBy]) ? 1 : -1
+      )
     },
   },
 
   methods: {
     notesToCards(notes) {
-      let cards = [];
+      let cards = []
       for (const note of notes) {
         cards.push({
           ...note,
           detailKey: this.sortBy,
-          detail: note[this.sortBy]
-        });
+          detail: note[this.sortBy],
+        })
       }
 
       let sortFunc
       switch (this.sortBy) {
-        case 'last_modified':
-        case 'created':
-          sortFunc = (a, b) => moment(a[this.sortBy]).isAfter(b._last_modified) ? -1 : 1
-          break;
-        case 'subject':
-          sortFunc = (a, b) => a.subject.slug === b.subject.slug ? -1 : 1
-          break;
-      
+        case "last_modified":
+        case "created":
+          sortFunc = (a, b) =>
+            moment(a[this.sortBy]).isAfter(b._last_modified) ? -1 : 1
+          break
+        case "subject":
+          sortFunc = (a, b) => (a.subject.slug === b.subject.slug ? -1 : 1)
+          break
+
         default:
-          sortFunc = (a, b) => a[this.sortBy] > b[this.sortBy] ? -1 : 1
-          break;
+          sortFunc = (a, b) => (a[this.sortBy] > b[this.sortBy] ? -1 : 1)
+          break
       }
-      return cards.sort(sortFunc);
-    }
+      return cards.sort(sortFunc)
+    },
   },
 
   mounted() {
     // can't seem to get @click working...
-    document.querySelectorAll(".js-confirm-modal").forEach(e => {
-      e.addEventListener("click", event => {
-        event.preventDefault();
-        this.addNote();
-      });
-    });
-  }
-};
+    document.querySelectorAll(".js-confirm-modal").forEach((e) => {
+      e.addEventListener("click", (event) => {
+        event.preventDefault()
+        this.addNote()
+      })
+    })
+  },
+}
 </script>
 
 <style lang="sass" scoped>

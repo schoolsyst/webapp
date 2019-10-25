@@ -1,15 +1,10 @@
 <template>
-    <div class="LineScheduleNow">
-
-    </div>
+  <div class="LineScheduleNow"></div>
 </template>
 
 <script>
-
 export default {
-    name: 'LineScheduleNow',
-
-
+  name: "LineScheduleNow",
 }
 </script>
 

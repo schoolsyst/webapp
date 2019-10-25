@@ -16,17 +16,17 @@
 </template>
 
 <script>
-import { mapState, mapGetters, mapMutations, mapActions } from "vuex";
-import TheHeading from "~/components/TheHeading.vue";
-import ArrayButtonFlat from "~/components/ArrayButtonFlat.vue";
-import ButtonFlat from "~/components/ButtonFlat.vue";
-import MainGroup from "~/components/MainGroup.vue";
-import MainGroupLeft from "~/components/MainGroupLeft.vue";
-import MainGroupRight from "~/components/MainGroupRight.vue";
-import HeadingSub from "~/components/HeadingSub.vue";
-import HeadingAlt from "~/components/HeadingAlt.vue";
-import ItemGrade from "~/components/ItemGrade.vue";
-import moment from "moment";
+import { mapState, mapGetters, mapMutations, mapActions } from "vuex"
+import TheHeading from "~/components/TheHeading.vue"
+import ArrayButtonFlat from "~/components/ArrayButtonFlat.vue"
+import ButtonFlat from "~/components/ButtonFlat.vue"
+import MainGroup from "~/components/MainGroup.vue"
+import MainGroupLeft from "~/components/MainGroupLeft.vue"
+import MainGroupRight from "~/components/MainGroupRight.vue"
+import HeadingSub from "~/components/HeadingSub.vue"
+import HeadingAlt from "~/components/HeadingAlt.vue"
+import ItemGrade from "~/components/ItemGrade.vue"
+import moment from "moment"
 
 export default {
   components: {
@@ -38,23 +38,23 @@ export default {
     MainGroupRight,
     HeadingSub,
     HeadingAlt,
-    ItemGrade
+    ItemGrade,
   },
 
   head() {
     return {
-      title: `${this.pageTitleCounter}Moyennes & notes`
-    };
+      title: `${this.pageTitleCounter}Moyennes & notes`,
+    }
   },
 
   computed: {
     ...mapGetters({
       dueTests: "homework/dueTests",
       pastTests: "homework/pastTests",
-      pageTitleCounter: "homework/pageTitleCounter"
+      pageTitleCounter: "homework/pageTitleCounter",
     }),
-  }
-};
+  },
+}
 </script>
 
 <style lang="stylus" scoped>

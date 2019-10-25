@@ -41,17 +41,17 @@
 </template>
 
 <script>
-import moment from "moment";
-import BaseModal from "~/components/BaseModal.vue";
-import HeadingSub from "~/components/HeadingSub.vue";
-import BadgeSubject from "~/components/BadgeSubject.vue";
-import InputFlat from "~/components/InputFlat.vue";
-import TextBlockInput from "~/components/TextBlockInput.vue";
-import ArrayButtonReg from "~/components/ArrayButtonReg.vue";
-import ButtonRegPrimary from "~/components/ButtonRegPrimary.vue";
-import ButtonRegSecondary from "~/components/ButtonRegSecondary.vue";
-import PickerSubject from "~/components/PickerSubject.vue";
-import { mapGetters } from "vuex";
+import moment from "moment"
+import BaseModal from "~/components/BaseModal.vue"
+import HeadingSub from "~/components/HeadingSub.vue"
+import BadgeSubject from "~/components/BadgeSubject.vue"
+import InputFlat from "~/components/InputFlat.vue"
+import TextBlockInput from "~/components/TextBlockInput.vue"
+import ArrayButtonReg from "~/components/ArrayButtonReg.vue"
+import ButtonRegPrimary from "~/components/ButtonRegPrimary.vue"
+import ButtonRegSecondary from "~/components/ButtonRegSecondary.vue"
+import PickerSubject from "~/components/PickerSubject.vue"
+import { mapGetters } from "vuex"
 
 export default {
   name: "ModalAddExercise",
@@ -64,7 +64,7 @@ export default {
     ButtonRegPrimary,
     ButtonRegSecondary,
     PickerSubject,
-    HeadingSub
+    HeadingSub,
   },
   props: {
     subject: {
@@ -73,9 +73,9 @@ export default {
         color: "black",
         abbreviation: "...",
         name: "Veuillez sélectionner une matière…",
-        _isPlaceholder: true
-      }
-    }
+        _isPlaceholder: true,
+      },
+    },
   },
   data() {
     return {
@@ -83,8 +83,8 @@ export default {
       mutDate: "",
       mutRoom: "",
       exerciseName: "",
-      notes: ""
-    };
+      notes: "",
+    }
   },
   computed: {
     ...mapGetters({
@@ -92,42 +92,42 @@ export default {
       subjectBySlug: "subjectBySlug",
     }),
     nextCourse() {
-      if ("_isPlaceholder" in this.mutSubject) return "";
-      let nextCourse = this.nextCourseOf(this.mutSubject.slug);
-      if (nextCourse) return nextCourse;
-      return "";
+      if ("_isPlaceholder" in this.mutSubject) return ""
+      let nextCourse = this.nextCourseOf(this.mutSubject.slug)
+      if (nextCourse) return nextCourse
+      return ""
     },
     nextCourseDate() {
       if (this.nextCourse) {
-        let val = this.nextCourse.date;
+        let val = this.nextCourse.date
         this.mutDate = val
-        return val;
+        return val
       }
-      return "";
+      return ""
     },
     nextCourseRoom() {
       if (this.nextCourse) {
-        let val = this.nextCourse.room;
+        let val = this.nextCourse.room
         this.mutRoom = val
-        return val;
+        return val
       }
-      return "";
-    }
+      return ""
+    },
   },
   methods: {
     pickSubject($event) {
-      this.mutSubject = $event;
+      this.mutSubject = $event
       this.mutDate = this.nextCourseDate
       this.mutRoom = this.nextCourseRoom
       document
         .getElementById("modal_add-exercise-subject-picker")
-        .classList.remove("opened");
+        .classList.remove("opened")
     },
     async addExercise() {
       let errs = []
-      console.log(`adding exercise: \
-[${this.mutSubject.abbreviation.toUpperCase()}] \
-${this.exerciseName} due for ${this.mutDate} @ ${this.mutRoom}`)
+      // console.log(`adding exercise: \
+      //[${this.mutSubject.abbreviation.toUpperCase()}] \
+      //${this.exerciseName} due for ${this.mutDate} @ ${this.mutRoom}`)
       // --- validate data ---
       // check for existence & non-emptiness of fields...
       if (!this.exerciseName) {
@@ -136,25 +136,29 @@ ${this.exerciseName} due for ${this.mutDate} @ ${this.mutRoom}`)
       if ("_isPlaceholder" in this.mutSubject) {
         errs.push(`Sélectionnez une matière`)
       }
-      if(!this.mutRoom) {
-        errs.push(`Choisissez une salle dans laquelle le devoir devra être rendu`)
+      if (!this.mutRoom) {
+        errs.push(
+          `Choisissez une salle dans laquelle le devoir devra être rendu`
+        )
       }
-      if(!this.mutDate) {
+      if (!this.mutDate) {
         errs.push(`Choisissez une date limite`)
       } else {
         // check for date validity
-        let parsedDate = moment(this.mutDate, 'DD/MM/YYYY')
+        let parsedDate = moment(this.mutDate, "DD/MM/YYYY")
         // is correct format
-        if(!parsedDate.isValid()) {
-          errs.push('Choisissez une date valide, au format JJ/MM/AAAA')
-        // is in the future
+        if (!parsedDate.isValid()) {
+          errs.push("Choisissez une date valide, au format JJ/MM/AAAA")
+          // is in the future
         } else if (!parsedDate.isAfter(moment())) {
-          errs.push('La date limite doit être dans le futur, Marty! Tu veux créer un paradoxe temporel‽')
+          errs.push(
+            "La date limite doit être dans le futur, Marty! Tu veux créer un paradoxe temporel‽"
+          )
         }
       }
       // if any errors: inform the user, and quit
       if (errs.length) {
-        errs.forEach(err => this.$toast.error(err))
+        errs.forEach((err) => this.$toast.error(err))
         return
       }
 
@@ -162,24 +166,23 @@ ${this.exerciseName} due for ${this.mutDate} @ ${this.mutRoom}`)
         let { data } = await this.$axios.post("/exercises/", {
           subject: this.mutSubject.slug,
           name: this.exerciseName,
-          due: moment(this.mutDate, 'DD/MM/YYYY').format('YYYY-MM-DD'),
+          due: moment(this.mutDate, "DD/MM/YYYY").format("YYYY-MM-DD"),
           room: this.mutRoom,
           created: moment().toISOString(),
           notes: this.notes,
-          completed: false
+          completed: false,
         })
         data.subject = this.subjectBySlug(data.subject)
-        this.$store.commit('homework/ADD_EXERCISE', data)
+        this.$store.commit("homework/ADD_EXERCISE", data)
         this.$toast.success(`Exercice "${this.exerciseName}" ajouté!`)
         // --- close modal manually ---
-        document.getElementById(`modal_add-exercise`).classList.remove('opened')
+        document.getElementById(`modal_add-exercise`).classList.remove("opened")
       } catch (error) {
         this.$toast.error(`Erreur lors de l'ajout de l'exercice: ${error}`)
       }
-
-    }
-  }
-};
+    },
+  },
+}
 </script>
 
 <style lang="sass" scoped>

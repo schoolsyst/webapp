@@ -7,18 +7,18 @@
 </template>
 
 <script>
-import BaseCard from "~/components/BaseCard.vue";
-import SubjectDot from "~/components/SubjectDot.vue";
-import moment from "moment";
+import BaseCard from "~/components/BaseCard.vue"
+import SubjectDot from "~/components/SubjectDot.vue"
+import moment from "moment"
 
 export default {
   name: "CardNoteAdd",
 
   components: {
     BaseCard,
-    SubjectDot
+    SubjectDot,
   },
-};
+}
 </script>
 
 <style lang="sass" scoped>

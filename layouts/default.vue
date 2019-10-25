@@ -7,23 +7,25 @@
 </template>
 
 <script>
-import TheNavbar from "~/components/TheNavbar.vue";
-import TheFooter from "~/components/TheFooter.vue";
-import { toDate } from "date-fns";
+import TheNavbar from "~/components/TheNavbar.vue"
+import TheFooter from "~/components/TheFooter.vue"
+import { toDate } from "date-fns"
 
 export default {
   components: {
     TheNavbar,
-    TheFooter
+    TheFooter,
   },
   mounted() {
     // fix weird nuxt bug where the exercises+test arrays are duped outside of the #__nuxt container
-    document.querySelectorAll("body > *:not(#__nuxt)").forEach(e => e.remove());
+    document
+      .querySelectorAll("body > *:not(#__nuxt)")
+      .forEach((e) => e.remove())
     setInterval(() => {
-      this.$store.now = toDate(Date.now());
-    }, 1000);
-  }
-};
+      this.$store.now = toDate(Date.now())
+    }, 1000)
+  },
+}
 </script>
 
 <style scoped lang="sass">

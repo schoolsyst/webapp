@@ -1,15 +1,10 @@
 <template>
-    <ul class="ArrayItemScheduleMutation">
-
-    </ul>
+  <ul class="ArrayItemScheduleMutation"></ul>
 </template>
 
 <script>
-
 export default {
-    name: 'ArrayItemScheduleMutation',
-
-
+  name: "ArrayItemScheduleMutation",
 }
 </script>
 

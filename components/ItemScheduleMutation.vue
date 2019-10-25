@@ -1,15 +1,10 @@
 <template>
-    <li class="ItemScheduleMutation">
-
-    </li>
+  <li class="ItemScheduleMutation"></li>
 </template>
 
 <script>
-
 export default {
-    name: 'ItemScheduleMutation',
-
-
+  name: "ItemScheduleMutation",
 }
 </script>
 

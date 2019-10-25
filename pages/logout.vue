@@ -6,16 +6,16 @@
 </template>
 
 <script>
-import OverlayLoadingLogo from '~/components/OverlayLoadingLogo.vue'
+import OverlayLoadingLogo from "~/components/OverlayLoadingLogo.vue"
 export default {
-    layout: 'bare',
-    components: {OverlayLoadingLogo},
-    async mounted() {
-        //Clear vuex data
-        await this.$store.dispatch('clearAllData')
-        //Logout
-        this.$auth.logout()
-    },
+  layout: "bare",
+  components: { OverlayLoadingLogo },
+  async mounted() {
+    //Clear vuex data
+    await this.$store.dispatch("clearAllData")
+    //Logout
+    this.$auth.logout()
+  },
 }
 </script>
 

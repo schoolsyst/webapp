@@ -21,258 +21,265 @@ export default {
     name: String,
     showCloseButton: {
       type: Boolean,
-      default: false
+      default: false,
     },
     horizontalItems: {
       type: Boolean,
-      default: false
-    }
+      default: false,
+    },
   },
   data() {
-    return { wasFocused: null };
+    return { wasFocused: null }
   },
   methods: {
     close(element = null) {
-      console.log(`closing modal ${this.name}`)
-      const modal = document.getElementById(`modal_${this.name}`);
-      console.log(modal)
+      // console.log(`closing modal ${this.name}`)
+      const modal = document.getElementById(`modal_${this.name}`)
+      // console.log(modal)
       if (modal === null) return
-      modal.classList.remove("opened");
-      modal.setAttribute("aria-hidden", "true");
-      modal.setAttribute("aria-modal", "false");
+      modal.classList.remove("opened")
+      modal.setAttribute("aria-hidden", "true")
+      modal.setAttribute("aria-modal", "false")
       // restore focus if we had any
       if (this.wasFocused !== null) {
-        this.wasFocused.focus();
+        this.wasFocused.focus()
       }
       // send vuejs event
       /* this.$emit(`modal-${this.name}-closed`, {
         from: element
       }) */
-    }
+    },
   },
   mounted() {
-    const component = this;
-    const modal = document.getElementById(`modal_${component.name}`);
+    const component = this
+    const modal = document.getElementById(`modal_${component.name}`)
     if (modal === null) return
     const focusableEls = "button, a, input, textarea, select"
-    const focusables = Array.from(modal.querySelectorAll(focusableEls));
+    const focusables = Array.from(modal.querySelectorAll(focusableEls))
     // console.group(`listening for clicks to open ${component.name} on:`)
-    document.querySelectorAll(`[open-modal="${component.name}"`).forEach(e => {
-      // console.log(e)
-      e.addEventListener("click", event => {
-        // calculate the position of .modal-wrapper:
-        // - cented: centered (use display:flex) (default)
-        // - self: from the calling element
-        // - NUMBERxNUMBER: from a given position
-        modal.classList.remove("centered"); // clear previous open position state
-        let openAt = e.getAttribute("open-at") || "center";
-        if (window.innerWidth <= 1000) {
-          openAt = "center"
-        }
-        let wrapper = modal.querySelector(".modal-wrapper");
-        const setPos = coords => {
-          wrapper.style.left = wrapper.style.right = wrapper.style.top = wrapper.style.bottom = // clean everything
-            "";
-
-          for (const [coord, val] of Object.entries(coords)) {
-            wrapper.style[coord] = val + "px";
+    document
+      .querySelectorAll(`[open-modal="${component.name}"`)
+      .forEach((e) => {
+        // // console.log(e)
+        e.addEventListener("click", (event) => {
+          // calculate the position of .modal-wrapper:
+          // - cented: centered (use display:flex) (default)
+          // - self: from the calling element
+          // - NUMBERxNUMBER: from a given position
+          modal.classList.remove("centered") // clear previous open position state
+          let openAt = e.getAttribute("open-at") || "center"
+          if (window.innerWidth <= 1000) {
+            openAt = "center"
           }
-        };
+          let wrapper = modal.querySelector(".modal-wrapper")
+          const setPos = (coords) => {
+            wrapper.style.left = wrapper.style.right = wrapper.style.top = wrapper.style.bottom = // clean everything
+              ""
 
-        if (openAt === 'self') {
-          // Choose which self. to use
-          // based on which one will keep the element from
-          // overflowing outside of the viewport
-
-          // get position of the calling element
-          let { y, x } = e.getBoundingClientRect()
-          // if the calling element is in the lower part of the viewport,
-          // show it from the bottom (self.bottom). Else, self.top.
-
-          //                                    |--> if the coords are higher == the element is 
-          //                                   |     below the half-height breakpoint
-          let openAtY = window.innerHeight / 2 < y ? 'bottom' : 'top'
-          //           |___________________|
-          //       get the point at which we pass 
-          //    into the lower-helf of the viewport
-
-          // Do the same for right/left
-
-          let openAtX = window.innerWidth / 2 < x ? 'right' : 'left'
-          openAt = `self.${openAtY}.${openAtX}`
-        }
-
-        console.log(
-          `opening modal ${
-            this.name
-          } at ${openAt} (${e.tagName.toLowerCase()}.${Array.from(
-            e.classList
-          ).join(".")})`
-        );
-
-        switch (openAt) {
-          case "center": {
-            // easiest one, add class "centered"
-            modal.classList.add("centered");
-            break;
-          }
-          
-          case "self.rightof": {
-            let { top, left, width, height } = e.getBoundingClientRect();
-            setPos({left: left+width+5, top})
-            break;
+            for (const [coord, val] of Object.entries(coords)) {
+              wrapper.style[coord] = val + "px"
+            }
           }
 
-          case "self.center.horizontal": {
-            let { top, left, width, height } = e.getBoundingClientRect();
-            let contentWidth = wrapper.getBoundingClientRect().width
+          if (openAt === "self") {
+            // Choose which self. to use
+            // based on which one will keep the element from
+            // overflowing outside of the viewport
 
-            console.log(e)
-            
-            setPos({ top, left: window.innerWidth/2 - contentWidth/2});
+            // get position of the calling element
+            let { y, x } = e.getBoundingClientRect()
+            // if the calling element is in the lower part of the viewport,
+            // show it from the bottom (self.bottom). Else, self.top.
 
-              break;
+            //                                    |--> if the coords are higher == the element is
+            //                                   |     below the half-height breakpoint
+            let openAtY = window.innerHeight / 2 < y ? "bottom" : "top"
+            //           |___________________|
+            //       get the point at which we pass
+            //    into the lower-helf of the viewport
+
+            // Do the same for right/left
+
+            let openAtX = window.innerWidth / 2 < x ? "right" : "left"
+            openAt = `self.${openAtY}.${openAtX}`
           }
 
-          case "self.center.vertical": {
-            let { top, left, width, height } = e.getBoundingClientRect();
-            let contentHeight = wrapper.getBoundingClientRect().height
+          // console.log(
+          //   `opening modal ${
+          //     this.name
+          //   } at ${openAt} (${e.tagName.toLowerCase()}.${Array.from(
+          //     e.classList
+          //   ).join(".")})`
+          // );
 
-            console.log(e)
-            
-            setPos({ left, bottom: window.innerHeight/2 + contentHeight/2});
+          switch (openAt) {
+            case "center": {
+              // easiest one, add class "centered"
+              modal.classList.add("centered")
+              break
+            }
 
-            break;
+            case "self.rightof": {
+              let { top, left, width, height } = e.getBoundingClientRect()
+              setPos({ left: left + width + 5, top })
+              break
+            }
+
+            case "self.center.horizontal": {
+              let { top, left, width, height } = e.getBoundingClientRect()
+              let contentWidth = wrapper.getBoundingClientRect().width
+
+              // console.log(e)
+
+              setPos({ top, left: window.innerWidth / 2 - contentWidth / 2 })
+
+              break
+            }
+
+            case "self.center.vertical": {
+              let { top, left, width, height } = e.getBoundingClientRect()
+              let contentHeight = wrapper.getBoundingClientRect().height
+
+              // console.log(e)
+
+              setPos({
+                left,
+                bottom: window.innerHeight / 2 + contentHeight / 2,
+              })
+
+              break
+            }
+
+            case "self.center": {
+              let contentHeight = wrapper.getBoundingClientRect().height
+              let contentWidth = wrapper.getBoundingClientRect().width
+
+              // console.log(e)
+
+              setPos({
+                left: window.innerWidth / 2 - contentWidth / 2,
+                bottom: window.innerHeight / 2 + contentHeight / 2,
+              })
+
+              break
+            }
+
+            case "self.top.left": {
+              // get top/left coordinates of element
+              // for absolute positionning
+              let { top, left, width, height } = e.getBoundingClientRect()
+
+              setPos({ top, left })
+              break
+            }
+
+            case "self.top.right": {
+              // get top/left coordinates of element
+              // for absolute positionning
+              let { top, left, width, height } = e.getBoundingClientRect()
+
+              setPos({
+                top,
+                right: window.innerWidth - (left + width),
+              })
+              break
+            }
+
+            case "self.bottom.right": {
+              // get bottom/right coordinates of element
+              // for absolute positionning
+              let { top, left, width, height } = e.getBoundingClientRect()
+
+              setPos({
+                bottom: window.innerHeight - (top + height),
+                right: window.innerWidth - (left + width),
+              })
+              break
+            }
+
+            case "self.bottom.left": {
+              // get bottom/right coordinates of element
+              // for absolute positionning
+              let { top, left, width, height } = e.getBoundingClientRect()
+
+              setPos({
+                bottom: window.innerHeight - (top + height),
+                left,
+              })
+              break
+            }
+
+            default: {
+              // specified coordinates
+              let [top, left] = openAt.split("x")
+              setPos({ top, left })
+              break
+            }
           }
 
-          case "self.center": {
-            let contentHeight = wrapper.getBoundingClientRect().height
-            let contentWidth = wrapper.getBoundingClientRect().width
-
-            console.log(e)
-            
-            setPos({ 
-              left: window.innerWidth/2 - contentWidth/2, 
-              bottom: window.innerHeight/2 + contentHeight/2
-            });
-
-            break;
+          modal.classList.add("opened")
+          // capture the currently focused element to
+          // restore focus after the modal closes
+          component.wasFocused = document.querySelector(":focus")
+          // get element to focus: the first [modal-autofocus] inside this modal
+          let toFocusOnOpenModal = modal.querySelector("[modal-autofocus]")
+          // if any autofocus element exists inside this modal
+          if (toFocusOnOpenModal) {
+            // the first focusable element inside [modal-autofocus] and focus it
+            toFocusOnOpenModal = toFocusOnOpenModal
+              .querySelector(focusableEls)
+              .focus()
           }
+          // set WAI-ARIA (accessibility) attrs
+          modal.setAttribute("aria-hidden", "false")
+          modal.setAttribute("aria-modal", "true")
+        })
+      })
 
-          case "self.top.left": {
-            // get top/left coordinates of element
-            // for absolute positionning
-            let { top, left, width, height } = e.getBoundingClientRect();
+    modal.querySelectorAll("[close-modal]").forEach((e) => {
+      e.addEventListener("click", (event) => {
+        component.close(e)
+      })
+    })
 
-            setPos({ top, left });
-            break;
-          }
-
-          case "self.top.right": {
-            // get top/left coordinates of element
-            // for absolute positionning
-            let { top, left, width, height } = e.getBoundingClientRect();
-
-            setPos({ 
-              top,
-              right: (window.innerWidth) - (left + width)
-            });
-            break;
-          }
-
-          case "self.bottom.right": {
-            // get bottom/right coordinates of element
-            // for absolute positionning
-            let { top, left, width, height } = e.getBoundingClientRect();
-
-            setPos({
-                bottom: (window.innerHeight) - (top + height),
-                right: (window.innerWidth) - (left + width)
-            });
-            break;
-          }
-
-          case "self.bottom.left": {
-            // get bottom/right coordinates of element
-            // for absolute positionning
-            let { top, left, width, height } = e.getBoundingClientRect();
-
-            setPos({
-                bottom: (window.innerHeight) - (top + height),
-                left
-            });
-            break;
-          }
-
-          default: {
-            // specified coordinates
-            let [top, left] = openAt.split("x");
-            setPos({ top, left });
-            break;
-          }
-        }
-
-        modal.classList.add("opened");
-        // capture the currently focused element to
-        // restore focus after the modal closes
-        component.wasFocused = document.querySelector(":focus");
-        // get element to focus: the first [modal-autofocus] inside this modal
-        let toFocusOnOpenModal = modal.querySelector('[modal-autofocus]')
-        // if any autofocus element exists inside this modal
-        if (toFocusOnOpenModal) {
-          // the first focusable element inside [modal-autofocus] and focus it
-          toFocusOnOpenModal = toFocusOnOpenModal.querySelector(focusableEls).focus()
-        }
-        // set WAI-ARIA (accessibility) attrs
-        modal.setAttribute("aria-hidden", "false");
-        modal.setAttribute("aria-modal", "true");
-      });
-    });
-
-    modal.querySelectorAll("[close-modal]").forEach(e => {
-      e.addEventListener("click", event => {
-        component.close(e);
-      });
-    });
-
-    window.addEventListener("keydown", event => {
-      const key = (event.key || '__unknownkey__').toLowerCase(); // not sure about the capitalization
-      let modalOpened = modal.classList.contains("opened");
+    window.addEventListener("keydown", (event) => {
+      const key = (event.key || "__unknownkey__").toLowerCase() // not sure about the capitalization
+      let modalOpened = modal.classList.contains("opened")
       // close on escape key
       if ((key === "escape" || key === "esc") && modalOpened) {
-        component.close();
+        component.close()
       }
       // keep focus inside the modal
       if (key === "tab" && modalOpened) {
         // prevent default navigation
-        event.preventDefault();
+        event.preventDefault()
         // get the tabindex of the currently focused element
         let focusIndex = focusables.findIndex(
-          f => f === modal.querySelector(":focus")
-        );
+          (f) => f === modal.querySelector(":focus")
+        )
         // get the tabindex of the element to focus after the keypress
         if (event.shiftKey) {
           // backwards navigation: shift-tab
-          focusIndex--;
+          focusIndex--
         } else {
-          focusIndex++;
+          focusIndex++
         }
         // if we go past the last focusable element
         if (focusIndex >= focusables.length) {
           // loop back to the beginning
-          focusIndex = 0;
+          focusIndex = 0
         }
         // if we go past the the first focusable element (by shift-tabbing, mostly)
         if (focusIndex < 0) {
           // loop back to the end
-          focusIndex = focusables.length - 1;
+          focusIndex = focusables.length - 1
         }
-        focusables[focusIndex].focus();
+        focusables[focusIndex].focus()
       }
-    });
+    })
     // console.groupEnd()
-  }
-};
+  },
+}
 </script>
 
 <style lang="sass" scoped>

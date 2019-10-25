@@ -5,50 +5,40 @@ BaseFlatComponent.ButtonFlat(:icon="icon" :icon-style="iconStyle" :large-icon="l
 </template>
 
 <script>
-import BaseFlatComponent from '~/components/BaseFlatComponent.vue'
+import BaseFlatComponent from "~/components/BaseFlatComponent.vue"
 
 export default {
-    name: 'ButtonFlat',
+  name: "ButtonFlat",
 
-    components: {
-        BaseFlatComponent
+  components: {
+    BaseFlatComponent,
+  },
+
+  props: {
+    icon: String,
+    iconStyle: {
+      type: String,
+      default: "outlined",
     },
-
-    props: {
-        icon: String,
-        iconStyle: {
-            type: String,
-            default: 'outlined'
-        },
-        largeIcon:{
-            type: Boolean,
-            default: false
-        },
-        small: {
-            type:Boolean,
-            default: false
-        }
+    largeIcon: {
+      type: Boolean,
+      default: false,
     },
-
-
-    data() {
-        return {
-            
-        }
+    small: {
+      type: Boolean,
+      default: false,
     },
+  },
 
-    computed: {
-    },
+  data() {
+    return {}
+  },
 
+  computed: {},
 
-    created() {
+  created() {},
 
-    },
-
-
-    methods: {
-
-    }
+  methods: {},
 }
 </script>
 

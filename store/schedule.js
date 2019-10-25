@@ -8,7 +8,7 @@
 */
 
 // Use moment-range
-import { firstBy } from "thenby";
+import { firstBy } from "thenby"
 import {
   startOfWeek,
   endOfWeek,
@@ -18,7 +18,6 @@ import {
   eachDayOfInterval,
   isBefore,
   isSameDay,
-  parse,
   isDate,
   isAfter,
   setMinutes,
@@ -26,136 +25,137 @@ import {
   setHours,
   endOfDay,
   startOfDay,
-} from "date-fns";
+} from "date-fns"
+import { getMutations } from "./index"
 
 export const state = () => ({
   events: [],
   mutations: [],
-});
+})
 
 const parseTime = (timeStr, date) => {
-  if (typeof timeStr !== "string") return timeStr;
-  let [h, m, s] = timeStr.split(":").map(o => parseInt(o));
-  setHours(date, h);
-  setMinutes(date, m);
-  setSeconds(date, s);
-  return date;
-};
+  if (typeof timeStr !== "string") return timeStr
+  const [h, m, s] = timeStr.split(":").map((o) => parseInt(o))
+  setHours(date, h)
+  setMinutes(date, m)
+  setSeconds(date, s)
+  return date
+}
 
-const parseEventDates = event => ({
+const parseEventDates = (event) => ({
   ...event,
   // I created a custom "parseTime" function because date-fns' parse() yields Invalid Date
   start: parseTime(event.start, event.date),
   end: parseTime(event.end, event.date),
-});
+})
 
 export const getters = {
   events: (state, getters) => state.events,
   event: (state, getters) => (value, prop = "uuid") =>
-    getters.events.find(o => o[prop] === value) || null,
+    getters.events.find((o) => o[prop] === value) || null,
   mutations: (state, getters) => state.mutations,
   mutation: (state, getters) => (value, prop = "uuid") =>
-    getters.mutations.find(o => o[prop] === value) || null,
+    getters.mutations.find((o) => o[prop] === value) || null,
   course: (state, getters) => (value, prop = "uuid") =>
-    getters.courses.find(o => o[prop] === value) || null,
-  trimester: (state, getters, rootState, rootGetters) => idx => {
+    getters.courses.find((o) => o[prop] === value) || null,
+  trimester: (state, getters, rootState, rootGetters) => (idx) => {
     /*
      *  Returns an Interval to test dates against using isWithinInterval(date, Interval)
      */
     // Bounds
-    let yearStart = rootGetters["settings/value"]("year_start");
-    let trimester2start = rootGetters["settings/value"]("trimester_2_start");
-    let trimester3start = rootGetters["settings/value"]("trimester_3_start");
-    let yearEnd = rootGetters["settings/value"]("year_end");
+    const yearStart = rootGetters["settings/value"]("year_start")
+    const trimester2start = rootGetters["settings/value"]("trimester_2_start")
+    const trimester3start = rootGetters["settings/value"]("trimester_3_start")
+    const yearEnd = rootGetters["settings/value"]("year_end")
     // Ranges
-    let trimester1 = { start: yearStart, end: trimester2start };
-    let trimester2 = { start: trimester2start, end: trimester3start };
-    let trimester3 = { start: trimester3start, end: yearEnd };
+    const trimester1 = { start: yearStart, end: trimester2start }
+    const trimester2 = { start: trimester2start, end: trimester3start }
+    const trimester3 = { start: trimester3start, end: yearEnd }
     // Choose which interval to return
-    if (idx === 1) return trimester1;
-    if (idx === 2) return trimester2;
-    if (idx === 3) return trimester3;
+    if (idx === 1) return trimester1
+    if (idx === 2) return trimester2
+    if (idx === 3) return trimester3
     // Invalid index
-    throw `Trimester #${idx} does not exist.`;
+    throw new Error(`Trimester #${idx} does not exist.`)
   },
-  isOffday: (state, getters, rootState, rootGetters) => date => {
+  isOffday: (state, getters, rootState, rootGetters) => (date) => {
     /* Check if the given `date` is an offday, by using the
      * `offdays` setting.
      */
     // Loop through each date/dateinterval in the `offdays` settings
-    rootGetters["settings/value"]("offdays").forEach(dateOrInterval => {
+    rootGetters["settings/value"]("offdays").forEach((dateOrInterval) => {
       if (isDate(dateOrInterval)) {
         // If it's a regular date, check if they're the same day
-        if (isSameDay(date, dateOrInterval)) return true;
+        if (isSameDay(date, dateOrInterval)) return true
       } else {
         // If it's a range, check if the given date is within it
         try {
-          if (isWithinInterval(date, dateOrInterval)) return true;
+          if (isWithinInterval(date, dateOrInterval)) return true
         } catch (error) {
-          console.error(error);
+          // console.error(error)
         }
       }
-    });
+    })
     /* At this point, if no value was returned, it means that
      * nothing was found in the list of offdays: return false
      */
-    return false;
+    return false
   },
   currentTrimester: (state, getters, rootState) => {
     /* Returns the index of the current trimester.
      * Returns null if the current date is outside any trimester
      */
-    let now = rootState.now;
-    let t1 = getters.trimester(1);
-    let t2 = getters.trimester(2);
-    let t3 = getters.trimester(3);
+    const now = rootState.now
+    const t1 = getters.trimester(1)
+    const t2 = getters.trimester(2)
+    const t3 = getters.trimester(3)
     try {
-      if (isWithinInterval(now, t1)) return 1;
-      if (isWithinInterval(now, t2)) return 2;
-      if (isWithinInterval(now, t3)) return 3;
+      if (isWithinInterval(now, t1)) return 1
+      if (isWithinInterval(now, t2)) return 2
+      if (isWithinInterval(now, t3)) return 3
     } catch (error) {
-      console.error(error);
-      console.error({ t1, t2, t3, now });
+      // console.error(error)
+      // console.error({ t1, t2, t3, now })
     }
-    return null;
+    return null
   },
   mutationsOf: (state, getters, rootState) => ({ event, date }) => {
     /* Provided an event and a date, returns either a schedule mutation object
      * or null if no mutation matches the arguments given.
      */
-    let mutations = getters.mutations;
+    let mutations = getters.mutations
     if (event) {
       // Filter by the given event.
-      mutations = mutations.filter(o => o.event.uuid === event.uuid);
+      mutations = mutations.filter((o) => o.event.uuid === event.uuid)
     }
     if (date) {
       /* Filter with the provided date, whether the events are...
        * - rescheduled to that week, or
        * - deleted from that week
        */
-      mutations = mutations.filter(o => {
-        let ret = false;
+      mutations = mutations.filter((o) => {
+        let ret = false
         // If the mutation's deleted field is not null, compare deletion date & current date
-        if (o.deleted) ret = isSameDay(o.deleted, date);
+        if (o.deleted) ret = isSameDay(o.deleted, date)
         // If the mutation's rescheduled field is not null, compare reschedule date & current date
-        if (o.rescheduled) ret = ret || isSameDay(o.rescheduled, date);
-        return ret;
-      });
+        if (o.rescheduled) ret = ret || isSameDay(o.rescheduled, date)
+        return ret
+      })
     }
-    return mutations;
+    return mutations
   },
   currrentWeekMutations: (state, getters, rootState) => {
-    let mutations = [];
-    let week = {
+    let mutations = []
+    const week = {
       start: startOfWeek(rootState.now),
       end: endOfWeek(rootState.now),
-    };
-    eachDayOfInterval(week).forEach(day => {
-      let mutationsOfDay = getters.mutationsOf({ date: day, event: null });
-      mutations = [...mutations, ...mutationsOfDay];
-    });
+    }
+    eachDayOfInterval(week).forEach((day) => {
+      const mutationsOfDay = getters.mutationsOf({ date: day, event: null })
+      mutations = [...mutations, ...mutationsOfDay]
+    })
   },
-  orderCourses: (state, getters, rootState, rootGetters) => courses =>
+  orderCourses: (state, getters, rootState, rootGetters) => (courses) =>
     /* Sort courses objects by day & starting date
      */
     [...courses].sort(
@@ -163,193 +163,168 @@ export const getters = {
     ),
 
   coursesIn: (state, getters, rootState, rootGetters) => (start, end) => {
-    let courses = [];
-    for (let day of eachDayOfInterval({ start, end })) {
+    const courses = []
+    for (const day of eachDayOfInterval({ start, end })) {
       // If this day is an offday, it doesn't contain any events
-      if (getters.isOffday(day)) continue;
+      if (getters.isOffday(day)) continue
       // Get the events for that day
-      let events = getters.events.filter(
-        o =>
+      const events = getters.events.filter(
+        (o) =>
           o.day === getISODay(day) &&
           [getters.weekType(day), "BOTH"].includes(o.week_type)
-      );
+      )
       // Loop through the events
-      events.forEach(event => {
+      events.forEach((event) => {
         // Handle mutations
-        let mutations = getters.mutationsOf(event, day);
+        const mutations = getters.mutationsOf(event, day)
         /* getters.mutationsOf returns an array of mutations, but here we only want one.
          * Since two mutations should never be on the same event & same day anyway, we just take
          * the array's first item (or set to null if no mutations were found.)
          */
-        let mutation = mutations.length
+        const mutation = mutations.length
           ? mutations[0]
-          : { deleted: null, rescheduled: null };
+          : { deleted: null, rescheduled: null }
         courses.push({
           ...event,
           ...mutation,
           date: day,
-        });
-      });
+        })
+      })
     }
-    return courses;
+    return courses
   },
   courses: (state, getters, rootState) =>
     /* Gets courses in the current week.
      */
     getters.coursesIn(startOfWeek(rootState.now), endOfWeek(rootState.now)),
-  weekType: (state, getters, rootState, rootGetters) => date => {
-    //TODO: explain this better, can't understand the logic I've written (it works tho)
+  weekType: (state, getters, rootState, rootGetters) => (date) => {
+    // TODO: explain this better, can't understand the logic I've written (it works tho)
     // get base Q1/Q2
-    let base = rootGetters["settings/value"]("starting_week_type");
-    let start = rootGetters["settings/value"]("year_start");
+    const base = rootGetters["settings/value"]("starting_week_type")
+    const start = rootGetters["settings/value"]("year_start")
     // convert to week-of-year number, and get if its even or odd.
     // tested date will be [base] (Q1 or Q2) if its also even.
-    let startingWeekIsEven = getISOWeek(start) % 2 === 0;
-    let other = base === "Q1" ? "Q2" : "Q1";
-    return getISOWeek(date) % 2 === 0 && startingWeekIsEven ? base : other;
+    const startingWeekIsEven = getISOWeek(start) % 2 === 0
+    const other = base === "Q1" ? "Q2" : "Q1"
+    return getISOWeek(date) % 2 === 0 && startingWeekIsEven ? base : other
   },
   currentCourse: (state, getters, rootState, rootGetters) => {
-    let course = getters.courses.find(
-      o =>
+    const course = getters.courses.find(
+      (o) =>
         // Is the same week day
         isSameDay(o.date, rootState.now) &&
         // Has started before now
         isBefore(o.start, rootState.now) &&
         // Hasn't finished yet or finished right this (mili)second
         isAfter(o.end, rootState.now)
-    );
-    return course === undefined ? null : course;
+    )
+    return course === undefined ? null : course
   },
   nextCourses: (state, getters, rootState, rootGetters) => {
     let courses = getters.courses.filter(
-      o =>
+      (o) =>
         // Is the same week day
         isSameDay(o.date, rootState.now) &&
         // Hasn't started yet
         isAfter(o.end, rootState.now)
-    );
+    )
     // Make sure the events are sorted
-    courses = getters.orderCourses(courses);
+    courses = getters.orderCourses(courses)
     // Get the soonest courses or null
-    return courses;
+    return courses
   },
   nextCoursesOf: (state, getters, rootState, rootGetters) => (value, what) => {
-    let nextCourses = getters.nextCourses;
-    if (!nextCourses.length) return null;
+    const nextCourses = getters.nextCourses
+    if (!nextCourses.length) return null
     switch (what) {
       case "subject":
-        return nextCourses.filter(o => o.subject.uuid === value);
+        return nextCourses.filter((o) => o.subject.uuid === value)
 
       default:
-        return null;
+        return null
     }
   },
   tomorrowCourses: (state, getters, rootState, rootGetters) =>
     getters.coursesIn(startOfDay(rootState.now), endOfDay(rootState.now)),
-};
+}
 
 export const mutations = {
-  SET_EVENTS: (state, events) => {
-    /* Turns dates in moment objects when setting events.
-     */
-    state.events = events.map(o => parseEventDates(o));
-  },
-  ADD_EVENT: (state, event) => state.events.push(event),
-  DEL_EVENT: (state, uuid) =>
-    (state.events = state.events.filter(o => o.uuid !== uuid)),
-  PATCH_EVENT: (state, uuid, modifications) => {
-    // Get the requested event's index in the state array
-    let idx = state.events.map(o => o.uuid).indexOf(uuid);
-    // Apply modifications
-    Object.assign(state.events[idx], modifications);
-  },
-  SET_MUTATIONS: (state, mutations) => (state.mutations = mutations),
-  ADD_MUTATION: (state, mutation) => state.mutations.push(subject),
-  DEL_MUTATION: (state, uuid) =>
-    (state.mutations = state.mutations.filter(o => o.uuid !== uuid)),
-  PATCH_MUTATION: (state, uuid, modifications) => {
-    // Get the requested mutation's index in the state array
-    let idx = state.mutations.map(o => o.uuid).indexOf(uuid);
-    // Apply modifications
-    Object.assign(state.mutations[idx], modifications);
-  },
-};
+  ...getMutations("event", parseEventDates, false),
+  ...getMutations("mutation", (o) => o, false),
+}
 
 export const actions = {
   async loadEvents({ commit, getters }) {
     try {
-      const { data } = await this.$axios.get(`/events/`);
-      console.log(`[from API] GET /events/: OK`);
-      if (data) commit("SET_EVENTS", data.map(o => parseEventDates(o)));
+      const { data } = await this.$axios.get(`/events/`)
+      // console.log(`[from API] GET /events/: OK`)
+      if (data) commit("SET_EVENTS", data.map((o) => parseEventDates(o)))
     } catch (error) {
-      console.error(`[from API] GET /events/: Error`);
+      // console.error(`[from API] GET /events/: Error`)
       try {
-        console.error(error.response.data);
+        // console.error(error.response.data)
       } catch (_) {
-        console.error(error);
+        // console.error(error)
       }
     }
   },
 
   async loadMutations({ commit }) {
     try {
-      const { data } = await this.$axios.get(`/events-mutations/`);
-      console.log(`[from API] GET /events-mutations/: OK`);
-      if (data) commit("SET_MUTATIONS", data);
+      const { data } = await this.$axios.get(`/events-mutations/`)
+      // console.log(`[from API] GET /events-mutations/: OK`)
+      if (data) commit("SET_MUTATIONS", data)
     } catch (error) {
-      console.error(`[from API] GET /events-mutations/: Error`);
+      // console.error(`[from API] GET /events-mutations/: Error`)
       try {
-        console.error(error.response.data);
+        // console.error(error.response.data)
       } catch (_) {
-        console.error(error);
+        // console.error(error)
       }
     }
   },
 
   async postEvent({ commit }, event) {
     try {
-      const { data } = await this.$axios.post(`/events/`, event);
-      if (data) commit("ADD_EVENT", data);
-      console.log("[from API] POST /events/: OK");
+      const { data } = await this.$axios.post(`/events/`, event)
+      if (data) commit("ADD_EVENT", data)
+      // console.log("[from API] POST /events/: OK")
     } catch (error) {
-      console.error(`[from API] POST /events/: Error`);
+      // console.error(`[from API] POST /events/: Error`)
       try {
-        console.error(error.response.data);
+        // console.error(error.response.data)
       } catch (_) {
-        console.error(error);
+        // console.error(error)
       }
     }
   },
 
   async postMutation({ commit }, mutation) {
     try {
-      const { data } = await this.$axios.post(`/events-mutations/`, mutation);
-      if (data) commit("ADD_MUTATION", data);
-      console.log("[from API] POST /events-mutations/: OK");
+      const { data } = await this.$axios.post(`/events-mutations/`, mutation)
+      if (data) commit("ADD_MUTATION", data)
+      // console.log("[from API] POST /events-mutations/: OK")
     } catch (error) {
-      console.error(`[from API] POST /events-mutations/: Error`);
+      // console.error(`[from API] POST /events-mutations/: Error`)
       try {
-        console.error(error.response.data);
+        // console.error(error.response.data)
       } catch (_) {
-        console.error(error);
+        // console.error(error)
       }
     }
   },
 
   async patchEvent({ commit }, uuid, modifications) {
     try {
-      const { data } = await this.$axios.patch(
-        `/events/${uuid}`,
-        modifications
-      );
-      if (data) commit("PATCH_EVENT", uuid, data);
-      console.log(`[from API] PATCH /events/${uuid}: OK`);
+      const { data } = await this.$axios.patch(`/events/${uuid}`, modifications)
+      if (data) commit("PATCH_EVENT", uuid, data)
+      // console.log(`[from API] PATCH /events/${uuid}: OK`)
     } catch (error) {
-      console.error(`[from API] PATCH /events/${uuid}: Error`);
+      // console.error(`[from API] PATCH /events/${uuid}: Error`)
       try {
-        console.error(error.response.data);
+        // console.error(error.response.data)
       } catch (_) {
-        console.error(error);
+        // console.error(error)
       }
     }
   },
@@ -359,46 +334,46 @@ export const actions = {
       const { data } = await this.$axios.patch(
         `/events-mutations/${uuid}`,
         modifications
-      );
-      if (data) commit("PATCH_MUTATION", uuid, data);
-      console.log(`[from API] PATCH /events-mutations/${uuid}: OK`);
+      )
+      if (data) commit("PATCH_MUTATION", uuid, data)
+      // console.log(`[from API] PATCH /events-mutations/${uuid}: OK`)
     } catch (error) {
-      console.error(`[from API] PATCH /events-mutations/${uuid}: Error`);
+      // console.error(`[from API] PATCH /events-mutations/${uuid}: Error`)
       try {
-        console.error(error.response.data);
+        // console.error(error.response.data)
       } catch (_) {
-        console.error(error);
+        // console.error(error)
       }
     }
   },
 
   async deleteEvent({ commit }, uuid) {
     try {
-      const { data } = await this.$axios.delete(`/events/${uuid}`);
-      if (data) commit("DEL_EVENT", uuid);
-      console.log(`[from API] DELETE /events/${uuid}: OK`);
+      const { data } = await this.$axios.delete(`/events/${uuid}`)
+      if (data) commit("DEL_EVENT", uuid)
+      // console.log(`[from API] DELETE /events/${uuid}: OK`)
     } catch (error) {
-      console.error(`[from API] DELETE /events/${uuid}: Error`);
+      // console.error(`[from API] DELETE /events/${uuid}: Error`)
       try {
-        console.error(error.response.data);
+        // console.error(error.response.data)
       } catch (_) {
-        console.error(error);
+        // console.error(error)
       }
     }
   },
 
   async deleteMutation({ commit }, uuid) {
     try {
-      const { data } = await this.$axios.delete(`/events-mutations/${uuid}`);
-      if (data) commit("DEL_MUTATION", uuid);
-      console.log(`[from API] DELETE /events-mutations/${uuid}: OK`);
+      const { data } = await this.$axios.delete(`/events-mutations/${uuid}`)
+      if (data) commit("DEL_MUTATION", uuid)
+      // console.log(`[from API] DELETE /events-mutations/${uuid}: OK`)
     } catch (error) {
-      console.error(`[from API] DELETE /events-mutations/${uuid}: Error`);
+      // console.error(`[from API] DELETE /events-mutations/${uuid}: Error`)
       try {
-        console.error(error.response.data);
+        // console.error(error.response.data)
       } catch (_) {
-        console.error(error);
+        // console.error(error)
       }
     }
-  }
-};
+  },
+}

@@ -84,9 +84,9 @@ export const getters = {
   tests: (state, getters, rootState) => getters.only(getters.all, "tests"),
   counts: (state, getters, rootState) => ({
     exercises: getters.only(getters.pending, "exercises"),
-    tests: getters.only(getters.currentOrNextWeek, "tests")
-  })
-};
+    tests: getters.only(getters.currentOrNextWeek, "tests"),
+  }),
+}
 
 export const mutations = {
   SET_HOMEWORKS: (state, homeworks) =>

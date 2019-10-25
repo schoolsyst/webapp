@@ -52,54 +52,54 @@
       overflow: hidden
     },
     h2 {
-      margin-top: 20px;
-      margin-bottom: 5px;
-      font-weight: 500;
-      font-size: 45px;
+      margin-top: 20px
+      margin-bottom: 5px
+      font-weight: 500
+      font-size: 45px
     }
     h1 {
-      font-family: 'Google Sans', 'Product Sans', 'Manrope', sans-serif;
-      font-weight: lighter;
-      font-size: 70px;
+      font-family: 'Google Sans', 'Product Sans', 'Manrope', sans-serif
+      font-weight: lighter
+      font-size: 70px
     }
     h3 {
-      margin-top: 10px;
-      margin-bottom: 5px;
-      font-size: 30px;
-      font-weight: normal;
+      margin-top: 10px
+      margin-bottom: 5px
+      font-size: 30px
+      font-weight: normal
     }
     p {
-      line-height: 1.5;
-      margin: 10px 0;
+      line-height: 1.5
+      margin: 10px 0
     }
     code {
-      color: var(--blue);
-      line-height: 1.2;
+      color: var(--blue)
+      line-height: 1.2
     }
     .footnotes-sep {
-      opacity: .75;
-      margin-top: 10px;
+      opacity: .75
+      margin-top: 10px
     }
     .footnotes-sep::before {
-      content: 'Notes de bas de page';
-      position: relative;
-      bottom: 30px;
+      content: 'Notes de bas de page'
+      position: relative
+      bottom: 30px
     }
     .admonition {
-      background: var(--offset-blue);
-      border-radius: 10px;
-      padding: 10px 20px;
-      margin: 20px 0;
+      background: var(--offset-blue)
+      border-radius: 10px
+      padding: 10px 20px
+      margin: 20px 0
     }
     .admonition-title {
-      color: var(--blue);
-      font-size: 24px;
-      font-weight: bold;
+      color: var(--blue)
+      font-size: 24px
+      font-weight: bold
     }
     .admonition.failure,
     .admonition.danger,
     .admonition.bug {
-      background: var(--red);
+      background: var(--red)
     }
     .admonition.failure p,
     .admonition.danger p,
@@ -128,13 +128,13 @@
     }
 
     ul {
-      padding-left: 30px;
-      list-style: circle;
+      padding-left: 30px
+      list-style: circle
     }
 
     #mirror ul li {
-      list-style: circle !important;
-      margin-bottom: 10px;
+      list-style: circle !important
+      margin-bottom: 10px
     }
 
     dd {
@@ -149,8 +149,8 @@
     }
 
     dt {
-      margin-top: 15px;
-      font-weight: bold;
+      margin-top: 15px
+      font-weight: bold
     }
 
     dt math {
@@ -162,80 +162,80 @@
     }
 
     table {
-      background: var(--offset-blue);
-      border-radius: 7.5px;
-      border: none;
-      border-collapse: collapse;
+      background: var(--offset-blue)
+      border-radius: 7.5px
+      border: none
+      border-collapse: collapse
     }
     thead tr,
     thead td {
-      color: var(--blue);
+      color: var(--blue)
     }
     thead:empty {
       display: none
     }
     thead th {
-      font-weight: normal;
+      font-weight: normal
     }
     thead th math {
       /* bold mathematics are ugly */
-      font-weight: normal;
+      font-weight: normal
     }
     tbody tr {
-      background: #fff;
+      background: #fff
     }
     tbody tr,
     tbody td {
-      border-top: 2px solid #0005;
-      border-bottom: 2px solid #0005;
+      border-top: 2px solid #0005
+      border-bottom: 2px solid #0005
     }
     td,
     tr {
-      padding: 20px;
+      padding: 20px
     }
     th {
-      padding: 10px 20px;
+      padding: 10px 20px
     }
     tbody tr:hover {
-      background: #fff3;
+      background: #fff3
     }
 
     blockquote {
-      padding-left: 15px;
-      border-left: 7.5px solid var(--blue);
+      padding-left: 15px
+      border-left: 7.5px solid var(--blue)
     }
 
     #mirror img {
-      max-width: 100%;
+      max-width: 100%
     }
 
     #mirror dl {
-      display: grid;
+      display: grid
       grid-template-columns: max-content max-content
     }
 
     #mirror dl dd {
-      grid-column: 2;
-      margin-top: 0px;
+      grid-column: 2
+      margin-top: 0px
     }
 
     #mirror dt {
-      grid-column: 1;
-      margin-top: 0px;
+      grid-column: 1
+      margin-top: 0px
     }
 
     #mirror dt strong {
-      color: var(--blue);
+      color: var(--blue)
     }
 
     hr.footnotes-sep {
-      margin-top: 100px;
+      margin-top: 100px
     }
 
     #mirror h1 {
-      text-align: center;
-      font-size: 36px;
-      margin: 50px 0;
+      text-align: center
+      font-size: 36px
+      margin: 50px 0
     }
 </template>
 
@@ -248,17 +248,17 @@ import platform from "platform";
 import { mapState, mapGetters, mapMutations, mapActions } from "vuex";
 
 //--- components ---
-import TheNavbar from "~/components/TheNavbar.vue";
-import ArrayButtonFlat from "~/components/ArrayButtonFlat.vue";
-import ButtonFlat from "~/components/ButtonFlat.vue";
-import MainGroup from "~/components/MainGroup.vue";
-import MainGroupLeft from "~/components/MainGroupLeft.vue";
-import MainGroupRight from "~/components/MainGroupRight.vue";
-import ButtonIcon from "~/components/ButtonIcon.vue";
-import BarFloating from "~/components/BarFloating.vue";
-import ModalAddExercise from "~/components/ModalAddExercise.vue";
-import ModalAddNote from "~/components/ModalAddNote.vue";
-import ModalAddTest from "~/components/ModalAddTest.vue";
+import TheNavbar from "~/components/TheNavbar.vue"
+import ArrayButtonFlat from "~/components/ArrayButtonFlat.vue"
+import ButtonFlat from "~/components/ButtonFlat.vue"
+import MainGroup from "~/components/MainGroup.vue"
+import MainGroupLeft from "~/components/MainGroupLeft.vue"
+import MainGroupRight from "~/components/MainGroupRight.vue"
+import ButtonIcon from "~/components/ButtonIcon.vue"
+import BarFloating from "~/components/BarFloating.vue"
+import ModalAddExercise from "~/components/ModalAddExercise.vue"
+import ModalAddNote from "~/components/ModalAddNote.vue"
+import ModalAddTest from "~/components/ModalAddTest.vue"
 export default {
   layout: "bare",
   components: {
@@ -283,8 +283,8 @@ export default {
 
   async asyncData({ store, app, route }) {
     try {
-      let { uuid } = route.params;
-      const { data } = await app.$axios.get(`/notes/${uuid}/`);
+      let { uuid } = route.params
+      const { data } = await app.$axios.get(`/notes/${uuid}/`)
       return {
         locked: false,
         name: data.name,
@@ -292,14 +292,14 @@ export default {
         created: data.created,
         server_last_modified: data.last_modified,
         server_content: data.content,
-        uuid: data.uuid
-      };
+        uuid: data.uuid,
+      }
     } catch (e) {
       if (e.response.status == 404) {
-        error = "Note non trouvée.";
+        error = "Note non trouvée."
         return {
-          error
-        };
+          error,
+        }
         // app.$router.push('/notes')
       }
     }
@@ -428,20 +428,20 @@ export default {
       content: window.localStorage.getItem(`${this.uuid}--noteContent`),
       modified: moment(
         window.localStorage.getItem(`${this.uuid}--noteLastModified`)
-      )
-    };
+      ),
+    }
     let server = {
       content: this.server_content,
-      modified: moment(this.server_last_modified)
-    };
+      modified: moment(this.server_last_modified),
+    }
     if (local.modified.isAfter(server.modified)) {
-      this.content = local.content;
+      this.content = local.content
       this.$toast.show(
         "La note enregistrée ici est plus récente que celle du serveur, et a été restaurée."
-      );
-      this.uploadToServer(local.content, true);
+      )
+      this.uploadToServer(local.content, true)
     } else {
-      this.content = server.content;
+      this.content = server.content
     }
 
     //                         |-> keyup never fires for Ctrl-S
@@ -595,13 +595,13 @@ export default {
 
   watch: {
     content(newContent, oldContent) {
-      window.localStorage.setItem(`${this.uuid}--noteContent`, newContent);
+      window.localStorage.setItem(`${this.uuid}--noteContent`, newContent)
       window.localStorage.setItem(
         `${this.uuid}--noteLastModified`,
         moment().format()
-      );
-      this.content = newContent;
-    }
+      )
+      this.content = newContent
+    },
   },
 
   computed: {
@@ -660,13 +660,13 @@ export default {
       if (moment().diff(this.lastSave, "seconds") < 5 && !force) {
         this.$toast.error(
           "Veuillez attendre un peu avant de synchroniser de nouveau."
-        );
-        return;
+        )
+        return
       } else {
-        this.lastSave = moment();
+        this.lastSave = moment()
       }
       // request
-      let errored = false;
+      let errored = false
       let requestData = {
         last_modified: moment().toISOString(),
         content
@@ -682,14 +682,14 @@ export default {
         );
         this.$toast.success(`Note "${data.name}" sauvegardée`);
       } catch (e) {
-        errored = true;
-        this.$toast.error(`Erreur lors de la sauvegarde: ${e}`);
+        errored = true
+        this.$toast.error(`Erreur lors de la sauvegarde: ${e}`)
       }
       if (!errored) {
         // remove from localStorage if synced correctly to avoid
         // incorrect "local version is more recent" notifications
-        window.localStorage.removeItem(`${this.uuid}--noteContent`);
-        window.localStorage.removeItem(`${this.uuid}--noteLastModified`);
+        window.localStorage.removeItem(`${this.uuid}--noteContent`)
+        window.localStorage.removeItem(`${this.uuid}--noteLastModified`)
       }
     },
     sync(force = false) {
@@ -697,22 +697,22 @@ export default {
       // let noteName = document.getElementsByTagName('h1')[0].innerText
       // this.name = noteName
       // this.$store.commit('notes/UPDATE_NOTE', {uuid: this.uuid, data: {name: this.name}})
-      this.uploadToServer(this.content, force, this.notes);
+      this.uploadToServer(this.content, force, this.notes)
     },
     saveSource() {
-      var element = document.createElement("a");
+      var element = document.createElement("a")
       element.setAttribute(
         "href",
         "data:text/plain;charset=utf-8," + encodeURIComponent(this.content)
-      );
-      element.setAttribute("download", this.name);
+      )
+      element.setAttribute("download", this.name)
 
-      element.style.display = "none";
-      document.body.appendChild(element);
+      element.style.display = "none"
+      document.body.appendChild(element)
 
-      element.click();
+      element.click()
 
-      document.body.removeChild(element);
+      document.body.removeChild(element)
     },
     savePDF() {
       alert("Fonctionnalité non disponible");

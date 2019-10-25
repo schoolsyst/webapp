@@ -13,7 +13,7 @@ export default {
   props: {
     to: String,
     icon: String,
-    title: String
+    title: String,
   },
 
   methods: {
@@ -21,23 +21,24 @@ export default {
       let currentPage
 
       if (this.to === "/") {
-        currentPage = this.to == this.$route.path;
+        currentPage = this.to == this.$route.path
       } else {
-        currentPage = this.$route.path.startsWith(this.to);
+        currentPage = this.$route.path.startsWith(this.to)
       }
 
       return currentPage
-    }
+    },
   },
 
   updated() {
-    if (this.$route.path.startsWith('/bag')) {
-      document.querySelector('.NavbarButton.bad-icon i').innerHTML = 'work'
+    if (this.$route.path.startsWith("/bag")) {
+      document.querySelector(".NavbarButton.bad-icon i").innerHTML = "work"
     } else {
-      document.querySelector('.NavbarButton.bad-icon i').innerHTML = 'work_outline'
+      document.querySelector(".NavbarButton.bad-icon i").innerHTML =
+        "work_outline"
     }
-  }
-};
+  },
+}
 </script>
 
 <style lang="sass" scoped>

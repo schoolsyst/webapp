@@ -60,28 +60,28 @@
   </template>
 
 <script>
-import axios from "axios";
-import moment from "moment";
-import tinycolor from 'tinycolor2'
-import groupBy from 'lodash.groupby';
-import { mapState, mapGetters, mapMutations, mapActions } from "vuex";
+import axios from "axios"
+import moment from "moment"
+import tinycolor from "tinycolor2"
+import groupBy from "lodash.groupby"
+import { mapState, mapGetters, mapMutations, mapActions } from "vuex"
 //-------------------------------------------------------
-import TheHeading from "~/components/TheHeading.vue";
-import ArrayButtonFlat from "~/components/ArrayButtonFlat.vue";
-import ButtonFlat from "~/components/ButtonFlat.vue";
-import MainGroup from "~/components/MainGroup.vue";
-import MainGroupLeft from "~/components/MainGroupLeft.vue";
-import MainGroupRight from "~/components/MainGroupRight.vue";
-import HeadingSub from "~/components/HeadingSub.vue";
-import BigNumber from "~/components/BigNumber.vue";
-import CardCourseUpcoming from "~/components/CardCourseUpcoming.vue";
-import CardHomework from "~/components/CardHomework.vue";
-import CardEmpty from "~/components/CardEmpty.vue";
-import ModalAddExercise from "~/components/ModalAddExercise.vue";
-import ModalAddNote from "~/components/ModalAddNote.vue";
-import ModalAddTest from "~/components/ModalAddTest.vue";
-import ArrayItemExercise from '~/components/ArrayItemExercise.vue'
-import ItemExercise from '~/components/ItemExercise.vue'
+import TheHeading from "~/components/TheHeading.vue"
+import ArrayButtonFlat from "~/components/ArrayButtonFlat.vue"
+import ButtonFlat from "~/components/ButtonFlat.vue"
+import MainGroup from "~/components/MainGroup.vue"
+import MainGroupLeft from "~/components/MainGroupLeft.vue"
+import MainGroupRight from "~/components/MainGroupRight.vue"
+import HeadingSub from "~/components/HeadingSub.vue"
+import BigNumber from "~/components/BigNumber.vue"
+import CardCourseUpcoming from "~/components/CardCourseUpcoming.vue"
+import CardHomework from "~/components/CardHomework.vue"
+import CardEmpty from "~/components/CardEmpty.vue"
+import ModalAddExercise from "~/components/ModalAddExercise.vue"
+import ModalAddNote from "~/components/ModalAddNote.vue"
+import ModalAddTest from "~/components/ModalAddTest.vue"
+import ArrayItemExercise from "~/components/ArrayItemExercise.vue"
+import ItemExercise from "~/components/ItemExercise.vue"
 
 export default {
   components: {
@@ -104,17 +104,17 @@ export default {
   },
 
   data() {
-    moment.locale("fr");
+    moment.locale("fr")
     return {
       addExerciseModal: false,
       now: moment(),
-    };
+    }
   },
 
   head() {
     return {
-      title: `${this.pageTitleCounter}Schoolsyst`
-    };
+      title: `${this.pageTitleCounter}Schoolsyst`,
+    }
   },
 
   computed: {
@@ -124,7 +124,8 @@ export default {
       fCurrentCourseSubject: "schedule/currentCourseSubject",
       setting: "setting",
       currentTrimesterMean: "homework/currentTrimesterMean",
-      currentTrimesterGradesEvolution: "homework/currentTrimesterGradesEvolution",
+      currentTrimesterGradesEvolution:
+        "homework/currentTrimesterGradesEvolution",
       notesOf: "notes/notesOf",
       pageTitleCounter: "homework/pageTitleCounter",
       pendingExercises: "homework/pendingExercises",
@@ -144,56 +145,66 @@ export default {
     mean() {
       return {
         value: this.currentTrimesterMean * this.gradeMax,
-        unit: `/${this.gradeMax}`
-      };
+        unit: `/${this.gradeMax}`,
+      }
     },
     evolution() {
       let sgn
       let { relativeDiff } = this.currentTrimesterGradesEvolution
       if (relativeDiff > 0) {
-        sgn = '+'
-      } else if(relativeDiff < 0) {
-        sgn = '-'
+        sgn = "+"
+      } else if (relativeDiff < 0) {
+        sgn = "-"
       } else {
-        sgn = ' '
+        sgn = " "
       }
       return {
         value: Math.abs(relativeDiff * 100),
-        sign: sgn
+        sign: sgn,
       }
     },
     evolutionVerb() {
       switch (this.evolution.sign) {
         case "+":
-          return 'gagné'
+          return "gagné"
 
         case "-":
-          return 'perdu'
+          return "perdu"
 
         default:
-          return 'perdu/gagné'
+          return "perdu/gagné"
       }
     },
     meanBeforeLastGrade() {
       let { meanThen } = this.currentTrimesterGradesEvolution
-      return (meanThen * this.gradeMax).toFixed(2).replace(/0+$/, '')
+      return (meanThen * this.gradeMax).toFixed(2).replace(/0+$/, "")
     },
     timeTilEndOfCurrentCourse() {
-      return moment().to(moment(this.currentCourse.end, 'hh:mm'), true)
+      return moment().to(moment(this.currentCourse.end, "hh:mm"), true)
     },
     //FIXME
     exercises() {
-      console.log(this.pendingExercises)
+      // console.log(this.pendingExercises)
       let condition
       // if we are Thu/Fri/Sat/Sun
       if (moment().isoWeekday() >= 4) {
         condition = (exo) => {
-          return moment(exo.due, 'YYYY-MM-DD').isSame(moment().add(1, 'week'), 'week') || moment(exo.due, 'YYYY-MM-DD').isSame(moment(), 'week')
+          return (
+            moment(exo.due, "YYYY-MM-DD").isSame(
+              moment().add(1, "week"),
+              "week"
+            ) || moment(exo.due, "YYYY-MM-DD").isSame(moment(), "week")
+          )
         }
       } else {
-        condition = (exo) => moment(exo.due, 'YYYY-MM-DD').isSame(moment(), 'week')
+        condition = (exo) =>
+          moment(exo.due, "YYYY-MM-DD").isSame(moment(), "week")
       }
-      return this.pendingExercises.filter(condition).sort(exo => moment(exo.due,'YYYY-MM-DD').isBefore(moment()) ? 1 : -1)
+      return this.pendingExercises
+        .filter(condition)
+        .sort((exo) =>
+          moment(exo.due, "YYYY-MM-DD").isBefore(moment()) ? 1 : -1
+        )
     },
   },
 
@@ -202,26 +213,32 @@ export default {
       if (!this.currentCourse) return
 
       let notesByModDate = this.notesOf(this.currentCourseSubject.slug).sort(
-        (a, b) => moment(a.last_modified, 'YYYY-MM-DD[T]hh:mm').isBefore(moment(b.last_modified, 'YYYY-MM-DD[T]hh:mm')) ? 1 : -1
+        (a, b) =>
+          moment(a.last_modified, "YYYY-MM-DD[T]hh:mm").isBefore(
+            moment(b.last_modified, "YYYY-MM-DD[T]hh:mm")
+          )
+            ? 1
+            : -1
       )
       if (notesByModDate.length) {
         this.$router.push(`/notes/${notesByModDate[0].uuid}`)
       } else {
-        this.$toast.error(`Aucune prise de note de ${this.currentCourseSubject.name} trouvée`)
+        this.$toast.error(
+          `Aucune prise de note de ${this.currentCourseSubject.name} trouvée`
+        )
       }
-    }
+    },
   },
 
   created() {
     String.prototype.capFirstChar = function() {
-      return this.charAt(0).toUpperCase() + this.substr(1).toLowerCase();
-    };
+      return this.charAt(0).toUpperCase() + this.substr(1).toLowerCase()
+    }
     setInterval(() => {
       this.now = moment()
-    }, 1000);
+    }, 1000)
   },
-
-};
+}
 </script>
 
 <style lang="sass" scoped>
