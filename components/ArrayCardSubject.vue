@@ -1,17 +1,16 @@
 <template lang="pug">
 ul.ArrayCardSubject
-    slot
+	slot
 </template>
 
 <script>
-
 export default {
-    name: 'ArrayCardSubject',
+	name: 'ArrayCardSubject',
 }
 </script>
 
 <style lang="stylus" scoped>
 li
-    margin-top: 15px
-    max-width 100%
+	margin-top: 15px
+	max-width 100%
 </style>

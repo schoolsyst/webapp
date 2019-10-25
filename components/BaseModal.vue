@@ -1,5 +1,5 @@
 <template lang="pug">
-//TODO: Fix the close arrow (put to the right)
+//TODO: Fix the close btn (put to the right)
 //https://www.w3.org/TR/wai-aria-practices/examples/dialog-modal/dialog.html
 aside.BaseModal(:id="`modal_${name}`",
     aria-hidden="true"

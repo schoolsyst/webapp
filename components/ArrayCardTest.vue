@@ -1,12 +1,11 @@
 <template lang="pug">
 ul.ArrayCardTest
-    slot
+	slot
 </template>
 
 <script>
-
 export default {
-    name: 'ArrayCardTest',
+	name: 'ArrayCardTest',
 }
 </script>
 
@@ -14,5 +13,5 @@ export default {
 @import '~/assets/defaults'
 
 .CardTest
-    margin-bottom: 30px
+	margin-bottom: 30px
 </style>

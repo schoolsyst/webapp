@@ -1,11 +1,11 @@
 <template lang="pug">
 ul.ArrayButtonReg
-    slot
+	slot
 </template>
 
 <script>
 export default {
-  name: "ArrayButtonReg"
+	name: "ArrayButtonReg"
 };
 </script>
 
@@ -13,6 +13,6 @@ export default {
 @import '~/assets/defaults'
 
 .ArrayButtonReg
-    display: flex
-    justify-content: space-around
+	display: flex
+	justify-content: space-around
 </style>

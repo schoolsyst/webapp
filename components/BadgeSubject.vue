@@ -21,9 +21,9 @@ export default {
         }
     },
     computed: {
-        textColor() {
-            return tinycolor(this.color).isDark() ? 'white' : 'black'
-        }
+        ...mapGetters({
+            textColor
+        })
     }
 }
 </script>

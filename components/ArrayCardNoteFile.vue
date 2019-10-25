@@ -1,11 +1,11 @@
 <template lang="pug">
 ul.ArrayCardNoteFile
-    slot
+	slot
 </template>
 
 <script>
 export default {
-  name: "ArrayCardNoteFile"
+	name: "ArrayCardNoteFile"
 };
 </script>
 
@@ -13,16 +13,16 @@ export default {
 @import '~/assets/defaults'
 
 .ArrayCardNoteFile 
-    display: flex
-    flex-wrap: wrap
-    +mobile
-        justify-content: center
+	display: flex
+	flex-wrap: wrap
+	+mobile
+		justify-content: center
 
 
 /deep/ li
-    margin-top: 25px
-    margin-right: 30px
-    width: 200px
-    min-width: 200px
+	margin-top: 25px
+	margin-right: 30px
+	width: 200px
+	min-width: 200px
 
 </style>
