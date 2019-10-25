@@ -17,7 +17,7 @@
     //TODO: White transparent overlay on <BarFloating> bg to indicate uploading progress
     ButtonIcon(@click="sync"        title="Synchroniser") import_export
     ButtonIcon(@click="toggleViewMode", title="Changer la vue") {{viewModeIcon}}
-    ButtonIcon(@click="savePDF" title="Télécharger le rendu (.pdf)") file_copy
+    ButtonIcon(@click="downloadPDF" title="Télécharger le rendu (.pdf)") file_copy
   MainGroup(:full-size="viewMode !== 'both'")
     MainGroupLeft(v-if="viewMode !== 'rendered'")
       textarea#editor(v-model="content" :disabled="locked") 
@@ -47,7 +47,7 @@
           title="Nouveau contrôle"
           color="black"
         ) format_list_bulleted
-  style.
+  style#mirror-styles.
     body {
       overflow: hidden
     },
@@ -140,10 +140,11 @@
     dd {
       padding-left: 15px;
       margin-bottom: 5px;
+      max-width: 25vw;
     }
 
-    dd:before {
-      content: '•';
+    dd::before {
+      content: ':';
       margin-right: 5px;
     }
 
@@ -223,10 +224,6 @@
       margin-top: 0px;
     }
 
-    #mirror dd::before {
-      content: none;
-    }
-
     #mirror dt strong {
       color: var(--blue);
     }
@@ -247,8 +244,9 @@
 //--- essentials ---
 import axios from "axios";
 import moment from "moment";
-import platform from 'platform';
+import platform from "platform";
 import { mapState, mapGetters, mapMutations, mapActions } from "vuex";
+
 //--- components ---
 import TheNavbar from "~/components/TheNavbar.vue";
 import ArrayButtonFlat from "~/components/ArrayButtonFlat.vue";
@@ -274,13 +272,13 @@ export default {
     ButtonFlat,
     ModalAddNote,
     ModalAddExercise,
-    ModalAddTest,
+    ModalAddTest
   },
 
   head() {
     return {
       title: `[${this.subject.abbreviation.toUpperCase()}] ${this.name}`
-    }
+    };
   },
 
   async asyncData({ store, app, route }) {
@@ -314,116 +312,118 @@ export default {
       lastSave: moment(),
       now: moment(),
       autosyncInterval: null,
-      viewMode: 'both',
+      viewMode: "both",
       shortcuts: [
         {
-            name: "Gras",
-            shortcut: ["Control", "b"],
-            content: ["*", "*"]
+          name: "Gras",
+          shortcut: ["Control", "b"],
+          content: ["*", "*"]
         },
         {
-            name: "Italique",
-            shortcut: ["Control", "i"],
-            content: ["_", "_"]
+          name: "Italique",
+          shortcut: ["Control", "i"],
+          content: ["_", "_"]
         },
         {
-            name: "Souligné",
-            shortcut: ["Control", "u"],
-            content: ["__", "__"]
+          name: "Souligné",
+          shortcut: ["Control", "u"],
+          content: ["__", "__"]
         },
         {
-            name: "Titre de 2e niveau",
-            shortcut: ["Control", "é"],
-            content: ["\n## ", ""]
+          name: "Titre de 2e niveau",
+          shortcut: ["Control", "é"],
+          content: ["\n## ", ""]
         },
         {
-            name: "Titre de 3e niveau",
-            shortcut: ["Control", "\""],
-            content: ["\n### ", ""]
+          name: "Titre de 3e niveau",
+          shortcut: ["Control", '"'],
+          content: ["\n### ", ""]
         },
         {
-            name: "Maths (en ligne)",
-            shortcut: ["Control", "e"],
-            content: ["$$", "$$"]
+          name: "Maths (en ligne)",
+          shortcut: ["Control", "e"],
+          content: ["$$", "$$"]
         },
         {
-            name: "Maths (centré)",
-            shortcut: ["Control", "m"],
-            content: ["\n$$$\n", "\n$$$"]
+          name: "Maths (centré)",
+          shortcut: ["Control", "m"],
+          content: ["\n$$$\n", "\n$$$"]
         },
         {
-            name: "Insérér un tableau",
-            shortcut: ["Alt", "t"],
-            exec: (listenerEl) => {
-                // Get array of column names for user
-                let cols = prompt("Titre des colonnes (séparées par des virgules)...")
-                          .split(',')
-                          .map(col => col.trim())
-                // Return nothing (just the cursor) if the array is empty
-                if (!cols.length) return ["", ""]
+          name: "Insérér un tableau",
+          shortcut: ["Alt", "t"],
+          exec: listenerEl => {
+            // Get array of column names for user
+            let cols = prompt(
+              "Titre des colonnes (séparées par des virgules)..."
+            )
+              .split(",")
+              .map(col => col.trim());
+            // Return nothing (just the cursor) if the array is empty
+            if (!cols.length) return ["", ""];
 
-                // Get the biggest number out of: longest-length column name OR 50
-                let colLength = Math.max(
-                  cols.sort((a, b) => b.length - a.length)[0].length,
-                  Math.floor(50 / cols.length - cols.length+1)
-                )
-                // Compute the table's header separator
-                let headerSep = '|' + ('-'.repeat(colLength) + '|').repeat(cols.length)
-                // Compute the table's header
-                let header = '|'
-                // For each column...
-                cols.forEach(col => {
-                    // Get the name, padded by spaces
-                    name = col.padEnd(colLength, ' ')
-                    // Append it to the header str
-                    header = header.concat(name + '|')
-                });
+            // Get the biggest number out of: longest-length column name OR 50
+            let colLength = Math.max(
+              cols.sort((a, b) => b.length - a.length)[0].length,
+              Math.floor(50 / cols.length - cols.length + 1)
+            );
+            // Compute the table's header separator
+            let headerSep =
+              "|" + ("-".repeat(colLength) + "|").repeat(cols.length);
+            // Compute the table's header
+            let header = "|";
+            // For each column...
+            cols.forEach(col => {
+              // Get the name, padded by spaces
+              name = col.padEnd(colLength, " ");
+              // Append it to the header str
+              header = header.concat(name + "|");
+            });
 
-                // Return the whole thing
-                return [`\n${header}\n${headerSep}\n|`, ""]
-            }
+            // Return the whole thing
+            return [`\n${header}\n${headerSep}\n|`, ""];
+          }
         },
         {
-            name: "Tracer une équation de droite",
-            shortcut: ["Control", "p"],
-            content: ["\n```plot\nplot ", "\n```"],
+          name: "Tracer une équation de droite",
+          shortcut: ["Control", "p"],
+          content: ["\n```plot\nplot ", "\n```"]
         },
         {
-            name: "Insérer un bloc de code",
-            shortcut: ["Control", "l"],
-            exec: (listenerEl) => {
-                let lang = prompt("Langage de ce bloc de code ?").toLowerCase()
-                return [`\n\`\`\`${lang}\n`, "\n```"]
-            }
+          name: "Insérer un bloc de code",
+          shortcut: ["Control", "l"],
+          exec: listenerEl => {
+            let lang = prompt("Langage de ce bloc de code ?").toLowerCase();
+            return [`\n\`\`\`${lang}\n`, "\n```"];
+          }
         },
         {
           name: "Insérér une boite d'infos",
-          shortcut: ['Control', 'q'],
-          exec: (listenerEl) => {
-            let title = prompt("Titre de la boîte ?").trim()
-            return [`\n!!! info ${title}\n`, '\n!!!']
+          shortcut: ["Control", "q"],
+          exec: listenerEl => {
+            let title = prompt("Titre de la boîte ?").trim();
+            return [`\n!!! info ${title}\n`, "\n!!!"];
           }
         },
         {
-          name: "Insérer une boîte \"Attention\"",
-          shortcut: ['Control', 'Alt', 'q'],
-          exec: (listenerEl) => {
-            let title = prompt("Titre de la boîte ?").trim()
-            return [`\n!!! danger ${title}\n\n`, '!!!']
+          name: 'Insérer une boîte "Attention"',
+          shortcut: ["Control", "Alt", "q"],
+          exec: listenerEl => {
+            let title = prompt("Titre de la boîte ?").trim();
+            return [`\n!!! danger ${title}\n\n`, "!!!"];
           }
         }
-
-    ]
-    }
+      ]
+    };
   },
 
   mounted() {
     setInterval(() => {
-      this.now = moment()
+      this.now = moment();
     }, 1000);
     let content;
-    let editor = document.getElementById('editor')
-    let mirror = document.getElementById('mirror')
+    let editor = document.getElementById("editor");
+    let mirror = document.getElementById("mirror");
     let local = {
       content: window.localStorage.getItem(`${this.uuid}--noteContent`),
       modified: moment(
@@ -445,12 +445,12 @@ export default {
     }
 
     //                         |-> keyup never fires for Ctrl-S
-    window.addEventListener('keydown', event => {
-      if (event.ctrlKey && event.key === 's') {
-        event.preventDefault()
-        this.sync()
+    window.addEventListener("keydown", event => {
+      if (event.ctrlKey && event.key === "s") {
+        event.preventDefault();
+        this.sync();
       }
-    })
+    });
 
     // Keyboard shortcuts
     /**
@@ -467,111 +467,130 @@ export default {
     keyReprMode: String: "asTyped"||"fullName"||"keyCode": 
         uses respectively event.key, event.code and event.keyCode
     */
-    const KBShortcuts = (listenerElement, shortcutsMap, keyReprMode = 'asTyped') =>{
-        console.log(`[KBShortcuts] Loaded ${shortcutsMap.length} shortcut(s)`)
-        console.log(`[KBShortcuts] Listening for shortcuts on ${listenerElement}`)
-        const $ = document.querySelector.bind(document)
-        const e = $(listenerElement)
-        // Key(s) released
-        e.addEventListener('keydown', event => {
-            if (true) {
-                // Gather the keystrokes
-                let keystrokes = []
-                // Ctrl or Cmd based on OS (this requires platform.js)
-                let ctrlOrCmd = platform.os.family === 'OS X' ? event.metaKey : event.ctrlKey
-                if (ctrlOrCmd) keystrokes.push('Control')
-                if (event.shiftKey) keystrokes.push('Shift')
-                if (event.altKey) keystrokes.push('Alt')
-                switch(keyReprMode) { // Choose which key naming to use
-                    case 'asTyped':
-                        keystrokes.push(event.key)
-                        break
-                    case 'fullName':
-                        keystrokes.push(event.code)
-                        break
-                    default:
-                        keystrokes.push(event.keyCode)
-                        break
-                }
+    const KBShortcuts = (
+      listenerElement,
+      shortcutsMap,
+      keyReprMode = "asTyped"
+    ) => {
+      console.log(`[KBShortcuts] Loaded ${shortcutsMap.length} shortcut(s)`);
+      console.log(
+        `[KBShortcuts] Listening for shortcuts on ${listenerElement}`
+      );
+      const $ = document.querySelector.bind(document);
+      const e = $(listenerElement);
+      // Key(s) released
+      e.addEventListener("keydown", event => {
+        if (true) {
+          // Gather the keystrokes
+          let keystrokes = [];
+          // Ctrl or Cmd based on OS (this requires platform.js)
+          let ctrlOrCmd =
+            platform.os.family === "OS X" ? event.metaKey : event.ctrlKey;
+          if (ctrlOrCmd) keystrokes.push("Control");
+          if (event.shiftKey) keystrokes.push("Shift");
+          if (event.altKey) keystrokes.push("Alt");
+          switch (
+            keyReprMode // Choose which key naming to use
+          ) {
+            case "asTyped":
+              keystrokes.push(event.key);
+              break;
+            case "fullName":
+              keystrokes.push(event.code);
+              break;
+            default:
+              keystrokes.push(event.keyCode);
+              break;
+          }
 
-                const arrayEqual = (arr1, arr2) => {
-                    arr1 = arr1.sort()
-                    arr2 = arr2.sort()
-                    if (arr1.length !== arr2.length) return false
-                    for (let i=0;i<arr1.length;i++) {
-                        if (arr1[i] !== arr2[i]) return false
-                    }
-                    return true
-                }
-
-                // Get corresponding shortcut body (repr)
-                let repr = null
-                shortcutsMap.forEach(shortcut => {
-                    if (arrayEqual(keystrokes, shortcut.shortcut)) {
-                        console.log(`[KBShortcuts] catched keystrokes ${keystrokes.join(' + ')}`)
-                        if ('exec' in shortcut) {
-                          repr = shortcut.exec(e)
-                        } else {
-                          repr = shortcut.content
-                        }
-                    }
-                })
-
-
-                // Get what to put before & after the cursor
-
-                if (repr && repr.length) {
-                    console.log('preventing default')
-                    event.preventDefault(event)
-                    let before = repr[0]
-                    let after = repr[1]
-                    before = e.value.substring(0, e.selectionStart) + before
-                    after  = after + e.value.substring(e.selectionStart)
-                    let curPos = e.selectionStart + before.length
-                    let isSelection = e.selectionStart !== e.selectionEnd
-                    if (!isSelection) {
-                        console.log(`--- ${keystrokes.join('+')} ---`)
-                        console.log(`${before}%c|%c${after}`, 'color: red;', 'color: black;')
-                        console.log('------------')
-
-                        e.value = before+after
-                        e.selectionStart = e.selectionEnd = before.length
-                    } else {
-                        let selected = e.value.substring(e.selectionStart, e.selectionEnd)
-                        e.value = before+selected+after
-                        e.selectionStart += before.length
-                        e.selectionEnd -= after.length
-                    }
-                    return false
-                }
+          const arrayEqual = (arr1, arr2) => {
+            arr1 = arr1.sort();
+            arr2 = arr2.sort();
+            if (arr1.length !== arr2.length) return false;
+            for (let i = 0; i < arr1.length; i++) {
+              if (arr1[i] !== arr2[i]) return false;
             }
-        })
-    }
-    KBShortcuts('#editor', this.shortcuts)
+            return true;
+          };
+
+          // Get corresponding shortcut body (repr)
+          let repr = null;
+          shortcutsMap.forEach(shortcut => {
+            if (arrayEqual(keystrokes, shortcut.shortcut)) {
+              console.log(
+                `[KBShortcuts] catched keystrokes ${keystrokes.join(" + ")}`
+              );
+              if ("exec" in shortcut) {
+                repr = shortcut.exec(e);
+              } else {
+                repr = shortcut.content;
+              }
+            }
+          });
+
+          // Get what to put before & after the cursor
+
+          if (repr && repr.length) {
+            console.log("preventing default");
+            event.preventDefault(event);
+            let before = repr[0];
+            let after = repr[1];
+            before = e.value.substring(0, e.selectionStart) + before;
+            after = after + e.value.substring(e.selectionStart);
+            let curPos = e.selectionStart + before.length;
+            let isSelection = e.selectionStart !== e.selectionEnd;
+            if (!isSelection) {
+              console.log(`--- ${keystrokes.join("+")} ---`);
+              console.log(
+                `${before}%c|%c${after}`,
+                "color: red;",
+                "color: black;"
+              );
+              console.log("------------");
+
+              e.value = before + after;
+              e.selectionStart = e.selectionEnd = before.length;
+            } else {
+              let selected = e.value.substring(
+                e.selectionStart,
+                e.selectionEnd
+              );
+              e.value = before + selected + after;
+              e.selectionStart += before.length;
+              e.selectionEnd -= after.length;
+            }
+            return false;
+          }
+        }
+      });
+    };
+    KBShortcuts("#editor", this.shortcuts);
 
     // Scroll mirror to bottom (because scroll is broken af)
     editor.addEventListener("scroll", event => {
-      mirror.scrollTop = mirror.scrollHeight
+      mirror.scrollTop = mirror.scrollHeight;
     });
 
     // Slide the navabr back in only a few seconds after to show that it's here
     setTimeout(() => {
-      document.getElementsByClassName('TheNavbar')[0].classList.remove('slid-out')
+      document
+        .getElementsByClassName("TheNavbar")[0]
+        .classList.remove("slid-out");
     }, 500);
 
     //TODO: get setting from API
-    let autosave = 5
+    let autosave = 5;
 
     this.autosyncInterval = setInterval(() => {
-      this.$toast.info('Sauvegarde automatique...')
-      this.sync()
+      this.$toast.info("Sauvegarde automatique...");
+      this.sync();
     }, autosave * 60 * 1000);
   },
 
   beforeRouteLeave(to, from, next) {
-    clearInterval(this.autosyncInterval)
-    this.sync(true)
-    next()
+    clearInterval(this.autosyncInterval);
+    this.sync(true);
+    next();
   },
 
   watch: {
@@ -589,32 +608,52 @@ export default {
     ...mapGetters({
       note: "notes/noteByUUID",
       currentCourse: "schedule/currentCourse",
-      fCurrentCourseSubject: "schedule/currentCourseSubject",
+      fCurrentCourseSubject: "schedule/currentCourseSubject"
     }),
     timeRemaining() {
-      let currentCourse = this.currentCourse(this.now)
-      if (!currentCourse) return null
-      let seconds = Math.abs(moment(currentCourse.end, 'HH:mm').diff(moment(), 'seconds'))
-      return moment().startOf('day').seconds(seconds)
+      let currentCourse = this.currentCourse(this.now);
+      if (!currentCourse) return null;
+      let seconds = Math.abs(
+        moment(currentCourse.end, "HH:mm").diff(moment(), "seconds")
+      );
+      return moment()
+        .startOf("day")
+        .seconds(seconds);
     },
     currentCourseSubject() {
-      return this.fCurrentCourseSubject(this.now)
+      return this.fCurrentCourseSubject(this.now);
     },
     viewModeIcon() {
       return {
-        'both': 'web',
-        'rendered': 'web_asset',
-        'source': 'subject'
-      }[this.viewMode]
+        both: "web",
+        rendered: "web_asset",
+        source: "subject"
+      }[this.viewMode];
     }
   },
 
   methods: {
     toggleViewMode() {
-      const modes = ['both', 'rendered', 'source']
-      const clampIdx = (idx) => idx < 0 ? 2 : (idx > 2 ? 0 : idx)
-      let currentIdx = modes.indexOf(this.viewMode)
-      this.viewMode = modes[clampIdx(currentIdx+1)]
+      const modes = ["both", "rendered", "source"];
+      const clampIdx = idx => (idx < 0 ? 2 : idx > 2 ? 0 : idx);
+      let currentIdx = modes.indexOf(this.viewMode);
+      this.viewMode = modes[clampIdx(currentIdx + 1)];
+    },
+    downloadPDF() {
+      const initialBodyStyles = {
+        overflow: document.body.style.overflow,
+        margin: document.body.style.margin,
+        maxWidth: document.body.style.maxWidth,
+      }
+      const initialInnerHTML = document.body.innerHTML
+      document.body.style.overflow = 'auto'
+      document.body.style.margin = '20px'
+      document.body.style.maxWidth = '500px'
+      document.body.innerHTML = '<style>' + document.getElementById('mirror-styles').innerHTML + '</style>' + document.getElementById('mirror').innerHTML
+      print()
+      document.body.innerHTML = '<code>Veuillez patienter...</code>'
+      document.location.reload()
+      
     },
     async uploadToServer(content, force = false, updateNoteName = false) {
       // rate limitting
@@ -629,15 +668,18 @@ export default {
       // request
       let errored = false;
       let requestData = {
-        last_modified: moment().toISOString(), 
+        last_modified: moment().toISOString(),
         content
-      }
+      };
       // update title
       if (updateNoteName) {
-        requestData.name = updateNoteName
+        requestData.name = updateNoteName;
       }
       try {
-        const { data } = await this.$axios.patch(`/notes/${this.uuid}/`, requestData);
+        const { data } = await this.$axios.patch(
+          `/notes/${this.uuid}/`,
+          requestData
+        );
         this.$toast.success(`Note "${data.name}" sauvegardée`);
       } catch (e) {
         errored = true;
@@ -673,7 +715,7 @@ export default {
       document.body.removeChild(element);
     },
     savePDF() {
-      alert("Fonctionnalité non disponible")
+      alert("Fonctionnalité non disponible");
     }
   }
 };
