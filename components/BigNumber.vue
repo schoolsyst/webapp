@@ -8,7 +8,9 @@
             @blur="onBlur()"
             :style="{color: signColor}"
         )
-            i.material-icons(v-if="sign === '+' || sign === '-'") {{sign == '+' ? 'add' : 'remove'}}
+            i.material-icons(v-if="sign === '+'") add
+            i.material-icons(v-else-if="sign === '-'") remove
+            i.material-icons(v-else-if="sign === '±'") 
             span(v-else) {{sign}}
         span.value(
             :contenteditable="writables.includes('value')"
@@ -30,11 +32,12 @@ export default {
 
   props: {
     value: {
+      type: [String, Number],
       default: "—",
     },
-    sign: {
-      type: String,
-      default: " ",
+    showSign: {
+      type: Boolean,
+      default: false
     },
     unit: {
       type: String,
@@ -55,6 +58,11 @@ export default {
   },
 
   computed: {
+    sign() {
+      if (this.value > 0) return '+'
+      if (this.value < 0) return '-'
+      else                return '±'
+    },
     signColor() {
       switch (this.sign) {
         case "+":
@@ -75,6 +83,9 @@ export default {
       let val = Number(this.value)
       if (this.fixed !== null) {
         val = val.toFixed(this.fixed)
+      }
+      if (this.showSign) {
+        val = Math.abs(val)
       }
       // if it wasn't able to convert to a number, or the value is null/undefined
       let isUndef =
@@ -117,6 +128,8 @@ export default {
 input.value
     max-width: 150px
 
+.value
+    font-family: Roboto Mono, sans-serif
 
 .value, .sign
     font-size: 96px

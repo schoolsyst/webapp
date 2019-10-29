@@ -52,7 +52,7 @@ export default {
 	},
 
   methods: {
-    ...mapGetters({textColor})
+    ...mapGetters(['textColor'])
   },
 
 	created() {

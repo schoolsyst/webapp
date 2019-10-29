@@ -26,7 +26,8 @@ export default {
 @import '~/assets/defaults'
 
 .TheFooter
-    margin-top: 210px
+    margin-top: 100vh //debugging
+    // margin-top: 210px
     width: 100%
     height: 50vh
     +mobile

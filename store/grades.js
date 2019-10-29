@@ -40,6 +40,7 @@ export const getters = {
   mean: (state, getters) => (grades) => {
     grades = grades.filter((o) => o.obtained !== null)
     if (!grades.length) return null
+    console.log(grades)
     const sumOfWeights = grades
       .map((o) => o.weight * o.subject.weight)
       .reduce((acc, cur) => acc + cur)
@@ -80,7 +81,7 @@ export const mutations = {
 }
 
 export const actions = {
-  async loadGrades({ commit }) {
+  async load({ commit }) {
     try {
       const { data } = await this.$axios.get(`/grades/`)
       // console.log(`[from API] GET /grades/: OK`)
@@ -94,7 +95,7 @@ export const actions = {
       }
     }
   },
-  async postGrades({ commit }, grade) {
+  async post({ commit }, grade) {
     try {
       const { data } = await this.$axios.get(`/grades/`)
       if (data) commit("ADD", grade)
@@ -104,7 +105,7 @@ export const actions = {
       // console.error(error.response.data)
     }
   },
-  async patchGrade({ commit }, uuid, modifications) {
+  async patch({ commit }, uuid, modifications) {
     try {
       const { data } = await this.$axios.patch(`/grades/${uuid}`, modifications)
       if (data) commit("PATCH", uuid, data)
@@ -118,7 +119,7 @@ export const actions = {
       }
     }
   },
-  async deleteGrade({ commit }, uuid) {
+  async delete({ commit }, uuid) {
     try {
       const { data } = await this.$axios.delete(`/grades/${uuid}`)
       if (data) commit("DEL", uuid)

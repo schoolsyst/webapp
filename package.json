@@ -22,6 +22,7 @@
     "@nuxtjs/moment": "^1.2.0",
     "@nuxtjs/pwa": "^3.0.0-0",
     "@nuxtjs/toast": "^3.2.1",
+    "constant-case": "^2.0.0",
     "date-fns": "^2.4.1",
     "fuse.js": "^3.4.5",
     "js-search": "^1.4.3",

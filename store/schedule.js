@@ -220,32 +220,34 @@ export const getters = {
     )
     return course === undefined ? null : course
   },
-  nextCourses: (state, getters, rootState, rootGetters) => {
+  nextCourses: (state, getters, rootState, rootGetters) => (from = null) => {
+    from = from || rootState.now
     let courses = getters.courses.filter(
       (o) =>
         // Is the same week day
-        isSameDay(o.date, rootState.now) &&
+        isSameDay(o.date, from) &&
         // Hasn't started yet
-        isAfter(o.end, rootState.now)
+        isAfter(o.end, from)
     )
     // Make sure the events are sorted
     courses = getters.orderCourses(courses)
-    // Get the soonest courses or null
-    return courses
+    // Get the soonest courses or an empty array
+    return courses || []
   },
-  nextCoursesOf: (state, getters, rootState, rootGetters) => (value, what) => {
-    const nextCourses = getters.nextCourses
+  nextCoursesOf: (state, getters, rootState, rootGetters) => (value, what = 'subject') => {
+    const nextCourses = getters.nextCourses()
     if (!nextCourses.length) return null
-    switch (what) {
-      case "subject":
-        return nextCourses.filter((o) => o.subject.uuid === value)
-
-      default:
-        return null
+    if (what === 'subject') {
+      return nextCourses.filter((o) => o.subject.uuid === value)
     }
+    return nextCourses.filter((o) => o[what] === value)
   },
   tomorrowCourses: (state, getters, rootState, rootGetters) =>
     getters.coursesIn(startOfDay(rootState.now), endOfDay(rootState.now)),
+  upcomingCourse: (state, getters, rootState) =>
+    getters.nextCourses()[0],
+  nextCourseOf: (state, getters) => (value, what = 'subject') =>
+    getters.nextCoursesOf(value, what)[0]
 }
 
 export const mutations = {

@@ -4,6 +4,8 @@ button.BadgeSubject(:style="{backgroundColor: color, color: textColor}" :title="
 
 <script>
 import tinycolor from "tinycolor2"
+import { mapGetters } from 'vuex'
+
 export default {
   name: "BadgeSubject",
   props: {
@@ -20,14 +22,12 @@ export default {
       default() {
         return this.abbreviation === "..."
           ? "Choisissez une matière..."
-      },
           : this.abbreviation
+      },
     },
   },
     computed: {
-        ...mapGetters({
-            textColor
-        })
+        ...mapGetters(['textColor'])
     }
 }
 </script>

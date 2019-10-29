@@ -107,9 +107,11 @@ export const getters = {
   all: (state, getters) => state.settings,
   one: (state, getters) => (propval, prop = "key") =>
     state.settings.find((o) => o[prop] === propval) || null,
-  value: (state, getters) => (propval, prop = "key") => {
+  value: (state, getters) => (propval, fallback = null, prop = "key") => {
     const setting = getters.one(propval, prop)
     if (setting === null)
+      if (fallback !== null) return fallback
+      else
       throw new Error(
         `No setting with ${prop}=${propval}. Available ${prop}s: ${getters.all.map(
           (o) => o[prop]
@@ -192,7 +194,7 @@ export const actions = {
       return null
     }
   },
-  async loadSettings({ commit, state, dispatch }) {
+  async load({ commit, state, dispatch }) {
     /* Computes the settings that should be used (state.settings)
      * from definitions and 'raw' settings returned directly by the API in fetchSettings
      */
@@ -200,7 +202,7 @@ export const actions = {
     const settings = (await dispatch("fetchSettings")) || []
     commit("SET", { definitions, settings })
   },
-  async postSetting({ commit }, setting) {
+  async post({ commit }, setting) {
     try {
       const { data } = await this.$axios.post("/settings/", setting)
       if (data) commit("ADD", data)
@@ -214,7 +216,7 @@ export const actions = {
       }
     }
   },
-  async patchSetting({ commit }, uuid, modifications) {
+  async patch({ commit }, uuid, modifications) {
     try {
       const { data } = await this.$axios.patch(
         `/settings/${uuid}`,
@@ -231,7 +233,7 @@ export const actions = {
       }
     }
   },
-  async deleteSetting({ commit }, uuid) {
+  async delete({ commit }, uuid) {
     try {
       const { data } = await this.$axios.delete(`/settings/${uuid}`)
       if (data) commit("DEL", uuid)

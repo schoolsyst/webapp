@@ -30,7 +30,9 @@ export default {
       default: "outlined",
     },
     name: String,
-    value: String,
+    value: {
+      default: ''
+    },
     placeholder: String,
     type: {
       type: String,

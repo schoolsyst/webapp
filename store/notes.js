@@ -5,7 +5,6 @@ import { getMutations } from "./index"
 
 export const state = () => ({
   notes: [],
-  learndatas: [],
 })
 
 const parseObjectDates = (object) => ({
@@ -18,12 +17,12 @@ const parseObjectDates = (object) => ({
 export const getters = {
   all: (state, getters) => state.notes,
   one: (state, getters) => (value, prop = "uuid") =>
-    getters.notes.find((o) => o[prop] === value) || null,
+    getters.find((o) => o[prop] === value) || null,
   of: (state, getters) => (value, what = "subject") => {
     if (what === "subject") {
-      return getters.notes.all.filter((o) => o.subject.uuid === value)
+      return getters.all.filter((o) => o.subject.uuid === value)
     } else {
-      return getters.notes.all.filter((o) => o[what] === value)
+      return getters.all.filter((o) => o[what] === value)
     }
   },
   currentSubject: (state, getters, rootState, rootGetters) => {
@@ -69,7 +68,7 @@ export const mutations = {
 }
 
 export const actions = {
-  async loadNotes({ commit }) {
+  async load({ commit }) {
     try {
       const { data } = await this.$axios.get(`/notes/`)
       // console.log(`[from API] GET /notes/: OK`)
@@ -83,66 +82,7 @@ export const actions = {
       }
     }
   },
-  async loadLearndatas({ commit }) {
-    try {
-      const { data } = await this.$axios.get("/learndata/")
-      // console.log("[from API] GET /learndata/: OK")
-      if (data) commit("SET", data)
-    } catch (error) {
-      // console.error("[from API] GET /learndatas/: Error")
-      try {
-        // console.error(error.response.data)
-      } catch (_) {
-        // console.error(error)
-      }
-    }
-  },
-  async postLearndata({ commit }, learndata) {
-    try {
-      const { data } = await this.$axios.post("/learndata/", learndata)
-      if (data) commit("ADD", data)
-      // console.log("[from API] POST /learndata/: OK")
-    } catch (error) {
-      // console.error("[from API] POST /learndata/: Error")
-      try {
-        // console.error(error.response.data)
-      } catch (_) {
-        // console.error(error)
-      }
-    }
-  },
-  async patchLearndata({ commit }, uuid, modifications) {
-    try {
-      const { data } = await this.$axios.patch(
-        `/learndata/${uuid}/`,
-        modifications
-      )
-      if (data) commit("PATCH", data)
-      // console.log("[from API] PATCH /learndata/: OK")
-    } catch (error) {
-      // console.error("[from API] PATCH /learndata/: Error")
-      try {
-        // console.error(error.response.data)
-      } catch (_) {
-        // console.error(error)
-      }
-    }
-  },
-  async deleteLearndata({ commit }, uuid) {
-    try {
-      await this.$axios.delete(`/learndata/${uuid}/`)
-      commit("DEL", uuid)
-      // console.log(`[from API] DELETE /learndata/${uuid}/: OK`)
-    } catch (error) {
-      // console.error(`[from API] DELETE /learndata/${uuid}/: Error`)
-      try {
-        // console.error(error.response.data)
-      } catch (_) {
-        // console.error(error)
-      }
-    }
-  },
-  async postNote({ commit }, note) {
+  async post({ commit }, note) {
     try {
       const { data } = await this.$axios.post("/notes/", note)
       // console.log("[from API] POST /notes/: OK")
@@ -156,7 +96,7 @@ export const actions = {
       }
     }
   },
-  async patchNote({ commit, getters }, uuid, modifications) {
+  async patch({ commit, getters }, uuid, modifications) {
     try {
       const { data } = await this.$axios.patch(`/notes/${uuid}`, {
         ...getters.one(uuid),
@@ -174,7 +114,7 @@ export const actions = {
       }
     }
   },
-  async deleteNote({ commit, getters }, uuid) {
+  async delete({ commit, getters }, uuid) {
     try {
       await this.$axios.delete(`/notes/${uuid}/`)
       commit("DEL", uuid)
@@ -188,7 +128,7 @@ export const actions = {
       }
     }
   },
-  async saveNote(
+  async save(
     { dispatch, getters, rootState },
     uuid,
     content = null,
@@ -212,7 +152,7 @@ export const actions = {
       // console.error(`[macro-action] saveNote error: ${error}`)
     }
   },
-  initNotesSearch({ getters }, indexes = ["name", "subject.name"]) {
+  initSearch({ getters }, indexes = ["name", "subject.name"]) {
     // Init search
     const search = new JsSearch.Search("uuid")
     // Add indexes
@@ -222,7 +162,7 @@ export const actions = {
     // Return the object to search with
     return search
   },
-  searchNotes({ getters }, searcher, query, apply = null) {
+  search({ getters }, searcher, query, apply = null) {
     /* Uses the object returned by `initNotesSearch` to search queries against.
      * @param searcher: The JsSearch.search object
      * @param query: the string to search the dataset against

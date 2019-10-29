@@ -51,7 +51,7 @@ import ArrayButtonReg from "~/components/ArrayButtonReg.vue"
 import ButtonRegPrimary from "~/components/ButtonRegPrimary.vue"
 import ButtonRegSecondary from "~/components/ButtonRegSecondary.vue"
 import PickerSubject from "~/components/PickerSubject.vue"
-import { mapGetters } from "vuex"
+import { mapGetters, mapState } from "vuex"
 
 export default {
   name: "ModalAddExercise",
@@ -69,12 +69,6 @@ export default {
   props: {
     subject: {
       type: Object,
-      default: {
-        color: "black",
-        abbreviation: "...",
-        name: "Veuillez sélectionner une matière…",
-        _isPlaceholder: true,
-      },
     },
   },
   data() {
@@ -84,6 +78,7 @@ export default {
       mutRoom: "",
       exerciseName: "",
       notes: "",
+      ...mapState('subjects', ['placeholder'])
     }
   },
   computed: {
@@ -92,6 +87,7 @@ export default {
       subjectBySlug: "subjectBySlug",
     }),
     nextCourse() {
+      if (!this.mutSubject) return ""
       if ("_isPlaceholder" in this.mutSubject) return ""
       let nextCourse = this.nextCourseOf(this.mutSubject.slug)
       if (nextCourse) return nextCourse

@@ -113,12 +113,14 @@ export default {
   computed: {
     ...mapGetters({
       nextCourseOf: "schedule/nextCourseOf",
-      setting: "schedule/setting",
-      notesOf: "notes/notesOf",
+      setting: "settings/one",
+      settingValue: 'settings/value',
+      notesOf: "notes/of",
       allNotes: "notes/allNotes",
       subjectBySlug: "subjectBySlug",
     }),
     nextCourse() {
+      if (!this.mutSubject) return ""
       if ("_isPlaceholder" in this.mutSubject) return ""
       let nextCourse = this.nextCourseOf(this.mutSubject.slug)
       if (nextCourse) return nextCourse
@@ -141,16 +143,17 @@ export default {
       return ""
     },
     defaultMax() {
-      let val = this.setting("grade_max").value
+      let val = this.settingValue("grade_max", 0)
       this.mutMax = val
       return val
     },
     defaultWeight() {
-      let val = this.setting("grade_weight").value
+      let val = this.settingValue("grade_weight", 0)
       this.mutWeight = val
       return val
     },
     notes() {
+      if (!this.mutSubject) return []
       let notes = this.notesOf(this.mutSubject.slug)
       return notes
     },

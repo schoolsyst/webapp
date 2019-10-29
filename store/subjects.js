@@ -2,6 +2,12 @@ import { getMutations } from "./index"
 
 export const state = () => ({
   subjects: [],
+  placeholder: {
+    color: "black",
+    abbreviation: "...",
+    name: "Veuillez sélectionner une matière…",
+    _isPlaceholder: true,
+  }
 })
 
 export const getters = {

@@ -1,9 +1,9 @@
 import { firstBy } from "thenby";
 import groupBy from "lodash.groupby";
-import { isSameWeek, differenceInWeeks, isSameDay, parseISO } from "date-fns";
+import { isSameWeek, differenceInWeeks, isBefore, parseISO } from "date-fns";
 
 export const state = () => ({
-	homework: []
+	homeworks: []
 });
 
 const parseHomeworkDates = homework => ({
@@ -12,9 +12,9 @@ const parseHomeworkDates = homework => ({
 })
 
 export const getters = {
-	all: (state, getters) => getters.order(state.homework),
+	all: (state, getters) => getters.order(state.homeworks),
 	one: (state, getters) => (value, prop = "uuid") =>
-		getters.homeworks.find(o => o[prop] === value) || null,
+		getters.all.find(o => o[prop] === value) || null,
 	nextWeek: (state, getters, rootState) =>
 		getters.all.filter(o => differenceInWeeks(o.due, rootState.now) == 1),
 	currentWeek: (state, getters, rootState) =>
@@ -27,7 +27,7 @@ export const getters = {
 		getters.currentOrNextWeek.filter(o => o.progress != 1),
 	order: (state, getters, rootState) => homeworks =>
 		[...homeworks].sort(
-			firstBy((o1, o2) => o1.due.isBefore(o2.due))
+			firstBy((o1, o2) => isBefore(o1.due, o2.due))
 				.thenBy(o => o.subject.weight)
 				.thenBy("uuid")
 		),
@@ -43,9 +43,10 @@ export const getters = {
 			flat.push({
 				due,
 				homeworks,
-				shown: _needToShowGroup({ due, homeworks })
+				shown: getters._needToShowGroup({ due, homeworks })
 			})
 		}
+		return flat
 	},
 	_needToShowGroup: (state, getters, rootState, rootGetters) => group => {
 		/* Takes a group object ({due, homeworks}) and decides whether this
@@ -76,25 +77,24 @@ export const getters = {
   grouped: (state, getters, rootState) => getters.group(getters.all),
   only: (state, getters, rootState) => (what, homeworks = null) => {
     homeworks = homeworks || getters.all
-    let isTest = ["test", "tests"].includes(what);
-    homeworks.filter(o => o.is_test === isTest);
+    return homeworks.filter(o => o.type === what.toUpperCase());
   },
   exercises: (state, getters, rootState) =>
-    getters.only(getters.all, "exercises"),
-  tests: (state, getters, rootState) => getters.only(getters.all, "tests"),
+    getters.only("exercises", getters.all),
+  tests: (state, getters, rootState) => getters.only("tests", getters.all),
   counts: (state, getters, rootState) => ({
-    exercises: getters.only(getters.pending, "exercises"),
-    tests: getters.only(getters.currentOrNextWeek, "tests"),
+    exercises: getters.only("exercises", getters.pending),
+    tests: getters.only("tests", getters.currentOrNextWeek),
   }),
 }
 
 export const mutations = {
-  SET_HOMEWORKS: (state, homeworks) =>
+  SET: (state, homeworks) =>
     state.homeworks = homeworks.map(o => parseHomeworkDates(o)),
-  ADD_HOMEWORK: (state, homework) => state.homeworks.push(subject),
-  DEL_HOMEWORK: (state, uuid) =>
+  ADD: (state, homework) => state.homeworks.push(subject),
+  DEL: (state, uuid) =>
     (state.homeworks = state.homeworks.filter(o => o.uuid !== uuid)),
-  PATCH_HOMEWORK: (state, uuid, modifications) => {
+  PATCH: (state, uuid, modifications) => {
     // Get the requested homework's index in the state array
 		let idx = state.homeworks.map(o => o.uuid).indexOf(uuid);
 		// Apply modifications
@@ -103,11 +103,11 @@ export const mutations = {
 };
 
 export const actions = {
-	async loadHomework({ commit }) {
+	async load({ commit }) {
 		try {
 			const { data } = await this.$axios.get(`/homework/`);
 			console.log(`[from API] GET /homework/: OK`);
-			if (data) commit("SET_HOMEWORKS", data);
+			if (data) commit("SET", data);
 		} catch (error) {
 			console.error(`[from API] GET /homework/: Error`);
 			try {
@@ -118,17 +118,17 @@ export const actions = {
 		}
 	},
 
-	async postHomework({ commit }, homework) {
+	async post({ commit }, homework) {
 		try {
 			const { data } = await this.$axios.post(`/homework/`, homework);
-			if (data) commit("ADD_HOMEWORK", homework);
+			if (data) commit("ADD", homework);
 		} catch (error) {}
 	},
 
-	async deleteHomework({ commit }, uuid) {
+	async delete({ commit }, uuid) {
 		try {
 			const { data } = await this.$axios.delete(`/homeworks/${uuid}`);
-			if (data) commit("DEL_HOMEWORK", uuid);
+			if (data) commit("DEL", uuid);
 			console.log(`[from API] DELETE /homeworks/${uuid}: OK`);
 		} catch (error) {
 			console.error(`[from API] DELETE /homeworks/${uuid}: Error`);
@@ -140,13 +140,13 @@ export const actions = {
 		}
 	},
 
-	async patchHomework({ commit }, uuid, modifications) {
+	async patch({ commit }, uuid, modifications) {
 		try {
 			const { data } = await this.$axios.patch(
 				`/homeworks/${uuid}`,
 				modifications
 			);
-			if (data) commit("PATCH_HOMEWORK", uuid, data);
+			if (data) commit("PATCH", uuid, data);
 			console.log(`[from API] PATCH /homeworks/${uuid}: OK`);
 		} catch (error) {
 			console.error(`[from API] PATCH /homeworks/${uuid}: Error`);

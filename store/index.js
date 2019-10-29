@@ -1,5 +1,6 @@
 import { toDate } from "date-fns"
 import tinycolor from "tinycolor2"
+import constantCase from 'constant-case'
 
 export const state = () => ({
   now: toDate(Date.now()), // For time-dependent getters.
@@ -67,22 +68,25 @@ export const getMutations = (
 
   const mutations = {}
   const WHAT = pure ? "" : "_" + constantCase(what)
+  const whats = what + 's'
 
   if (verbs.includes("set"))
     mutations[`SET${WHAT}${pure ? "" : "S"}`] = (state, items) =>
-      (state[what] = items.map(mapWith))
+      (state[whats] = items.map(mapWith))
   if (verbs.includes("add"))
-    mutations[`ADD${WHAT}`] = (state, item) => state[what].push(mapWith(item))
+    mutations[`ADD${WHAT}`] = (state, item) => state[whats].push(mapWith(item))
   if (verbs.includes("del"))
     mutations[`DEL${WHAT}`] = (state, uuid) =>
-      (state[what] = state[what].filter((o) => o.uuid !== uuid))
+      (state[whats] = state[whats].filter((o) => o.uuid !== uuid))
   if (verbs.includes("patch"))
     mutations[`PATCH${WHAT}`] = (state, uuid, modifications) => {
       // Apply mapWith to modifications
       modifications = modifications.map(mapWith)
       // Get the requested item's index in the state array
-      let idx = state[what].map((o) => o.uuid).indexOf(uuid)
+      let idx = state[whats].map((o) => o.uuid).indexOf(uuid)
       // Apply modifications
-      Object.assign(state[what][idx], modifications)
+      Object.assign(state[whats][idx], modifications)
     }
+  
+    return mutations
 }
