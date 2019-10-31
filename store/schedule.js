@@ -10,6 +10,7 @@
 // Use moment-range
 import { firstBy } from "thenby"
 import {
+  parseISO,
   startOfWeek,
   endOfWeek,
   getISODay,
@@ -33,21 +34,13 @@ export const state = () => ({
   mutations: [],
 })
 
-const parseTime = (timeStr, date) => {
-  if (typeof timeStr !== "string") return timeStr
-  const [h, m, s] = timeStr.split(":").map((o) => parseInt(o))
-  setHours(date, h)
-  setMinutes(date, m)
-  setSeconds(date, s)
+const _mergeDateAndTime = (date, time) => {
+  const [hours, minutes, seconds] = time.split(':')
+  date = setHours(date, hours)
+  date = setMinutes(date, minutes)
+  date = setSeconds(date, seconds)
   return date
 }
-
-const parseEventDates = (event) => ({
-  ...event,
-  // I created a custom "parseTime" function because date-fns' parse() yields Invalid Date
-  start: parseTime(event.start, event.date),
-  end: parseTime(event.end, event.date),
-})
 
 export const getters = {
   events: (state, getters) => state.events,
@@ -57,7 +50,7 @@ export const getters = {
   mutation: (state, getters) => (value, prop = "uuid") =>
     getters.mutations.find((o) => o[prop] === value) || null,
   course: (state, getters) => (value, prop = "uuid") =>
-    getters.courses.find((o) => o[prop] === value) || null,
+    getters.currentWeekCourses.find((o) => o[prop] === value) || null,
   trimester: (state, getters, rootState, rootGetters) => (idx) => {
     /*
      *  Returns an Interval to test dates against using isWithinInterval(date, Interval)
@@ -187,13 +180,15 @@ export const getters = {
         courses.push({
           ...event,
           ...mutation,
-          date: day,
+          start: _mergeDateAndTime(day, event.start),
+          end: _mergeDateAndTime(day, event.end),
+          placeholder: false // See getters.courseOrPlaceholder
         })
       })
     }
     return courses
   },
-  courses: (state, getters, rootState) =>
+  currentWeekCourses: (state, getters, rootState) =>
     /* Gets courses in the current week.
      */
     getters.coursesIn(startOfWeek(rootState.now), endOfWeek(rootState.now)),
@@ -208,26 +203,39 @@ export const getters = {
     const other = base === "Q1" ? "Q2" : "Q1"
     return getISOWeek(date) % 2 === 0 && startingWeekIsEven ? base : other
   },
+  courseOrPlaceholder: (state, getters, rootState, rootGetters) => (course) => {
+    /* If the given course is null, return a placeholder course.
+      Useful in some cases where we want to access a course's subject
+      no matter if it exists or not (eg. current courses's subject, fall back to placeholder)
+    */
+    console.log(course)
+    if (course) return course
+
+    return {
+      subject: rootGetters['subjects/placeholder'],
+      placeholder: true
+    }
+  },
   currentCourse: (state, getters, rootState, rootGetters) => {
-    const course = getters.courses.find(
+    const course = getters.currentWeekCourses.find(
       (o) =>
-        // Is the same week day
-        isSameDay(o.date, rootState.now) &&
+        // Is the same day
+        isSameDay(o.start, rootState.now) &&
         // Has started before now
         isBefore(o.start, rootState.now) &&
         // Hasn't finished yet or finished right this (mili)second
         isAfter(o.end, rootState.now)
     )
-    return course === undefined ? null : course
+    return course || null
   },
   nextCourses: (state, getters, rootState, rootGetters) => (from = null) => {
     from = from || rootState.now
-    let courses = getters.courses.filter(
+    let courses = getters.currentWeekCourses.filter(
       (o) =>
         // Is the same week day
-        isSameDay(o.date, from) &&
+        isSameDay(o.start, from) &&
         // Hasn't started yet
-        isAfter(o.end, from)
+        isAfter(o.start, from)
     )
     // Make sure the events are sorted
     courses = getters.orderCourses(courses)
@@ -236,7 +244,7 @@ export const getters = {
   },
   nextCoursesOf: (state, getters, rootState, rootGetters) => (value, what = 'subject') => {
     const nextCourses = getters.nextCourses()
-    if (!nextCourses.length) return null
+    if (!nextCourses.length) return []
     if (what === 'subject') {
       return nextCourses.filter((o) => o.subject.uuid === value)
     }
@@ -251,7 +259,7 @@ export const getters = {
 }
 
 export const mutations = {
-  ...getMutations("event", parseEventDates, false),
+  ...getMutations("event", (o) => o, false),
   ...getMutations("mutation", (o) => o, false),
 }
 
@@ -260,7 +268,7 @@ export const actions = {
     try {
       const { data } = await this.$axios.get(`/events/`)
       // console.log(`[from API] GET /events/: OK`)
-      if (data) commit("SET_EVENTS", data.map((o) => parseEventDates(o)))
+      if (data) commit("SET_EVENTS", data)
     } catch (error) {
       // console.error(`[from API] GET /events/: Error`)
       try {

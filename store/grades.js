@@ -15,9 +15,10 @@ export const getters = {
   all: (state, getters) => getters.order(state.grades),
   one: (state, getters) => (value, prop = "uuid") =>
     getters.all.find((o) => o[prop] === value) || null,
-  of: (state, getters, rootState, rootGetters) => (value, what) => {
+  of: (state, getters, rootState, rootGetters) => (value, what = 'trimester') => {
     switch (what) {
       case "trimester":
+        if (![1, 2, 3].includes(value)) return []
         const trimester = rootGetters["schedule/trimester"](value)
         if (trimester === null) return []
         // Gets all the grades that have been added within the `value`th trimester
@@ -37,10 +38,9 @@ export const getters = {
     unit = unit === 100 ? "%" : `/${unit}`
     return { value, unit }
   },
-  mean: (state, getters) => (grades) => {
+  mean: (state, getters) => (grades, debug=false) => {
     grades = grades.filter((o) => o.obtained !== null)
     if (!grades.length) return null
-    console.log(grades)
     const sumOfWeights = grades
       .map((o) => o.weight * o.subject.weight)
       .reduce((acc, cur) => acc + cur)
@@ -57,10 +57,11 @@ export const getters = {
      * Effectively represents the relative evolution of the mean caused by the latest grade.
      */
     // Just to be sure, sort the grades
-    grades = getters.order(grades)
+    // Also remove notes that have no `obtained` score (see `const oldMean = `) for why
+    grades = getters.order(grades).filter((o) => !!o.obtained)
     // Get the current mean (w/ all the grades given)
     const newMean = getters.mean(grades)
-    // Get the mean w/o the latest grade
+    // Get the mean w/o the latest grade *that has been obtained*
     //                                     ↓ we use .slice, .pop would mutate *the state*, which… no.
     const oldMean = getters.mean(grades.slice(0, -1))
     // Classic relative gap formula
@@ -69,11 +70,15 @@ export const getters = {
   currentTrimester: (state, getters, rootState, rootGetters) => {
     return getters.of(rootGetters["schedule/currentTrimester"], "trimester")
   },
-  currentTrimesterMean: (state, getters, rootState, rootGetters) => {
-    getters.mean(getters.currentTrimester)
-  },
+  currentTrimesterMean: (state, getters, rootState, rootGetters) =>
+    getters.mean(getters.currentTrimester),
   currentTrimesterEvolution: (state, getters, rootState, rootGetters) =>
     getters.evolution(getters.currentTrimester),
+  display: (state, getters, rootState, rootGetters) => (grade, unit=null, precision=2) => {
+    if (grade === null) return '—'
+    unit = unit || rootGetters['settings/value']('grade_max')
+    return (grade * unit).toFixed(precision).replace('.', ',')
+  }
 }
 
 export const mutations = {

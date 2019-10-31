@@ -24,20 +24,12 @@ export default {
 			required: true
 		},
 		start: {
-			// HH:MM
-			validator: function(value) {
-				return value.match(/\d+:\d+/);
-			},
 			required: true
 		},
 		room: {
 			type: String,
 			required: true
 		},
-		start: {
-			type: String,
-			required: true
-		}
 	},
 
 	data() {

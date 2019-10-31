@@ -42,21 +42,21 @@
 						HeadingSub devoirs du cours suivant
 						CardHomework(v-bind='homework', v-for='(homework, i) in upcomingCourse.homework', :key='i')
 					CardEmpty(v-else) 👌
-				CardEmpty(v-else) Plus que {{ timeTilEndOfCurrentCourse }} !
+				CardEmpty(v-else) Fin de la journée {{ formatDistance(currentCourse.end, $store.state.now, { addSuffix: true, locale: fr }) }} !
 			template(v-else)
 				HeadingSub(has-inline-buttons)
-					| Devoirs de la semaine
+					| Devoirs à venir
 					//FIXME: Sort by date due
 					ArrayButtonFlat(inline)
 						li: ButtonFlat(icon="arrow_forward"): nuxt-link.goto-homework(to="/homework") Voir tout
 				ArrayItemExercise
-					ItemExercise(v-for="exercise in exercises", :key="exercise.uuid" v-bind="exercise")
+					ItemExercise(v-for="exercise in onlyHomeworkOfType('exercises', currentOrNextWeekHomework)", :key="exercise.uuid" v-bind="exercise")
 		MainGroupRight
 			HeadingSub moyenne
-			BigNumber(:value="currentTrimesterMean" :unit="`/${settingValue('grade_max')}`" :fixed="2")
+			BigNumber(:value="currentTrimesterMean * settingValue('grade_max')" :unit="`/${settingValue('grade_max')}`" :fixed="2")
 			HeadingSub Évolution
-			p La moyenne était de {{meanBeforeLastGrade || '—'}}/{{settingValue('grade_max')}} avant la dernière note
-			BigNumber(:value="currentTrimesterEvolution" show-sign :fixed="2", :unit="`% (${(mean.value - meanBeforeLastGrade > 0) ? '+' : ''}${Math.round(mean.value - meanBeforeLastGrade) || '—'})`")
+			p La moyenne était de {{display(meanBeforeLastGrade)}}/{{settingValue('grade_max')}} avant la dernière note
+			BigNumber(:value="currentTrimesterEvolution * 100" show-sign :fixed="2", unit="%")
 	</template>
 
 <script>
@@ -64,6 +64,8 @@ import axios from "axios"
 import moment from "moment"
 import tinycolor from "tinycolor2"
 import groupBy from "lodash.groupby"
+import { formatDistance } from 'date-fns'
+import { fr } from 'date-fns/locale'
 import { mapState, mapGetters, mapMutations, mapActions } from "vuex"
 //-------------------------------------------------------
 import TheHeading from "~/components/TheHeading.vue"
@@ -107,13 +109,14 @@ export default {
 		moment.locale("fr")
 		return {
 			addExerciseModal: false,
-			now: moment(),
+			now: moment(this.$store.state.now),
+			fr
 		}
 	},
 
 	head() {
 		return {
-			title: `${this.pageTitleCounter}Schoolsyst`,
+			title: `${this.pageTitleCounter} | Schoolsyst`,
 		}
 	},
 
@@ -123,20 +126,20 @@ export default {
 			'currentTrimesterMean',
 			'mean',
 			'settingValue',
-    ]),
-    ...mapGetters('homework', [
-      'exercises'
+			'display'
     ]),
     ...mapGetters({
       settingValue: 'settings/value',
-      grades: 'grades/all',
+			grades: 'grades/currentTrimester',
+			onlyHomeworkOfType: 'homework/only',
+			currentOrNextWeekHomework: 'homework/currentOrNextWeek'
     }),
     ...mapGetters('schedule', [
       'upcomingCourse',
       'currentCourse',
     ]),
 		meanBeforeLastGrade() {
-			this.mean(this.grades.slice(0, -1))
+			return this.mean(this.grades.filter((o) => !!o.obtained).slice(0, -1))
 		},
 		evolutionVerb() {
 			if (this.evolution > 0)
@@ -150,6 +153,7 @@ export default {
 	},
 
 	methods: {
+		formatDistance,
 		openCurrentSubjectLatestNote() {
 			if (!this.currentCourse) return
 

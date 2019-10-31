@@ -1,14 +1,14 @@
 <template lang="pug">
 
 <div class="container">
-  ModalAddNote(:subject="currentCourseSubject", :newNoteName="newNoteName")
+  ModalAddNote(:subject="courseOrPlaceholder(currentCourse).subject", :newNoteName="newNoteName")
 
   TheHeading Prises de notes
 
   ButtonFloating(icon="add", open-modal="add-note", open-at="self").new-note-fab Nouvelle note...
   MainGroup(full-size)
     template(v-if="currentCourse")
-      HeadingSub {{currentCourse.subject.name}}
+      HeadingSub {{courseOrPlaceholder(currentCourse).subject}}
       ArrayCardNoteFile
         CardNoteAdd
         CardNoteFile(v-for="(note, i) in currentSubjectCards" :key="i" v-bind="note")
@@ -82,15 +82,9 @@ export default {
     CardNoteAdd,
   },
 
-  computed: {
-    ...mapGetters({
-      token: "auth/token",
-    }),
-  },
-
   data() {
     return {
-      // UI DATA
+      // UI Data
       searchText: "",
       sortOptions: [
         { value: "last_modified", name: "Date de modification" },
@@ -99,31 +93,17 @@ export default {
       ],
       sortBy: "last_modified",
       newNoteName: "",
-      // API DATA
+      // API Data
       cards: [],
       fuse: null,
     }
   },
 
-  head() {
-    return {
-      title: `${this.pageTitleCounter}Prises de notes`,
-    }
-  },
-
   computed: {
     ...mapGetters({
-      fCurrentCourse: "schedule/currentCourse",
-      notes: "notes/allNotes",
-      fCurrentCourseSubject: "schedule/currentCourseSubject",
-      pageTitleCounter: "homework/pageTitleCounter",
+      currentCourse: "schedule/currentCourse",
+      notes: "notes/all",
     }),
-    currentCourse() {
-      return this.fCurrentCourse(this.now)
-    },
-    currentCourseSubject() {
-      return this.fCurrentCourseSubject(this.now)
-    },
     allCards() {
       let notes = this.notes
       if (this.currentCourse) {
@@ -164,6 +144,7 @@ export default {
   },
 
   methods: {
+    ...mapGetters('schedule', ['courseOrPlaceholder']),
     notesToCards(notes) {
       let cards = []
       for (const note of notes) {
@@ -179,7 +160,7 @@ export default {
         case "last_modified":
         case "created":
           sortFunc = (a, b) =>
-            moment(a[this.sortBy]).isAfter(b._last_modified) ? -1 : 1
+            moment(a[this.sortBy]).isAfter(b[this.sortBy]) ? -1 : 1
           break
         case "subject":
           sortFunc = (a, b) => (a.subject.slug === b.subject.slug ? -1 : 1)

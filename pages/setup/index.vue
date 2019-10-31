@@ -154,7 +154,7 @@ export default {
   computed: {
     ...mapGetters({
       setting: "setting",
-      subjects: "subjects",
+      subjects: "subjects/all",
     }),
     settingsHere() {
       return [

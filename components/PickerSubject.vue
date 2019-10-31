@@ -37,7 +37,7 @@ export default {
   },
   computed: {
     ...mapGetters({
-      subjects: "subjects",
+      subjects: "subjects/all",
     }),
   },
 }

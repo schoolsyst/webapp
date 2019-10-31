@@ -2,21 +2,25 @@
     //FIXME: does not update valueDisp when it has been modified by hand
     span.BigNumber
         span.sign(
-            v-if="sign.trim()"  
+            v-if="showSign"  
             :contenteditable="writables.includes('sign' )"
             @input="onInput($event)"
             @blur="onBlur()"
             :style="{color: signColor}"
         )
-            i.material-icons(v-if="sign === '+'") add
-            i.material-icons(v-else-if="sign === '-'") remove
-            i.material-icons(v-else-if="sign === '±'") 
+            i.material-icons(v-if="value > 0") trending_up
+            i.material-icons(v-else-if="value < 0") trending_down
+            i.material-icons(v-else-if="value === 0") trending_flat
             span(v-else) {{sign}}
         span.value(
             :contenteditable="writables.includes('value')"
             @input="onInput($event)"
             @blur="onBlur()"
-        ) {{valueDisp}}
+        ) {{display()(Math.abs(value), 1)}}
+        //- dunno why I need `funcName()(args...)` but hey if I call 
+                                      ^^
+            it normally it spits out the function's source code 
+            as a string (crazy right? I love JS.)
         span.unit(
             v-if="unit.trim()"  
             :contenteditable="writables.includes('unit' )"
@@ -27,6 +31,7 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
 export default {
   name: "BigNumber",
 
@@ -78,24 +83,10 @@ export default {
           break
       }
     },
-    valueDisp() {
-      let valIsNull = this.value === null
-      let val = Number(this.value)
-      if (this.fixed !== null) {
-        val = val.toFixed(this.fixed)
-      }
-      if (this.showSign) {
-        val = Math.abs(val)
-      }
-      // if it wasn't able to convert to a number, or the value is null/undefined
-      let isUndef =
-        val === "NaN" || this.value === null || isNaN(this.value) || valIsNull
-
-      return isUndef ? "—" : val
-    },
   },
 
   methods: {
+    ...mapGetters('grades', ['display']),
     onInput($event) {
       $event.target.innerText = $event.target.innerText.replace(/—/, () => "")
       if (!$event.target.innerText.length || isNaN($event.target.innerText)) {
@@ -128,14 +119,14 @@ export default {
 input.value
     max-width: 150px
 
-.value
-    font-family: Roboto Mono, sans-serif
-
 .value, .sign
     font-size: 96px
 
 .sign .material-icons
     font-size: 72px
+
+.sign
+    margin-right: 10px
 
 .unit 
     font-weight: 500

@@ -19,6 +19,7 @@ const parsedValue = (
    * @params {...} : different properties of a SettingDefinition object.
    */
   let parsed
+  if (value === null) return null
 
   if (multiple) {
     // Handle multiple values

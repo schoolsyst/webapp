@@ -101,7 +101,7 @@ export default {
 
   computed: {
     ...mapGetters({
-      subjects: "subjects",
+      subjects: "subjects/all",
       currentCourseSubject: "schedule/currentCourseSubject",
       allExercises: "homework/allExercises",
       uncompleteExercises: "homework/uncompleteExercises",

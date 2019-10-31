@@ -603,15 +603,13 @@ export default {
       this.content = newContent
     },
   },
-
   computed: {
+    ...mapGetters('schedule', ['currentCourse']),
     ...mapGetters({
-      note: "notes/noteByUUID",
-      currentCourse: "schedule/currentCourse",
-      fCurrentCourseSubject: "schedule/currentCourseSubject"
+      note: 'notes/one'
     }),
     timeRemaining() {
-      let currentCourse = this.currentCourse(this.now);
+      let currentCourse = this.currentCourse;
       if (!currentCourse) return null;
       let seconds = Math.abs(
         moment(currentCourse.end, "HH:mm").diff(moment(), "seconds")
@@ -621,7 +619,7 @@ export default {
         .seconds(seconds);
     },
     currentCourseSubject() {
-      return this.fCurrentCourseSubject(this.now);
+      return this.courseOrPlaceholder(this.currentCourse).subject
     },
     viewModeIcon() {
       return {
@@ -633,6 +631,7 @@ export default {
   },
 
   methods: {
+    ...mapGetters('schedule', ['courseOrPlaceholder']),
     toggleViewMode() {
       const modes = ["both", "rendered", "source"];
       const clampIdx = idx => (idx < 0 ? 2 : idx > 2 ? 0 : idx);

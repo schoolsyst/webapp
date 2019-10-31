@@ -77,7 +77,7 @@ export const getters = {
   grouped: (state, getters, rootState) => getters.group(getters.all),
   only: (state, getters, rootState) => (what, homeworks = null) => {
     homeworks = homeworks || getters.all
-    return homeworks.filter(o => o.type === what.toUpperCase());
+    return homeworks.filter(o => o.type === what.replace(/(.+)s$/, ($0, $1) => $1).toUpperCase());
   },
   exercises: (state, getters, rootState) =>
     getters.only("exercises", getters.all),
