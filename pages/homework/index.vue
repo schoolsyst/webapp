@@ -33,7 +33,7 @@
         li
           input(type="checkbox", v-model="showCompleted")#field_show-completed
           label(for="field_show-completed") Voir les exercices terminés
-      ArrayGroupedHomework(:groups="groupedHomework", show="exercises", :show-completed="showCompleted")
+      ArrayGroupedHomework
     MainGroupRight
       HeadingAlt(has-inline-buttons) Contrôles
         ButtonFlat(open-modal="add-test", open-at="center" icon="add" inline large-icon)
@@ -43,7 +43,7 @@
           icon="sort"
           v-model="sortBy"
         )
-      ArrayGroupedHomework(:groups="groupedHomework", show="tests")
+      ArrayGroupedHomework
 
 </template>
 
@@ -87,6 +87,10 @@ export default {
     }
   },
 
+  fetch({store}) {
+    store.dispatch('homework/load')
+  },
+
   data() {
     return {
       sortBy: "due",
@@ -102,14 +106,12 @@ export default {
   computed: {
     ...mapGetters({
       subjects: "subjects/all",
-      currentCourseSubject: "schedule/currentCourseSubject",
-      allExercises: "homework/allExercises",
-      uncompleteExercises: "homework/uncompleteExercises",
-      tests: "homework/dueTests",
-      groupedHomework: "homework/groupedHomework",
-      pendingExercises: "homework/pendingExercises",
-      pageTitleCounter: "homework/pageTitleCounter",
+      currentCourse: "schedule/currentCourse",
+      courseOrPlaceholder: "schedule/courseOrPlaceholder",
     }),
+    currentCourseSubject() {
+      return this.courseOrPlaceholder(this.currentCourse).subject
+    }
   },
 }
 </script>

@@ -103,7 +103,8 @@ export const mutations = {
 };
 
 export const actions = {
-	async load({ commit }) {
+	async load({ commit, state }, force = false) {
+		if (!force && state.homeworks.length) return
 		try {
 			const { data } = await this.$axios.get(`/homework/`);
 			console.log(`[from API] GET /homework/: OK`);

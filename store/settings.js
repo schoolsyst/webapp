@@ -195,10 +195,11 @@ export const actions = {
       return null
     }
   },
-  async load({ commit, state, dispatch }) {
+  async load({ commit, state, dispatch }, force = false) {
     /* Computes the settings that should be used (state.settings)
      * from definitions and 'raw' settings returned directly by the API in fetchSettings
      */
+    if (!force && state.settings.length) return
     const definitions = (await dispatch("fetchDefinitions")) || []
     const settings = (await dispatch("fetchSettings")) || []
     commit("SET", { definitions, settings })

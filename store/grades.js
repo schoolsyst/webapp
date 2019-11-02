@@ -39,15 +39,21 @@ export const getters = {
     return { value, unit }
   },
   mean: (state, getters) => (grades, debug=false) => {
+    let ret
     grades = grades.filter((o) => o.obtained !== null)
-    if (!grades.length) return null
+    if (!grades.length) ret = null
+    else {
     const sumOfWeights = grades
       .map((o) => o.weight * o.subject.weight)
       .reduce((acc, cur) => acc + cur)
     const sumOfGrades = grades
       .map((o) => o.obtained * o.weight * o.subject.weight)
       .reduce((acc, cur) => acc + cur)
-    return sumOfGrades / sumOfWeights
+
+    ret = sumOfGrades / sumOfWeights
+  }
+  console.log(`{${new Date().getMilliseconds()}} ${ret}`)
+  return ret
   },
   evolution: (state, getters) => (grades) => {
     /* Returns a number ∈ [0,1] that represents the relative gap between...
@@ -59,6 +65,7 @@ export const getters = {
     // Just to be sure, sort the grades
     // Also remove notes that have no `obtained` score (see `const oldMean = `) for why
     grades = getters.order(grades).filter((o) => !!o.obtained)
+    if (!grades.length) return null
     // Get the current mean (w/ all the grades given)
     const newMean = getters.mean(grades)
     // Get the mean w/o the latest grade *that has been obtained*
@@ -74,8 +81,9 @@ export const getters = {
     getters.mean(getters.currentTrimester),
   currentTrimesterEvolution: (state, getters, rootState, rootGetters) =>
     getters.evolution(getters.currentTrimester),
-  display: (state, getters, rootState, rootGetters) => (grade, unit=null, precision=2) => {
-    if (grade === null) return '—'
+  display: (state, getters, rootState, rootGetters) => (grade, unit=null, precision=2, abs=false) => {
+    if (!grade && grade !== 0) return '—'
+    grade = abs ? ~~grade : grade
     unit = unit || rootGetters['settings/value']('grade_max')
     return (grade * unit).toFixed(precision).replace('.', ',')
   }
@@ -86,7 +94,8 @@ export const mutations = {
 }
 
 export const actions = {
-  async load({ commit }) {
+  async load({ commit, state }, force = false) {
+    if (!force && state.grades.length) return
     try {
       const { data } = await this.$axios.get(`/grades/`)
       // console.log(`[from API] GET /grades/: OK`)

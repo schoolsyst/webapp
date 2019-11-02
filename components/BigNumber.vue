@@ -16,7 +16,7 @@
             :contenteditable="writables.includes('value')"
             @input="onInput($event)"
             @blur="onBlur()"
-        ) {{display()(Math.abs(value), 1)}}
+        ) {{display()(value, 1, 2, !showSign)}}
         //- dunno why I need `funcName()(args...)` but hey if I call 
                                       ^^
             it normally it spits out the function's source code 
@@ -37,8 +37,7 @@ export default {
 
   props: {
     value: {
-      type: [String, Number],
-      default: "—",
+      default: "—"
     },
     showSign: {
       type: Boolean,

@@ -21,7 +21,8 @@ export const mutations = {
 }
 
 export const actions = {
-  async load({ commit }) {
+  async load({ commit, state }, force = false) {
+    if (!force && state.subjects.length) return
     try {
       const { data } = await this.$axios.get(`/subjects/`)
       console.log(`[from API] GET /subjects/: OK`)

@@ -42,7 +42,8 @@ export const actions = {
   },
 
   async nuxtServerInit({ dispatch }) {
-    await dispatch("loadAll")
+    await dispatch("settings/load")
+    await dispatch("subjects/load")
   },
 }
 

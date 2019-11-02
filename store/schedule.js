@@ -264,7 +264,8 @@ export const mutations = {
 }
 
 export const actions = {
-  async loadEvents({ commit, getters }) {
+  async loadEvents({ commit, state }, force = false) {
+    if (!force && state.events.length) return
     try {
       const { data } = await this.$axios.get(`/events/`)
       // console.log(`[from API] GET /events/: OK`)
@@ -279,7 +280,8 @@ export const actions = {
     }
   },
 
-  async loadMutations({ commit }) {
+  async loadMutations({ commit, state }, force = false) {
+    if (!force && state.mutations.length) return
     try {
       const { data } = await this.$axios.get(`/events-mutations/`)
       // console.log(`[from API] GET /events-mutations/: OK`)

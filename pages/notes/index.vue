@@ -99,6 +99,11 @@ export default {
     }
   },
 
+  fetch({ store }) {
+    store.dispatch('schedule/load')
+    store.dispatch('notes/load')
+  },
+
   computed: {
     ...mapGetters({
       currentCourse: "schedule/currentCourse",

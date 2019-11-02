@@ -46,7 +46,6 @@
 			template(v-else)
 				HeadingSub(has-inline-buttons)
 					| Devoirs à venir
-					//FIXME: Sort by date due
 					ArrayButtonFlat(inline)
 						li: ButtonFlat(icon="arrow_forward"): nuxt-link.goto-homework(to="/homework") Voir tout
 				ArrayItemExercise
@@ -118,6 +117,13 @@ export default {
 		return {
 			title: `${this.pageTitleCounter} | Schoolsyst`,
 		}
+	},
+
+	fetch({ store }) {
+		store.dispatch("schedule/loadEvents")
+		store.dispatch("grades/load")
+		store.dispatch("homework/load")
+		store.dispatch("notes/load")
 	},
 
 	computed: {
