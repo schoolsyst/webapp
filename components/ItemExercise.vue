@@ -60,8 +60,8 @@ export default {
     name: String,
     notes: String,
     uuid: String,
-    due: String,
-    completed: Boolean,
+    due: Date,
+    progress: Number,
     showCompleted: {
       type: Boolean,
       default: true,
@@ -77,7 +77,7 @@ export default {
       badgeHasCheckmark: false,
       initialInnerHTML: "",
       lastCompletionSync: null,
-      mutCompleted: this.completed,
+      mutCompleted: this.progress === 1,
       mutDue: this.due,
       mutNotes: this.notes,
       expanded: false,
@@ -97,7 +97,7 @@ export default {
       this.syncCompletionStatus(this.mutCompleted)
     },
     async syncCompletionStatus(completed) {
-      // don't sync too much (every 5 secs. max)
+      // don't sync too much (every 3 secs. max)
       if (this.lastCompletionSync)
         if (
           this.lastCompletionSync &&
@@ -108,8 +108,10 @@ export default {
 
       try {
         const { data } = await this.$axios.patch(`/exercises/${this.uuid}/`, {
-          completed,
+          progress: completed ? 1 : 0,
         })
+        this.$store.commit('PATCH_EXERCISE', this.uuid, { progress: completed ? 1 : 0 })
+
         this.lastCompletionSync = moment()
         // console.log();
       } catch (error) {

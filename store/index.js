@@ -1,9 +1,10 @@
-import { toDate } from "date-fns"
+import { toDate, addDays } from "date-fns"
 import tinycolor from "tinycolor2"
 import constantCase from 'constant-case'
 
 export const state = () => ({
   now: toDate(Date.now()), // For time-dependent getters.
+  tomorrow: addDays(toDate(Date.now()), 1)
 })
 
 export const getters = {
@@ -26,7 +27,10 @@ export const getters = {
 }
 
 export const mutations = {
-  UPDATE_TIME: (state, newTime) => (state.now = newTime),
+  UPDATE_TIME: (state, newTime) => {
+    state.now = newTime
+    state.tomorrow = addDays(newTime, 1)
+  },
 }
 
 export const actions = {
@@ -35,8 +39,7 @@ export const actions = {
     await dispatch("subjects/load")
     await dispatch("homework/load")
     await dispatch("grades/load")
-    await dispatch("schedule/loadEvents")
-    await dispatch("schedule/loadMutations")
+    await dispatch("schedule/load")
     await dispatch("notes/load")
     await dispatch("learndata/load")
   },

@@ -3,8 +3,8 @@
 		li(v-for="group in grouped" :key="group.due")
 			template(v-if="group.shown")
 				HeadingSub(v-if="showHeaders") {{ group.dispDue }}
-				ArrayItemExercise(:exercises="only('exercices', group.homeworks)")
-				ArrayCardTest(:tests="only('tests', group.homeworks)")
+				ArrayItemExercise(:exercises="only()('exercices', group.homeworks)")
+				ArrayCardTest(:tests="only()('tests', group.homeworks)")
 
 </template>
 

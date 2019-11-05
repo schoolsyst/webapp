@@ -120,7 +120,7 @@ export default {
 	},
 
 	fetch({ store }) {
-		store.dispatch("schedule/loadEvents")
+		store.dispatch("schedule/load")
 		store.dispatch("grades/load")
 		store.dispatch("homework/load")
 		store.dispatch("notes/load")

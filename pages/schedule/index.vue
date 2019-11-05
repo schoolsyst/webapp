@@ -14,8 +14,8 @@
         MainGroupLeft
             TheHeading {{date}}
             p.heading-detail 
-                | Semaine du {{scheduleNow.startOf('week').format('D/M')}} 
-                | au {{scheduleNow.endOf('week').format('D/M')}} 
+                | Semaine du {{format(startOfWeek(scheduleNow), 'd/M')}} 
+                | au {{format(endOfWeek(scheduleNow), 'd/M')}} 
                 | ({{weekType}})
             HeadingSub Cours reportés & supprimés
             ButtonLargeFlat.new-mutation Nouvelle modification…
@@ -26,6 +26,7 @@
 <script>
 import moment from "moment"
 import { mapState, mapGetters, mapMutations, mapActions } from "vuex"
+import { format, startOfWeek, endOfWeek } from 'date-fns'
 //-------------------------------------------------------------------
 import TheHeading from "~/components/TheHeading.vue"
 import ArrayButtonFlat from "~/components/ArrayButtonFlat.vue"
@@ -66,7 +67,7 @@ export default {
 
   data() {
     return {
-      scheduleNow: moment(),
+      scheduleNow: new Date(),
       now: moment(),
       //TODO: dynamically determine PX_PER_MIN & EVENT_WIDTH to fit neatly into 100vh & 2/3*100vw
     }
@@ -78,7 +79,7 @@ export default {
       pageTitleCounter: "homework/pageTitleCounter",
     }),
     weekType() {
-      return this.getWeekType(this.scheduleNow.format("YYYY-MM-DD"))
+      return this.getWeekType()
     },
     date() {
       moment.locale("fr")
@@ -86,6 +87,8 @@ export default {
       return fmt.charAt(0).toUpperCase() + fmt.substr(1)
     },
   },
+
+  methods: { format, startOfWeek, endOfWeek }
 }
 </script>
 

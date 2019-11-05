@@ -15,7 +15,7 @@ const parseObjectDates = (object) => ({
 })
 
 export const getters = {
-  all: (state, getters) => state.notes,
+  all: (state, getters) => getters.orderBy(state.notes),
   one: (state, getters) => (value, prop = "uuid") =>
     getters.find((o) => o[prop] === value) || null,
   of: (state, getters) => (value, what = "subject") => {

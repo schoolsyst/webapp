@@ -8,7 +8,8 @@ export const state = () => ({
 
 const parseHomeworkDates = homework => ({
 	...homework,
-	due: parseISO(homework.due)
+	due: parseISO(homework.due),
+	created: parseISO(homework.created)
 })
 
 export const getters = {
