@@ -26,6 +26,7 @@ import {
   setHours,
   endOfDay,
   startOfDay,
+  isValid,
 } from "date-fns"
 import { getMutations } from "./index"
 
@@ -35,6 +36,7 @@ export const state = () => ({
 })
 
 const _mergeDateAndTime = (date, time) => {
+  // Assuming `time` uses the ISO format "HH:mm:ss"
   const [hours, minutes, seconds] = time.split(':')
   date = setHours(date, hours)
   date = setMinutes(date, minutes)
@@ -320,7 +322,12 @@ export const actions = {
     }
   },
 
-  async postEvent({ commit }, event) {
+  async postEvent({ commit, dispatch }, event, force = false) {
+    if(!force) {
+      const validation = await dispatch('validatePostEvent', mutation)
+      // if validation is not true, it's the error message
+      if (validation !== true) return validation 
+    }
     try {
       const { data } = await this.$axios.post(`/events/`, event)
       if (data) commit("ADD_EVENT", data)
@@ -333,6 +340,57 @@ export const actions = {
         // console.error(error)
       }
     }
+  },
+
+  async validatePostEvent({ getters, rootGetters }, event) {
+    //TODO: include the object fields that errored in errorMessages
+    const errorMessages = {}
+
+    // start, end, subject, day and week_type are specified
+    if(!( "start" in event ))
+      return "Veuillez spécifier l'heure de début du cours"
+    if(!( "end" in event ))
+      return "Veuillez spécifier l'heure de fin du cours"
+    if(!( event.subject && event.subject.uuid ))
+      return "Veuillez spécifier la matière du cours"
+    if(!( "day" in event ))
+      return "Veuillez choisir le jour du cours"
+    if(!( "week_type" in event ))
+      return "Veuillez sélectionner la semaine: Q1, Q2 ou les deux"
+
+    // start & end are Date objects
+    if(!( startDefined && isValid(parse(event.start, 'HH:mm')) ))
+      return "Veuillez rentrer une heure de début valide, au format HH:MM (24 heures)"
+    if(!( endDefined && isValid(parse(event.end, 'HH:mm')) ))
+      return "Veuillez rentrer une heure de fin valide, au format HH:MM (24 heures)"
+
+    // start is before end
+    if(!( startIsDate && endIsDate && isBefore(start, end) ))
+      return "L'heure du début du cours est après l'heure de fin !"
+
+    // day is a valid week day integer
+    if(!( dayDefined && [1, 2, 3, 4, 5, 6, 7].includes(event.day) ))
+      return `Veuillez un jour de la semaine valide`
+
+    // week_type is either Q1, Q2 or BOTH
+    if(!( weekTypeDefined && ["Q1", "Q2", "BOTH"].includes(event.week_type) ))
+      return "Veuillez choisir un type de semaine correct: Q1, Q2 ou les deux"
+
+    // Check if no event exist at this date
+    const doesNotOverlap = !getters.events.filter((o) => 
+      o.start === event.start &&
+      o.end === event.end &&
+      o.day === event.day && 
+      (o.week_type === event.week_type || o.week_type === 'BOTH')
+    ).length
+
+    if(!doesNotOverlap) return "Un autre cours existe déjà ici !"
+
+    // Subject is specified & exists
+    if(!( subjectDefined && rootGetters['subjects/all'].map((o) => o.uuid).includes(event.subject.uuid) ))
+      return `La matière ${'name' in event.subject ? '"' + event.subject.name + '"' : 'sélectionnée'} n'existe pas`
+
+    return true
   },
 
   async postMutation({ commit, dispatch }, mutation, force = false) {
@@ -368,7 +426,7 @@ export const actions = {
     // Check if the rescheduled date is free
     const doesNotOverlap = isRescheduled && startIsBeforeEnd && getters.coursesIn(start, end, false).length <= 0
     // Check if the required fields are present
-    const subjectNotEmpty = !!mutation.subject
+    const subjectNotEmpty = mutation.subject && mutation.subject.uuid
     const subjectExists = subjectNotEmpty && rootGetters['subjects/all'].map((o) => o.uuid).includes(mutation.subject.uuid)
     
     const isValidated = subjectNotEmpty && subjectExists && (isRescheduled ? startIsBeforeEnd && doesNotOverlap : true)
