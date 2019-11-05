@@ -155,7 +155,11 @@ export const getters = {
       firstBy("day").thenBy((o1, o2) => isBefore(o1.start, o2.start))
     ),
 
-  coursesIn: (state, getters, rootState, rootGetters) => (start, end, includeDeleted = false) => {
+  coursesIn: (state, getters, rootState, rootGetters) => (start, end=null, includeDeleted=false) => {
+    if (end===null) {
+      start = startOfDay(start)
+      end = endOfDay(start)
+    }
     const courses = []
     for (const day of eachDayOfInterval({ start, end })) {
       // If this day is an offday, it doesn't contain any events
@@ -187,7 +191,7 @@ export const getters = {
           })
       })
     }
-    return courses
+    return getters.orderCourses(courses)
   },
   currentWeekCourses: (state, getters, rootState) =>
     /* Gets courses in the current week.
@@ -195,6 +199,7 @@ export const getters = {
     getters.coursesIn(startOfWeek(rootState.now), endOfWeek(rootState.now)),
   weekType: (state, getters, rootState, rootGetters) => (date) => {
     // TODO: explain this better, can't understand the logic I've written (it works tho)
+    date = date || rootState.now
     // get base Q1/Q2
     const base = rootGetters["settings/value"]("starting_week_type")
     const start = rootGetters["settings/value"]("year_start")
@@ -251,12 +256,26 @@ export const getters = {
     }
     return nextCourses.filter((o) => o[what] === value)
   },
+  todayCourses: (state, getters, rootState, rootGetters) =>
+    getters.coursesIn(rootState.now),
   tomorrowCourses: (state, getters, rootState, rootGetters) =>
-    getters.coursesIn(startOfDay(rootState.now), endOfDay(rootState.now)),
+    getters.coursesIn(rootState.tomorrow),
   upcomingCourse: (state, getters, rootState) =>
     getters.nextCourses()[0],
   nextCourseOf: (state, getters) => (value, what = 'subject') =>
-    getters.nextCoursesOf(value, what)[0]
+    getters.nextCoursesOf(value, what)[0],
+  startOfDay: (state, getters, rootState) => (start, end=null) => {
+    start = start || rootState.now
+    const courses = getters.orderCourses(getters.coursesIn(start, end))
+    if(!courses.length) return null
+    return courses[0].start
+  },
+  endOfDay: (state, getters, rootState) => (start, end=null) => {
+    start = start || rootState.now
+    const courses = getters.orderCourses(getters.coursesIn(start, end))
+    if(!courses.length) return null
+    return courses[courses.length-1].end
+  }
 }
 
 export const mutations = {
@@ -265,6 +284,10 @@ export const mutations = {
 }
 
 export const actions = {
+  async load ({ dispatch }, force = false) {
+    await dispatch('loadEvents', force)
+    await dispatch('loadMutations', force)
+  },
   async loadEvents({ commit, state }, force = false) {
     if (!force && state.events.length) return
     try {
