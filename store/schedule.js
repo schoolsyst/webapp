@@ -155,7 +155,7 @@ export const getters = {
       firstBy("day").thenBy((o1, o2) => isBefore(o1.start, o2.start))
     ),
 
-  coursesIn: (state, getters, rootState, rootGetters) => (start, end) => {
+  coursesIn: (state, getters, rootState, rootGetters) => (start, end, includeDeleted = false) => {
     const courses = []
     for (const day of eachDayOfInterval({ start, end })) {
       // If this day is an offday, it doesn't contain any events
@@ -177,13 +177,14 @@ export const getters = {
         const mutation = mutations.length
           ? mutations[0]
           : { deleted: null, rescheduled: null }
-        courses.push({
-          ...event,
-          ...mutation,
-          start: _mergeDateAndTime(day, event.start),
-          end: _mergeDateAndTime(day, event.end),
-          placeholder: false // See getters.courseOrPlaceholder
-        })
+        if (!mutations.deleted || includeDeleted)
+          courses.push({
+            ...event,
+            ...mutation,
+            start: _mergeDateAndTime(day, event.start),
+            end: _mergeDateAndTime(day, event.end),
+            placeholder: false // See getters.courseOrPlaceholder
+          })
       })
     }
     return courses
@@ -311,7 +312,11 @@ export const actions = {
     }
   },
 
-  async postMutation({ commit }, mutation) {
+  async postMutation({ commit, dispatch }, mutation, force = false) {
+    if(!force) {
+      const validation = await dispatch('validatePostMutation', mutation)
+      if (!validation.result) return validation.errors
+    }
     try {
       const { data } = await this.$axios.post(`/events-mutations/`, mutation)
       if (data) commit("ADD_MUTATION", data)
@@ -324,6 +329,35 @@ export const actions = {
         // console.error(error)
       }
     }
+
+    return {
+      result: isValidated,
+      // Gets the value of the variable to know if the check failed
+      errors: Object.entries(errorMessages).filter((o) => !eval(o[0])) 
+    }
+  },
+
+  async validatePostMutation({ commit, getters, rootGetters }, mutation) {
+    const [ start, end ] = [ mutation.rescheduled_start, mutation.rescheduled_end ]
+    const isRescheduled = start && end
+    // Check if the start and end date are in the correct order
+    const startIsBeforeEnd = isRescheduled && isBefore(start, end)
+    // Check if the rescheduled date is free
+    const doesNotOverlap = isRescheduled && startIsBeforeEnd && getters.coursesIn(start, end, false).length <= 0
+    // Check if the required fields are present
+    const subjectNotEmpty = !!mutation.subject
+    const subjectExists = subjectNotEmpty && rootGetters['subjects/all'].map((o) => o.uuid).includes(mutation.subject.uuid)
+    
+    const isValidated = subjectNotEmpty && subjectExists && (isRescheduled ? startIsBeforeEnd && doesNotOverlap : true)
+    const errorMessages = {
+      startIsBeforeEnd: "Les dates doivent être dans le bon ordre",
+      doesNotOverlap: "La date choisie n'est pas libre",
+      subjectNotEmpty: "Veuillez choisir une matière",
+      subjectExists: "La matière choisie n'existe pas"
+    }
+
+    return getValidationObject(isValidated, errorMessages)
+
   },
 
   async patchEvent({ commit }, uuid, modifications) {
