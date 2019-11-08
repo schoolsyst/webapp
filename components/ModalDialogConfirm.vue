@@ -97,6 +97,7 @@ export default {
 
 <style lang="stylus" scoped>
 .ModalDialogConfirm /deep/ .modal-wrapper {
+  padding-top: 30px
   max-width: 500px;
 }
 

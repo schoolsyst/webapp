@@ -1,5 +1,4 @@
 <template lang="pug">
-//TODO: Fix the close btn (put to the right)
 //https://www.w3.org/TR/wai-aria-practices/examples/dialog-modal/dialog.html
 aside.BaseModal(:id="`modal_${name}`",
     aria-hidden="true"
@@ -310,6 +309,7 @@ export default {
     transition: all .25s ease
 
 .modal-wrapper
+    position: relative
     border-radius: 10px
     background: #ffffff
     // width: 600px
@@ -329,8 +329,10 @@ export default {
     position: fixed
 
 button.close-modal
-    position: relative
+    position: absolute
     top: 10px
     right: 10px
+    i
+      font-size: 2em
 
 </style>
