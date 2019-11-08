@@ -84,7 +84,7 @@ export default {
 <style lang="sass" scoped>
 @import '~/assets/defaults'
 
-$nav-padding: 20px
+$nav-padding: 15px
 .TheNavbar
   position: fixed
   @media (min-width: $bk-sidebar)
@@ -95,7 +95,7 @@ $nav-padding: 20px
     left: 0
     transform: translateY(-50%)
     .NavbarButton:not(:last-child)
-      margin-bottom: 20px
+      margin-bottom: 10px
 
   //TODO hide on scroll on mobile ?
   @media (max-width: $bk-sidebar - 1px)

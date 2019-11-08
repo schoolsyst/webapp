@@ -87,8 +87,9 @@ export default {
     }
   },
 
-  fetch({store}) {
-    store.dispatch('homework/load')
+  async fetch({store}) {
+    await store.dispatch('homework/load')
+    await store.dispatch('schedule/load')
   },
 
   data() {

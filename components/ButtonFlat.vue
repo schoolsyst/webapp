@@ -1,18 +1,12 @@
 <template lang="pug">
-BaseFlatComponent.ButtonFlat(:icon="icon" :icon-style="iconStyle" :large-icon="largeIcon" :small="small")
-    button.input(@click="$emit('click')")
-        slot
+  button.ButtonFlat(@click="$emit('click')" :data-icon-style="iconStyle" :class="role")
+    i.icon(:class="iconStyle === 'outlined' ? 'material-icons-outlined' : 'material-icons'" v-if="icon") {{icon}}
+    span.text: slot
 </template>
 
 <script>
-import BaseFlatComponent from "~/components/BaseFlatComponent.vue"
-
 export default {
   name: "ButtonFlat",
-
-  components: {
-    BaseFlatComponent,
-  },
 
   props: {
     icon: String,
@@ -20,45 +14,36 @@ export default {
       type: String,
       default: "outlined",
     },
-    largeIcon: {
-      type: Boolean,
-      default: false,
-    },
-    small: {
-      type: Boolean,
-      default: false,
-    },
-  },
-
-  data() {
-    return {}
-  },
-
-  computed: {},
-
-  created() {},
-
-  methods: {},
+    role: String
+  }
 }
 </script>
 
 <style lang="sass" scoped>
 @import '~/assets/defaults'
-.ButtonFlat button
-    &:hover, &:focus 
-        color: var(--blue)
-
-.ButtonFlat:focus, .ButtonFlat:hover
-    outline-color: transparent
+.ButtonFlat
+    font-size: 1.5rem
+    font-weight: bold
+    letter-spacing: 1.5px
+    display: flex
+    align-items: center
+    text-transform: uppercase
     color: var(--blue)
+    &.danger
+      color: var(--red)
 
-.ButtonFlat.disabled
+.icon
+    margin-right: 0.5rem
+
+.ButtonFlat:hover
+    outline-color: transparent
+    color: var(--blue-light)
+    &.danger
+      color: var(--red-light)
+
+.ButtonFlat[disabled]
     opacity: 0.25
     pointer-events: none
-
-.input 
-    color: inherit
-    font-size: 1em
 
 
 </style>
