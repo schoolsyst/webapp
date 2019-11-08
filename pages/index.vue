@@ -36,7 +36,7 @@
 			template(v-if="currentCourse || upcomingCourse")
 				HeadingSub cours suivant
 				template(v-if='upcomingCourse')
-					CardCourseUpcoming(v-bind='upcomingCourse')
+					CardCourseUpcoming(:course="upcomingCourse")
 					//TODO: make upcomingCourseHomework getter
 					template(v-if='upcomingCourse.homework')
 						HeadingSub devoirs du cours suivant

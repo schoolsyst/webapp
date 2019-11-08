@@ -154,7 +154,7 @@ export const getters = {
     /* Sort courses objects by day & starting date
      */
     [...courses].sort(
-      firstBy("day").thenBy((o1, o2) => isBefore(o1.start, o2.start))
+      firstBy("day").thenBy((o1, o2) => isAfter(o1.start, o2.start))
     ),
 
   coursesIn: (state, getters, rootState, rootGetters) => (start, end=null, includeDeleted=false) => {

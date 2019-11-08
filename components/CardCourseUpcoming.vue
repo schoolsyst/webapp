@@ -1,7 +1,7 @@
 <template lang="pug">
-	BaseCard(class="CardCourseUpcoming" :style="{backgroundColor: subject.color, color: textColor(subject.color)}")
-		h4.name {{subject.name}}
-		div.room {{room}}
+	BaseCard(class="CardCourseUpcoming" :style="{backgroundColor: currentCourse.subject.color, color: textColor(currentCourse.subject.color)}")
+		h4.name {{currentCourse.subject.name}}
+		div.room {{currentCourse.room}}
 		time.remaining-time {{ timeRemaining.capFirstChar() }}
 </template>
 
@@ -9,7 +9,9 @@
 import tinycolor from 'tinycolor2'
 import moment from "moment";
 import BaseCard from "~/components/BaseCard.vue";
+import { formatDistanceToNow } from 'date-fns'
 import { mapGetters } from 'vuex';
+import { fr } from 'date-fns/locale';
 
 export default {
 	name: "CardCourseUpcoming",
@@ -19,17 +21,10 @@ export default {
 	},
 
 	props: {
-		subject: {
+		course: {
 			type: Object,
-			required: true
-		},
-		start: {
-			required: true
-		},
-		room: {
-			type: String,
-			required: true
-		},
+			default: null
+		}
 	},
 
 	data() {
@@ -37,15 +32,18 @@ export default {
 	},
 
 	computed: {
+		...mapGetters('schedule', {getCurrentCourse: 'currentCourse'}),
 		timeRemaining() {
-			moment.locale("fr");
-			return moment(this.start, "HH:mm").fromNow();
+			return formatDistanceToNow(this.currentCourse.start, { locale: fr })
 		},
+		currentCourse() {
+			return this.course || this.getCurrentCourse
+		}
 	},
 
-  methods: {
-    ...mapGetters(['textColor'])
-  },
+	methods: {
+		...mapGetters(['textColor'])
+	},
 
 	created() {
 		String.prototype.capFirstChar = function() {
