@@ -120,7 +120,35 @@ export const actions = {
 		}
 	},
 
-	async post({ commit }, homework) {
+	async validate({ getters, rootGetters }, homework) {
+		homework = {
+			subject: {uuid: null},
+			name: "",
+			type: "",
+			room: "",
+			progress: 0,
+			...homework
+		}
+		if (!homework.subject.uuid)
+			return "Veuillez préciser une matière"
+		if (!rootGetters['subject/all'].map((o) => o.uuid).includes(homework.subject.uuid))
+			return "La matière sélectionnée n'existe pas"
+		if (homework.name.length > 300)
+			return "Le nom du devoir est trop long"
+		if (!['TEST', 'DM', 'EXERCISE', 'TOBRING'].includes(homework.type))
+			return "Veuillez choisir un type de devoir"
+		if (homework.room.length > 300)
+			return "Le nom de la salle est trop long"
+		if (homework.progress > 1 || homework.progress < 0)
+			return "Valeur d'avancement incorrecte"
+		return true
+	},
+
+	async post({ commit, dispatch }, homework, force = false) {
+		if(!force) {
+			const validation = await dispatch('validate', homework)
+			if (validation !== true) return validation
+		}
 		try {
 			const { data } = await this.$axios.post(`/homework/`, homework);
 			if (data) commit("ADD", homework);
@@ -142,7 +170,13 @@ export const actions = {
 		}
 	},
 
-	async patch({ commit }, uuid, modifications) {
+	async patch({ commit, dispatch, getters }, uuid, modifications, force = false) {
+		if(!force) {
+			let homework = getters.one(uuid)
+			homework = {...homework, ...modifications}
+			const validation = await dispatch('validate', homework)
+			if(validation !== true) return validation
+		}
 		try {
 			const { data } = await this.$axios.patch(
 				`/homeworks/${uuid}`,
