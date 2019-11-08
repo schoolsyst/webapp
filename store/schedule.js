@@ -324,7 +324,7 @@ export const actions = {
 
   async postEvent({ commit, dispatch }, event, force = false) {
     if(!force) {
-      const validation = await dispatch('validatePostEvent', mutation)
+      const validation = await dispatch('validateEvent', mutation)
       // if validation is not true, it's the error message
       if (validation !== true) return validation 
     }
@@ -342,7 +342,7 @@ export const actions = {
     }
   },
 
-  async validatePostEvent({ getters, rootGetters }, event) {
+  async validateEvent({ getters, rootGetters }, event) {
     //TODO: include the object fields that errored in errorMessages
     const errorMessages = {}
 
@@ -395,8 +395,8 @@ export const actions = {
 
   async postMutation({ commit, dispatch }, mutation, force = false) {
     if(!force) {
-      const validation = await dispatch('validatePostMutation', mutation)
-      if (!validation.result) return validation.errors
+      const validation = await dispatch('validateMutation', mutation)
+      if (validation !== true) return validation
     }
     try {
       const { data } = await this.$axios.post(`/events-mutations/`, mutation)
@@ -410,38 +410,35 @@ export const actions = {
         // console.error(error)
       }
     }
-
-    return {
-      result: isValidated,
-      // Gets the value of the variable to know if the check failed
-      errors: Object.entries(errorMessages).filter((o) => !eval(o[0])) 
-    }
   },
 
-  async validatePostMutation({ commit, getters, rootGetters }, mutation) {
+  async validateMutation({ commit, getters, rootGetters }, mutation) {
     const [ start, end ] = [ mutation.rescheduled_start, mutation.rescheduled_end ]
     const isRescheduled = start && end
     // Check if the start and end date are in the correct order
-    const startIsBeforeEnd = isRescheduled && isBefore(start, end)
+    if(!( isRescheduled && isBefore(start, end) ))
+      return "Les dates doivent être dans le bon ordre"
     // Check if the rescheduled date is free
-    const doesNotOverlap = isRescheduled && startIsBeforeEnd && getters.coursesIn(start, end, false).length <= 0
+    if(!( isRescheduled && startIsBeforeEnd && getters.coursesIn(start, end, false).length <= 0))
+      return "La date choisie n'est pas libre"
     // Check if the required fields are present
-    const subjectNotEmpty = mutation.subject && mutation.subject.uuid
-    const subjectExists = subjectNotEmpty && rootGetters['subjects/all'].map((o) => o.uuid).includes(mutation.subject.uuid)
+    if(!(mutation.subject && mutation.subject.uuid))
+      return "Veuillez choisir une matière"
     
-    const isValidated = subjectNotEmpty && subjectExists && (isRescheduled ? startIsBeforeEnd && doesNotOverlap : true)
-    const errorMessages = {
-      startIsBeforeEnd: "Les dates doivent être dans le bon ordre",
-      doesNotOverlap: "La date choisie n'est pas libre",
-      subjectNotEmpty: "Veuillez choisir une matière",
-      subjectExists: "La matière choisie n'existe pas"
-    }
+    if(!(subjectNotEmpty && rootGetters['subjects/all'].map((o) => o.uuid).includes(mutation.subject.uuid)))
+      return "La matière choisie n'existe pas"
 
-    return getValidationObject(isValidated, errorMessages)
+    return true
 
   },
 
-  async patchEvent({ commit }, uuid, modifications) {
+  async patchEvent({ commit, getters, dispatch }, uuid, modifications, force = false) {
+    if(!force) {
+      let event = getters.event(uuid)
+      event = {...event, ...mutations}
+      const validation = await dispatch('validateEvent', event)
+      if (validation !== true) return validation
+    }
     try {
       const { data } = await this.$axios.patch(`/events/${uuid}`, modifications)
       if (data) commit("PATCH_EVENT", uuid, data)
@@ -457,6 +454,12 @@ export const actions = {
   },
 
   async patchMutation({ commit }, uuid, modifications) {
+    if(!force) {
+      let mutation = getters.event(uuid)
+      mutation = {...mutation, ...mutations}
+      const validation = await dispatch('validateMutation', mutation)
+      if (validation !== true) return validation
+    }
     try {
       const { data } = await this.$axios.patch(
         `/events-mutations/${uuid}`,
