@@ -62,7 +62,36 @@ export const actions = {
       }
     }
   },
-  async post({ commit }, learndata) {
+  async validate({ commit, rootGetters }, learndata) {
+    learndata = {
+      subject: { uuid: null },
+      name: "",
+      data: "",
+      progress: 0,
+      test_tries: 0,
+      train_tries: 0,
+      ...learndata
+    }
+
+    if(!learndata.subject.uuid)
+      return "Veuillez préciser la matière"
+    if(!rootGetters['subjects/all'].map((o) => o.uuid).includes(learndata.subject.uuid))
+      return "La matière spécifée n'existe pas"
+    if(learndata.progress < 0 || learndata.progress > 1)
+      return "Valeur d'avancement incorrecte"
+    if(learndata.test_tries < 0)
+      return "Nombre d'essais en mode contrôle incorrect"
+    if(learndata.train_tries < 0)
+      return "Nombre d'essais en mode entraînement incorrect"
+    if(learndata.name.length > 300)
+      return "Nom du learndata trop long"
+    return true
+  },
+  async post({ commit, dispatch }, learndata, force = false) {
+    if(!force) {
+      const validation = await dispatch('validate', learndata)
+      if (validation !== true) return validation
+    }
     try {
       const { data } = await this.$axios.post("/learndata/", learndata)
       if (data) commit("ADD", data)
@@ -76,7 +105,13 @@ export const actions = {
       }
     }
   },
-  async patch({ commit }, uuid, modifications) {
+  async patch({ commit, dispatch, getters }, uuid, modifications, force = false) {
+    if(!force) {
+      let learndata = getters.one(uuid)
+      learndata = {...learndata, ...modifications}
+      const validation = await dispatch('validate', learndata)
+      if (validation !== true) return validation
+    }
     try {
       const { data } = await this.$axios.patch(
         `/learndata/${uuid}/`,
