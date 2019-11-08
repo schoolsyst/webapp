@@ -116,7 +116,7 @@ $nav-padding: 15px
 +tablet
   .TheNavbar.slide-out
     // positioning
-    left: -95px
+    left: -72px - $nav-padding
     // dimensions
     padding: $nav-padding
     // appearance
