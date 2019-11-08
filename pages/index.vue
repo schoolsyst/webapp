@@ -119,11 +119,11 @@ export default {
 		}
 	},
 
-	fetch({ store }) {
-		store.dispatch("schedule/load")
-		store.dispatch("grades/load")
-		store.dispatch("homework/load")
-		store.dispatch("notes/load")
+	async fetch({ store }) {
+		await store.dispatch("schedule/load")
+		await store.dispatch("grades/load")
+		await store.dispatch("homework/load")
+		await store.dispatch("notes/load")
 	},
 
 	computed: {

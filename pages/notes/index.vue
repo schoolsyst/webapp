@@ -99,9 +99,9 @@ export default {
     }
   },
 
-  fetch({ store }) {
-    store.dispatch('schedule/load')
-    store.dispatch('notes/load')
+  async fetch({ store }) {
+    await store.dispatch('schedule/load')
+    await store.dispatch('notes/load')
   },
 
   computed: {
