@@ -163,7 +163,7 @@ export const actions = {
     // Return the object to search with
     return search
   },
-  search({ getters }, searcher, query, apply = null) {
+  async search({ getters, dispatch }, query, searcher = null, apply = null) {
     /* Uses the object returned by `initNotesSearch` to search queries against.
      * @param searcher: The JsSearch.search object
      * @param query: the string to search the dataset against
@@ -171,7 +171,8 @@ export const actions = {
      *               the returned arary of matches will be mapped with the result of this function.
      *               `getters.note` by default.
      */
-    apply |= getters.note
+    searcher = searcher || await dispatch('initSearch')
+    apply = apply || getters.note
     return searcher.search(query).map((uuid) => apply(uuid))
   },
 }
