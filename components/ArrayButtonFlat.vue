@@ -1,5 +1,5 @@
 <template lang="pug">
-ul.ArrayButtonFlat(:class="{'inline': inline}")
+ul.ArrayButtonFlat(:class="{inline}")
 	slot
 </template>
 

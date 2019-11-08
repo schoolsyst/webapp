@@ -1,12 +1,36 @@
 <template lang="pug">
 ul.ArrayItemExercise
-    slot
+  li(v-for="exercise in exercises" :key="exercise.uuid")
+    ItemExercise(
+      v-bind="exercise"
+      @expand="$event ? expandedItem = exercise.uuid : expandedItem = null"
+      :expanded="expandedItem === exercise.uuid"
+    )
 </template>
 
 <script>
+import ItemExercise from "~/components/ItemExercise.vue";
+
 export default {
   name: "ArrayItemExercise",
-}
+
+  components: { ItemExercise },
+
+  props: {
+    exercises: {
+      type: String,
+      default: null
+    }
+  },
+
+  data() {
+    return {
+      expandedItem: {
+        uuid: null
+      }
+    };
+  }
+};
 </script>
 
 <style lang="sass" scoped>

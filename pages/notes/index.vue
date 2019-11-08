@@ -128,7 +128,7 @@ export default {
     },
     currentSubjectCards() {
       return this.notesToCards(this.notes)
-        .filter((card) => card.subject.slug === this.currentCourseSubject.slug)
+        .filter((card) => card.subject.slug === this.courseOrPlaceholder(this.currentCourse).subject.slug)
         .sort((a, b) =>
           moment(a.last_modified).isBefore(b.last_modified) ? 1 : -1
         )

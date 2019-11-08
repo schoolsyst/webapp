@@ -2,7 +2,7 @@
 //TODO: click to expand & show exercise notes, full title. Complete w/ the subject badge/dot
 //TODO: On expanded notes, linkify http[s]://domain.tld and also domain.tld if domain in ICANN domains.
 //TODO: expand less others when expanding this one (also for CardTest)
-li.ItemExercise(:class="{'expanded': expanded && !mutCompleted}" :data-exercise-id="uuid")
+li.ItemExercise(:class="{'expanded': mutExpanded && !mutCompleted}" :data-exercise-id="uuid")
   ModalDialogConfirm(
       :name="`delete-exercise-${uuid}`", 
       @confirm="deleteExercise"
@@ -23,10 +23,10 @@ li.ItemExercise(:class="{'expanded': expanded && !mutCompleted}" :data-exercise-
       BadgeSubject(v-bind="subject" v-else)
       h4.name {{name}}
     button.expand(
-      @click="expanded = !expanded"
+      @click="$emit('expand', !mutExpanded); mutExpanded = !mutExpanded"
       v-if="!mutCompleted"
     )
-      i.material-icons.icon {{expanded ? 'expand_less' : 'expand_more'}}
+      i.material-icons.icon {{mutExpanded ? 'expand_less' : 'expand_more'}}
   .expanded-content
     p.full-name {{name}}
     textarea.notes(v-model="mutNotes", :id="`field_${uuid}-notes`", cols=0, rows=0)
@@ -70,6 +70,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    expanded: {
+      type: Boolean,
+      default: false
+    }
   },
 
   data() {
@@ -80,7 +84,7 @@ export default {
       mutCompleted: this.progress === 1,
       mutDue: this.due,
       mutNotes: this.notes,
-      expanded: false,
+      mutExpanded: this.expanded
     }
   },
 
