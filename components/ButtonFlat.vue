@@ -22,7 +22,7 @@ export default {
 <style lang="sass" scoped>
 @import '~/assets/defaults'
 .ButtonFlat
-    font-size: 1.5rem
+    font-size: 1.2rem
     font-weight: bold
     letter-spacing: 1.5px
     display: flex

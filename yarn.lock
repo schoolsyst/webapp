@@ -6118,6 +6118,13 @@ number-is-nan@^1.0.0:
   resolved "https://registry.yarnpkg.com/number-is-nan/-/number-is-nan-1.0.1.tgz#097b602b53422a522c1afb8790318336941a011d"
   integrity sha1-CXtgK1NCKlIsGvuHkDGDNpQaAR0=
 
+nuxt-vue-select@^0.1.4:
+  version "0.1.4"
+  resolved "https://registry.yarnpkg.com/nuxt-vue-select/-/nuxt-vue-select-0.1.4.tgz#773ad2ef78902b440f9b5766d9cc73f103f083b2"
+  integrity sha512-8njkU9XZV2it9IjZHFwLj2mChsxFhiAJ6MFj3ZU8wBffirylZXcZmzOuO/hBduz8jf1os8Q5A7x94QmoPK4A8A==
+  dependencies:
+    vue-select "^3.2.0"
+
 nuxt@^2.0.0:
   version "2.8.1"
   resolved "https://registry.yarnpkg.com/nuxt/-/nuxt-2.8.1.tgz#10a307e51973fa7b55abfeb41b84c76cbdd6f2f6"
@@ -9030,6 +9037,11 @@ vue-router@^3.0.6:
   version "3.1.2"
   resolved "https://registry.yarnpkg.com/vue-router/-/vue-router-3.1.2.tgz#2e0904703545dabdd42b2b7a2e617f02f99a1969"
   integrity sha512-WssQEHSEvIS1/CI4CO2T8LJdoK4Q9Ngox28K7FDNMTfzNTk2WS5D0dDlqYCaPG+AG4Z8wJkn1KrBc7AhspZJUQ==
+
+vue-select@^3.2.0:
+  version "3.2.0"
+  resolved "https://registry.yarnpkg.com/vue-select/-/vue-select-3.2.0.tgz#c72166cb1f976d76cd612cde25fc8ef29f7914f5"
+  integrity sha512-FfARbDuJWQNpYm6X9zPWCsYXmz33TNR2oqY8FktKRVksKfp1tZPqL9g+/7wgsaMaqUxcIxYEUVV7C3AD+H5cxA==
 
 vue-server-renderer@^2.6.10:
   version "2.6.10"

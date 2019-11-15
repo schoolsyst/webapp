@@ -1,0 +1,113 @@
+<template lang="pug">
+    fieldset.RadioButtons
+        legend: slot
+        .RadioButton(v-for="value in _values" :key="value.key")
+            input(
+                @change="$emit('input', value.key)"
+                type="radio"
+                :id="`radio--${id}--${slugify(value.key)}`"
+                :name="id"
+                :value="value.key"
+                :selected="value.key === defaultValue"
+            )
+            label(:for="`radio--${id}--${slugify(value.key)}`") {{value.label}}
+</template>
+
+<script>
+import slugify from 'slugify'
+
+export default {
+    data() {
+        return {
+            checked: this.value,
+        }
+    },
+    computed: {
+        id() {
+            const label = this.$slots.default[0].text
+            return slugify(label).toLowerCase()
+        },
+        _values() {
+            let ret = []
+            for (const key in this.values) {
+                if (this.values.hasOwnProperty(key)) {
+                    const element = this.values[key];
+                    ret.push(
+                        {
+                            key,
+                            label: element
+                        }
+                    )
+                }
+            }
+            return ret
+        },
+        defaultSelection() {
+            const idx = this.defaultValue 
+                ? this.values.map((o) => o.key).indexOf(this.defaultValue)
+                : 0
+            return this.values[idx].key
+        }
+    },
+    props: {
+        value: {
+            type: Boolean,
+            default: false
+        },
+        name: {
+            type: String,
+            required: true
+        },
+        values: {
+            type: Array,
+            default: () => ([])
+        },
+        defaultValue: {
+            type: String,
+            default: null
+        }
+    },
+    methods: {
+        slugify
+    }
+}
+</script>
+
+<style lang="stylus" scoped>
+input
+    display none
+label
+    height: 1.15em
+    display flex
+    align-items center
+    flex-shrink 0
+label::before
+    content ''
+    display flex
+    text-align center
+    align-items center
+    font-family 'Material Icons'
+    display inline-block
+    height 1.15em
+    width 1.15em
+    border 2px solid black
+    border-radius 50%
+    margin-right 0.25rem
+.RadioButton
+    display flex
+    align-items center
+    margin-right: 1rem
+fieldset
+    display flex
+    border 2px solid rgba(0,0,0,0.25)
+    // padding 0.75em 0.625em
+    border-radius 2.5px
+    
+legend
+    padding 0 10px
+input:checked + label::before
+    background #000
+    color white
+input[disabled] + label
+    opacity: 0.5
+</style>
