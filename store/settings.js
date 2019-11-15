@@ -152,12 +152,13 @@ export const mutations = {
       } else {
         value = setting.value
       }
+      let rawValue = value
       // Convert to the appropriate JS representation of the value
       value = parsedValue(value, definition)
       /* Adds the definition to the state as a setting object + the value prop
        * and a bool to tell if the setting is set to the default value.
        */
-      const hydratedDefinition = { ...definition, value, isDefaultValue }
+      const hydratedDefinition = { ...definition, value, isDefaultValue, rawValue }
       state.settings.push(hydratedDefinition)
     })
   },

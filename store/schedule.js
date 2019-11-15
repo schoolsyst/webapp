@@ -33,6 +33,7 @@ import { getMutations } from "./index"
 export const state = () => ({
   events: [],
   mutations: [],
+  loadedMutations: false
 })
 
 const _mergeDateAndTime = (date, time) => {
@@ -283,6 +284,8 @@ export const getters = {
 export const mutations = {
   ...getMutations("event", (o) => o, false),
   ...getMutations("mutation", (o) => o, false),
+  MUTATIONS_POSTLOAD: (state) =>
+    state.loadedMutations = true
 }
 
 export const actions = {
@@ -292,6 +295,7 @@ export const actions = {
   },
   async loadEvents({ commit, state }, force = false) {
     if (!force && state.events.length) return
+    console.log(`Loading events :: force=${force}, state.events.length=${state.events.length}`)
     try {
       const { data } = await this.$axios.get(`/events/`)
       // console.log(`[from API] GET /events/: OK`)
@@ -307,11 +311,16 @@ export const actions = {
   },
 
   async loadMutations({ commit, state }, force = false) {
-    if (!force && state.mutations.length) return
+    if (!force && state.loadedMutations) return
+    console.log(`Loading mutations :: force=${force}, state.loadedMutations=${state.loadedMutations}`)
     try {
       const { data } = await this.$axios.get(`/events-mutations/`)
       // console.log(`[from API] GET /events-mutations/: OK`)
-      if (data) commit("SET_MUTATIONS", data)
+      if (data) {
+        commit("SET_MUTATIONS", data)
+        commit('MUTATIONS_POSTLOAD')
+      }
+      
     } catch (error) {
       // console.error(`[from API] GET /events-mutations/: Error`)
       try {
