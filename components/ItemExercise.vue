@@ -328,6 +328,8 @@ export default {
   //--- dimensions  ---
   height: 40px
   width: 40px
+  flex-shrink: 0
+  flex-grow: 0
   //---   margins   ---
   
   //---  appearance ---

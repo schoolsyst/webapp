@@ -92,7 +92,8 @@ export default {
     "@nuxtjs/auth",
     "@nuxtjs/toast",
     "@nuxtjs/toast",
-    "@nuxtjs/markdownit"
+    "@nuxtjs/markdownit",
+    ["nuxt-vue-select", {}]
   ],
   /*
    ** Markdown-it configuration

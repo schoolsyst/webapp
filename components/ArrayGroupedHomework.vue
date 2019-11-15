@@ -1,10 +1,16 @@
 <template lang="pug">
 	ul.ArrayGroupedHomework
-		li(v-for="group in grouped" :key="group.due")
+		li(v-for="group in groups" :key="group.due")
 			template(v-if="group.shown")
 				HeadingSub(v-if="showHeaders") {{ group.dispDue }}
-				ArrayItemExercise(:exercises="only()('exercices', group.homeworks)")
-				ArrayCardTest(:tests="only()('tests', group.homeworks)")
+				ArrayItemExercise(
+					v-if="only !== 'tests'"
+					:exercises="only()('exercices', group.homeworks)"
+				)
+				ArrayCardTest(
+					v-if="only !== 'exercises'"
+					:tests="only()('tests', group.homeworks)"
+				)
 
 </template>
 
@@ -21,16 +27,32 @@ export default {
 		showHeaders: {
 			type: Boolean,
 			default: true
+		},
+		only: {
+			type: [String, Boolean],
+			default: false
+		},
+		homeworks: {
+			type: Array,
+			default: () => ([])
 		}
 	},
 	mounted() {
     this.load()
 	},
-	computed: mapGetters('homework', [
-		'grouped'
-	]),
+	computed: {
+		...mapGetters('homework', [
+			'grouped'
+		]),
+		groups() {
+			if(this.homeworks.length) 
+				return this.group(this.homeworks)
+			else
+				return this.grouped
+		}
+	},
 	methods: {
-    ...mapGetters('homework', ['only']),
+    ...mapGetters('homework', ['only', 'group']),
 	  ...mapActions('homework', ['load'])
 	}
 }

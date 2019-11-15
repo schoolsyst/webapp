@@ -1,24 +1,4 @@
 <template lang="pug">
-//- COMPONENT TREE
-  Excluding single-use components (TheHeading, TheNavbar, TheFooter,...)
-
-  MainGroup
-      MainGroupLeft
-          HeadingAlt
-              ArrayButtonFlat
-                  ButtonFlat
-          ArrayButtonFlat
-              CheckboxFlat
-          HeadingSub
-              ItemExercise
-      MainGroupRight
-          HeadingAlt
-              ArrayButtonFlat
-                  ButtonFlat
-          HeadingSub
-              CardTest
-
-
 .container
   ModalAddExercise(:subject="currentCourseSubject")
   ModalAddTest(:subject="currentCourseSubject")
@@ -31,8 +11,7 @@
         ButtonFlat(open-modal="add-exercise", open-at="center" icon="add" inline large-icon)
       ArrayButtonFlat
         li
-          input(type="checkbox", v-model="showCompleted")#field_show-completed
-          label(for="field_show-completed") Voir les exercices terminés
+          Checkbox(v-model="showCompleted") Montrer les exercices terminés
       ArrayGroupedHomework
     MainGroupRight
       HeadingAlt(has-inline-buttons) Contrôles
@@ -64,6 +43,7 @@ import DropdownFlat from "~/components/DropdownFlat.vue"
 import ModalAddExercise from "~/components/ModalAddExercise.vue"
 import ModalAddTest from "~/components/ModalAddTest.vue"
 import ArrayGroupedHomework from "~/components/ArrayGroupedHomework.vue"
+import Checkbox from '~/components/Checkbox.vue'
 
 export default {
   components: {
@@ -79,6 +59,7 @@ export default {
     ModalAddExercise,
     ModalAddTest,
     ArrayGroupedHomework,
+    Checkbox,
   },
 
   head() {

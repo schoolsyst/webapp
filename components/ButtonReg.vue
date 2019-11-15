@@ -35,7 +35,7 @@ button
     align-items: center
     border-radius 7.5px
     padding: 0 25px
-    font-size: 1.5rem
+    font-size: 1.2rem
     height: 60px
     .icon
       margin-right: 0.5rem
