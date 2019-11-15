@@ -1,5 +1,5 @@
 <template lang="pug">
-BaseCard.CardSubject(:style="{backgroundColor: mutColor, color: textColor}", :class="{isEditing}")
+BaseCard.CardSubject(:style="{backgroundColor: mutColor, color: textColor}", :class="{expanded}")
   //TODO: type in the name of the subject to confirm deletion
   ModalDialogConfirm.confirm-delete(
     :name="`delete-subject-${uuid}`" 
@@ -7,7 +7,7 @@ BaseCard.CardSubject(:style="{backgroundColor: mutColor, color: textColor}", :cl
     confirm-text="Supprimer" 
     challenge-message="Pour confirmer, écrivez le nom de la matière"
     :challenge="(input) => input === name"
-    @confirm="isEditing = false; $emit('editing-finished', subject); deleteSubject()"
+    @confirm="deleteSubject(); $emit('expand', false)"
   )
     | Supprimer cette matière supprimera #[strong tout] ce qui était en lien avec:
     br
@@ -18,9 +18,9 @@ BaseCard.CardSubject(:style="{backgroundColor: mutColor, color: textColor}", :cl
     br
     | Cette action est #[strong irréversible]
   p.name 
-    input.name-input(v-model="mutName" placeholder="Nom de la matière..." :readonly="!isEditing")
+    input.name-input(v-model="mutName" placeholder="Nom de la matière..." :readonly="!expanded")
     //-TODO: close button reverts values to those passed in props
-    ButtonIcon.edit-button(@click="toggleAndCancel()" :color="textColor" v-if="uuid !== 'new' && !noEditButton") {{ isEditing ? 'close' : 'edit' }}
+    ButtonIcon.edit-button(@click="toggleAndCancel(); $emit('expand', true)" :color="textColor" v-if="uuid !== 'new' && !noEditButton") {{ expanded ? 'close' : 'edit' }}
   .row
     .field
       LabelFlat Abbreviation*
@@ -56,7 +56,7 @@ BaseCard.CardSubject(:style="{backgroundColor: mutColor, color: textColor}", :cl
       )
   .button-row
     ButtonIcon.delete-button(:open-modal="`confirm-delete-subject-${uuid}`" open-at="center" :color="textColor" v-if="uuid !== 'new'") delete
-    ButtonIcon.confirm-button(@click="isEditing = false; $emit('editing-finished', subject); uploadChanges()" :color="textColor") check
+    ButtonIcon.confirm-button(@click="$emit('expand', false); uploadChanges()" :color="textColor") check
 </template>
 
 <script>
@@ -101,7 +101,7 @@ export default {
       type: Boolean,
       default: false,
     },
-    editing: {
+    expanded: {
       type: Boolean,
       default: false,
     },
@@ -121,10 +121,10 @@ export default {
 
   computed: {
     ...mapGetters({
-      setting: "setting",
+      setting: "settings/value",
     }),
     gradeUnit() {
-      return Number(this.setting("grade_max").value)
+      return Number(this.setting("grade_max"))
     },
     textColor() {
       return tinycolor(this.mutColor).isLight() ? "black" : "white"
@@ -148,7 +148,7 @@ export default {
 
   methods: {
     toggleAndCancel() {
-      if (this.isEditing) {
+      if (this.expanded) {
         this.mutColor = this.$props.color
         this.mutName = this.$props.name
         this.mutGrade_goal = this.$props.grade_goal
@@ -157,18 +157,18 @@ export default {
         this.mutAbbreviation = this.$props.abbreviation
         this.mutSlug = this.$props.slug
       }
-      this.isEditing = !this.isEditing
+      this.$emit('expand', !this.expanded)
     },
     uploadChanges: debounce(function() {
       try {
         let res
         if (this.uuid === "new") {
           res = this.$axios.post(`/subjects/`, this.subject)
-          this.$store.commit("ADD_SUBJECT", res.data)
+          this.$store.commit("subjects/ADD", res.data)
           this.$toast.success(`Matière "${res.data.name}" ajoutée`)
         } else {
           res = this.$axios.patch(`/subjects/${this.uuid}/`, this.subject)
-          this.$store.commit("UPDATE_SUBJECT", {
+          this.$store.commit("subjects/PATCH", {
             uuid: this.uuid,
             data: res.data,
           })
@@ -211,7 +211,7 @@ export default {
 
   overflow: hidden;
 
-  &:not(.isEditing) {
+  &:not(.expanded) {
     height: 60px;
   }
 

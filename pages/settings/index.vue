@@ -23,17 +23,15 @@
                     HeadingSub {{namespace}}
                     .field(v-for="setting in settings")
                         label(:for="`field_${setting.key.replace('_', '-')}`") {{setting.name}}
-                        template(v-if="setting.kind === 'choices'")
+                        template(v-if="setting.type === 'CHOICES'")
                             select(:id="`field_${setting.key.replace('_', '-')}`")
-                                option(v-for="choice in setting.choices.split(',')" :selected="choice === setting.default") {{choice}}
+                                option(v-for="choice in setting.choices.split(',')" :selected="choice === setting.value") {{choice}}
                         template(v-else)
-                            textarea(:id="`field_${setting.key.replace('_', '-')}`") {{getSetting(setting.key)}}
+                            textarea(:id="`field_${setting.key.replace('_', '-')}`") {{setting.rawValue}}
         MainGroupRight
             HeadingSub Matières
-            ArrayCardSubject
+            ArrayCardSubject(:subjects="subjects")
                 li: ButtonLargeFlat(icon="plus", open-modal="add-subject", open-at="self") Ajouter une {{ subjects.length ? 'autre' : 'matière'}}
-                li(v-for="subject in subjects" :key="subject.uuid"): CardSubject(v-bind="subject")
-
 </template>
 
 <script>
@@ -68,18 +66,17 @@ export default {
   },
   head() {
     return {
-      title: `${this.pageTitleCounter}Réglages`,
+      // title: `${this.pageTitleCounter}Réglages`,
     }
   },
   computed: {
     ...mapGetters({
-      defaultSettings: "defaultSettings",
-      setting: "setting",
-      subjects: "subjects",
-      pageTitleCounter: "homework/pageTitleCounter",
+      defaultSettings: "settings/all",
+      setting: "settings/value",
+      subjects: "subjects/all",
     }),
     groupedSettings() {
-      return groupBy(this.defaultSettings, "namespace")
+      return groupBy(this.defaultSettings, "category")
     },
   },
   methods: {
