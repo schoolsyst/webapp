@@ -1,6 +1,6 @@
 import { firstBy } from "thenby"
 import { isBefore, isWithinInterval, parseISO } from "date-fns"
-import { getMutations } from "./index"
+import { getMutations, getValidator } from "./index"
 
 export const state = () => ({
   grades: [],
@@ -116,7 +116,7 @@ export const actions = {
   async post({ commit, dispatch }, grade, force = false) {
     if(!force) {
       const validation = await dispatch('validate', grade)
-      if(validation !== true) return validation
+      if(!validation.validated) return validation
     }
     try {
       const { data } = await this.$axios.get(`/grades/`)
@@ -128,37 +128,37 @@ export const actions = {
     }
   },
 
-  async validate({ getters, rootGetters }, grade) {
-    /* Returns true if the grade can be sent to the database
-    Returns an error message as a string otherwise
-    */
-    // Check if x ∈ [0, 1]
-    const isIn01 = (x) => x >= 0 && x <= 1
-
-    if (!('name' in grade && grade.name))
-      return "Veuillez donner un nom à cette note"
-    if(!(grade.name.length <= 300))
-      return "Le nom de la note est trop long"
-    if (!(grade.unit >= 1))
-      return `L'unité de la note doit être au minimum 1`
-    if (!(grade.weight >= 0))
-      return `Le coefficient ne peut être négatif`
-    if (grade.obtained && !isIn01(grade.obtained))
-      return `La note obtenue doit être comprise entre 0 et ${grade.unit}`
-    if (grade.expected && !isIn01(grade.expected))
-      return `La note estimée doit être comprise entre 0 et ${grade.unit}`
-    if (grade.goal && !isIn01(grade.goal))
-      return `L'objectif de note doit être comprise entre 0 et ${grade.unit}`
-
-    return true
-  },
+  validate: getValidator({
+    constraints: {
+      maxLength: {
+        300: ["name"]
+      },
+      minimum: {
+        0: ["obtained", "expected", "goal", "weight"],
+        1: ["unit"]
+      },
+      maximum: {
+        1: ["obtained", "expected", "goal"],
+      },
+      required: ["name"],
+    },
+    fieldNames: {
+      name:     { gender: "M", name: "nom" },
+      obtained: { gender: "F", name: "note obtenue" },
+      expected: { gender: "F", name: "note estimée" },
+      goal:     { gender: "M", name: "objectif" },
+      weight:   { gender: "M", name: "coefficient" },
+      unit:     { gender: "F", name: "unité" },
+    },
+    resourceName: { gender: "F", name: "note" }
+  }),
 
   async patch({ commit, dispatch, getters }, uuid, modifications, force = false) {
     if(!force) {
       let grade = getters.one(uuid)
       grade = {...grade, ...modifications}
       const validation = await dispatch('validate', grade)
-      if(validation !== true) return validation
+      if(!validation.validated) return validation
     }
     try {
       const { data } = await this.$axios.patch(`/grades/${uuid}`, modifications)
