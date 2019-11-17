@@ -1,4 +1,4 @@
-import { toDate, addDays } from "date-fns"
+import { toDate, addDays, isBefore } from "date-fns"
 import tinycolor from "tinycolor2"
 import constantCase from 'constant-case'
 
@@ -53,8 +53,9 @@ export const actions = {
 export const getValidator = ({ 
   constraints,
   resourceName,
-  fieldNames
-}) => async ({getters}, object) => {
+  fieldNames,
+  customConstraints
+}) => async (ctx, object) => {
   /* Factory to create a validator.
   Describe constraints on fields, error messages are generated automatically.
   */
@@ -86,7 +87,15 @@ export const getValidator = ({
     maxLength: ({arg, fieldName}) => 
       object[fieldName].length <= arg,
     required: ({arg, fieldName}) => 
-      object.hasOwnProperty(fieldName) && object[fieldName] !== null
+      object.hasOwnProperty(fieldName) && object[fieldName] !== null,
+    isAHomeworkType: ({arg, fieldName}) =>
+      ['TEST', 'DM', 'EXERCISE', 'TOBRING'].includes(object[fieldName]),
+    isAWeekType: ({arg, fieldName}) =>
+      ['Q1', 'Q2', 'BOTH'].includes(object[fieldName]),
+    before: ({arg, fieldName}) =>
+      isBefore(object[fieldName], object[arg]),
+    isAColor: ({arg, fieldName}) =>
+      fieldName.match(/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/) !== null
   }
   const check = ({errorName, fieldName, errorArg}) => {
     // Wrap checkers with object property existential check
@@ -105,12 +114,21 @@ export const getValidator = ({
     const {gender, name} = fieldNames[fieldName]
     const fieldIsFeminine = gender === 'F'
     const determinateArticle = article(name, fieldIsFeminine, false)
-    const indeterminateArticle = article(fieldIsFeminine, fieldIsFeminine, true)
+    const indeterminateArticle = article(name, fieldIsFeminine, true)
+    const argNameWithArticle = article(
+      fieldNames[errorArg].name,
+      fieldNames[errorArg].gender === 'F',
+      false
+    ) + fieldNames[errorArg].name
     return upperFirst({
       maximum: `${determinateArticle}${name} ne doit pas dépasser ${errorArg}`,
       minimum: `${determinateArticle}${name} doit être d'au moins ${errorArg}`,
       maxLength: `${determinateArticle}${name} est trop long${fieldIsFeminine ? "ue" : ""}. (Taille maximale: ${errorArg})`,
-      required: `Veuillez donner ${indeterminateArticle}${name} à ${resourceName.article}${resourceName.name}`
+      required: `Veuillez donner ${indeterminateArticle}${name} à ${resourceName.article}${resourceName.name}`,
+      isAHomeworkType: `${determinateArticle}${name} doit être un contrôle, un exercice, un DM ou quelque chose à apporter.`,
+      isAWeekType: `${determinateArticle}${name} doit être Q1, Q2 ou les deux.`,
+      before: `${determinateArticle}${name} doit être avant ${argNameWithArticle}`,
+      isAColor: `${determinateArticle}${name} doit être une couleur au format hexadécimal. Exemple: #09f ou #0479cf`
     }[errorName])
   }
 
@@ -154,6 +172,14 @@ export const getValidator = ({
       }
     }
   }
+
+  // Go through custom constraints
+  customConstraints.forEach(({message, constraint}) => {
+    if (!constraint(ctx, object)) {
+      errorMessages.push(message)
+      validated = false
+    }
+  })
 
   // returns the object
   return {

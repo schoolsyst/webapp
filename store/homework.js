@@ -1,6 +1,7 @@
 import { firstBy } from "thenby";
 import groupBy from "lodash.groupby";
 import { isSameWeek, differenceInWeeks, isBefore, parseISO } from "date-fns";
+import { getValidator } from "./index"
 
 export const state = () => ({
 	homeworks: []
@@ -120,34 +121,34 @@ export const actions = {
 		}
 	},
 
-	async validate({ getters, rootGetters }, homework) {
-		homework = {
-			subject: {uuid: null},
-			name: "",
-			type: "",
-			room: "",
-			progress: 0,
-			...homework
-		}
-		if (!homework.subject.uuid)
-			return "Veuillez préciser une matière"
-		if (!rootGetters['subject/all'].map((o) => o.uuid).includes(homework.subject.uuid))
-			return "La matière sélectionnée n'existe pas"
-		if (homework.name.length > 300)
-			return "Le nom du devoir est trop long"
-		if (!['TEST', 'DM', 'EXERCISE', 'TOBRING'].includes(homework.type))
-			return "Veuillez choisir un type de devoir"
-		if (homework.room.length > 300)
-			return "Le nom de la salle est trop long"
-		if (homework.progress > 1 || homework.progress < 0)
-			return "Valeur d'avancement incorrecte"
-		return true
-	},
+	validate: getValidator({
+		constraints: {
+			isAHomeworkType: ["subject"],
+			required: ["subject", "name"],
+			minimum: {
+				0: ["progress"]
+			},
+			maximum: {
+				1: ["progress"]
+			},
+			maxLength: {
+				300: ["name", "room"]
+			}
+		},
+		fieldNames: {
+			subject:  { gender: "F", name: "matière" },
+			name:     { gender: "M", name: "nom" },
+			type:     { gender: "M", name: "type" },
+			room:     { gender: "F", name: "salle" },
+			progress: { gender: "F", name: "progression" }
+		},
+		resourceName: { gender: "M", name: "devoir" }
+	}),
 
 	async post({ commit, dispatch }, homework, force = false) {
 		if(!force) {
 			const validation = await dispatch('validate', homework)
-			if (validation !== true) return validation
+			if (!validation.validated) return validation
 		}
 		try {
 			const { data } = await this.$axios.post(`/homework/`, homework);
@@ -175,7 +176,7 @@ export const actions = {
 			let homework = getters.one(uuid)
 			homework = {...homework, ...modifications}
 			const validation = await dispatch('validate', homework)
-			if(validation !== true) return validation
+			if (!validation.validated) return validation
 		}
 		try {
 			const { data } = await this.$axios.patch(

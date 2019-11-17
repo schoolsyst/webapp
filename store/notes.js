@@ -1,7 +1,7 @@
 import { firstBy } from "thenby"
-import { isBefore, parseISO } from "date-fns"
+import { isBefore, parseISO, format } from "date-fns"
 import JsSearch from "js-search"
-import { getMutations } from "./index"
+import { getMutations, getValidator } from "./index"
 
 export const state = () => ({
   notes: [],
@@ -68,6 +68,24 @@ export const mutations = {
 }
 
 export const actions = {
+  validate: getValidator({
+    constraints: {
+      required: ["subject", "name", "format"],
+      maxLength: {
+        300: ["name"]
+      }
+    },
+    fieldNames: {
+      subject:  { gender: "F", name: "matière" },
+      name:     { gender: "M", name: "nom" },
+      content:  { gender: "M", name: "contenu" },
+      format:   { gender: "M", name: "format" },
+      modified: { gender: "F", name: "date de modification" },
+      added:    { gender: "F", name: "date de création" },
+      opened:   { gender: "F", name: "date d'ouverture" },
+    },
+    resourceName: { gender: "F", name: "prise de notes" }
+  }),
   async load({ commit, state }, force = false) {
     if (!force && state.notes.length) return
     console.log(`Loading notes :: force=${force}, state.notes.length=${state.notes.length}`)
@@ -84,7 +102,11 @@ export const actions = {
       }
     }
   },
-  async post({ commit }, note) {
+  async post({ commit, dispatch }, note) {
+    if(!force) {
+      const validation = await dispatch('validate', note)
+      if (!validation.validated) return validation
+    }
     try {
       const { data } = await this.$axios.post("/notes/", note)
       // console.log("[from API] POST /notes/: OK")
@@ -98,13 +120,17 @@ export const actions = {
       }
     }
   },
-  async patch({ commit, getters }, uuid, modifications) {
+  async patch({ commit, getters, dispatch }, uuid, modifications, force = false) {
+    const note = {
+      ...getters.one(uuid),
+      ...modifications
+    }
+    if(!force) {
+      const validation = await dispatch('validate', note)
+      if (!validation.validated) return validation
+    }
     try {
-      const { data } = await this.$axios.patch(`/notes/${uuid}`, {
-        ...getters.one(uuid),
-        modified: new Date(),
-        ...modifications,
-      })
+      const { data } = await this.$axios.patch(`/notes/${uuid}`, note)
       // console.log(`[from API] PATCH /notes/${uuid}/: OK`)
       if (data) commit("PATCH", uuid, modifications)
     } catch (error) {

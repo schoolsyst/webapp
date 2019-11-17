@@ -19,6 +19,7 @@ import {
   eachDayOfInterval,
   isBefore,
   isSameDay,
+  isSameMinute,
   isDate,
   isAfter,
   setMinutes,
@@ -28,7 +29,7 @@ import {
   startOfDay,
   isValid,
 } from "date-fns"
-import { getMutations } from "./index"
+import { getMutations, getValidator } from "./index"
 
 export const state = () => ({
   events: [],
@@ -289,6 +290,121 @@ export const mutations = {
 }
 
 export const actions = {
+  validateEvent: getValidator({
+    constraints: {
+      required: ["subject", "start", "end", "day", "week_type"],
+      isAWeekType: ["week_type"],
+      before: {
+        end: ["start"]
+      }
+    },
+    customConstraints: [
+      {
+        message: "Cet emplacement est déjà pris par un autre cours",
+        constraint: ({getters}, object) =>
+          !getters.events.filter((o) => 
+            o.start === object.start &&
+            o.end === object.end &&
+            o.day === object.day && 
+            (o.week_type === object.week_type || o.week_type === 'BOTH')
+          ).length
+      }
+    ],
+    fieldNames: {
+      subject:   { gender: "F", name: "matière" },
+      start:     { gender: "F", name: "heure de début" },
+      end:       { gender: "F", name: "heure de fin" },
+      room:      { gender: "F", name: "salle" },
+      day:       { gender: "M", name: "jour" },
+      week_type: { gender: "M", name: "type de semaine" }
+    },
+    resourceName: { gender: "M", name: "cours" },
+  }),
+  validateMutation: getValidator({
+    constraints: {
+      before: {
+        rescheduled_end: ["rescheduled_start"]
+      },
+      required: ["subject"],
+      maxLength: {
+        300: ["room"]
+      }
+    },
+    customConstraints: [
+      {
+        message: "Un cours existe déjà à cette période",
+        constraint: ({getters}, object) => {
+          /* Checks if -- when the mutation is rescheduled -- no courses already exists between the chosen dates */
+          if (!(object.hasOwnProperty('rescheduled_start') && object.hasOwnProperty('rescheduled_end')))
+            return true
+          !getters.coursesIn(
+            object.rescheduled_start,
+            object.rescheduled_end
+          ).filter((o) => 
+            (
+              isSameMinute(o.start, object.rescheduled_start) || 
+              isAfter(object.rescheduled_end, o.end)
+            ) &&
+            (
+              isSameMinute(o.end, object.rescheduled_end) || 
+              isBefore(object.rescheduled_end, o.end)
+            )
+          ).length
+        }
+      },
+      {
+        message: "Aucun cours n'existe entre les dates de supression",
+        constraint: ({getters}, object) => {
+          /* Checks if -- when the mutation is deleted -- some course(s) already exists between the chosen dates */
+          if (!(object.hasOwnProperty('deleted_start') && object.hasOwnProperty('deleted_end')))
+            return true
+          getters.coursesIn(
+            object.deleted_start,
+            object.deleted_end
+          ).filter((o) => 
+            (
+              isSameMinute(o.start, object.deleted_start) || 
+              isAfter(object.deleted_end, o.end)
+            ) &&
+            (
+              isSameMinute(o.end, object.deleted_end) || 
+              isBefore(object.deleted_end, o.end)
+            )
+          ).length > 0
+        }
+      },
+      {
+        message: "Il y a plusieurs cours entre les deux dates de suppression",
+        constraint: ({getters}, object) => {
+          /* Checks if -- when the mutation is deleted -- no more than one course already exists between the chosen dates */
+          if (!(object.hasOwnProperty('deleted_start') && object.hasOwnProperty('deleted_end')))
+            return true
+          getters.coursesIn(
+            object.deleted_start,
+            object.deleted_end
+          ).filter((o) => 
+            (
+              isSameMinute(o.start, object.deleted_start) || 
+              isAfter(object.deleted_end, o.end)
+            ) &&
+            (
+              isSameMinute(o.end, object.deleted_end) || 
+              isBefore(object.deleted_end, o.end)
+            )
+          ).length <= 1
+        }
+      }
+    ],
+    fieldNames: {
+      subject:           { gender: "F", name: "matière" },
+      rescheduled_start: { gender: "M", name: "début du nouveau cours" },
+      rescheduled_end:   { gender: "F", name: "fin du nouveau cours" },
+      deleted_start:     { gender: "M", name: "début du cours supprimé" },
+      deleted_end:       { gender: "F", name: "fin du cours supprimé" },
+      room:              { gender: "F", name: "salle" },
+    },
+    resourceName: { gender: 'M', name: "changement d'emploi du temps" }
+  }),
   async load ({ dispatch }, force = false) {
     await dispatch('loadEvents', force)
     await dispatch('loadMutations', force)
@@ -334,8 +450,7 @@ export const actions = {
   async postEvent({ commit, dispatch }, event, force = false) {
     if(!force) {
       const validation = await dispatch('validateEvent', mutation)
-      // if validation is not true, it's the error message
-      if (validation !== true) return validation 
+      if (!validation.validated) return validation 
     }
     try {
       const { data } = await this.$axios.post(`/events/`, event)
@@ -351,61 +466,10 @@ export const actions = {
     }
   },
 
-  async validateEvent({ getters, rootGetters }, event) {
-    //TODO: include the object fields that errored in errorMessages
-    const errorMessages = {}
-
-    // start, end, subject, day and week_type are specified
-    if(!( "start" in event ))
-      return "Veuillez spécifier l'heure de début du cours"
-    if(!( "end" in event ))
-      return "Veuillez spécifier l'heure de fin du cours"
-    if(!( event.subject && event.subject.uuid ))
-      return "Veuillez spécifier la matière du cours"
-    if(!( "day" in event ))
-      return "Veuillez choisir le jour du cours"
-    if(!( "week_type" in event ))
-      return "Veuillez sélectionner la semaine: Q1, Q2 ou les deux"
-
-    // start & end are Date objects
-    if(!( startDefined && isValid(parse(event.start, 'HH:mm')) ))
-      return "Veuillez rentrer une heure de début valide, au format HH:MM (24 heures)"
-    if(!( endDefined && isValid(parse(event.end, 'HH:mm')) ))
-      return "Veuillez rentrer une heure de fin valide, au format HH:MM (24 heures)"
-
-    // start is before end
-    if(!( startIsDate && endIsDate && isBefore(start, end) ))
-      return "L'heure du début du cours est après l'heure de fin !"
-
-    // day is a valid week day integer
-    if(!( dayDefined && [1, 2, 3, 4, 5, 6, 7].includes(event.day) ))
-      return `Veuillez un jour de la semaine valide`
-
-    // week_type is either Q1, Q2 or BOTH
-    if(!( weekTypeDefined && ["Q1", "Q2", "BOTH"].includes(event.week_type) ))
-      return "Veuillez choisir un type de semaine correct: Q1, Q2 ou les deux"
-
-    // Check if no event exist at this date
-    const doesNotOverlap = !getters.events.filter((o) => 
-      o.start === event.start &&
-      o.end === event.end &&
-      o.day === event.day && 
-      (o.week_type === event.week_type || o.week_type === 'BOTH')
-    ).length
-
-    if(!doesNotOverlap) return "Un autre cours existe déjà ici !"
-
-    // Subject is specified & exists
-    if(!( subjectDefined && rootGetters['subjects/all'].map((o) => o.uuid).includes(event.subject.uuid) ))
-      return `La matière ${'name' in event.subject ? '"' + event.subject.name + '"' : 'sélectionnée'} n'existe pas`
-
-    return true
-  },
-
   async postMutation({ commit, dispatch }, mutation, force = false) {
     if(!force) {
       const validation = await dispatch('validateMutation', mutation)
-      if (validation !== true) return validation
+      if (!validation.validated) return validation
     }
     try {
       const { data } = await this.$axios.post(`/events-mutations/`, mutation)
@@ -446,7 +510,7 @@ export const actions = {
       let event = getters.event(uuid)
       event = {...event, ...mutations}
       const validation = await dispatch('validateEvent', event)
-      if (validation !== true) return validation
+      if (!validation.validated) return validation
     }
     try {
       const { data } = await this.$axios.patch(`/events/${uuid}`, modifications)
@@ -467,7 +531,7 @@ export const actions = {
       let mutation = getters.event(uuid)
       mutation = {...mutation, ...mutations}
       const validation = await dispatch('validateMutation', mutation)
-      if (validation !== true) return validation
+      if (!validation.validated) return validation
     }
     try {
       const { data } = await this.$axios.patch(

@@ -1,4 +1,4 @@
-import { getMutations } from "./index"
+import { getMutations, getValidator } from "./index"
 import { firstBy, thenBy } from 'thenby'
 
 export const state = () => ({
@@ -31,6 +31,41 @@ export const mutations = {
 }
 
 export const actions = {
+  validate: getValidator({
+    constraints: {
+      maxLength: {
+        300: ["name", "room"],
+        3: ["abbreviation"]
+      },
+      isAColor: ["color"],
+      required: ["name", "color", "abbreviation", "weight"],
+      maximum: {
+        1: ["goal"]
+      },
+      minimum: {
+        0: ["goal", "weight"],
+      }
+    },
+    customConstraints: [
+      {
+        message: "Veuillez ne pas mettre d'espaces dans l'abbréviation",
+        constraint: (ctx, object) => {
+          if (object.abbreviation.length > 3)
+            return true
+          return object.abbreviation.match(/^[^\s]{,3}$/) !== null
+        }
+      }
+    ],
+    fieldNames: {
+      color:        { gender: 'F', name: 'couleur' },
+      name:         { gender: 'M', name: 'nom' },
+      abbreviation: { gender: 'F', name: 'abbréviation' },
+      goal:         { gender: 'M', name: 'objectif de moyenne' },
+      weight:       { gender: 'M', name: 'coefficient' },
+      room:         { gender: 'F', name: 'salle' }
+    },
+    resourceName: { gender: 'F', name: 'matière' }
+  }),
   async load({ commit, state }, force = false) {
     if (!force && state.subjects.length) return
     console.log(window)
@@ -48,7 +83,7 @@ export const actions = {
     }
   },
 
-  async post({ commit }, subject) {
+  async post({ commit }, subject, force = false) {
     try {
       const { data } = await this.$axios.post(`/subjects/`, subject)
       if (data) commit("ADD", data)
@@ -63,7 +98,7 @@ export const actions = {
     }
   },
 
-  async patch({ commit }, uuid, modifications) {
+  async patch({ commit }, uuid, modifications, force = false) {
     try {
       const { data } = await this.$axios.patch(
         `/subjects/${uuid}/`,
