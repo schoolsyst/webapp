@@ -70,11 +70,14 @@ export default {
    ** Global CSS
    */
   css: [
+    // Global
     "~/assets/reset.sass",
     "~/assets/defaults.sass",
     // Fonts
-    "~/assets/fonts/Manrope/import.css",
-    "~/assets/fonts/FantasqueSansMono/import.css"
+    "~/assets/fonts/FantasqueSansMono/import.css",
+    "~/assets/fonts/Now/import.css",
+    // Icons
+    "~/assets/fonts/Material-Icons/import.css"
   ],
   /*
    ** Plugins to load before mounting the App
