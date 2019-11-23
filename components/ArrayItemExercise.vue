@@ -18,8 +18,8 @@ export default {
 
   props: {
     exercises: {
-      type: String,
-      default: null
+      type: Array,
+      default: () => []
     }
   },
 

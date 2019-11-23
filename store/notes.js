@@ -61,13 +61,6 @@ export const getters = {
         return []
     }
   },
-}
-
-export const mutations = {
-  ...getMutations("note", parseObjectDates),
-}
-
-export const actions = {
   validate: getValidator({
     constraints: {
       required: ["subject", "name", "format"],
@@ -86,6 +79,13 @@ export const actions = {
     },
     resourceName: { gender: "F", name: "prise de notes" }
   }),
+}
+
+export const mutations = {
+  ...getMutations("note", parseObjectDates),
+}
+
+export const actions = {
   async load({ commit, state }, force = false) {
     if (!force && state.notes.length) return
     console.log(`Loading notes :: force=${force}, state.notes.length=${state.notes.length}`)

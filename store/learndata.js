@@ -40,28 +40,6 @@ export const getters = {
         return []
     }
   },
-}
-
-export const mutations = {
-  ...getMutations("learndata", parseObjectDates),
-}
-
-export const actions = {
-  async load({ commit, state }, force = false) {
-    if (!force && state.learndatas.length) return
-    try {
-      const { data } = await this.$axios.get("/learndata/")
-      // console.log("[from API] GET /learndata/: OK")
-      if (data) commit("SET", data)
-    } catch (error) {
-      // console.error("[from API] GET /learndatas/: Error")
-      try {
-        // console.error(error.response.data)
-      } catch (_) {
-        // console.error(error)
-      }
-    }
-  },
   validate: getValidator({
     constraints: {
       required: ["subject", "name", "data"],
@@ -85,6 +63,28 @@ export const actions = {
     },
     resourceName: { gender: "M", name: "learndata" }
   }),
+}
+
+export const mutations = {
+  ...getMutations("learndata", parseObjectDates),
+}
+
+export const actions = {
+  async load({ commit, state }, force = false) {
+    if (!force && state.learndatas.length) return
+    try {
+      const { data } = await this.$axios.get("/learndata/")
+      // console.log("[from API] GET /learndata/: OK")
+      if (data) commit("SET", data)
+    } catch (error) {
+      // console.error("[from API] GET /learndatas/: Error")
+      try {
+        // console.error(error.response.data)
+      } catch (_) {
+        // console.error(error)
+      }
+    }
+  },
   async post({ commit, dispatch }, learndata, force = false) {
     if(!force) {
       const validation = await dispatch('validate', learndata)

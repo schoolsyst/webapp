@@ -6,8 +6,8 @@ html
     font-family:  'Now', sans-serif
 
 
-pre, code, source
-    font-family: 'Roboto Mono', monospace
+pre, code, source, .-font-monospace
+    font-family: 'Cascadia Code', 'Roboto Mono', monospace
 
 
 //=====================
@@ -88,9 +88,6 @@ button, a, select
     100%
         opacity: 1
 
-.anim--blink
-    animation: blink 1s linear infinite
-
 @keyframes fade-in
     0%
         opacity: 0
@@ -155,3 +152,15 @@ $bk-sidebar: 650px
 //       MODULES
 //=====================
 @import 'toasts.sass'
+
+//=====================
+//        LINKS
+//=====================
+
+p a:not([no-default])
+    color: var(--blue)
+    border-bottom: 2px solid var(--blue)
+    &:hover, &:focus
+        height: 1.5em
+    &:active
+        color: var(--blue-dark)

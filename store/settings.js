@@ -7,6 +7,158 @@ export const state = () => ({
   settings: [],
 })
 
+export const getters = {
+  all: (state, getters) => state.settings,
+  one: (state, getters) => (propval, prop = "key") =>
+    state.settings.find((o) => o[prop] === propval) || null,
+  value: (state, getters) => (propval, fallback = null, prop = "key") => {
+    const setting = getters.one(propval, prop)
+    if (setting === null)
+      if (fallback !== null) return fallback
+      else
+      // throw new Error(
+      //   `No setting with ${prop}=${propval}. Available ${prop}s: ${getters.all.map(
+      //     (o) => o[prop]
+      //   )}`
+      // )
+      return []
+    return setting.value
+  },
+  group: (state, getters) => (settings, { removeHidden }) => {
+    /* Groups `settings` by category.
+     * `removeHidden`: when set to true, categories that match the regex pattern below
+     * get filtered out of the returned array:
+     * ^__.+__$
+     */
+    if (removeHidden)
+      settings = settings.filter((o) => !o.category.match(/^__.+__$/))
+    settings = groupBy(settings, "category")
+    return settings
+  },
+  grouped: (state, getters) =>
+    getters.group(getters.all, { removeHidden: true }),
+}
+
+export const mutations = {
+  SET: (state, { definitions, settings }) => {
+    /* Set settings for the user, by combining a setting definition (SettinDefinition in the backend)
+     * and a value (Setting.value in the backend)
+     */
+    definitions.forEach((definition) => {
+      let value
+      // Attempt to get the user's value for this setting definition
+      const setting = settings.find((o) => o.setting.key === definition.key)
+      // Set `value` property: if setting is undefined, fallback to the default
+      // value, else use the one on the found setting
+      const isDefaultValue = setting === undefined
+      if (isDefaultValue) {
+        value = definition.default
+      } else {
+        value = setting.value
+      }
+      let rawValue = value
+      // Convert to the appropriate JS representation of the value
+      value = parsedValue(value, definition)
+      /* Adds the definition to the state as a setting object + the value prop
+       * and a bool to tell if the setting is set to the default value.
+       */
+      const hydratedDefinition = { ...definition, value, isDefaultValue, rawValue }
+      state.settings.push(hydratedDefinition)
+    })
+  },
+  ...getMutations("setting", parsedValue, true, ["del", "add", "patch"]),
+  //TODO validator: customConstraints from definitions
+  // eg: if (definition.required) /* check if setting is not empty */ else return true
+  // eg2: try { parseValue(definition.type, setting.value) } catch (e) { return false }
+}
+
+export const actions = {
+  async fetchSettings({ commit }) {
+    try {
+      const { data } = await this.$axios.get(`/settings/`)
+      // console.log(`[from API] GET /settings/: OK`)
+      return data
+    } catch (error) {
+      // console.error(`[from API] GET /settings/: Error`)
+      try {
+        // console.error(error.response.data)
+      } catch (_) {
+        // console.error(error)
+      }
+      return null
+    }
+  },
+  async fetchDefinitions({ commit }) {
+    try {
+      const { data } = await this.$axios.get(`/settings-definitions/`)
+      // console.log(`[from API] GET /settings-definitions/: OK`)
+      return data
+    } catch (error) {
+      // console.error(`[from API] GET /settings-definitions/: Error`)
+      try {
+        // console.error(error.response.data)
+      } catch (_) {
+        // console.error(error)
+      }
+      return null
+    }
+  },
+  async load({ commit, state, dispatch }, force = false) {
+    /* Computes the settings that should be used (state.settings)
+     * from definitions and 'raw' settings returned directly by the API in fetchSettings
+     */
+    if (!force && state.settings.length) return
+    const definitions = (await dispatch("fetchDefinitions")) || []
+    const settings = (await dispatch("fetchSettings")) || []
+    commit("SET", { definitions, settings })
+  },
+  async post({ commit }, setting) {
+    try {
+      const { data } = await this.$axios.post("/settings/", setting)
+      if (data) commit("ADD", data)
+      // console.log(`[from API] POST /settings/: OK`)
+    } catch (error) {
+      // console.error("[from API] POST /settings/: Error")
+      try {
+        // console.error(error.response.data)
+      } catch (_) {
+        // console.error(error)
+      }
+    }
+  },
+  async patch({ commit }, uuid, modifications) {
+    try {
+      const { data } = await this.$axios.patch(
+        `/settings/${uuid}`,
+        modifications
+      )
+      if (data) commit("PATCH", uuid, data)
+      // console.log(`[from API] PATCH /settings/${uuid}: OK`)
+    } catch (error) {
+      // console.error(`[from API] PATCH /settings/${uuid}: Error`)
+      try {
+        // console.error(error.response.data)
+      } catch (_) {
+        // console.error(error)
+      }
+    }
+  },
+  async delete({ commit }, uuid) {
+    try {
+      const { data } = await this.$axios.delete(`/settings/${uuid}`)
+      if (data) commit("DEL", uuid)
+      // console.log(`[from API] DELETE /settings/${uuid}: OK`)
+    } catch (error) {
+      // console.error(`[from API] DELETE /settings/${uuid}: Error`)
+      try {
+        // console.error(error.response.data)
+      } catch (_) {
+        // console.error(error)
+      }
+    }
+  },
+}
+
 const parsedValue = (
   value,
   { type, multiple, positive },
@@ -102,152 +254,4 @@ const parsedValue = (
   }
   if (typeof parsed === "number" && positive) parsed = Math.abs(parsed)
   return parsed
-}
-
-export const getters = {
-  all: (state, getters) => state.settings,
-  one: (state, getters) => (propval, prop = "key") =>
-    state.settings.find((o) => o[prop] === propval) || null,
-  value: (state, getters) => (propval, fallback = null, prop = "key") => {
-    const setting = getters.one(propval, prop)
-    if (setting === null)
-      if (fallback !== null) return fallback
-      else
-      throw new Error(
-        `No setting with ${prop}=${propval}. Available ${prop}s: ${getters.all.map(
-          (o) => o[prop]
-        )}`
-      )
-    return setting.value
-  },
-  group: (state, getters) => (settings, { removeHidden }) => {
-    /* Groups `settings` by category.
-     * `removeHidden`: when set to true, categories that match the regex pattern below
-     * get filtered out of the returned array:
-     * ^__.+__$
-     */
-    if (removeHidden)
-      settings = settings.filter((o) => !o.category.match(/^__.+__$/))
-    settings = groupBy(settings, "category")
-    return settings
-  },
-  grouped: (state, getters) =>
-    getters.group(getters.all, { removeHidden: true }),
-}
-
-export const mutations = {
-  SET: (state, { definitions, settings }) => {
-    /* Set settings for the user, by combining a setting definition (SettinDefinition in the backend)
-     * and a value (Setting.value in the backend)
-     */
-    definitions.forEach((definition) => {
-      let value
-      // Attempt to get the user's value for this setting definition
-      const setting = settings.find((o) => o.setting.key === definition.key)
-      // Set `value` property: if setting is undefined, fallback to the default
-      // value, else use the one on the found setting
-      const isDefaultValue = setting === undefined
-      if (isDefaultValue) {
-        value = definition.default
-      } else {
-        value = setting.value
-      }
-      let rawValue = value
-      // Convert to the appropriate JS representation of the value
-      value = parsedValue(value, definition)
-      /* Adds the definition to the state as a setting object + the value prop
-       * and a bool to tell if the setting is set to the default value.
-       */
-      const hydratedDefinition = { ...definition, value, isDefaultValue, rawValue }
-      state.settings.push(hydratedDefinition)
-    })
-  },
-  ...getMutations("setting", parsedValue, true, ["del", "add", "patch"]),
-}
-
-export const actions = {
-  async fetchSettings({ commit }) {
-    try {
-      const { data } = await this.$axios.get(`/settings/`)
-      // console.log(`[from API] GET /settings/: OK`)
-      return data
-    } catch (error) {
-      // console.error(`[from API] GET /settings/: Error`)
-      try {
-        // console.error(error.response.data)
-      } catch (_) {
-        // console.error(error)
-      }
-      return null
-    }
-  },
-  async fetchDefinitions({ commit }) {
-    try {
-      const { data } = await this.$axios.get(`/settings-definitions/`)
-      // console.log(`[from API] GET /settings-definitions/: OK`)
-      return data
-    } catch (error) {
-      // console.error(`[from API] GET /settings-definitions/: Error`)
-      try {
-        // console.error(error.response.data)
-      } catch (_) {
-        // console.error(error)
-      }
-      return null
-    }
-  },
-  async load({ commit, state, dispatch }, force = false) {
-    /* Computes the settings that should be used (state.settings)
-     * from definitions and 'raw' settings returned directly by the API in fetchSettings
-     */
-    if (!force && state.settings.length) return
-    const definitions = (await dispatch("fetchDefinitions")) || []
-    const settings = (await dispatch("fetchSettings")) || []
-    commit("SET", { definitions, settings })
-  },
-  async post({ commit }, setting) {
-    try {
-      const { data } = await this.$axios.post("/settings/", setting)
-      if (data) commit("ADD", data)
-      // console.log(`[from API] POST /settings/: OK`)
-    } catch (error) {
-      // console.error("[from API] POST /settings/: Error")
-      try {
-        // console.error(error.response.data)
-      } catch (_) {
-        // console.error(error)
-      }
-    }
-  },
-  async patch({ commit }, uuid, modifications) {
-    try {
-      const { data } = await this.$axios.patch(
-        `/settings/${uuid}`,
-        modifications
-      )
-      if (data) commit("PATCH", uuid, data)
-      // console.log(`[from API] PATCH /settings/${uuid}: OK`)
-    } catch (error) {
-      // console.error(`[from API] PATCH /settings/${uuid}: Error`)
-      try {
-        // console.error(error.response.data)
-      } catch (_) {
-        // console.error(error)
-      }
-    }
-  },
-  async delete({ commit }, uuid) {
-    try {
-      const { data } = await this.$axios.delete(`/settings/${uuid}`)
-      if (data) commit("DEL", uuid)
-      // console.log(`[from API] DELETE /settings/${uuid}: OK`)
-    } catch (error) {
-      // console.error(`[from API] DELETE /settings/${uuid}: Error`)
-      try {
-        // console.error(error.response.data)
-      } catch (_) {
-        // console.error(error)
-      }
-    }
-  },
 }

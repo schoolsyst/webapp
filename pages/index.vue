@@ -1,7 +1,9 @@
 <template lang="pug">
 	.page-container
+		ModalAddHomework
+		
 		TheHeading
-			| {{format($store.state.now, 'dddd D MMM')}}
+			| {{format($store.state.now, 'EEEE d MMM')}}
 			| &mdash; {{format($store.state.now, 'HH')}}
 			span.time-separator :
 			| {{format($store.state.now, 'mm')}}
@@ -109,7 +111,10 @@ export default {
 		},
 	},
 	methods: {
-		format,
+		//TODO: move this to some global module & autodetect locale based on browser language
+		format(date, formatStr) {
+			return format(date, formatStr, {locale: fr}).split(' ').map((word) => word[0].toUpperCase()+word.slice(1)).join(' ')
+		},
 		formatDistance,
 		...mapGetters({
 			homeworkFor: 'homework/for'
@@ -131,6 +136,23 @@ export default {
 			}
 		}
 	},
-
+	mounted() {
+		
+	},
 }
 </script>
+
+<style lang="stylus" scoped>
+.time-separator
+	animation blink 1s linear infinite
+
+@keyframes blink
+	0%
+		opacity: 0
+	49.999%
+		opacity: 0
+	50%
+		opacity: 1
+	100%
+		opacity: 1
+</style>

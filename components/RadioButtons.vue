@@ -1,7 +1,7 @@
 <template lang="pug">
     fieldset.RadioButtons
         legend: slot
-        .RadioButton(v-for="value in _values" :key="value.key")
+        .RadioButton(v-for="value in values" :key="value.key")
             input(
                 @change="$emit('input', value.key)"
                 type="radio"
@@ -27,21 +27,6 @@ export default {
             const label = this.$slots.default[0].text
             return slugify(label).toLowerCase()
         },
-        _values() {
-            let ret = []
-            for (const key in this.values) {
-                if (this.values.hasOwnProperty(key)) {
-                    const element = this.values[key];
-                    ret.push(
-                        {
-                            key,
-                            label: element
-                        }
-                    )
-                }
-            }
-            return ret
-        },
         defaultSelection() {
             const idx = this.defaultValue 
                 ? this.values.map((o) => o.key).indexOf(this.defaultValue)
@@ -50,10 +35,6 @@ export default {
         }
     },
     props: {
-        value: {
-            type: Boolean,
-            default: false
-        },
         name: {
             type: String,
             required: true

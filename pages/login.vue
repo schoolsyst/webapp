@@ -5,120 +5,59 @@
     .error(v-if="errors") 
       i.material-icons warning
       p Identifiant ou mot de passe erroné
-  .logging-in(v-show="loading")
-    OverlayLoadingLogo(animation="loop")
-    h1 Connexion...
+  //- .logging-in(v-show="loading")
+  //-   OverlayLoadingLogo(animation="loop")
+  //-   h1 Connexion...
 
   .centered.login(v-if="loggingIn")
     OverlayLoadingLogo(animation="animate-in")
+    .register-link
+      p 
+        | Pas de compte ?
+        ButtonNormal(small variant="outline" @click="loggingIn = false") Créez-en un
     form(method="post" @submit.prevent="login")
-      .field
-          //TODO: remember username
-          InputFlat(
-              type="username",
-              placeholder="Nom",
-              name="username",
-              icon="account_circle",
-              @input="username = $event"
-              autofocus, required
-          )
-          
-      .field
-          //TODO: toggle 'view password'
-          //    HOWTO: new PasswordInputFlat component, based on InputFlat,
-          //           that has a toggler between [type=password] & [type=text]
-          InputFlat(
-              type="password",
-              placeholder="Mot de passe",
-              name="password",
-              icon="lock"
-              @input="password = $event"
-              required
-          )
-
-      ButtonNormal(variant="text").submit Connexion
-      .register-link
+      //TODO: remember username
+      InputField(name="username" v-model="username" :validation="loginValidation") Nom
+      InputField(type="password" v-model="password" :validation="loginValidation") Mot de passe
+      .forgotten-password
         p 
-          |Pas de compte ?
-          //- FIXME: link is added to DOM but does not redirect. Ctrl+L /register/ Enter works tho.
-          span(@click="loggingIn = false") 
-            i.material-icons chevron_right
-            |Créez-en un
-            i.material-icons chevron_left
+          | Mot de passe oublié ? 
+          nuxt-link(to="/reset-password/") Changez-le ici
+          |.
+      ButtonNormal(
+        variant="primary"
+        type="submit"
+        :validation="loginValidation"
+      ).submit Connexion
+      
   .centered.register(v-else)
     TheHeading Créez un compte.
     form(method="post" @submit.prevent="register")
-              .field
-                  //label(for="field_username") Nom
-                  //input#field_username(type="text", name="username")
-                  InputFlat(
-                      type="text",
-                      placeholder="Nom",
-                      name="username",
-                      icon="account_circle",
-                      @input="username = $event"
-                  )
-
-              .field
-                  //label(for="field_password") Mot de passe
-                  //input#field_password(type="password", name="password")
-                  InputFlat(
-                      type="password",
-                      placeholder="Mot de passe",
-                      name="password",
-                      icon="lock",
-                      @input="password = $event"
-                  )
-
-              .field
-                  //label(for="field_email") Addresse e-mail
-                  //input#field_email(type="email", name="email")
-                  InputFlat(
-                      type="email",
-                      placeholder="Addresse e-mail",
-                      name="email",
-                      icon="email",
-                      @input="email = $event"
-                      required
-                  )
-
-              .buttons
-                ButtonRegPrimary.submit(variant="primary") Créer
-
-              .login-link
-                p 
-                  |Déjà un compte ?
-                  //- FIXME: link is added to DOM but does not redirect. Ctrl+L /register/ Enter works tho.
-                  span(@click="loggingIn = true") 
-                    i.material-icons chevron_right
-                    |Connexion
-                    i.material-icons chevron_left
+      .login-link
+        p 
+          | Déjà un compte ?
+          ButtonNormal(small variant="outline" @click="loggingIn = true") Connectez-vous.
+      InputField(name="username" v-model="username") Nom
+      InputField(type="email"    v-model="email") Email
+      InputField(type="password" v-model="password") Mot de passe
 </template>
 
 <script>
 import axios from "axios"
 import { mapState, mapGetters, mapMutations, mapActions } from "vuex"
-import ArrayButtonReg from "~/components/ArrayButtonReg.vue"
-import ButtonRegPrimary from "~/components/ButtonRegPrimary.vue"
-import InputFlat from "~/components/InputFlat.vue"
 import TheHeading from "~/components/TheHeading.vue"
 import OverlayLoadingLogo from "~/components/OverlayLoadingLogo.vue"
-import ButtonFlat from "~/components/ButtonFlat.vue"
-import ButtonRegSecondary from "~/components/ButtonRegSecondary.vue"
 import ButtonNormal from '~/components/ButtonNormal.vue'
+import InputField from '~/components/InputField.vue'
 
 export default {
   middleware: false,
   layout: "bare",
   components: {
-    ArrayButtonReg,
-    ButtonRegPrimary,
-    ButtonRegSecondary,
-    ButtonFlat,
-    InputFlat,
     TheHeading,
     OverlayLoadingLogo,
-    ButtonNormal
+    ButtonNormal,
+    InputField
   },
 
   data() {
@@ -131,6 +70,7 @@ export default {
   },
 
   methods: {
+    ...mapGetters('auth', ['validateLogin']),
     async login() {
       let res = null
       try {
@@ -191,7 +131,14 @@ export default {
       }
     },
   },
-  computed: {},
+  computed: {
+    loginValidation() {
+      return this.validateLogin()({
+        username: this.username, 
+        password: this.password
+      })
+    }
+  },
 }
 </script>
 
@@ -205,6 +152,7 @@ export default {
   align-items: center
   justify-content: center
   flex-direction: column
+  text-align: center
 
 // UNUSED
 /* .error
@@ -245,6 +193,8 @@ export default {
   span:hover
     cursor: pointer
     color: var(--blue)
+.register-link
+  margin-bottom: 30px
 
 +mobile
   .InputFlat

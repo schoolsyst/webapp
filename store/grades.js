@@ -90,7 +90,31 @@ export const getters = {
   absoluteUnit: (state, getters) => (value, unit=null) => {
     unit = unit || rootGetters['settings/value']('grade_max')
     return value / unit
-  }
+  },
+  validate: getValidator({
+    constraints: {
+      maxLength: {
+        300: ["name"]
+      },
+      minimum: {
+        0: ["obtained", "expected", "goal", "weight"],
+        1: ["unit"]
+      },
+      maximum: {
+        1: ["obtained", "expected", "goal"],
+      },
+      required: ["name"],
+    },
+    fieldNames: {
+      name:     { gender: "M", name: "nom" },
+      obtained: { gender: "F", name: "note obtenue" },
+      expected: { gender: "F", name: "note estimée" },
+      goal:     { gender: "M", name: "objectif" },
+      weight:   { gender: "M", name: "coefficient" },
+      unit:     { gender: "F", name: "unité" },
+    },
+    resourceName: { gender: "F", name: "note" }
+  }),
 }
 
 export const mutations = {
@@ -127,31 +151,6 @@ export const actions = {
       // console.error(error.response.data)
     }
   },
-
-  validate: getValidator({
-    constraints: {
-      maxLength: {
-        300: ["name"]
-      },
-      minimum: {
-        0: ["obtained", "expected", "goal", "weight"],
-        1: ["unit"]
-      },
-      maximum: {
-        1: ["obtained", "expected", "goal"],
-      },
-      required: ["name"],
-    },
-    fieldNames: {
-      name:     { gender: "M", name: "nom" },
-      obtained: { gender: "F", name: "note obtenue" },
-      expected: { gender: "F", name: "note estimée" },
-      goal:     { gender: "M", name: "objectif" },
-      weight:   { gender: "M", name: "coefficient" },
-      unit:     { gender: "F", name: "unité" },
-    },
-    resourceName: { gender: "F", name: "note" }
-  }),
 
   async patch({ commit, dispatch, getters }, uuid, modifications, force = false) {
     if(!force) {

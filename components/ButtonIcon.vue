@@ -17,12 +17,11 @@ export default {
 </script>
 
 <style lang="stylus" scoped>
-.icon {
-  font-size: 36px;
-}
+.icon
+  font-size: 36px
 
-.icon:hover, .icon:focus {
-  font-family: 'Material Icons';
-  outline: none;
-}
+.icon:hover, .icon:focus
+  font-family: 'Material Icons'
+  outline: none
+
 </style>

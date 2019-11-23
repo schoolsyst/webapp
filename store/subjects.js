@@ -49,6 +49,7 @@ export const actions = {
     customConstraints: [
       {
         message: "Veuillez ne pas mettre d'espaces dans l'abbréviation",
+        field: 'abbreviation',
         constraint: (ctx, object) => {
           if (object.abbreviation.length > 3)
             return true

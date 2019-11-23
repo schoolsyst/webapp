@@ -279,17 +279,7 @@ export const getters = {
     const courses = getters.orderCourses(getters.coursesIn(start, end))
     if(!courses.length) return null
     return courses[courses.length-1].end
-  }
-}
-
-export const mutations = {
-  ...getMutations("event", (o) => o, false),
-  ...getMutations("mutation", (o) => o, false),
-  MUTATIONS_POSTLOAD: (state) =>
-    state.loadedMutations = true
-}
-
-export const actions = {
+  },
   validateEvent: getValidator({
     constraints: {
       required: ["subject", "start", "end", "day", "week_type"],
@@ -301,6 +291,7 @@ export const actions = {
     customConstraints: [
       {
         message: "Cet emplacement est déjà pris par un autre cours",
+        field: null,
         constraint: ({getters}, object) =>
           !getters.events.filter((o) => 
             o.start === object.start &&
@@ -333,6 +324,7 @@ export const actions = {
     customConstraints: [
       {
         message: "Un cours existe déjà à cette période",
+        field: null,
         constraint: ({getters}, object) => {
           /* Checks if -- when the mutation is rescheduled -- no courses already exists between the chosen dates */
           if (!(object.hasOwnProperty('rescheduled_start') && object.hasOwnProperty('rescheduled_end')))
@@ -405,6 +397,16 @@ export const actions = {
     },
     resourceName: { gender: 'M', name: "changement d'emploi du temps" }
   }),
+}
+
+export const mutations = {
+  ...getMutations("event", (o) => o, false),
+  ...getMutations("mutation", (o) => o, false),
+  MUTATIONS_POSTLOAD: (state) =>
+    state.loadedMutations = true
+}
+
+export const actions = {
   async load ({ dispatch }, force = false) {
     await dispatch('loadEvents', force)
     await dispatch('loadMutations', force)

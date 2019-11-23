@@ -54,11 +54,17 @@ export const getValidator = ({
   constraints,
   resourceName,
   fieldNames,
-  customConstraints
-}) => async (ctx, object) => {
+  customConstraints = []
+}) => (getters) => (object) => {
   /* Factory to create a validator.
   Describe constraints on fields, error messages are generated automatically.
   */
+
+  console.group(`[validator] validating resource "${resourceName.name}"`)
+  console.log(`Constraints:`)
+  console.log({...constraints, ...customConstraints})
+  console.log(`Fields:`)
+  console.log(object)
 
   // Article in french
   const article = (noun, feminine, indeterminate = false) => {
@@ -88,6 +94,8 @@ export const getValidator = ({
       object[fieldName].length <= arg,
     required: ({arg, fieldName}) => 
       object.hasOwnProperty(fieldName) && object[fieldName] !== null,
+    notEmpty: ({arg, fieldName}) =>
+      object[fieldName].length > 0,
     isAHomeworkType: ({arg, fieldName}) =>
       ['TEST', 'DM', 'EXERCISE', 'TOBRING'].includes(object[fieldName]),
     isAWeekType: ({arg, fieldName}) =>
@@ -116,19 +124,21 @@ export const getValidator = ({
     const determinateArticle = article(name, fieldIsFeminine, false)
     const indeterminateArticle = article(name, fieldIsFeminine, true)
     const argNameWithArticle = article(
-      fieldNames[errorArg].name,
-      fieldNames[errorArg].gender === 'F',
+      fieldNames[fieldName].name,
+      fieldNames[fieldName].gender === 'F',
       false
-    ) + fieldNames[errorArg].name
+    ) + fieldNames[fieldName].name
+    const fieldNameWithArticle = determinateArticle + name
     return upperFirst({
-      maximum: `${determinateArticle}${name} ne doit pas dépasser ${errorArg}`,
-      minimum: `${determinateArticle}${name} doit être d'au moins ${errorArg}`,
-      maxLength: `${determinateArticle}${name} est trop long${fieldIsFeminine ? "ue" : ""}. (Taille maximale: ${errorArg})`,
-      required: `Veuillez donner ${indeterminateArticle}${name} à ${resourceName.article}${resourceName.name}`,
-      isAHomeworkType: `${determinateArticle}${name} doit être un contrôle, un exercice, un DM ou quelque chose à apporter.`,
-      isAWeekType: `${determinateArticle}${name} doit être Q1, Q2 ou les deux.`,
-      before: `${determinateArticle}${name} doit être avant ${argNameWithArticle}`,
-      isAColor: `${determinateArticle}${name} doit être une couleur au format hexadécimal. Exemple: #09f ou #0479cf`
+      maximum: `${fieldNameWithArticle} ne doit pas dépasser ${errorArg}`,
+      minimum: `${fieldNameWithArticle} doit être d'au moins ${errorArg}`,
+      maxLength: `${fieldNameWithArticle} est trop long${fieldIsFeminine ? "ue" : ""}. (Taille maximale: ${errorArg})`,
+      required: `Veuillez renseigner ${indeterminateArticle}${name}`,
+      isAHomeworkType: `${fieldNameWithArticle} doit être un contrôle, un exercice, un DM ou quelque chose à apporter.`,
+      isAWeekType: `${fieldNameWithArticle} doit être Q1, Q2 ou les deux.`,
+      before: `${fieldNameWithArticle} doit être avant ${argNameWithArticle}`,
+      isAColor: `${fieldNameWithArticle} doit être une couleur au format hexadécimal. Exemple: #09f ou #0479cf`,
+      notEmpty: `${fieldNameWithArticle} ne peut pas être vide`,
     }[errorName])
   }
 
@@ -174,18 +184,28 @@ export const getValidator = ({
   }
 
   // Go through custom constraints
-  customConstraints.forEach(({message, constraint}) => {
-    if (!constraint(ctx, object)) {
-      errorMessages.push(message)
+  customConstraints.forEach(({message, constraint, field}) => {
+    if (!constraint(getters, object)) {
+      field = field === null ? 'nonFieldErrors' : field
+      if (errorMessages.hasOwnProperty(field)) {
+        errorMessages[field].push(message)
+      } else {
+        errorMessages[field] = [message]
+      }
       validated = false
     }
   })
 
   // returns the object
-  return {
+  const ret = {
     validated,
     errors: errorMessages
   }
+  console.log('Results:')
+  console.log(ret)
+  console.groupEnd()
+
+  return ret
 }
 
 export const getMutations = (

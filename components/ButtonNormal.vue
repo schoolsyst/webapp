@@ -1,9 +1,11 @@
 <template lang="pug">
+    //TODO: popup w/ errors
     button.btn(
         :type="type"
-        :class="`btn--${variant}`"
-        :disabled="disabled || !validated"
-        :title="!validated ? message : false"
+        :class="`btn--${variant} ${small ? 'small' : ''}`"
+        :disabled="disabled || !v.validated"
+        :title="!v.validated ? Object.values(v.errors).join(', ') : false"
+        @click="$emit('click')"
     ): slot
 </template>
 
@@ -12,7 +14,7 @@ export default {
     props: {
         type: {
             type: String,
-            default: "submit"
+            default: ""
         },
         variant: {
             type: String,
@@ -21,20 +23,22 @@ export default {
         },
         validation: {
             type: Object,
-            default: () => ({
-                validated: true,
-                message: null
-            })
+            default: null
         },
         disabled: {
             type: Boolean,
             default: false
+        },
+        small: {
+            type: Boolean,
+            default: false
         }
     },
-    data() {
-        return {
-            validated: this.validation.validated,
-            message: this.validation.message
+    computed: {
+        v() {
+            if (this.validation === null) 
+                return { validated: true, errors: {} }
+            return this.validation
         }
     }
 }
@@ -42,12 +46,19 @@ export default {
 
 <style lang="stylus" scoped>
 .btn
+    // display inline
+    margin 0 5px
     padding 15px 20px
-    border-radius 5px
     font-size: 1.05em
-    display flex
+    &.small
+        font-size: 0.85em
+        margin 0 1.5em
+    border-radius 5px
+    display flex-inline
     justify-content center
     align-items center
+    &[disabled]
+        cursor not-allowed
 .btn--outline
     border 2px solid var(--blue)
     color var(--blue)
@@ -56,6 +67,10 @@ export default {
         color white
     &:active
         background-color var(--blue-dark)
+    &[disabled]
+        color #00000055
+        border-color #00000055
+        background transparent
 .btn--primary
     background-color var(--blue)
     color white
@@ -63,6 +78,9 @@ export default {
         background-color var(--blue-dark)
     &:active
         color rgba(255,255,255,0.25)
+    &[disabled]
+        background #00000033
+        color #00000088
 .btn--secondary
     background-color var(--offset-blue)
     color var(--blue)

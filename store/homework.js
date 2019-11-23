@@ -101,26 +101,7 @@ export const mutations = {
 		let idx = state.homeworks.map(o => o.uuid).indexOf(uuid);
 		// Apply modifications
 		Object.assign(state.homeworks[idx], modifications);
-	}
-};
-
-export const actions = {
-	async load({ commit, state }, force = false) {
-		if (!force && state.homeworks.length) return
-		try {
-			const { data } = await this.$axios.get(`/homework/`);
-			console.log(`[from API] GET /homework/: OK`);
-			if (data) commit("SET", data);
-		} catch (error) {
-			console.error(`[from API] GET /homework/: Error`);
-			try {
-				console.error(error.response.data);
-			} catch (_) {
-				console.error(error)
-			}
-		}
 	},
-
 	validate: getValidator({
 		constraints: {
 			isAHomeworkType: ["subject"],
@@ -144,6 +125,24 @@ export const actions = {
 		},
 		resourceName: { gender: "M", name: "devoir" }
 	}),
+};
+
+export const actions = {
+	async load({ commit, state }, force = false) {
+		if (!force && state.homeworks.length) return
+		try {
+			const { data } = await this.$axios.get(`/homework/`);
+			console.log(`[from API] GET /homework/: OK`);
+			if (data) commit("SET", data);
+		} catch (error) {
+			console.error(`[from API] GET /homework/: Error`);
+			try {
+				console.error(error.response.data);
+			} catch (_) {
+				console.error(error)
+			}
+		}
+	},
 
 	async post({ commit, dispatch }, homework, force = false) {
 		if(!force) {
