@@ -36,8 +36,7 @@
               required
           )
 
-      ArrayButtonReg.buttons
-        ButtonRegPrimary.submit(type="submit") Connexion
+      ButtonNormal(variant="text").submit Connexion
       .register-link
         p 
           |Pas de compte ?
@@ -84,7 +83,7 @@
                   )
 
               .buttons
-                ButtonRegPrimary.submit(type="submit") Créer
+                ButtonRegPrimary.submit(variant="primary") Créer
 
               .login-link
                 p 
@@ -106,6 +105,7 @@ import TheHeading from "~/components/TheHeading.vue"
 import OverlayLoadingLogo from "~/components/OverlayLoadingLogo.vue"
 import ButtonFlat from "~/components/ButtonFlat.vue"
 import ButtonRegSecondary from "~/components/ButtonRegSecondary.vue"
+import ButtonNormal from '~/components/ButtonNormal.vue'
 
 export default {
   middleware: false,
@@ -118,6 +118,7 @@ export default {
     InputFlat,
     TheHeading,
     OverlayLoadingLogo,
+    ButtonNormal
   },
 
   data() {
