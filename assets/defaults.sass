@@ -11,22 +11,45 @@ pre, code, source, .-font-monospace
 
 
 //=====================
+//  VARIOUS CSS VARS
+//=====================
+html
+    --border-radius: 5px
+
+//=====================
 //       COLORS
 //=====================
 
 $blue: #1389FD
 
 html
+    // Greys
+    --black: #111111
+    --white: #ffffff
+    --grey-light: #F3F3F3
+    --grey: #BDBDBD
+    --grey-dark: #4F4F4F
+    // Blues
     --blue: #1389FD
     --blue-light: #89c4fe
     --blue-dark: #006BD4
     --offset-blue: #E7F8FF
     --offset-blue-dark: #c7edff
-    --grey: #F3F3F3
+    // Reds
     --red: #D50000
     --red-light: #ff3519
     --offset-red: #FF9E9E
-
+    // Greens
+    --green: #27CE5F
+    --green-dark: #09AA5D
+    --offset-green: #BFEFCC
+    // Yellows
+    --yellow: #F2C94C
+    --yellow-dark: #EEAA44
+    --offset-yellow: #FAE192
+body
+    color: var(--black)
+    background-color: var(--white)
 
 //=====================
 //       SHADOWS
@@ -149,9 +172,23 @@ $bk-sidebar: 650px
 
 
 //=====================
-//       MODULES
+//       TOASTS
 //=====================
-@import 'toasts.sass'
+.toasted-container .toasted.toasted-primary
+    height: 50px
+    border-radius: var(--border-radius)
+    font-weight: 500
+    font-size: 1em
+    box-shadow: none
+    &.error
+        background-color: var(--red)
+    &.success
+        background-color: var(--green)
+    &.info
+        background-color: var(--blue)
+    &.warn
+        background-color: var(--yellow)
+        color: black
 
 //=====================
 //        LINKS
