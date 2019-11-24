@@ -1,12 +1,22 @@
 <template lang="pug">
     //TODO: popup w/ errors
-    button.btn(
-        :type="type"
-        :class="`btn--${variant} ${small ? 'small' : ''}`"
-        :disabled="disabled || !v.validated"
-        :title="!v.validated ? Object.values(v.errors).join(', ') : false"
-        @click="$emit('click')"
-    ): slot
+    .button
+        nuxt-link.btn(
+            v-if="href"
+            :to="href"
+            :class="`btn--${variant} ${small ? 'small' : ''}`"
+            :title="title"
+        )
+            slot
+        button.btn(
+            v-else
+            :type="type"
+            :class="`btn--${variant} ${small ? 'small' : ''}`"
+            :disabled="disabled || !v.validated"
+            :title="title"
+            @click="href ? $router.push(href) : $emit('click')"
+        )
+            slot
 </template>
 
 <script>
@@ -19,7 +29,7 @@ export default {
         variant: {
             type: String,
             default: "outline",
-            // validate: (v) => ["primary", "outline", "secondary"].includes(v)
+            // validator: (v) => ["primary", "outline", "secondary"].includes(v)
         },
         validation: {
             type: Object,
@@ -32,6 +42,10 @@ export default {
         small: {
             type: Boolean,
             default: false
+        },
+        href: {
+            type: String,
+            default: null
         }
     },
     computed: {
@@ -39,21 +53,33 @@ export default {
             if (this.validation === null) 
                 return { validated: true, errors: {} }
             return this.validation
+        },
+        title() {
+            if (this.v.validated) return false
+            return (
+                Object.values(this.v.errors)
+                .filter((v) => v.length)
+                .map((v) => v[0])
+                .join('\n')
+            )
         }
     }
 }
 </script>
 
 <style lang="stylus" scoped>
+.button
+    display inline-block
 .btn
     // display inline
     margin 0 5px
     padding 15px 20px
     font-size: 1.05em
     &.small
-        font-size: 0.85em
+        padding 13px 18px
+        font-size: 0.9em
         margin 0 1.5em
-    border-radius 5px
+    border-radius var(--border-radius)
     display flex-inline
     justify-content center
     align-items center
@@ -79,7 +105,7 @@ export default {
     &:active
         color rgba(255,255,255,0.25)
     &[disabled]
-        background #00000033
+        background #00000011
         color #00000088
 .btn--secondary
     background-color var(--offset-blue)
