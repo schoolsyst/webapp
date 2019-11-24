@@ -1,5 +1,5 @@
 <template>
-  <div class="OverlayLoadingLogo" id="lottie-overlay-loading-logo"></div>
+  <div class="OverlayLoadingLogo" :class="animation" id="lottie-overlay-loading-logo"></div>
 </template>
 
 <script>
@@ -19,6 +19,10 @@ export default {
   },
 
   mounted() {
+    if (window.innerWidth < 500 && this.animation === 'animate-in-compound') {
+      this.animation = 'animate-in'
+    }
+
     this.lottieInstance = lottie.loadAnimation({
       container: document.getElementById("lottie-overlay-loading-logo"),
       renderer: "svg",
@@ -67,13 +71,17 @@ export default {
 <style lang="sass" scoped>
 @import '~/assets/defaults'
 .OverlayLoadingLogo
-    background-color: transparent
-    width: 25%
-    height: 25%
-    min-width: 200px
-    min-height: 200px
-    display: block
-    overflow: hidden
-    text-align: center
-    opacity: 1
+  background-color: transparent
+  width: 25%
+  height: 25%
+  min-width: 200px
+  min-height: 200px
+  display: block
+  overflow: hidden
+  text-align: center
+  opacity: 1
+.animate-in-compound
+  min-width: 500px
+  max-height: 100px
+  width: 45%
 </style>
