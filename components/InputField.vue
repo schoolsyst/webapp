@@ -1,5 +1,5 @@
 <template lang="pug">
-  .field(:class="{active, errored, filled: !!value}")
+  .field(:class="{active, errored, filled: !!value}" :name="dName")
     .field-inner
       button.action(
         v-if="showActionButton"
@@ -7,23 +7,22 @@
       )
         i.material-icons-outlined {{actionButtonIcon}}
       input(
-        :type="passwordShown ? 'text' : type"
         :name="dName"
+        :tabindex="tabindex"
+        :value="value"
+        :type="passwordShown ? 'text' : type"
         :id="`input-field--${dName}`"
-        @input="$emit('input', $event.target.value); active = true"
+        :class="passwordShown ? '-font-monospace' : ''"
+        @input="$emit('input', $event.target.value); active = true; initial = false"
         @click="active = true"
         @blur="active = false; passwordShown = false"
-        :value="value"
-        :class="passwordShown ? '-font-monospace' : ''"
       )
       label(
         :for="`input-field--${dName}`"
         :style="`background: ${active ? backgroundColor : 'transparent'};`"
       )
         slot
-    .errors(v-if="errored")
-      ul
-        li(v-for="error in validation.errors[name]" :key="error") {{error}}
+    p.error(v-if="!noErrorMessages") {{errored ? validation.errors[camelCaseName][0] : ""}}
 </template>
 
 <script>
@@ -44,7 +43,7 @@ export default {
     value: {
       default: ""
     },
-    hideActionButton: {
+    noActionButton: {
       type: Boolean,
       default: false
     },
@@ -52,17 +51,26 @@ export default {
       type: String,
       default: 'white'
     },
-    placeholder: String
+    placeholder: String,
+    noErrorMessages: {
+      type: Boolean,
+      default: false
+    },
+    tabindex: {
+      type: [String, Boolean],
+      default: false
+    }
   },
   data() {
     return {
       active: false,
-      passwordShown: false
+      passwordShown: false,
+      initial: true
     }
   },
   computed: {
     showActionButton() {
-      if (this.hideActionButton) return false
+      if (this.noActionButton) return false
       return !!this.value
     },
     actionButtonIcon() {
@@ -90,14 +98,22 @@ export default {
     errored() {
       return (
         !this.validation.validated 
-        && this.dName in this.validation.errors 
-        && this.validation.errors[this.dName].length > 0
+        && !this.initial
+        && this.camelCaseName in this.validation.errors 
+        && this.validation.errors[this.camelCaseName].length > 0
+      )
+    },
+    camelCaseName() {
+      return this.dName.replace(
+        /([-_][a-z])/g,
+        (group) => group.toUpperCase()
+                        .replace('-', '')
+                        .replace('_', '')
       )
     }
   },
   methods: {
     clearField() {
-      console.log(`Cleared field @ ${this.name}#${this._uid}`)
       this.$emit('input', '')
     },
     togglePasswordVisibility() {
@@ -116,12 +132,15 @@ export default {
 <style lang="stylus" scoped>
 // ===== Vars
 side-padding = 15px
+stroke-thickness = 2px
+errors-space = 2em
 // ==== Setup
 .field
   // Used for the label's absolute positionning
   position relative
   // The label goes outside the bounding box and will potentially overlap with stuff around the field if we don't do this
   padding-top: calc(1em + 3px)
+  // Leave some space for errors
 .field-inner
   // Vertically center the action button
   display flex
@@ -140,8 +159,8 @@ input
   padding-right (side-padding * 2 + 10px)
   // LOOKS
   background transparent
-  border 2px solid #00000088
-  border-radius 5px
+  border (stroke-thickness) solid #00000088
+  border-radius var(--border-radius)
 label
   position absolute
   left 5px
@@ -171,7 +190,7 @@ input:hover, input:focus
     border-color var(--red)
 // ===== Filled state
 .field:not(.active).filled label
-  color #000000cc
+  color #00000088
 // ===== Interactions
 input
   transition all .25s ease
@@ -187,8 +206,12 @@ label
   position absolute
   right: side-padding
   z-index: 2
-.errors
+.error
+  text-align: center
   color var(--red)
   font-size: 0.85em
-  margin-top: 0.85em
+  margin-top: 0.45em
+  flex-grow: 0
+  height (errors-space)
+  overflow-y hidden
 </style>
