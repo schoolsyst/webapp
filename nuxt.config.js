@@ -104,7 +104,7 @@ export default {
    ** and https://github.com/markdown-it/markdown-it
    */
   markdownit: {
-    injected: true,
+    injected: false,
     breaks: true,
     linkify: true,
     typographer: true,
@@ -135,7 +135,7 @@ export default {
    */
   toast: {
     position: "bottom-left",
-    duration: 5000
+    duration: 3000,
   },
   /*
    ** Auth module configuration.
