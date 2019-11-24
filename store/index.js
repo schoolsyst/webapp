@@ -64,7 +64,9 @@ export const getValidator = ({
   console.log(`Constraints:`)
   console.log({...constraints, ...customConstraints})
   console.log(`Fields:`)
-  console.log(object)
+  console.log(Object.fromEntries(
+    Object.keys(fieldNames).map((field) => [field, object[field]])
+  ))
 
   // Article in french
   const article = (noun, feminine, indeterminate = false) => {
@@ -103,7 +105,10 @@ export const getValidator = ({
     before: ({arg, fieldName}) =>
       isBefore(object[fieldName], object[arg]),
     isAColor: ({arg, fieldName}) =>
-      fieldName.match(/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/) !== null
+      object[fieldName].match(/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/) !== null,
+    isAnEmail: ({arg, fieldName}) =>
+      // regex source: https://emailregex.com/
+      object[fieldName].match(/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/) !== null
   }
   const check = ({errorName, fieldName, errorArg}) => {
     // Wrap checkers with object property existential check
@@ -138,7 +143,11 @@ export const getValidator = ({
       isAWeekType: `${fieldNameWithArticle} doit être Q1, Q2 ou les deux.`,
       before: `${fieldNameWithArticle} doit être avant ${argNameWithArticle}`,
       isAColor: `${fieldNameWithArticle} doit être une couleur au format hexadécimal. Exemple: #09f ou #0479cf`,
-      notEmpty: `${fieldNameWithArticle} ne peut pas être vide`,
+      notEmpty: `${fieldNameWithArticle} est requis${fieldIsFeminine ? 'e' : ''}`,
+      isAnEmail: 
+        name === 'adresse email'
+          ? `${fieldNameWithArticle} doit être valide`
+          : `${fieldNameWithArticle} doit être une adresse email valide`
     }[errorName])
   }
 
@@ -201,8 +210,17 @@ export const getValidator = ({
     validated,
     errors: errorMessages
   }
-  console.log('Results:')
-  console.log(ret)
+  if (ret.validated) {
+    console.log('Validated.')
+  } else {
+    console.log('Errors:')
+    Object.entries(ret.errors).forEach(([name, errors]) => {
+      if (errors.length) {
+        console.log(`    ${name}:`)
+        console.log(errors)
+      }
+    });
+  }
   console.groupEnd()
 
   return ret
