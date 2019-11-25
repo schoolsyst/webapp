@@ -23,6 +23,7 @@
                     nuxt-link.link(v-else :to="link.href")
                         Icon(:filled="isCurrent(link)").icon {{link.icon}}
                         span.name {{link.name}}
+                        span.notifications-badge(v-if="hasNotifications(link)") {{link.notifications}}
         .overlay(@click="$emit('close')", :style="{opacity: opened ? 1 : 0}")
 
 </template>
@@ -47,6 +48,11 @@ export default {
             if (link === 'separator') return false
             const topPathFragment = this.$route.path.split('/')[1]
             return '/' + topPathFragment === link.href
+        },
+        hasNotifications(link) {
+            if (link.hasOwnProperty('notifications')) {
+                return link.notifications >= 1 || link.notifications === '99+'
+            }
         }
     }
 }
@@ -99,6 +105,14 @@ nav
             color var(--blue-dark)
     &::-moz-focus-inner
         border-style none
+    .notifications-badge
+        margin-left auto
+        background var(--red)
+        color var(--white)
+        padding .2em .5em
+        border-radius calc(var(--border-radius) * (1/2))
+        display flex
+        font-family var(--fonts-monospace)
 
 
 li
