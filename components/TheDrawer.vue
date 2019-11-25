@@ -80,8 +80,7 @@ export default {
 
 <style lang="stylus" scoped>
 nav
-    opacity: 0.95
-    position absolute
+    position fixed
     left 0
     bottom 0
     top 0
@@ -92,7 +91,6 @@ nav
     width: 300px
     overflow hidden
     transition width .25s ease
-    mix-blend-mode darken
     box-shadow 0 8px 10px -5px rgba(0,0,0,0.2),0 16px 24px 2px rgba(0,0,0,0.14),0 6px 30px 5px rgba(0,0,0,0.12)
 .username
     font-size: 24px
