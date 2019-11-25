@@ -132,7 +132,7 @@ li.title > :not(.time)
 	z-index: 10
 	padding 0.5em 0
 	@media (min-width 1001px)
-		margin-left: 1.5em
+		margin-left: var(--border-radius)
 	@media (max-width 1000px)
 		width: 100%
 //=====================
