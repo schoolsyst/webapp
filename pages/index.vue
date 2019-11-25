@@ -1,158 +1,199 @@
 <template lang="pug">
-	.page-container
-		ModalAddHomework
-		
-		TheHeading
-			| {{format($store.state.now, 'EEEE d MMM')}}
-			| &mdash; {{format($store.state.now, 'HH')}}
-			span.time-separator :
-			| {{format($store.state.now, 'mm')}}
-		ArrayButtonFlat
-			li: ButtonFlat.add-homework(
-				icon="edit"
-				open-modal="add-homework"
-				open-at="center"
-			) Devoir
-			li: ButtonFlat.add-note(
-				icon="note_add"
-				open-modal="add-note"
-				open-at="center"
-			) Note
-			li: ButtonFlat.open-latest-note(
-				icon="insert_drive_file"
-				@click="openCurrentSubjectLatestNote"
-				:disabled="!currentCourse"
-			) Dernière note
-			li: ButtonFlat.add-mutation(
-				icon="schedule"
-				open-modal="add-mutation"
-				open-at="center"
-			) Modification d'emploi du temps
-		MainGroup
-			MainGroupLeft
-				template(v-if="currentCourse || upcomingCourse")
-					HeadingSub Cours suivant
-					template(v-if="upcomingCourse")
-						CardCourseUpcoming
-						HeadingSub Devoirs du cours suivant
-						ArrayHomework(:homeworks="homeworkFor(upcomingCourse)" v-if="homeworkFor(upcomingCourse).length")
-						CardEmpty(v-else) 👌
-					template(v-else)
-						CardEmpty 
-							| Fin de la journée 
-							| {{ formatDistance(currentCourse.end, $store.state.now, { addSuffix: true, locale: fr }) }} !
+//TODO: create a <CardEvent> component for .card-wrapper & children
+.container
+	.timeline(v-if="nextCourses().length || currentCourse")
+		.line
+		ul.events
+			li.current
+				span.time {{ formatTime(now, 'HH:mm') }}
+				template(v-if="currentCourse")
+					.card-wrapper
+						.card(:style="{backgroundColor: currentCourse.subject.color, color: textColor(currentCourse.subject.color)}")
+							span.subject {{ currentCourse.subject.name }}
+							span.room {{ currentCourse.room }}
 				template(v-else)
-					HeadingSub
-						| Devoirs à venir
-						ArrayButtonFlat
-							li: ButtonFlat(icon="arrow_forward"): nuxt-link(to="/homework") Voir tout
-					ArrayItemExercise(
-						:exercises="currentOrNextWeekHomework"
+					.card.empty Pas de cours en ce moment
+			li.title
+				span.time.empty
+				HeadingSub(v-if="nextCourses().length") prochainement
+			li(v-for="(course, i) in nextCourses()" :key="course.uuid")
+				span.time
+					| {{ formatTime(course.start, 'HH:mm') }}
+					template(v-if="formatTime(nextCourse(i).start) !== formatTime(course.end)")
+						Icon chevron_right
+						| {{ formatTime(course.end, 'HH:mm') }}
+				.card-wrapper
+					.card(
+						:style="{backgroundColor: course.subject.color, color: textColor(course.subject.color)}"
 					)
-			MainGroupRight
-				HeadingSub moyenne
-				BigNumber(:value="currentTrimesterMean * settingValue('grade_max')" :unit="`/${settingValue('grade_max')}`" :fixed="2")
-				HeadingSub Évolution
-				p La moyenne était de {{display(meanBeforeLastGrade)}}/{{settingValue('grade_max')}} avant la dernière note
-				BigNumber(:value="currentTrimesterEvolution * 100" show-sign :fixed="2", unit="%")
+					span.subject {{ course.subject.name }}
+					span.room {{ course.room }}
+			li.title
+				span.time {{ formatDistance(endOfDay()) }}
+				HeadingSub fin des cours
+	.no-courses(v-else)
+		h1 
+			template(v-if="todayCourses.length") Plus de cours pour aujourd'hui
+			template(v-else) Pas de cours pour aujourd'hui
+		//FIXME: #[br]#[br] is no good, use margins instead
+		p.
+			Profitez-en pour #[nuxt-link(to="/homework") faire vos devoirs] 😉
+			#[br]#[br]
+			C'est une erreur? #[nuxt-link(to="/bug-report") faites-moi en part]
 </template>
 
 <script>
-import { format, formatDistance, isBefore } from 'date-fns'
-import { fr } from 'date-fns/locale'
-import { mapGetters, mapActions } from 'vuex'
-import {firstBy, thenBy} from "thenby"
-//-----------------------------------------------
-import TheHeading from '~/components/TheHeading.vue'
-import ArrayButtonFlat from '~/components/ArrayButtonFlat.vue'
-import ButtonFlat from '~/components/ButtonFlat.vue'
-import MainGroup from '~/components/MainGroup.vue'
-import MainGroupLeft from '~/components/MainGroupLeft.vue'
-import MainGroupRight from '~/components/MainGroupRight.vue'
 import HeadingSub from '~/components/HeadingSub.vue'
-import BigNumber from '~/components/BigNumber.vue'
-import CardCourseUpcoming from '~/components/CardCourseUpcoming.vue'
-import CardEmpty from '~/components/CardEmpty.vue'
-import ArrayItemExercise from '~/components/ArrayItemExercise.vue'
-import ModalAddHomework from '~/components/ModalAddHomework.vue'
-import ModalAddNote from '~/components/ModalAddNote.vue'
+import Icon from '~/components/Icon.vue'
+import { format, isAfter, formatDistanceStrict } from 'date-fns'
+import { fr } from 'date-fns/locale'
+import { mapState, mapGetters } from 'vuex'
 
 export default {
-	components: {
-		TheHeading,
-		ArrayButtonFlat,
-		ButtonFlat,
-		MainGroup,
-		MainGroupLeft,
-		MainGroupRight,
-		HeadingSub,
-		BigNumber,
-		CardCourseUpcoming,
-		CardEmpty,
-		ArrayItemExercise,
-		ModalAddHomework,
-		ModalAddNote,
-	},
+	components: { HeadingSub, Icon },
 	computed: {
-		...mapGetters('schedule', ['currentCourse', 'upcomingCourse']),
-		...mapGetters('grades', [
-			'currentTrimesterEvolution',
-			'currentTrimesterMean',
-			'mean',
-			'display'
-		]),
-		...mapGetters({
-			currentOrNextWeekHomework: 'homework/currentOrNextWeek',
-			settingValue: 'settings/value',
-			grades: "grades/currentTrimester",
-		}),
-		meanBeforeLastGrade() {
-			this.mean(this.grades.filter((o) => !!o.obtained).slice(0, -1))
-		},
+		...mapState(['now']),
+		...mapGetters('schedule', ['todayCourses', 'currentCourse', 'nextCourses', 'endOfDay']),
+		...mapGetters(['textColor'])
 	},
 	methods: {
-		//TODO: move this to some global module & autodetect locale based on browser language
-		format(date, formatStr) {
-			return format(date, formatStr, {locale: fr}).split(' ').map((word) => word[0].toUpperCase()+word.slice(1)).join(' ')
+		nextCourse(i) {
+			let ret
+			// If that condition is true, we're already on the last course.
+			if (i === this.nextCourses().length - 1)
+				ret = { start: null }
+			else
+				ret = this.nextCourses()[i+1]
+			return ret
 		},
-		formatDistance,
-		...mapGetters({
-			homeworkFor: 'homework/for'
-		}),
-		openCurrentSubjectLatestNote() {
-			if (!this.currentCourse) {
-				return
-			}
-
-			let notesByModDate = this.notesOf(this.currentCourse.subject).sort(
-				firstBy((a, b) => isBefore(a.modified, b.modified))
-			)
-			if (notesByModDate.length) {
-				this.$router.push(`/notes/${notesByModDate[0].uuid}`)
-			} else {
-				this.$toast.error(
-					`Aucune prise de note de ${this.currentCourse.subject.name} trouvée`
-				)
-			}
+		formatTime(time) {
+			if (time === null) return null
+			return format(time, 'HH:mm')
+		},
+		formatDistance(date) {
+			return formatDistanceStrict(date, this.now, { locale: fr })
 		}
 	},
-	mounted() {
-		
-	},
+	async mounted() {
+		await this.$store.dispatch('schedule/load')
+	}
 }
 </script>
 
 <style lang="stylus" scoped>
-.time-separator
-	animation blink 1s linear infinite
-
-@keyframes blink
-	0%
-		opacity: 0
-	49.999%
-		opacity: 0
-	50%
-		opacity: 1
-	100%
-		opacity: 1
+//=====================
+//        LINE
+//=====================
+.timeline .line 
+		position relative
+		left: 2.25em * 7.75
+		z-index: -10
+		@media (max-width 1000px)
+			left 30px
+		opacity: 0.25
+		background url('/misc/timeline-line.svg')
+		background-repeat repeat-y
+		// background-size 2em 40em
+		width 1em
+//=====================
+//    COURSE CARDS
+//=====================
+.card
+	padding 0 1.5em
+	z-index: 10
+	height: 65px
+	width: 500px
+	border-radius var(--border-radius)
+	display flex
+	align-items center
+	&.current
+		justify-content center
+	&.empty
+		background var(--grey)
+.card .subject
+	font-size: 1.5em
+.card .room
+	margin-left auto
+	font-family var(--fonts-monospace)
+@media (max-width 1000px)
+	.card-wrapper
+		width: 100%
+		display flex
+		justify-content flex-start
+	.card
+		width: 100%
+		max-width 500px
+//=====================
+//        TITLES
+//=====================
+li.title > :not(.time)
+	background white
+	position relative
+	z-index: 10
+	padding 0.5em 0
+	@media (min-width 1001px)
+		margin-left: 1.5em
+	@media (max-width 1000px)
+		width: 100%
+//=====================
+//     TIME STAMPS
+//=====================
+li .time
+	font-family var(--fonts-monospace)
+	font-size: 1.5em
+	width 180px
+	display flex
+	justify-content flex-end
+	align-items center
+	i //<-- Caret icon between two time stamps
+		padding 0 .25em
+	// Mobile 
+	@media (min-width 1001px)
+		margin-right .75em
+	@media (max-width 1000px)
+		justify-content flex-start
+		width: 100%
+		margin-bottom 0.5em
+		padding 0.5em 0
+		&:not(.empty)
+			background var(--white)
+			position relative
+			z-index: 10
+li.current .time
+	font-size 2.25em
+//=====================
+//     ITEM LAYOUT
+//=====================
+ul
+	margin-left: 1em
+	list-style none
+	@media (max-width 1000px)
+		margin-left: -1em //FIXME
+		width: 100%
+li
+	margin-bottom 2em
+	&.title, &.current
+		margin-bottom: 1em
+	display flex
+	align-items center
+	@media (max-width 1000px)
+		flex-direction column
+//=====================
+//    SPECIAL CASES
+//=====================
+.no-courses
+	display flex
+	flex-direction column
+	align-items center
+	text-align: center
+	font-size 1.5em
+	width 100%
+	margin-top 3em
+	p
+		margin-top 1em
+//=====================
+//    GLOBAL LAYOUT
+//=====================
+.timeline
+	display flex
 </style>

@@ -34,7 +34,7 @@ export default {
       .querySelectorAll("body > *:not(#__nuxt)")
       .forEach((e) => e.remove())
     setInterval(() => {
-      this.$store.now = toDate(Date.now())
+      this.$store.commit('UPDATE_TIME', toDate(Date.now()))
     }, 1000)
   },
 }
@@ -49,10 +49,19 @@ export default {
   
 main
   margin-top: 100px
-  margin-left: 110px
+  +desktop
+    margin-left: 110px
+  +mobile
+    margin-left: 20px
+    margin-right: 20px
+main, .container
+  width: 100%
+  height: 100%
 #side-rail
   margin-top: 80px
   padding-left: 15px
+  +mobile
+    display: none
 .side-by-side
   display: flex
 </style>
