@@ -28,11 +28,6 @@ export default {
         href: "https://fonts.googleapis.com/css?family=Roboto+Mono"
       },
       {
-        rel: "stylesheet",
-        href:
-          "https://fonts.googleapis.com/css?family=Material+Icons|Material+Icons+Outlined"
-      },
-      {
         rel: "apple-touch-icon",
         sizes: "180x180",
         href: "/apple-touch-icon.png"
@@ -55,7 +50,7 @@ export default {
     script: [
       {
         src:
-          "https://cdnjs.cloudflare.com/ajax/libs/bodymovin/5.5.7/lottie.min.js"
+          "/lottie.min.js"
       }
     ]
   },
