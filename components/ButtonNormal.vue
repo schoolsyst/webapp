@@ -1,20 +1,14 @@
 <template lang="pug">
     //TODO: popup w/ errors
     .button
-        nuxt-link.btn(
-            v-if="href"
-            :to="href"
-            :class="`btn--${variant} ${small ? 'small' : ''}`"
-            :title="title"
-        )
-            slot
-        button.btn(
-            v-else
+        component.btn(
+            :is="href ? 'nuxt-link' : 'button'"
+            :to="href ? href : ''"
             :type="type"
             :class="`btn--${variant} ${small ? 'small' : ''}`"
             :disabled="disabled || !v.validated"
             :title="title"
-            @click="href ? $router.push(href) : $emit('click')"
+            @click="!href ? $emit('click') : ''"
         )
             slot
 </template>
