@@ -46,7 +46,7 @@
                     button(
                         :class="{active: isActive.underline()}"
                         @click="commands.underline"
-                        title="Sous-titré (Ctrl + U)"
+                        title="Souligné (Ctrl + U)"
                     )
                         Icon format_underlined
                     button(
@@ -179,7 +179,7 @@ export default {
 </script>
 
 <style lang="stylus" scoped>
-.container
+body
     padding 1em
     background var(--grey-light)
 .toolbar
@@ -194,6 +194,7 @@ export default {
     border-bottom 2px solid rgba(0,0,0,0.25)
 .top
     margin-left: 0.5em
+    margin-bottom .75em
     display flex
     align-items center
     h1
@@ -227,7 +228,7 @@ export default {
     padding 0
 
 .editor-page-wrapper
-    padding-top 6em
+    padding-top 7em
     display flex
     justify-content center
     width 100%
