@@ -8,7 +8,7 @@ export const state = () => ({
   links: [
     { 
         name: 'Timeline',
-        href: '/', 
+        href: '/timeline', 
         icon: 'timeline' ,
         id:   'timeline'
     },
