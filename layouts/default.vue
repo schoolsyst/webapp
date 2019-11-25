@@ -1,20 +1,23 @@
-<template>
-  <div class="app">
-    <TheNavbar />
-    <nuxt />
-    <TheFooter />
-  </div>
+<template lang="pug">
+  .app
+    TheTopBar
+    TheDrawer
+    main
+      nuxt
+    TheFooter
 </template>
 
 <script>
-import TheNavbar from "~/components/TheNavbar.vue"
+import TheDrawer from '~/components/TheDrawer.vue'
+import TheTopBar from "~/components/TheTopBar.vue"
 import TheFooter from "~/components/TheFooter.vue"
-import { toDate } from "date-fns"
+import { toDate } from 'date-fns'
 
 export default {
   components: {
-    TheNavbar,
     TheFooter,
+    TheDrawer,
+    TheTopBar
   },
   mounted() {
     // fix weird nuxt bug where the exercises+test arrays are duped outside of the #__nuxt container
