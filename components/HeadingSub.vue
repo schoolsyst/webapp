@@ -1,5 +1,5 @@
 <template>
-  <h2 class="HeadingSub" :class="{'has-inline-buttons': hasInlineButtons}">
+  <h2 class="HeadingSub" :class="{buttons}">
     <slot></slot>
   </h2>
 </template>
@@ -9,21 +9,11 @@ export default {
   name: "HeadingSub",
 
   props: {
-    hasInlineButtons: {
+    buttons: {
       type: Boolean,
       default: false
     }
   },
-
-  data() {
-    return {};
-  },
-
-  computed: {},
-
-  created() {},
-
-  methods: {}
 };
 </script>
 
@@ -33,14 +23,15 @@ export default {
   text-transform: uppercase
   font-weight: bold
   letter-spacing: 0.09em
-  margin-top: 60px
+  // margin-top: 60px
+  font-size: 1.2em
 
 +desktop
-  .HeadingSub.has-inline-buttons 
+  .HeadingSub.buttons 
     display: inline-flex
     align-items: center
     white-space: nowrap
 +mobile
-  .HeadingSub.has-inline-buttons > *
+  .HeadingSub.buttons > *
     margin-top: 10px
 </style>
