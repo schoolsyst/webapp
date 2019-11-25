@@ -2,7 +2,7 @@
     nav#drawer
         ul
             li.user 
-                span.username {{ $auth.user.username }}
+                img(src="/logos/compound.svg")
                 br
                 span.email {{ $auth.user.email }}
             li(
@@ -84,7 +84,7 @@ nav
     left 0
     bottom 0
     top 0
-    padding-top: 30px
+    padding-top: 20px
     display flex
     background var(--white)
     z-index: 1000
@@ -92,10 +92,12 @@ nav
     overflow hidden
     transition width .25s ease
     box-shadow 0 8px 10px -5px rgba(0,0,0,0.2),0 16px 24px 2px rgba(0,0,0,0.14),0 6px 30px 5px rgba(0,0,0,0.12)
-.username
-    font-size: 24px
+img
+    width: 225px
 .email
     font-size: 14px
+.user
+    margin-bottom: 20px
 .link
     display flex
     align-items center
