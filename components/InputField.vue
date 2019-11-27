@@ -1,5 +1,9 @@
 <template lang="pug">
-  .field(:class="{active, errored, filled: !!value}" :name="dName")
+  .field(
+    :class="{active, errored, filled: !!value, 'has-label': !noLabel, [`variant-${variant}`]: true}"
+    :name="dName"
+    :data-variant="variant"
+  )
     .field-inner
       button.action(
         v-if="showActionButton"
@@ -12,7 +16,8 @@
         :value="value"
         :type="passwordShown ? 'text' : type"
         :id="`input-field--${dName}`"
-        :class="passwordShown ? '-font-monospace' : ''"
+        :style="{fontFamily: `var(--fonts-${passwordShown ? 'monospace' : 'regular'}`}"
+        :placeholder="placeholder"
         @input="$emit('input', $event.target.value); active = true; initial = false"
         @click="active = true"
         @blur="active = false; passwordShown = false"
@@ -56,9 +61,17 @@ export default {
       type: Boolean,
       default: false
     },
+    noLabel: {
+      type: Boolean,
+      default: false
+    },
     tabindex: {
       type: [String, Boolean],
       default: false
+    },
+    variant: {
+      type: String,
+      default: 'outline'
     }
   },
   data() {
@@ -139,12 +152,16 @@ errors-space = 2em
   // Used for the label's absolute positionning
   position relative
   // The label goes outside the bounding box and will potentially overlap with stuff around the field if we don't do this
-  padding-top: calc(1em + 3px)
+  &.has-label
+    padding-top calc(1em + 3px)
   // Leave some space for errors
 .field-inner
   // Vertically center the action button
   display flex
   align-items center
+input
+  // Let the input take the whole .inner-field width
+  width 100% 
 // ==== Typography
 label
   text-transform uppercase
@@ -214,4 +231,21 @@ label
   flex-grow: 0
   height (errors-space)
   overflow-y hidden
+
+/* Background variant
+ *
+ */
+.variant-filled
+  //==== Passive state
+  input
+    background var(--grey-light)
+    border 2px solid transparent
+  //==== Hover state
+  input:hover, input:active
+    background transparent
+    border 2px solid var(--grey-dark)
+  //==== Active state
+  &.active input
+    background transparent
+    border 2px solid var(--black)
 </style>

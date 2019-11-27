@@ -1,7 +1,7 @@
 <template lang="pug">
   .app
-    TheTopBar
-    TheDrawer
+    TheTopBar(@menu-click="drawerOpened = !drawerOpened")
+    TheDrawer(@close="drawerOpened = false" :opened="drawerOpened")
     main
       nuxt
     TheFooter
@@ -18,6 +18,11 @@ export default {
     TheFooter,
     TheDrawer,
     TheTopBar
+  },
+  data() {
+    return {
+      drawerOpened: false
+    }
   },
   mounted() {
     // fix weird nuxt bug where the exercises+test arrays are duped outside of the #__nuxt container
@@ -57,4 +62,7 @@ export default {
 @media (max-width: $bk-sidebar - 1px)
   .container
     padding-bottom: 100px
+  
+main
+  margin-top: 100px
 </style>

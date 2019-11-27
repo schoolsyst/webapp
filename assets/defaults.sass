@@ -3,11 +3,16 @@
 //====================
 
 html
-    font-family:  'Now', sans-serif
+    --fonts-regular: 'Now', sans-serif
+    --fonts-monospace: 'Cascadia Code', 'Roboto Mono', monospace
+
+html
+    font-family:  var(--fonts-regular)
 
 
-pre, code, source, .-font-monospace
-    font-family: 'Cascadia Code', 'Roboto Mono', monospace
+pre, code, source
+    font-family: var(--fonts-monospace)
+
 
 
 //=====================

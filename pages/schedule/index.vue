@@ -1,14 +1,4 @@
 <template lang="pug">
-//-
-    COMPONENT TREE
-    Excluding single-use components (TheHeading, TheNavbar, TheFooter,...)
-
-    ArrayButtonFlat
-    MainGroup
-        MainGroupRight
-        MainGroupLeft
-        MainGroupRight
-
 .container
     MainGroup
         MainGroupLeft
