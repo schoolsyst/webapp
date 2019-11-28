@@ -1,6 +1,6 @@
 <template lang="pug">
   .field(
-    :class="{active, errored, filled: !!value, 'has-label': !noLabel, [`variant-${variant}`]: true}"
+    :class="{active, errored, filled: !!value, 'has-label': !noLabel, [`variant-${variant}`]: true, disabled}"
     :name="dName"
     :data-variant="variant"
   )
@@ -13,15 +13,15 @@
         i.material-icons-outlined {{actionButtonIcon}}
       input(
         :name="dName"
-        :tabindex="tabindex"
-        :value="value"
         :type="passwordShown ? 'text' : type"
         :id="`input-field--${dName}`"
         :style="{fontFamily: `var(--fonts-${passwordShown ? 'monospace' : 'regular'}`}"
-        :placeholder="placeholder"
-        @input="$emit('input', $event.target.value); active = true; initial = false"
-        @click="active = true"
-        @blur="active = false; passwordShown = false"
+        v-bind="{value, tabindex, placeholder, disabled}"
+        @input="active = true; initial = false; $emit('input', $event.target.value)"
+        @click="active = true; $emit('click')"
+        @blur="active = false; passwordShown = false; $emit('blur')"
+        @mouseover="$emit('mouseover')"
+        @mouseout="$emit('mouseout')"
       )
       label(
         :for="`input-field--${dName}`"
@@ -73,6 +73,10 @@ export default {
     variant: {
       type: String,
       default: 'outline'
+    },
+    disabled: {
+      type: Boolean,
+      default: false
     }
   },
   data() {
@@ -207,8 +211,15 @@ input:hover, input:focus
   input
     border-color var(--red)
 // ===== Filled state
-.field:not(.active).filled label
+.field.filled label
   color #00000088
+// ===== Disabled state
+.field.disabled
+  input
+    background var(--grey)
+    pointer-events none
+  label
+    opacity: 0.25
 // ===== Interactions
 input
   transition all .25s ease
