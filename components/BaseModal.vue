@@ -304,13 +304,13 @@ export default {
         opacity: 0
         background: transparent
         // backdrop-filter: blur(1px)
-    z-index: 1000
+    z-index: 10000
     //TODO: pass the duration of this as a prop
     transition: all .25s ease
 
 .modal-wrapper
     position: relative
-    border-radius: 10px
+    border-radius: var(--border-radius)
     background: #ffffff
     // width: 600px
     padding: 20px

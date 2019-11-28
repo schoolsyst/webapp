@@ -3,8 +3,8 @@ BaseModal.ModalDialogConfirm(:name="`confirm-${name}`", show-close-button)
     p.heading {{heading}}
     p.message: slot
     ArrayButtonReg.buttons(v-if="!challengeOpened")
-        ButtonRegSecondary(close-modal) {{cancelText}}
-        ButtonRegPrimary(@click.native="challenge ? startChallenge() : confirmAndClose()", :role="confirmRole") {{confirmText}}
+        ButtonNormal(variant="secondary" close-modal) {{cancelText}}
+        ButtonNormal(variant="primary" @click="challenge ? startChallenge() : confirmAndClose()", :role="confirmRole") {{confirmText}}
     .challenge(:class="{'errored': challengeError}" v-else)
         LabelFlat(:for="`confirm-${name}-challenge`") {{challengeMessage}}
         .inputs
@@ -21,6 +21,7 @@ import BaseModal from "~/components/BaseModal.vue"
 import LabelFlat from "~/components/LabelFlat.vue"
 import InputFlat from "~/components/InputFlat.vue"
 import ButtonIcon from "~/components/ButtonIcon.vue"
+import ButtonNormal from '~/components/ButtonNormal.vue'
 export default {
   name: "ModalDialogConfirm",
   components: {
@@ -31,6 +32,7 @@ export default {
     LabelFlat,
     InputFlat,
     ButtonIcon,
+    ButtonNormal
   },
   props: {
     heading: {
