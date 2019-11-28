@@ -2,6 +2,7 @@
   .app
     TheTopBar(@menu-click="drawerOpened = !drawerOpened")
     TheDrawer(@close="drawerOpened = false" :opened="drawerOpened")
+    TheSideRail
     main
       nuxt
     TheFooter
@@ -11,13 +12,15 @@
 import TheDrawer from '~/components/TheDrawer.vue'
 import TheTopBar from "~/components/TheTopBar.vue"
 import TheFooter from "~/components/TheFooter.vue"
+import TheSideRail from '~/components/TheSideRail.vue'
 import { toDate } from 'date-fns'
 
 export default {
   components: {
     TheFooter,
     TheDrawer,
-    TheTopBar
+    TheTopBar,
+    TheSideRail
   },
   data() {
     return {

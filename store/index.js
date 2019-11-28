@@ -4,7 +4,58 @@ import constantCase from 'constant-case'
 
 export const state = () => ({
 	now: toDate(Date.now()), // For time-dependent getters.
-	tomorrow: addDays(toDate(Date.now()), 1)
+  tomorrow: addDays(toDate(Date.now()), 1),
+  links: [
+    { 
+        name: 'Timeline',
+        href: '/', 
+        icon: 'timeline' ,
+        id:   'timeline'
+    },
+    { 
+        name: 'Cours',
+        href: '/notes', 
+        icon: 'insert_drive_file' ,
+        id:   'notes'
+    },
+    { 
+        name: 'Devoirs',
+        href: '/homework', 
+        icon: 'book' ,
+        id:   'homework'
+    },
+    { 
+        name: 'Emploi du temps',
+        href: '/schedule', 
+        icon: 'today' ,
+        id:   'schedule'
+    },
+    { 
+        name: 'Notes',
+        href: '/grades', 
+        icon: 'school' ,
+        id:   'grades'
+    },
+    { 
+        name: 'Sac',
+        href: '/bag', 
+        icon: 'work_outline',
+        id:   'bag'
+    },
+    'separator',
+    {
+        name: 'Réglages',
+        href: '/settings',
+        icon: 'settings',
+        id:   'settings'
+    },
+    {
+        name: 'Signaler un bug',
+        href: '/bug-report',
+        icon: 'bug_report',
+        id:   'bug-report'
+    }
+],
 })
 
 export const getters = {
@@ -24,6 +75,14 @@ export const getters = {
      * on backgroundColor: either 'black' or 'white'.
      */
     tinycolor(backgroundColor).isLight() ? "black" : "white",
+  drawerLinks: (state) => (state.links),
+  sideRailLinks: (state) => {
+    let links = state.links
+    return links.filter((link) => {
+      if (link === 'separator') return false
+      return ['timeline', 'notes', 'homework', 'schedule', 'grades'].includes(link.id)
+    })
+  }
 }
 
 export const mutations = {

@@ -41,53 +41,7 @@ export default {
             default: false
         }
     },
-    data() {
-        return {
-            links: [
-                { 
-                    name: 'Timeline',
-                    href: '/', 
-                    icon: 'timeline' 
-                },
-                { 
-                    name: 'Cours',
-                    href: '/notes', 
-                    icon: 'insert_drive_file' 
-                },
-                { 
-                    name: 'Devoirs',
-                    href: '/homework', 
-                    icon: 'book' 
-                },
-                { 
-                    name: 'Emploi du temps',
-                    href: '/schedule', 
-                    icon: 'today' 
-                },
-                { 
-                    name: 'Notes',
-                    href: '/grades', 
-                    icon: 'school' 
-                },
-                { 
-                    name: 'Sac',
-                    href: '/bag', 
-                    icon: 'work_outline'
-                },
-                'separator',
-                {
-                    name: 'Réglages',
-                    href: '/settings',
-                    icon: 'settings'
-                },
-                {
-                    name: 'Signaler un bug',
-                    href: '/bug-report',
-                    icon: 'bug_report'
-                }
-            ],
-        }
-    },
+    computed: mapGetters({links: 'drawerLinks'}),
     methods: {
         isCurrent(link) {
             if (link === 'separator') return false
@@ -168,7 +122,8 @@ ul
     bottom: 0
     top: 0
     width 100vw
-    background rgba(0,0,0,0.25)
+    // background rgba(0,0,0,0.125)
+    background transparent
     z-index: 900
 .nav-wrapper:not(.opened) .overlay
     opacity: 0
