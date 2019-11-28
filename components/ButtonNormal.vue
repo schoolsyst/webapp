@@ -65,18 +65,19 @@ export default {
 .button
     display inline-block
 .btn
-    // display inline
     margin 0 5px
     padding 15px 20px
     font-size: 1.05em
+    display flex
     &.small
         padding 13px 18px
         font-size: 0.9em
         margin 0 1.5em
+        display inline
     border-radius var(--border-radius)
-    display flex-inline
     justify-content center
     align-items center
+    text-align center
     &[disabled]
         cursor not-allowed
 .btn--outline
@@ -115,4 +116,13 @@ export default {
     color black
     &:hover, &:focus
         border 2px solid rgba(0,0,0,0.25)
+.btn--flat
+    padding 10px 0
+    margin: 0
+    text-transform uppercase
+    letter-spacing: .125em
+    font-weight bold
+    color var(--blue)
+    &:hover, &:focus
+        color var(--blue-dark)
 </style>
