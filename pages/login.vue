@@ -12,7 +12,7 @@
       name="username"
       v-model="username"
       v-bind="{validation}"
-      tabindex="1"
+      tabindex="0"
       no-action-button
     ) Nom
     InputField(
