@@ -1,14 +1,22 @@
 <template lang="pug">
-    #topbar.topbar
+    #topbar.topbar(:class="{scrolled}")
         button.open-drawer(@click="$emit('menu-click')"): Icon menu
         .centered
             InputField.search(
                 variant="filled"
-                placeholder="Aller quelque part…" 
+                title="Le \"quick switcher\" arrive bientôt !"
                 no-error-messages 
                 no-label
+                disabled
                 v-model="searchText"
+                @click="searchBarFocused = true"
+                @blur="searchBarFocused = false"
+                @mouseover="searchBarHovered = true"
+                @mouseout="searchBarHovered = false"
+                name="quick-switcher"
+                :style={opacity:0}
             )
+            .logo(:style="{opacity: !searchBarHovered && !searchBarFocused ? '1' : '0'}"): img(src="/logos/compound.svg")
 </template>
 
 <script>
@@ -20,13 +28,14 @@ export default {
     data() {
         return {
             searchText: "",
-            active: false
+            scrolled: false,
+            searchBarFocused: false,
+            searchBarHovered: false
         }
     },
     mounted() {
-        console.log(window)
         document.addEventListener('scroll', (e) => {
-            this.active = window.scrollY > 0
+            this.scrolled = window.scrollY > 0
         })
     }
 }
@@ -44,8 +53,9 @@ export default {
     display flex
     // justify-content center
     align-items center
-    &.active
-        box-shadow 0 10px 30px 10px rgba(0,0,0,0.0625)
+    &.scrolled
+        box-shadow 0 5px 30px 10px rgba(0,0,0,0.0325)
+    transition box-shadow 0.5s ease
 
 .centered
     display flex
@@ -57,5 +67,23 @@ export default {
 .search
     margin-left 2em
     width 50vw
+    &::-moz-placeholder
+    &::-webkit-input-placeholder
+    &::-ms-input-placeholder
+        text-align: center
+
+.logo
+    z-index: 910
+    pointer-events none
+    display flex
+    align-items center
+    justify-content center
+    position absolute
+    width 100%
+    height 100%
+    top: 0
+    transition opacity 0.25s ease
+    img
+        height: 2.125em
 
 </style>
