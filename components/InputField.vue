@@ -8,6 +8,7 @@
       button.action(
         v-if="showActionButton"
         @click.prevent="action()"
+        tabindex="-1"
       )
         i.material-icons-outlined {{actionButtonIcon}}
       input(
