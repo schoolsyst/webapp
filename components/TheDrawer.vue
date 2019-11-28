@@ -2,9 +2,10 @@
     .nav-wrapper(:class="{opened}")
         nav#drawer(:style="{left: !opened ? '-500px' : '0px'}")
             ul
-                li.user 
+                li.image 
                     img(src="/logos/compound.svg")
-                    br
+                li.user
+                    nuxt-link.logout(to="/logout" title="Déconnexion"): Icon power_settings_new
                     span.email {{ $auth.user.email }}
                 li(
                     v-for="link in links"
@@ -12,7 +13,7 @@
                 )
                     hr(v-if="link === 'separator'")
                     nuxt-link.link(v-else :to="link.href")
-                        Icon.icon {{link.icon}}
+                        Icon(:filled="isCurrent(link)").icon {{link.icon}}
                         span.name {{link.name}}
         .overlay(@click="$emit('close')", :style="{opacity: opened ? 1 : 0}")
 
@@ -20,9 +21,10 @@
 
 <script>
 import Icon from '~/components/Icon.vue'
+import ButtonNormal from '~/components/ButtonNormal.vue'
 
 export default {
-    components: { Icon },
+    components: { Icon, ButtonNormal },
     props: {
         opened: {
             type: Boolean,
@@ -101,27 +103,39 @@ nav
     overflow hidden
     transition left .25s ease
     box-shadow 0 8px 10px -5px rgba(0,0,0,0.2),0 16px 24px 2px rgba(0,0,0,0.14),0 6px 30px 5px rgba(0,0,0,0.12)
-img
-    width: 15em
-.email
-    font-size: 0.85em
+.image
+    padding-bottom: 0
+    img
+        width: 15em
 .user
-    margin-bottom: 1.75em
+    padding-top: 0
+    margin-bottom: .5em
+    display flex
+    align-items center
+    .email
+        font-size: 0.85em
+    .logout
+        font-size 1.5em
+        margin-right: 0.5em
+        color var(--red)
+        &:hover
+            color var(--red-dark)
+
 .link
     display flex
     align-items center
     .icon
-        font-size: 1.6em
+        font-size: 1.4em
     .name
-        margin-left: 1.25em
-        font-size: 1.25em
+        margin-left: 1em
+        font-size: 1.2em
         white-space nowrap
     &:hover, &:focus
         .icon
         .name
             color var(--blue-dark)
-        &::-moz-focus-inner
-            border-style none
+    &::-moz-focus-inner
+        border-style none
 
 
 li
