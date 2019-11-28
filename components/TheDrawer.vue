@@ -1,15 +1,23 @@
 <template lang="pug">
     .nav-wrapper(:class="{opened}")
+        ModalDialogConfirm(
+            heading=""
+            confirm-text="Déconnexion"
+            @confirm="$router.push('/logout')"
+            name="logout"
+        )
+            p Êtes-vous sûr(e) de vouloir vous déconnecter ?
         nav#drawer(:style="{left: !opened ? '-500px' : '0px'}")
             ul
                 li.image 
                     img(src="/logos/compound.svg")
                 li.user
-                    nuxt-link.logout(to="/logout" title="Déconnexion"): Icon power_settings_new
+                    button.logout(open-modal="confirm-logout" open-at="center"): Icon power_settings_new
                     span.email {{ $auth.user.email }}
                 li(
                     v-for="link in links"
                     :class="{current: isCurrent(link)}"
+                    @click="$emit('close')"
                 )
                     hr(v-if="link === 'separator'")
                     nuxt-link.link(v-else :to="link.href")
@@ -22,9 +30,11 @@
 <script>
 import Icon from '~/components/Icon.vue'
 import ButtonNormal from '~/components/ButtonNormal.vue'
+import ModalDialogConfirm from '~/components/ModalDialogConfirm.vue'
+import { mapState, mapGetters } from 'vuex'
 
 export default {
-    components: { Icon, ButtonNormal },
+    components: { Icon, ButtonNormal, ModalDialogConfirm },
     props: {
         opened: {
             type: Boolean,
@@ -101,7 +111,7 @@ nav
     z-index: 1000
     width: 20em
     overflow hidden
-    transition left .25s ease
+    transition left .375s ease
     box-shadow 0 8px 10px -5px rgba(0,0,0,0.2),0 16px 24px 2px rgba(0,0,0,0.14),0 6px 30px 5px rgba(0,0,0,0.12)
 .image
     padding-bottom: 0
