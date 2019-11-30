@@ -2,9 +2,10 @@
   .app
     TheTopBar(@menu-click="drawerOpened = !drawerOpened")
     TheDrawer(@close="drawerOpened = false" :opened="drawerOpened")
-    TheSideRail
-    main
-      nuxt
+    .side-by-side
+      TheSideRail
+      main
+        nuxt
     TheFooter
 </template>
 
@@ -45,27 +46,13 @@ export default {
 // Keep footer outta the first page
 .TheNavbar + div
   min-height: 100vh
-
-/* DESKTOP */
-+desktop 
-  .container 
-    margin: 50px 0 0 calc(50px + 60px)
-
-
-/* MOBILE */
-+mobile 
-  .container 
-    margin: 20px
-    padding-bottom: calc((100vw - 30px) / 6)
-    
-@media (min-width: $bk-sidebar)
-  .container
-    margin-left: 110px
-
-@media (max-width: $bk-sidebar - 1px)
-  .container
-    padding-bottom: 100px
   
 main
   margin-top: 100px
+  margin-left: 110px
+#side-rail
+  margin-top: 80px
+  padding-left: 15px
+.side-by-side
+  display: flex
 </style>
