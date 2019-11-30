@@ -1,75 +1,112 @@
 <template lang="pug">
     .container
-        EditorMenuBar(:editor="editor" v-slot="{commands, isActive, focused}")
-            .menubar(:class="{focused}")
-                button(@click="commands.undo"): Icon undo
-                button(@click="commands.redo"): Icon redo
-                span.sep |
-                button Sauvegarder
-                button Exporter
-                button Partager
-                button Imprimmer
-                button Apprendre...
-                span.sep |
-                button: Icon format_clear
-                //- select Titre...
-                //-     template(v-for="level in [0, 1, 2, 3, 4, 5, 6]")
-                //-         option(@select="commands.heading({level})"): component(:is="`h${level}`") Titre
-                span.sep |
-                button(
-                    :class="{active: isActive.bold()}"
-                    @click="commands.bold"
-                )
-                    strong B
-                button(
-                    :class="{active: isActive.italic()}"
-                    @click="commands.italic"
-                )
-                    em I
-                button(
-                    :class="{active: isActive.underline()}"
-                    @click="commands.underline"
-                )
-                    u U
-                button(
-                    :class="{active: isActive.strike()}"
-                    @click="commands.strike"
-                )
-                    s S
-                button: math: mi x
-                button(
-                    :class="{active: isActive.code()}"
-                    @click="commands.code"
-                )
-                    code M
-                button 
-                    span.low-opacity a
-                    sup n
-                button 
-                    span.low-opacity a
-                    sub n
-                span.sep |
-                button: Icon(filled) format_color_text
-                button Note#[sup 1]
-                button: Icon insert_link
-                button(@click="commands.bullet_list")
-                    Icon format_list_bulleted
-                button(@click="commands.ordered_list")
-                    Icon format_list_numbered
-                button Def:
-                button abbr
-                span.sep |
-                button(@click="commands.horizontal_rule") 
-                    | —
-                button(@click="commands.createTable({rowsCount: 2, colsCount: 2})")
-                    Icon table_chart
-                button(@click="commands.blockquote")
-                    Icon format_quote
-                //dropdown: Admonitions
-                button(@click="commands.code_block")
-                    Icon code
-                button: Icon function
-        editor-content(:editor="editor")
+        .toolbar
+            .top
+                nuxt-link(to="/notes"): Icon.icon arrow_back
+                h1(contenteditable) Title
+
+            EditorMenuBar(:editor="editor" v-slot="{commands, isActive}")
+                .menubar
+                    button(@click="commands.undo" title="Annuler (Ctrl + Z)")
+                        Icon undo
+                    button(@click="commands.redo" title="Refaire (Ctrl + Shift + Z)")
+                        Icon redo
+                    button(title="Sauvegarder (Ctrl + S)")
+                        Icon(filled) save
+                    span.sep |
+                    button(title="Ctrl + Shift + S")
+                        //- Icon(filled) save_alt
+                        | Exporter
+                    //- button
+                    //-     Icon share
+                    //-     | Partager
+                    button(title="Ctrl + P")
+                        //- Icon print
+                        | Imprimmer
+                    button Apprendre...
+                    span.sep |
+                    button(title="Enlever le formatage (Ctrl + Shift + :)")
+                        Icon format_clear
+                    //- select Titre...
+                    //-     template(v-for="level in [0, 1, 2, 3, 4, 5, 6]")
+                    //-         option(@select="commands.heading({level})"): component(:is="`h${level}`") Titre
+                    span.sep |
+                    button(
+                        :class="{active: isActive.bold()}"
+                        @click="commands.bold"
+                        title="Gras (Ctrl + B)"
+                    )
+                        Icon format_bold
+                    button(
+                        :class="{active: isActive.italic()}"
+                        @click="commands.italic"
+                        title="Italique (Ctrl + I)"
+                    )
+                        Icon format_italic
+                    button(
+                        :class="{active: isActive.underline()}"
+                        @click="commands.underline"
+                        title="Sous-titré (Ctrl + U)"
+                    )
+                        Icon format_underlined
+                    button(
+                        :class="{active: isActive.strike()}"
+                        @click="commands.strike"
+                        title="Barré (Ctrl + D)"
+                    )
+                        Icon format_strikethrough
+                    button(title="Maths (Ctrl + E)"): math: mi x
+                    button(
+                        :class="{active: isActive.code()}"
+                        @click="commands.code"
+                        title=""
+                    )
+                        code M
+                    button(title="Superscript (Ctrl + Shift + ,)")
+                        span.low-opacity a
+                        sup n
+                    button(title="Indice (Ctrl + ,)")
+                        span.low-opacity a
+                        sub n
+                    span.sep |
+                    button(title="Couleur de texte")
+                        Icon(filled) format_color_text
+                    button(title="Note de bas de page (Ctrl + ;)")
+                        | Note#[sup 1]
+                    button(title="Lien (Ctrl + K)")
+                        Icon insert_link
+                    button(
+                        @click="commands.bullet_list"
+                        title="Liste à points (Ctrl + Shift + 8)"
+                    )
+                        Icon format_list_bulleted
+                    button(
+                        @click="commands.ordered_list"
+                        title="Liste numérotée (Ctrl + Shift + 9)"
+                    )
+                        Icon format_list_numbered
+                    button(title="Liste de définitions (Ctrl + Shift + 0)")
+                        | Def:
+                    button(title="Abbréviation (Ctrl + *)")
+                        | abbr
+                    span.sep |
+                    button(
+                        @click="commands.horizontal_rule"
+                        title="Ligne horizontale"
+                    ) 
+                        | —
+                    button(
+                        @click="commands.createTable({rowsCount: 2, colsCount: 2})"
+                        title="Tableau"
+                    )
+                        Icon table_chart
+                    //- button(@click="commands.blockquote")
+                    //-     Icon format_quote
+                    //dropdown: Admonitions (Ctrl + !)
+                    button(@click="commands.code_block" title="Bloc de code")
+                        Icon code
+                    button(title="Bloc de maths (Ctrl + Shift + E)"): Icon functions
+        .editor-page-wrapper: editor-content.editor-page(:editor="editor")
 </template>
 
 <script>
@@ -103,12 +140,12 @@ import Icon from '~/components/Icon.vue'
 
 export default {
     components: { Editor, EditorContent, EditorMenuBar, Icon },
+    layout: 'bare',
     data() {
         return {
             editor: new Editor({
                 extensions: [
                     new CodeBlock(),
-                    new CodeBlockHighlight(),
                     new HardBreak(),
                     new Heading({ levels: [1, 2, 3, 4, 5, 6]}),
                     new HorizontalRule(),
@@ -142,12 +179,29 @@ export default {
 </script>
 
 <style lang="stylus" scoped>
+.container
+    padding 1em
+    background var(--grey-light)
+.toolbar
+    position fixed
+    top: 0
+    left: 0
+    right: 0
+    background var(--white)
+    z-index: 10
+    padding 1em
+    padding-bottom: 0
+    border-bottom 2px solid rgba(0,0,0,0.25)
+.top
+    margin-left: 0.5em
+    display flex
+    align-items center
+    h1
+        margin-left .25em
+    .icon
+        font-size: 2em
 .menubar
-    opacity: 0
-    &.focused
-        opacity: 1
-.menubar
-    margin-bottom: 30px
+    padding-bottom .5em
     display flex
     align-items center
     // justify-content center
@@ -167,4 +221,30 @@ export default {
     font-weight thin
     font-size 2em
     padding 0 0.25em
+
+.ProseMirror::-moz-focus-inner
+    border none !important
+    padding 0
+
+.editor-page-wrapper
+    padding-top 6em
+    display flex
+    justify-content center
+    width 100%
+    height 100vh
+    background var(--grey-light)
+    .editor-page
+        margin-top: 20px
+        padding 3em
+        width: 800px
+        background var(--white)
+
+.editor-page table
+    td, tr
+        border 2px solid black
+.editor-page
+    font-family Arial, sans-serif
+    line-height 1.2em
+    p
+        margin-bottom 0.2em
 </style>
