@@ -45,9 +45,8 @@ export default {
     methods: {
         isCurrent(link) {
             if (link === 'separator') return false
-            const href = link.href
             const topPathFragment = this.$route.path.split('/')[1]
-            return '/' + topPathFragment === href
+            return '/' + topPathFragment === link.href
         }
     }
 }
