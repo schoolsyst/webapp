@@ -1,5 +1,7 @@
 <template lang="pug">
+//-TODO: Real loading
 .container
+	.loading(v-if="!loaded") Chargement...
 	//- @ Main Timeline
 	.timeline(v-if="nextCourses().length || currentCourse")
 		//- Timeline's dotted line
@@ -61,7 +63,8 @@ export default {
 	components: { HeadingSub, Icon, CardCourse },
 	data() {
 		return {
-			expandedCourse: null
+			expandedCourse: null,
+			loaded: false
 		}
 	},
 	computed: {
@@ -86,6 +89,7 @@ export default {
 	},
 	async mounted() {
 		await this.$store.dispatch('schedule/load')
+		this.loaded = true
 	},
 	watch: {
 		expandedCourse() {
@@ -96,6 +100,23 @@ export default {
 </script>
 
 <style lang="stylus" scoped>
+//=====================
+//       LOADING
+//=====================
+.loading
+	position fixed
+	top: 0
+	right: 0
+	bottom: 0
+	left: 0
+	width 100vw
+	height 100vh
+	background white
+	display flex
+	text-align: center
+	justify-content center
+	align-items center
+	z-index: 100
 //=====================
 //        LINE
 //=====================
