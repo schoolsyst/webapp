@@ -1,4 +1,4 @@
-import { toDate, addDays, isBefore } from "date-fns"
+import { toDate, addDays, isBefore, format } from "date-fns"
 import tinycolor from "tinycolor2"
 import constantCase from 'constant-case'
 
@@ -75,6 +75,10 @@ export const getters = {
      * on backgroundColor: either 'black' or 'white'.
      */
     tinycolor(backgroundColor).isLight() ? "black" : "white",
+  formatTime: (state, getters) => (time) => {
+    if (time === null) return null
+    return format(time, 'HH:mm')
+  },
   drawerLinks: (state) => (state.links),
   sideRailLinks: (state) => {
     let links = state.links
