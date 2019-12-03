@@ -264,8 +264,10 @@ export const getters = {
     getters.coursesIn(rootState.now),
   tomorrowCourses: (state, getters, rootState, rootGetters) =>
     getters.coursesIn(rootState.tomorrow),
-  upcomingCourse: (state, getters, rootState) =>
-    getters.nextCourses()[0],
+  upcomingCourse: (state, getters, rootState) => {
+    const nextCourses = getters.nextCourses()
+    return nextCourses.length ? nextCourses[0] : null
+  },
   nextCourseOf: (state, getters) => (value, what = 'subject') =>
     getters.nextCoursesOf(value, what)[0],
   startOfDay: (state, getters, rootState) => (start, end=null) => {
