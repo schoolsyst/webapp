@@ -1,36 +1,43 @@
 <template lang="pug">
-//TODO: create a <CardEvent> component for .card-wrapper & children
 .container
+	//- @ Main Timeline
 	.timeline(v-if="nextCourses().length || currentCourse")
+		//- Timeline's dotted line
 		.line
 		ul.events
+			//- Current event
 			li.current
-				span.time {{ formatTime(now, 'HH:mm') }}
-				template(v-if="currentCourse")
-					.card-wrapper
-						.card(:style="{backgroundColor: currentCourse.subject.color, color: textColor(currentCourse.subject.color)}")
-							span.subject {{ currentCourse.subject.name }}
-							span.room {{ currentCourse.room }}
-				template(v-else)
-					.card.empty Pas de cours en ce moment
+				span.time {{ formatTime()(now, 'HH:mm') }}
+				CardCourse(
+					v-if="currentCourse" 
+					v-bind="currentCourse"
+					:expanded="expandedCourse === currentCourse.uuid"
+					@expanded="expandedCourse = currentCourse.uuid"
+					@closed="expandedCourse = null"
+				)
+				CardCourse(v-else empty) Pas de cours en ce moment
 			li.title
 				span.time.empty
-				HeadingSub(v-if="nextCourses().length") prochainement
+				HeadingSub(v-if="nextCourses().length")
+					| dans {{ formatDistance(nextCourses()[0].start) }}
+			//- For each course that are upcoming
 			li(v-for="(course, i) in nextCourses()" :key="course.uuid")
 				span.time
-					| {{ formatTime(course.start, 'HH:mm') }}
-					template(v-if="formatTime(nextCourse(i).start) !== formatTime(course.end)")
+					| {{ formatTime()(course.start, 'HH:mm') }}
+					//- Don't show redundant info: hide end time when courses immediately follow
+					template(v-if="formatTime()(nextCourse(i).start) !== formatTime()(course.end)")
 						Icon chevron_right
-						| {{ formatTime(course.end, 'HH:mm') }}
-				.card-wrapper
-					.card(
-						:style="{backgroundColor: course.subject.color, color: textColor(course.subject.color)}"
-					)
-					span.subject {{ course.subject.name }}
-					span.room {{ course.room }}
+						| {{ formatTime()(course.end, 'HH:mm') }}
+				CardCourse(
+					v-bind="course"
+					:expanded="expandedCourse === course.uuid"
+					@expanded="expandedCourse = course.uuid"
+					@closed="expandedCourse = null"
+				)
+			//- Time until end of courses
 			li.title
-				span.time {{ formatDistance(endOfDay()) }}
-				HeadingSub fin des cours
+				span.time.empty
+				HeadingSub fin dans {{ formatDistance(endOfDay()) }}
 	.no-courses(v-else)
 		h1 
 			template(v-if="todayCourses.length") Plus de cours pour aujourd'hui
@@ -45,18 +52,25 @@
 <script>
 import HeadingSub from '~/components/HeadingSub.vue'
 import Icon from '~/components/Icon.vue'
+import CardCourse from '~/components/CardCourse.vue'
 import { format, isAfter, formatDistanceStrict } from 'date-fns'
 import { fr } from 'date-fns/locale'
 import { mapState, mapGetters } from 'vuex'
 
 export default {
-	components: { HeadingSub, Icon },
+	components: { HeadingSub, Icon, CardCourse },
+	data() {
+		return {
+			expandedCourse: null
+		}
+	},
 	computed: {
 		...mapState(['now']),
 		...mapGetters('schedule', ['todayCourses', 'currentCourse', 'nextCourses', 'endOfDay']),
 		...mapGetters(['textColor'])
 	},
 	methods: {
+		...mapGetters(['formatTime']),
 		nextCourse(i) {
 			let ret
 			// If that condition is true, we're already on the last course.
@@ -66,16 +80,17 @@ export default {
 				ret = this.nextCourses()[i+1]
 			return ret
 		},
-		formatTime(time) {
-			if (time === null) return null
-			return format(time, 'HH:mm')
-		},
 		formatDistance(date) {
 			return formatDistanceStrict(date, this.now, { locale: fr })
 		}
 	},
 	async mounted() {
 		await this.$store.dispatch('schedule/load')
+	},
+	watch: {
+		expandedCourse() {
+			console.log(this.expandedCourse)
+		}
 	}
 }
 </script>
@@ -96,41 +111,13 @@ export default {
 		// background-size 2em 40em
 		width 1em
 //=====================
-//    COURSE CARDS
-//=====================
-.card
-	padding 0 1.5em
-	z-index: 10
-	height: 65px
-	width: 500px
-	border-radius var(--border-radius)
-	display flex
-	align-items center
-	&.current
-		justify-content center
-	&.empty
-		background var(--grey)
-.card .subject
-	font-size: 1.5em
-.card .room
-	margin-left auto
-	font-family var(--fonts-monospace)
-@media (max-width 1000px)
-	.card-wrapper
-		width: 100%
-		display flex
-		justify-content flex-start
-	.card
-		width: 100%
-		max-width 500px
-//=====================
 //        TITLES
 //=====================
 li.title > :not(.time)
 	background white
 	position relative
 	z-index: 10
-	padding 0.5em 0
+	padding 0.2em 0
 	@media (min-width 1001px)
 		margin-left: var(--border-radius)
 	@media (max-width 1000px)
@@ -149,7 +136,7 @@ li .time
 		padding 0 .25em
 	// Mobile 
 	@media (min-width 1001px)
-		margin-right .75em
+		margin-right 1.5rem
 	@media (max-width 1000px)
 		justify-content flex-start
 		width: 100%
