@@ -211,7 +211,7 @@ input:hover, input:focus
   input
     border-color var(--red)
 // ===== Filled state
-.field.filled label
+:not(.active).field.filled label
   color #00000088
 // ===== Disabled state
 .field.disabled
