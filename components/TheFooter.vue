@@ -4,7 +4,7 @@
         h6.logo-title schoolsyst
         p.logo-subtitle 
             |by 
-            a(href="https://mx3creations.com") Mx3
+            a(href="https://mx3creations.com" no-default) Mx3
         p.version #[code alpha v0.0.666]
     </footer>
 </template>
