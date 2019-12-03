@@ -181,7 +181,7 @@ export default {
 <style lang="stylus" scoped>
 body
     padding 1em
-    background var(--grey-light)
+    background var(--offset-grey)
 .toolbar
     position fixed
     top: 0
@@ -233,7 +233,7 @@ body
     justify-content center
     width 100%
     height 100vh
-    background var(--grey-light)
+    background var(--offset-grey)
     .editor-page
         margin-top: 20px
         padding 3em
