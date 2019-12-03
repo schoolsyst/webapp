@@ -52,7 +52,6 @@ export const getters = {
 
     ret = sumOfGrades / sumOfWeights
   }
-  console.log(`{${new Date().getMilliseconds()}} ${ret}`)
   return ret
   },
   evolution: (state, getters) => (grades) => {
