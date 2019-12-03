@@ -88,7 +88,7 @@ export default {
 .register-link
   margin-bottom: 4em
 .forgotten-password
-  margin-top: 2em
+  margin-top: 0em
 .submit
-  margin-top: 1em
+  margin-top: 3em
 </style>
