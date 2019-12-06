@@ -200,7 +200,7 @@ export const getValidator = ({
     return upperFirst({
       maximum: `${fieldNameWithArticle} ne doit pas dépasser ${errorArg}`,
       minimum: `${fieldNameWithArticle} doit être d'au moins ${errorArg}`,
-      maxLength: `${fieldNameWithArticle} est trop long${fieldIsFeminine ? "ue" : ""}. (Taille maximale: ${errorArg})`,
+      maxLength: `${fieldNameWithArticle} ne doit pas dépasser ${errorArg} caractère${errorArg === 1 ? '' : 's'}`,
       required: `Veuillez renseigner ${indeterminateArticle}${name}`,
       isAHomeworkType: `${fieldNameWithArticle} doit être un contrôle, un exercice, un DM ou quelque chose à apporter.`,
       isAWeekType: `${fieldNameWithArticle} doit être Q1, Q2 ou les deux.`,
