@@ -186,6 +186,7 @@ export const getters = {
           ? mutations[0]
           : { deleted: null, rescheduled: null }
         if (!mutations.deleted || includeDeleted)
+          delete mutation.subject // Mutation subject is just a number, while event's subject is a proper object.
           courses.push({
             ...event,
             ...mutation,
