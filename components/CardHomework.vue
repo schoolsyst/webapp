@@ -1,97 +1,97 @@
-<template>
-	<BaseCard class="CardHomework" :style="{backgroundColor: subject.color}">
-		<h4 class="name">{{name}}</h4>
-		<div class="progress-bar">
-			<div class="completed" :style="{width: percentProgress}"></div>
-			<span class="percent">{{progress == 1 ? 'TERMINÉ' : percentProgress}}</span>
-		</div>
-	</BaseCard>
+<template lang="pug">
+    .card(
+        @click.self="onClick"
+        :class="{clicked, completed: progress >= 1}"
+    )
+        .complete-slider
+            Icon check
+        .infos
+            .first-line
+                SubjectDot.subject-color(v-bind="subject")
+                span.name {{ name }}
+            pre.notes(v-if="notes.length > 0" v-html="treatNotes(notes)")
 </template>
 
 <script>
-import BaseCard from "~/components/BaseCard.vue"
-
+import Icon from '~/components/Icon.vue'
+import SubjectDot from '~/components/SubjectDot.vue'
 export default {
-	name: 'CardHomework',
-
-	components: {
-		BaseCard
-	},
-
-	props: {
-		progress: {
-			// float in [0;1]
-			validator: function(value) { return value <= 1 && value >= 0},
-			default: 1
-		},
-		subject: {
-			type: Object,
-			required: true
-		},
-		name: {
-			type: String,
-			required: true,
-		}
-	},
-
-
-	data() {
-		return {
-
-		}
-	},
-
-	computed: {
-		percentProgress() {
-			return this.progress * 100 + '%'
-		}
-	},
-
-
-	created() {
-
-	},
-
-
-	methods: {
-
-	}
+    components: { Icon, SubjectDot },
+    props: {
+        name: String,
+        notes: String,
+        subject: Object
+    },
+    data() {
+        return {
+            clicked: false,
+        }
+    },
+    methods: {
+        treatNotes(content) {
+            content = content.length > 150 ? content.substring(0, 150) + '…' : content            
+            return content.replace(/<<([^>]+)>>/g, ($0, $1) => `<a href="http://localhost:3000/${$1}">${$1}</a>`)
+        },
+        onClick() {
+            this.clicked = true
+            setTimeout(() => {
+                this.clicked = false
+                this.progress = this.progress === 1 ? 0 : 1 
+            }, 500);
+        }
+    },
 }
 </script>
 
-<style lang="sass" scoped>
-@import '~/assets/defaults'
-.CardHomework 
-	border-radius: 10px
-	height: auto
-	max-width: 500px
-	padding: 0
+<style lang="stylus" scoped>
+.card
+    cursor pointer
+    display flex
+    // height: 100px
+    width: 500px
+    border 2px solid var(--grey-light)
+    border-radius var(--border-radius)
+    overflow hidden
+.complete-slider
+    width: 0
+    overflow hidden
+    background var(--blue)
+    color var(--white)
+    display flex
+    align-items center
+    transition width 0.25s ease
+    flex-shrink 0
+    z-index: 10
+    i
+        margin-left: 0.5em
+.infos
+    padding 20px 25px
+    display flex
+    flex-direction column
+    .first-line
+        align-items center
+        display flex
+        width 100%
+        overflow hidden
+        text-overflow ellipsis
+        white-space nowrap
+    .name
+        margin-left 0.5rem
+    .notes
+        margin-top .5em
+        width 100%
+        overflow hidden
+        text-overflow ellipsis
+        white-space wrap
+        font-size: 0.75em
+        flex-grow 0
 
-.name, .percent 
-	padding: 0 20px
-	color: white
-
-.name 
-	padding: 10px 20px
-	line-height: 56px
-	font-size: 48px
-	font-weight: normal
-
-.percent 
-	font-size: 24px
-	padding: 20px
-
-.progress-bar 
-	position: relative
-	display: flex
-	align-items: center
-
-.progress-bar .completed 
-	position: absolute
-	background: rgba(255,255,255,0.5)
-	width: 100%
-
-.progress-bar, .progress-bar .completed 
-	height: 40px
-
+.card.completed
+    opacity: 0.5
+.card:not(.completed):hover
+    .complete-slider
+        width 3em
+.card:not(.completed).clicked
+    .complete-slider
+        width 100%
 </style>

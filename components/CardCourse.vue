@@ -1,37 +1,41 @@
 <template lang="pug">
-  .card-wrapper(@click="$emit('expanded')" @blur="$emit('closed')")
+  .card-wrapper(
+    @click="$emit(expanded ? 'closed' : 'expanded')"
+    :class="{empty, expanded}"
+  )
     .card(
-      :style="{\
-        backgroundColor, \
+      :style="!empty ? {\
+        backgroundColor,\
         color: backgroundColor \
           ? textColor(backgroundColor)() \
           : false\
-        }"
+        } : false"
       :class="{empty, expanded}"
     )
       template(v-if="subject")
-        template(v-if="!expanded")
-              span.subject {{ subject.name }}
-              span.room {{ room }}
-        template(v-else)
-              span.subject {{ subject.name }}
-              .room-and-time 
-                .room {{ room }}
-                br
-                .time
-                  | {{ formatTime()(start) }}
-                  Icon trending_flat
-                  | {{ formatTime()(end) }}
+        SubjectDot.subject-color(v-bind="subject")
+        .infos
+          span.subject
+            span.subject-name {{ subject.name }}
+          .room-and-time 
+            .room {{ room }}
+        .homework(v-if="currentWeek")
+          ul
+            li(v-for="hw in currentWeek" :key="hw.uuid")
+              .card
+                span.name {{ hw.name }}
       template(v-else)
         slot
 </template>
 
 <script>
+import SubjectDot from '~/components/SubjectDot.vue'
+import HeadingSub from '~/components/HeadingSub.vue'
 import Icon from '~/components/Icon.vue'
 import { mapState, mapGetters } from 'vuex'
 import { format } from 'date-fns'
 export default {
-  components: { Icon },
+  components: { Icon, SubjectDot, HeadingSub },
   props: {
     subject: {
       type: Object,
@@ -54,6 +58,7 @@ export default {
   },
   computed: {
     ...mapState('subject',  ['placeholder']),
+    ...mapGetters('homework', ['currentWeek']),
     backgroundColor() {
       if (this.empty) {
         return false
@@ -79,14 +84,32 @@ export default {
   border-radius var(--border-radius)
   display flex
   align-items center
+  transition all .25s ease
+  border 2px solid var(--grey-light)
+  border-color transparent
   &.current
     justify-content center
   &.empty
     color black
     background white
-    border 2px solid var(--grey-light)
-.subject
-  font-size: 1.5em
+    border-color var(--grey-light)
+.infos
+  display flex
+  align-items center
+  width 100%
+  .subject
+    font-size 1.2rem
+    display flex
+    align-items center
+    .subject-name
+      margin-left: -1.2em
+      transition margin 0.25s ease
+    .subject-color
+      width 0px
+      height 0px
+  .room-and-time
+    font-size 1rem
+    margin-left auto
 .room
 .room-and-time
   margin-left auto
@@ -108,6 +131,25 @@ export default {
     width: 100%
     max-width 500px
 
-.card-wrapper.expanded
-  height auto
+// .card-wrapper.expanded
+//   .card
+//     background var(--white) !important
+//     border 2px solid var(--grey-light)
+//   .infos
+//     height: 65px
+//     color var(--black) !important
+//     display flex
+//     align-items center
+//     width 100%
+//     .subject
+//       display flex
+//       align-items center
+//       .subject-color
+//         height 1.2em
+//         width: 1.2em
+//       .subject-name
+//         margin-left 0.3em
+//   .homework
+//     display flex
+//     flex-direction column
 </style>

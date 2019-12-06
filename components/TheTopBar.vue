@@ -54,7 +54,7 @@ export default {
     // justify-content center
     align-items center
     &.scrolled
-        box-shadow 0 5px 30px 10px rgba(0,0,0,0.0325)
+        box-shadow 0 5px 30px 10px rgba(0,0,0,0.0625)
     transition box-shadow 0.5s ease
 
 .centered

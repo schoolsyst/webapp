@@ -18,6 +18,7 @@
 					@closed="expandedCourse = null"
 				)
 				CardCourse(v-else empty) Pas de cours en ce moment
+							
 			li.title
 				span.time.empty
 				HeadingSub(v-if="nextCourses().length")

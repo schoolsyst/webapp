@@ -11,7 +11,7 @@ html
     font-family:  var(--fonts-regular)
 
 
-pre, code, source
+code, source
     font-family: var(--fonts-monospace)
 
 
@@ -202,10 +202,12 @@ $bk-sidebar: 650px
 //        LINKS
 //=====================
 
-p a:not([no-default])
-    color: var(--blue)
-    border-bottom: 2px solid var(--blue)
-    &:hover,
-    &:focus,
-    &:active
-        color: var(--blue-dark)
+p, pre
+    font-family: var(--fonts-normal)
+    a:not([no-default])
+        color: var(--blue)
+        border-bottom: 2px solid var(--blue)
+        &:hover,
+        &:focus,
+        &:active
+            color: var(--blue-dark)
