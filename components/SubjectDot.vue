@@ -27,7 +27,7 @@ export default {
 @import '~/assets/defaults'
 
 .SubjectDot
-    $size: 40px
+    $size: 1.2em
     height: $size
     width: $size
     min-width: $size / 2
