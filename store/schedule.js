@@ -211,7 +211,7 @@ export const getters = {
     // convert to week-of-year number, and get if its even or odd.
     // tested date will be [base] (Q1 or Q2) if its also even.
     const startingWeekIsEven = getISOWeek(start) % 2 === 0
-    const other = base === "Q1" ? "Q2" : "Q1"
+    const other = base === "Q2" ? "Q1" : "Q2"
     return getISOWeek(date) % 2 === 0 && startingWeekIsEven ? base : other
   },
   courseOrPlaceholder: (state, getters, rootState, rootGetters) => (course) => {
