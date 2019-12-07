@@ -16,7 +16,6 @@ export default {
         },
         iconText() {
             const rawText = this.$slots.default[0].text
-            console.log(this.$slots.default)
             if (this.filled) {
                 return rawText.replace('_outline','')
             } else {
