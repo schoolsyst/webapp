@@ -1,6 +1,6 @@
 <template lang="pug">
     .card(
-        @click.self="onClick"
+        @click="onClick"
         :class="{clicked, completed: progress >= 1}"
     )
         .complete-slider
@@ -20,7 +20,9 @@ export default {
     props: {
         name: String,
         notes: String,
-        subject: Object
+        subject: Object,
+        uuid: String,
+        progress: Number
     },
     data() {
         return {
@@ -32,11 +34,13 @@ export default {
             content = content.length > 150 ? content.substring(0, 150) + '…' : content            
             return content.replace(/<<([^>]+)>>/g, ($0, $1) => `<a href="http://localhost:3000/${$1}">${$1}</a>`)
         },
-        onClick() {
+        async onClick() {
             this.clicked = true
-            setTimeout(() => {
+            await setTimeout(async () => {
                 this.clicked = false
-                this.progress = this.progress === 1 ? 0 : 1 
+                await this.$store.dispatch('homework/patch', this.uuid, {
+                    progress: this.progress
+                })
             }, 500);
         }
     },
