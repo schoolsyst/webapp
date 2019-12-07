@@ -1,40 +1,52 @@
 <template lang="pug">
-  .container
-    OverlayLoadingLogo(animation="animate-in-compound")
-    .login-link
-      p
-        | Déjà un compte ?
-        ButtonNormal(small variant="outline" href="/login") Connectez-vous
-    form(method="post" @submit.prevent="register")
-      .group-left
-        InputField(
-          name="username"
-          v-model="username"
-          v-bind="{validation}"
-          tabindex="1"
-        ) Nom d'utilisateur
-        InputField(
-          type="password"
-          v-model="password"
-          v-bind="{validation}"
-          tabindex="3"
-        ) Mot de passe
-      .group-right
-        InputField(
-          name="email"
-          v-model="email"
-          v-bind="{validation}"
-          tabindex="2"
-        ) Adresse email
-        InputField(
-          type="password"
-          name="password-confirmation"
-          v-model="passwordConfirmation"
-          v-bind="{validation}"
-          tabindex="4"
-        ) Confirmer le mot de passe
-      .group-both
-        ButtonNormal(variant="primary" v-bind="{validation}") Créez votre compte
+  .container(:class="{registered}")
+    OverlayLoadingLogo.logo(animation="animate-in-compound")
+    template(v-if="!registered")
+      .login-link
+        p
+          | Déjà un compte ?
+          ButtonNormal(small variant="outline" href="/login") Connectez-vous
+      form(method="post" @submit.prevent="registered = register({username, password})")
+        .group-left
+          InputField(
+            name="username"
+            v-model="username"
+            v-bind="{validation}"
+            tabindex="1"
+          ) Nom d'utilisateur
+          InputField(
+            name="email"
+            v-model="email"
+            v-bind="{validation}"
+            tabindex="2"
+          ) Adresse email
+        .group-right
+          InputField(
+            type="password"
+            v-model="password"
+            v-bind="{validation}"
+            tabindex="3"
+          ) Mot de passe
+          InputField(
+            type="password"
+            name="password-confirmation"
+            v-model="passwordConfirmation"
+            v-bind="{validation}"
+            tabindex="4"
+          ) Confirmer le mot de passe
+        .group-both
+          ButtonNormal.submit(variant="primary" v-bind="{validation}") Créez votre compte
+    template(v-else)
+      .registered
+        img(src="/misc/registered-checkmark.svg")
+        .text 
+          p 
+            | Vous voici fin prêt, 
+            wbr
+            span.username {{ username }}
+            |.
+          ButtonNormal.cta(href="/login" variant="primary") Connectez-vous
+
 </template>
 
 <script>
@@ -49,10 +61,11 @@ export default {
   components: { OverlayLoadingLogo, InputField, ButtonNormal },
   data() {
     return {
-      username: "",
+      username: "ewen-le-bihan",
       email: "",
       password: "",
       passwordConfirmation: "",
+      registered: false
     }
   },
   computed: {
@@ -69,8 +82,8 @@ export default {
 
 <style lang="stylus" scoped>
 .container
-  height 100vh
-  width 100vw
+  min-height 100vh
+  min-width 100vw
   display flex
   justify-content center
   align-items center
@@ -96,4 +109,28 @@ export default {
 
 .field
   width: 300px
+
+
+.registered
+  display flex
+  align-items center
+  @media (max-width 1000px)
+    flex-direction column
+    justify-content center
+    img
+      width 90vw
+  p
+    font-size 1.5rem
+    line-height 1.2em
+  .text
+    text-align left
+    @media (max-width 1000px)
+      text-align: center
+    max-width 20em
+    & /deep/ .btn
+      margin-top 2em
+
+@media (max-width 1000px)
+  .registered .logo
+    display: none
 </style>

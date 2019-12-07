@@ -37,7 +37,6 @@ export const getters = {
     customConstraints: [
       {
         field: 'passwordConfirmation',
-        //FIXME: better error msg
         message: "Les deux mot de passe ne correspondent pas",
         constraint({getters}, object) {
           const pwd1 = object['password']
@@ -51,7 +50,6 @@ export const getters = {
 
 export const actions = {
   async login({commit}, data) {
-    let res = null
     try {
       await this.$auth.loginWith('local', {data})
       this.$router.push('/')
@@ -60,6 +58,18 @@ export const actions = {
         "Mot de passe ou non d'utilisateur incorrect",
         {icon: 'error_outline'}
       )
+    }
+  },
+  async register({dispatch, getters}, data) {
+    try {
+      await this.$axios.post('/users/', data)
+      return true
+    } catch (error) {
+      this.$toast.error(
+        "Erreur lors de la création du compte",
+        {icon: 'error_outline'}
+      )
+      return false
     }
   }
 }
