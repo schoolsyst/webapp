@@ -174,7 +174,7 @@ export const actions = {
 		if(!force) {
 			let homework = getters.one(uuid)
 			homework = {...homework, ...modifications}
-			const validation = await dispatch('validate', homework)
+			const validation = await getters.validate(homework)
 			if (!validation.validated) return validation
 		}
 		try {
