@@ -13,7 +13,7 @@
                     img(src="/logos/compound.svg")
                 li.user
                     button.logout(open-modal="confirm-logout" open-at="center"): Icon power_settings_new
-                    span.email {{ $auth.user.email }}
+                    span.email {{ $auth.user.email || $auth.user.username }}
                 li(
                     v-for="link in links"
                     :class="{current: isCurrent(link)}"
