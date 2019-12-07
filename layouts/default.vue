@@ -6,7 +6,6 @@
       TheSideRail
       main
         nuxt
-    TheFooter
 </template>
 
 <script>
@@ -29,10 +28,10 @@ export default {
     }
   },
   mounted() {
-    // fix weird nuxt bug where the exercises+test arrays are duped outside of the #__nuxt container
-    document
-      .querySelectorAll("body > *:not(#__nuxt)")
-      .forEach((e) => e.remove())
+    // // fix weird nuxt bug where the exercises+test arrays are duped outside of the #__nuxt container
+    // document
+    //   .querySelectorAll("body > *:not(#__nuxt)")
+    //   .forEach((e) => e.remove())
     setInterval(() => {
       this.$store.commit('UPDATE_TIME', toDate(Date.now()))
     }, 1000)
