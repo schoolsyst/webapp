@@ -1,8 +1,15 @@
 <template lang="pug">
   .container
+    #loading(v-if="!loaded")
+      p Chargement...
     .search
       Icon search
-      InputField(v-model.lazy="searchQuery" no-label no-error-messages placeholder="Recherche par titre ou nom de la matière")
+      InputField(
+        v-model.lazy="searchQuery"
+        no-label
+        no-error-messages
+        placeholder="Recherche par titre ou nom de la matière"
+      )
     .current-subject(v-if="currentCourse && searched(all).length > 0")
       HeadingSub {{ currentCourse.subject.name }}
       ul.notes
@@ -22,8 +29,8 @@
           v-for="note in searched(all)" :key="note.uuid" 
           @contextmenu.prevent="$refs.menu.open($event, { note })"
         )
-          CardNote(v-bind="note" @more="$refs.menu.open($event, { note })")
-    .no-search-results(v-else)
+          CardNote(v-bind="note" @more.prevent="$refs.menu.open($event, { note })")
+    .no-search-results(v-if="!searched(all).length && !!searchQuery")
       .smiley :/
       p Votre recherche n'a pas donné de résultat.
       ButtonNormal Nouvelle note
@@ -31,7 +38,7 @@
     
     vue-context(
       ref="menu" 
-      :close-on-click="true" 
+      :close-on-click="false" 
       :close-on-scroll="true"
     )
       template(slot-scope="child" v-if="child.data")
@@ -110,7 +117,22 @@ export default {
 </script>
 
 <style lang="stylus" scoped>
-// FLOATING SEARCH BAR
+// LOADING SCREEN
+#loading
+  position fixed
+  top: 0
+  right: 0
+  bottom: 0
+  left: 0
+  width 100vw
+  height 100vh
+  background white
+  display flex
+  text-align center
+  justify-content center
+  align-items center
+  z-index 100
+// SEARCH BAR
 .search
   display flex
   align-items center
@@ -126,14 +148,17 @@ export default {
     @media (max-width 600px)
       width 200px
 // CONTEXT MENU
-.v-context li a
-  display flex
-  align-items center
+.v-context li
+  a
+    display flex
+    align-items center
   i
     margin-right 0.5rem
-  &:hover
-    &, i
-      color var(--blue)
+// .v-context li:hover
+//     &, a
+//       background var(--offset-blue)
+//     a, i
+//       color var(--blue)
 //-----------------------
 //       NO RESULTS
 //-----------------------
