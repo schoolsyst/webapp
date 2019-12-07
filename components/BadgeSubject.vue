@@ -1,9 +1,10 @@
 <template lang="pug">
-button.BadgeSubject(
+component.BadgeSubject(
   :style="{backgroundColor: color, color: textColor}"
-  :title="name"
   @click="$emit('click')"
-) {{abbreviation}}
+  :class="{clickable}"
+  :is="clickable ? 'button' : 'span'"
+) {{name}}
 </template>
 
 <script>
@@ -13,10 +14,6 @@ import { mapGetters } from 'vuex'
 export default {
   name: "BadgeSubject",
   props: {
-    abbreviation: {
-      type: String,
-      default: "...",
-    },
     color: {
       type: String,
       default: "#000000",
@@ -29,6 +26,10 @@ export default {
           : this.abbreviation
       },
     },
+    clickable: {
+      type: Boolean,
+      default: false
+    }
   },
     computed: {
         ...mapGetters(['textColor'])
@@ -36,23 +37,19 @@ export default {
 }
 </script>
 
-<style lang="sass" scoped>
-@import '~/assets/defaults'
-
+<style lang="stylus" scoped>
 .BadgeSubject
-    width: 100px
-    height: 50px
-    font-family: 'Roboto Mono', monospace
-    font-size: 30px
-    padding: 10px 15px
-    border-radius: 10px
-    color: #fff
-    display: flex
-    white-space: nowrap
-    justify-content: center
-    align-items: center
-    text-transform: uppercase
-    &:focus, &:hover
-        outline: none
-        opacity: 0.75
+  font-size: 0.8em
+  padding: .3em .5em
+  border-radius: var(--border-radius)
+  color: #fff
+  display: flex
+  white-space: nowrap
+  justify-content: center
+  align-items: center
+  font-weight normal
+.clickable
+  &:focus, &:hover
+    outline: none
+    opacity: 0.75
 </style>
