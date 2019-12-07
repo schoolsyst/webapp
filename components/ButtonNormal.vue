@@ -65,6 +65,7 @@ export default {
 .button
     display inline-block
 .btn
+    transition all 0.125s ease
     margin 0 5px
     padding 15px 20px
     font-size: 1.05em
@@ -80,6 +81,9 @@ export default {
     text-align center
     &[disabled]
         cursor not-allowed
+    i
+        margin-right 0.2em
+        font-size 1.8em
 .btn--outline
     border 2px solid var(--blue)
     color var(--blue)
