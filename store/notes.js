@@ -17,7 +17,7 @@ const parseObjectDates = (object) => ({
 export const getters = {
   all: (state, getters) => getters.orderBy(state.notes),
   one: (state, getters) => (value, prop = "uuid") =>
-    getters.find((o) => o[prop] === value) || null,
+    getters.all.find((o) => o[prop] === value) || null,
   of: (state, getters) => (value, what = "subject") => {
     if (what === "subject") {
       return getters.all.filter((o) => o.subject.uuid === value)
@@ -57,7 +57,6 @@ export const getters = {
         return state.learndatas.filter((o) => o.subject.uuid === value)
 
       default:
-        // console.error(`[notes/learndatasOf] Unrecognized prop: ${prop}`)
         return []
     }
   },
@@ -102,15 +101,16 @@ export const actions = {
       }
     }
   },
-  async post({ commit, dispatch }, note) {
+  async post({ commit, dispatch, rootGetters }, { note, force }) {
+    force = force || false
     if(!force) {
-      const validation = await dispatch('validate', note)
+      const validation = getters.validate(note)()
+      console.log(validation)
       if (!validation.validated) return validation
     }
     try {
       const { data } = await this.$axios.post("/notes/", note)
-      // console.log("[from API] POST /notes/: OK")
-      if (data) commit("SET", data)
+      if (data) commit("ADD", {...data, subject: note.subject})
     } catch (error) {
       // console.error("[from API] POST /notes/: Error")
       try {
@@ -126,7 +126,7 @@ export const actions = {
       ...modifications
     }
     if(!force) {
-      const validation = await dispatch('validate', note)
+      const validation = await getters.validate(note)
       if (!validation.validated) return validation
     }
     try {
@@ -142,10 +142,23 @@ export const actions = {
       }
     }
   },
-  async delete({ commit, getters }, uuid) {
+  async delete({ commit, getters, dispatch }, uuid) {
     try {
+      // Stores the note object because we want to be able to cancel the deletion
+      const note = getters.one(uuid)
+      // 
       await this.$axios.delete(`/notes/${uuid}/`)
+      console.log(note)
       commit("DEL", uuid)
+      this.$toast.show('Note supprimée', {
+        action: {
+          text: "Annuler",
+          onClick: async (e, toast) => {
+            await dispatch(`post`, {note: {...note, subject: note.subject.slug}, force: true})
+            toast.goAway(0)
+          }
+        },
+      })
       // console.log(`[from API] DELETE /notes/${uuid}/: OK`)
     } catch (error) {
       // console.error(`[from API] DELETE /notes/${uuid}/: Error`)
