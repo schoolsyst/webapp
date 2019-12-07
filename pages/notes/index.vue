@@ -2,7 +2,7 @@
   .container
     #loading(v-if="!loaded")
       p Chargement...
-    .search
+    .search(v-if="!!all.length")
       Icon search
       InputField(
         v-model.lazy="searchQuery"
@@ -10,13 +10,13 @@
         no-error-messages
         placeholder="Recherche par titre ou nom de la matière"
       )
-    .current-subject(v-if="currentCourse && searched(all).length > 0")
+    .current-subject(v-if="currentCourse && !!searched(all).length")
       HeadingSub {{ currentCourse.subject.name }}
       ul.notes
         li.card-new
           Icon add
         li(
-          v-for="note in searched(currentSubject)" :key="note.uuid"
+          v-for="note in orderBy()(searched(currentSubject), sortBy)" :key="note.uuid"
           @contextmenu.prevent="$refs.menu.open($event, { note })"
         )
           CardNote(v-bind="note")
@@ -26,19 +26,23 @@
         li.card-new(v-if="!currentCourse")
           Icon add
         li(
-          v-for="note in searched(all)" :key="note.uuid" 
+          v-for="note in orderBy()(searched(all), sortBy)" :key="note.uuid" 
           @contextmenu.prevent="$refs.menu.open($event, { note })"
         )
           CardNote(v-bind="note" @more.prevent="$refs.menu.open($event, { note })")
-    .no-search-results(v-if="!searched(all).length && !!searchQuery")
-      .smiley :/
+    ScreenEmpty(v-else-if="!!searchQuery" @cta="newNote")
+      template(#smiley) :/
       p Votre recherche n'a pas donné de résultat.
-      ButtonNormal Nouvelle note
+      template(#cta) Nouvelle note
+    ScreenEmpty(v-else @cta="newNote")
+      template(#smiley) oO
+      p C'est plutôt vide ici.
+      template(#cta) Créer une note
     
     
     vue-context(
       ref="menu" 
-      :close-on-click="false" 
+      :close-on-click="true" 
       :close-on-scroll="true"
     )
       template(slot-scope="child" v-if="child.data")
@@ -50,6 +54,7 @@
 </template>
 
 <script>
+import ScreenEmpty from '~/components/ScreenEmpty.vue'
 import HeadingSub from '~/components/HeadingSub.vue'
 import SubjectDot from '~/components/SubjectDot.vue'
 import ButtonNormal from '~/components/ButtonNormal.vue'
@@ -61,16 +66,16 @@ import 'vue-context/src/sass/vue-context.scss'
 import { mapGetters, mapActions } from 'vuex';
 import Fuse from 'fuse.js'
 export default {
-  components: { HeadingSub, CardNote, InputField, Icon, VueContext, ButtonNormal },
+  components: { HeadingSub, CardNote, InputField, Icon, VueContext, ButtonNormal, ScreenEmpty },
   data() {
     return {
       // User-editable data
       searchQuery: "",
-      sortBy: 'last_modified',
+      sortBy: 'added',
       // UI data
       sortOptions: [
         { value: 'modified', name: "Date de création" },
-        { value: 'created',  name: "Date de modification" },
+        { value: 'added',  name: "Date de modification" },
         { value: 'subject',  name: "Matière" }
       ],
       openedContextMenuNote: null,
@@ -159,23 +164,6 @@ export default {
 //       background var(--offset-blue)
 //     a, i
 //       color var(--blue)
-//-----------------------
-//       NO RESULTS
-//-----------------------
-.no-search-results
-  margin-top 10rem
-  text-align: center
-  display flex
-  align-items center
-  flex-direction column
-  .smiley
-    font-size 10rem
-    font-family var(--fonts-monospace)
-    color var(--grey-light)
-  p
-    font-size 1.5rem
-    margin-top 4em
-    margin-bottom 1.5em
 //-----------------------
 //       CARD LIST
 //-----------------------

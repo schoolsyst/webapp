@@ -41,27 +41,23 @@
 			li.title
 				span.time.empty
 				HeadingSub fin dans {{ formatDistance(endOfDay()) }}
-	.no-courses(v-else)
-		h1 
-			template(v-if="todayCourses.length") Plus de cours pour aujourd'hui
-			template(v-else) Pas de cours pour aujourd'hui
-		//FIXME: #[br]#[br] is no good, use margins instead
-		p.
-			Profitez-en pour #[nuxt-link(to="/homework") faire vos devoirs] 😉
-			#[br]#[br]
-			C'est une erreur? #[nuxt-link(to="/bug-report") faites-moi en part]
+	ScreenEmpty(v-else @cta="$router.push('/homework')")
+		template(#smiley) ^^
+		p {{todayCourses.length ? 'Plus' : 'Pas'}} de cours pour aujourd'hui
+		template(#cta) Voir les devoirs
 </template>
 
 <script>
 import HeadingSub from '~/components/HeadingSub.vue'
 import Icon from '~/components/Icon.vue'
 import CardCourse from '~/components/CardCourse.vue'
+import ScreenEmpty from '~/components/ScreenEmpty.vue'
 import { format, isAfter, formatDistanceStrict } from 'date-fns'
 import { fr } from 'date-fns/locale'
 import { mapState, mapGetters } from 'vuex'
 
 export default {
-	components: { HeadingSub, Icon, CardCourse },
+	components: { HeadingSub, Icon, CardCourse, ScreenEmpty },
 	data() {
 		return {
 			expandedCourse: null,

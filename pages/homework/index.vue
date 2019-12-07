@@ -1,15 +1,20 @@
 <template lang="pug">
     .container
-        ul.homework
+        ul.homework(v-if="!!all.length")
             li(v-for="hw in all", :key="hw.uuid")
                 CardHomework(v-bind="hw")
+        ScreenEmpty(v-else)
+            template(#smiley) \o/
+            p Bravo. Vous n'avez plus rien à travailler, pour le moment.
+            template(#cta) Ajouter des devoirs
 </template>
 
 <script>
 import CardHomework from '~/components/CardHomework.vue'
+import ScreenEmpty from '~/components/ScreenEmpty.vue'
 import { mapGetters } from 'vuex';
 export default {
-    components: { CardHomework },
+    components: { CardHomework, ScreenEmpty },
     computed: {
         ...mapGetters('homework', ['all'])
     },
