@@ -185,7 +185,7 @@ $bk-sidebar: 650px
 .toasted-container .toasted.toasted-primary
     height: 50px
     border-radius: var(--border-radius)
-    font-weight: 500
+    font-weight: 400
     font-size: 1em
     box-shadow: none
     &.error
@@ -197,6 +197,14 @@ $bk-sidebar: 650px
     &.warn
         background-color: var(--yellow)
         color: black
+    &.default
+        background-color: var(--black)
+    .action
+        color: var(--blue-light)
+        letter-spacing: 1px
+        &:hover
+            color: var(--blue)
+            text-decoration: none
 
 //=====================
 //        LINKS
