@@ -1,10 +1,9 @@
 <template lang="pug">
 .card-wrapper
   nuxt-link.card(:to="`/notes/${uuid}`")
-    //- substring(1, ...) 1 because we get rid of the note's h1
-    pre.preview {{ content.substring(1, 1000) }}
+    p.preview(v-html="content")
     .infos
-      span.name(:title="name") {{ name }}
+      span.name(:title="name" :class="{'untitled': !name}") {{ name || '(Document sans titre)' }}
       span.info(:title="subject.name")
         SubjectDot(v-bind="subject").subject-color
         span.subject-name {{ subject.name }}
@@ -17,7 +16,10 @@ import SubjectDot from '~/components/SubjectDot.vue'
 export default {
   components: { Icon, SubjectDot },
   props: {
-    content: String,
+    content: {
+      type: String,
+      default: ""
+    },
     name: String,
     subject: Object,
     uuid: String
@@ -51,7 +53,7 @@ export default {
   // Text
   font-size 0.5rem
   overflow: hidden
-  font-family var(--fonts-monospace-light)
+  // font-family var(--fonts-monospace-light)
   line-height 1.2em
   // Colors
   background var(--offset-grey)
@@ -82,6 +84,8 @@ export default {
   text-overflow ellipsis
   width 100%
   white-space nowrap
+  &.untitled
+    opacity: 0.5
 .info
   // Layout
   display flex
