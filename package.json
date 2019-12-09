@@ -9,7 +9,7 @@
   "author": "Ewen Le Bihan",
   "private": true,
   "scripts": {
-    "dev": "nuxt --port 5555",
+    "dev": "nuxt --port 3000",
     "build": "nuxt build",
     "start": "nuxt start",
     "generate": "nuxt generate",
@@ -55,6 +55,7 @@
     "slugify": "^1.3.4",
     "stylus": "^0.54.5",
     "stylus-loader": "^3.0.1",
+    "suncalc": "^1.8.0",
     "thenby": "^1.3.0",
     "tinycolor2": "^1.4.1",
     "tiptap": "^1.26.4",

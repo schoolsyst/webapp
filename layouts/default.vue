@@ -14,6 +14,7 @@ import TheTopBar from "~/components/TheTopBar.vue"
 import TheFooter from "~/components/TheFooter.vue"
 import TheSideRail from '~/components/TheSideRail.vue'
 import { toDate } from 'date-fns'
+import { mapGetters, mapState } from 'vuex'
 
 export default {
   components: {
@@ -27,15 +28,22 @@ export default {
       drawerOpened: false
     }
   },
-  mounted() {
-    // // fix weird nuxt bug where the exercises+test arrays are duped outside of the #__nuxt container
-    // document
-    //   .querySelectorAll("body > *:not(#__nuxt)")
-    //   .forEach((e) => e.remove())
+  computed: {
+    ...mapState(['now']),
+  },
+  methods: {
+    ...mapGetters('theme', {theme: 'current'})
+  },
+  async mounted() {
+    // Refresh time every second
     setInterval(() => {
       this.$store.commit('UPDATE_TIME', toDate(Date.now()))
-    }, 1000)
+    }, 1 * 1000)
   },
+  async onBeforeRouteLeave() {
+    console.log('Refreshing theme')
+    await this.$store.dispatch('theme/set')
+  }
 }
 </script>
 

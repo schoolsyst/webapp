@@ -16,15 +16,17 @@
                 name="quick-switcher"
                 :style={opacity:0}
             )
-            .logo(:style="{opacity: !searchBarHovered && !searchBarFocused ? '1' : '0'}"): img(src="/logos/compound.svg")
+            .logo(:style="{opacity: !searchBarHovered && !searchBarFocused ? '1' : '0'}")
+                LogoCompound
 </template>
 
 <script>
 import Icon from '~/components/Icon.vue'
 import InputField from '~/components/InputField.vue'
+import LogoCompound from '~/components/LogoCompound.vue'
 
 export default {
-    components: { Icon, InputField },
+    components: { Icon, InputField, LogoCompound },
     data() {
         return {
             searchText: "",
@@ -64,6 +66,7 @@ export default {
 
 .open-drawer i
     font-size 2em
+    color var(--black)
 .search
     margin-left 2em
     width 50vw
@@ -83,7 +86,7 @@ export default {
     height 100%
     top: 0
     transition opacity 0.25s ease
-    img
-        height: 2.125em
+    svg
+        height: 2.25em
 
 </style>

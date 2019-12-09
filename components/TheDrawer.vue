@@ -10,9 +10,9 @@
         nav#drawer(:style="{left: !opened ? '-500px' : '0px'}")
             ul
                 li.image 
-                    img(src="/logos/compound.svg")
+                    LogoCompound
                 li.user
-                    button.logout(open-modal="confirm-logout" open-at="center"): Icon power_settings_new
+                    button.logout(@click="$modal.show('confirm-logout')"): Icon power_settings_new
                     span.email {{ $auth.user.email || $auth.user.username }}
                 li(
                     v-for="link in links"
@@ -32,10 +32,11 @@
 import Icon from '~/components/Icon.vue'
 import ButtonNormal from '~/components/ButtonNormal.vue'
 import ModalDialogConfirm from '~/components/ModalDialogConfirm.vue'
+import LogoCompound from '~/components/LogoCompound.vue'
 import { mapState, mapGetters } from 'vuex'
 
 export default {
-    components: { Icon, ButtonNormal, ModalDialogConfirm },
+    components: { Icon, ButtonNormal, ModalDialogConfirm, LogoCompound },
     props: {
         opened: {
             type: Boolean,
@@ -74,8 +75,9 @@ nav
     box-shadow 0 8px 10px -5px rgba(0,0,0,0.2),0 16px 24px 2px rgba(0,0,0,0.14),0 6px 30px 5px rgba(0,0,0,0.12)
 .image
     padding-bottom: 0
-    img
+    svg
         width: 15em
+        height 3em
 .user
     padding-top: 0
     margin-bottom: .5em

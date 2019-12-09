@@ -28,13 +28,13 @@ html
 
 $blue: #1389FD
 
-html
+body
     // Greys
     --black: #111111
     --white: #ffffff
     --grey-light: #c0c0c0
     --grey: #d4d3d3
-    --grey-dark: #4F4F4F
+    --grey-dark: #757575
     --offset-grey: #F3F3F3
     // Blues
     --blue: #1389FD
@@ -55,6 +55,33 @@ html
     --yellow: #F2C94C
     --yellow-dark: #EEAA44
     --offset-yellow: #FAE192
+    &[theme="DARK"]
+        // Greys
+        --white: #111111
+        --black: #ffffff
+        --grey-dark: #c0c0c0
+        --grey: #d4d3d3
+        --grey-light: #4F4F4F
+        --offset-grey: #242424
+        // Blues
+        --blue: #1389FD
+        --blue-light: #89c4fe
+        --blue-dark: #006BD4
+        --offset-blue-dark: #E7F8FF
+        --offset-blue: #0b123a
+        // Reds
+        --red: #D50000
+        --red-light: #ff3519
+        --red-dark: #940000
+        --offset-red: #FF9E9E
+        // Greens
+        --green: #27CE5F
+        --green-light: #09AA5D
+        --offset-green: #BFEFCC
+        // Yellows
+        --yellow: #F2C94C
+        --yellow-light: #EEAA44
+        --offset-yellow: #FAE192
 body
     color: var(--black)
     background-color: var(--white)
@@ -219,3 +246,4 @@ p, pre
         &:focus,
         &:active
             color: var(--blue-dark)
+            border-color: var(--blue-dark)

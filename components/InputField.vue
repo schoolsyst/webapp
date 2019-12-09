@@ -55,7 +55,7 @@ export default {
     },
     backgroundColor: {
       type: String,
-      default: 'white'
+      default: 'var(--white)'
     },
     placeholder: String,
     noErrorMessages: {
@@ -181,8 +181,9 @@ input
   padding-right (side-padding * 2 + 10px)
   // LOOKS
   background transparent
-  border (stroke-thickness) solid #00000088
+  border (stroke-thickness) solid var(--grey-dark)
   border-radius var(--border-radius)
+  color var(--black)
 label
   position absolute
   left 5px
@@ -192,7 +193,7 @@ label
 // ===== Hover state
 input:hover, input:focus
   &
-    border-color black
+    border-color var(--black)
     outline none
   & + label
     left 10px
@@ -212,7 +213,7 @@ input:hover, input:focus
     border-color var(--red)
 // ===== Filled state
 :not(.active).field.filled label
-  color #00000088
+  color var(--grey-dark)
 // ===== Disabled state
 .field.disabled
   input
@@ -235,6 +236,7 @@ label
   position absolute
   right: side-padding
   z-index: 2
+  color var(--black)
 .error
   text-align: center
   color var(--red)

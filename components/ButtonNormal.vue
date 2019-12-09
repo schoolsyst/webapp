@@ -92,9 +92,10 @@ export default {
         color white
     &:active
         background-color var(--blue-dark)
+        border-color var(--blue-dark)
     &[disabled]
-        color #00000055
-        border-color #00000055
+        color var(--grey)
+        border-color var(--grey)
         background transparent
 .btn--primary
     background-color var(--blue)
@@ -104,8 +105,8 @@ export default {
     &:active
         color rgba(255,255,255,0.25)
     &[disabled]
-        background #00000011
-        color #00000088
+        background var(--offset-grey)
+        color var(--grey-dark)
 .btn--secondary
     background-color var(--offset-blue)
     color var(--blue)
@@ -119,7 +120,7 @@ export default {
     border 2px solid transparent
     color black
     &:hover, &:focus
-        border 2px solid rgba(0,0,0,0.25)
+        border 2px solid var(--grey-light)
 .btn--flat
     padding 10px 0
     margin: 0

@@ -108,7 +108,7 @@ export default {
 }
 
 .heading, .message {
-  color: #000;
+  color: var(--black);
   text-align: center;
 }
 

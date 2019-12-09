@@ -5,6 +5,10 @@ import constantCase from 'constant-case'
 export const state = () => ({
 	now: toDate(Date.now()), // For time-dependent getters.
   tomorrow: addDays(toDate(Date.now()), 1),
+  location: {
+    latitude: null,
+    longitude: null
+  },
   links: [
     { 
         name: 'Timeline',
@@ -80,13 +84,11 @@ export const getters = {
     return format(time, 'HH:mm')
   },
   drawerLinks: (state) => (state.links),
-  sideRailLinks: (state) => {
-    let links = state.links
-    return links.filter((link) => {
+  sideRailLinks: (state) =>
+    state.links.filter((link) => {
       if (link === 'separator') return false
-      return ['timeline', 'notes', 'homework', 'schedule', 'grades'].includes(link.id)
-    })
-  }
+      return ['timeline', 'notes', 'homework', 'grades'].includes(link.id)
+    }),
 }
 
 export const mutations = {
@@ -94,6 +96,9 @@ export const mutations = {
     state.now = newTime
     state.tomorrow = addDays(newTime, 1)
   },
+  UPDATE_LOCATION: (state, newLocation) => {
+    state.location = newLocation
+  }
 }
 
 export const actions = {
@@ -111,6 +116,18 @@ export const actions = {
     await dispatch("settings/load")
     await dispatch("subjects/load")
   },
+
+  async acquireLocation({commit, state}) {
+    if (state.longitude === null || state.latitude === null)
+      navigator.geolocation.getCurrentPosition(
+        (pos) => {
+          commit('UPDATE_LOCATION', pos.coords)
+        },
+        (err) => {
+          console.error(`[store] acquireLocation: error while requesting for location: ${err}`)
+        }
+      )
+  }
 }
 
 export const getValidator = ({ 
@@ -156,7 +173,7 @@ export const getValidator = ({
     minimum: ({arg, fieldName}) => 
       object[fieldName] >= arg,
     maxLength: ({arg, fieldName}) => 
-      object[fieldName].length <= arg,
+      typeof object[fieldName] === 'string' ? object[fieldName].length <= arg : true,
     required: ({arg, fieldName}) => 
       object.hasOwnProperty(fieldName) && object[fieldName] !== null,
     notEmpty: ({arg, fieldName}) =>
@@ -322,13 +339,11 @@ export const getMutations = (
     mutations[`DEL${WHAT}`] = (state, uuid) =>
       (state[whats] = state[whats].filter((o) => o.uuid !== uuid))
   if (verbs.includes("patch"))
-    mutations[`PATCH${WHAT}`] = (state, uuid, modifications) => {
-      // Apply mapWith to modifications
-      modifications = modifications.map(mapWith)
+    mutations[`PATCH${WHAT}`] = (state, {uuid, modifications}) => {
       // Get the requested item's index in the state array
 			let idx = state[whats].map((o) => o.uuid).indexOf(uuid)
 			// Apply modifications
-			Object.assign(state[whats][idx], modifications)
+			state[whats][idx] = {...state[whats][idx], ...modifications}
 		}
 
 		return mutations

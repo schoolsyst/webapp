@@ -90,8 +90,8 @@ export default {
   &.current
     justify-content center
   &.empty
-    color black
-    background white
+    color var(--black)
+    background var(--white)
     border-color var(--grey-light)
 .infos
   display flex
