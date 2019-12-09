@@ -108,7 +108,7 @@ export default {
 	left: 0
 	width 100vw
 	height 100vh
-	background white
+	background var(--white)
 	display flex
 	text-align: center
 	justify-content center
@@ -132,7 +132,7 @@ export default {
 //        TITLES
 //=====================
 li.title > :not(.time)
-	background white
+	background var(--white)
 	position relative
 	z-index: 10
 	padding 0.2em 0
