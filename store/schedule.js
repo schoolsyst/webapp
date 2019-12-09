@@ -317,7 +317,7 @@ export const getters = {
   validateMutation: getValidator({
     constraints: {
       before: {
-        rescheduled_end: ["rescheduled_start"]
+        added_end: ["added_start"]
       },
       required: ["subject"],
       maxLength: {
@@ -330,19 +330,19 @@ export const getters = {
         field: null,
         constraint: ({getters}, object) => {
           /* Checks if -- when the mutation is rescheduled -- no courses already exists between the chosen dates */
-          if (!(object.hasOwnProperty('rescheduled_start') && object.hasOwnProperty('rescheduled_end')))
+          if (!(object.hasOwnProperty('added_start') && object.hasOwnProperty('added_end')))
             return true
           !getters.coursesIn(
-            object.rescheduled_start,
-            object.rescheduled_end
+            object.added_start,
+            object.added_end
           ).filter((o) => 
             (
-              isSameMinute(o.start, object.rescheduled_start) || 
-              isAfter(object.rescheduled_end, o.end)
+              isSameMinute(o.start, object.added_start) || 
+              isAfter(object.added_end, o.end)
             ) &&
             (
-              isSameMinute(o.end, object.rescheduled_end) || 
-              isBefore(object.rescheduled_end, o.end)
+              isSameMinute(o.end, object.added_end) || 
+              isBefore(object.added_end, o.end)
             )
           ).length
         }
@@ -392,8 +392,8 @@ export const getters = {
     ],
     fieldNames: {
       subject:           { gender: "F", name: "matière" },
-      rescheduled_start: { gender: "M", name: "début du nouveau cours" },
-      rescheduled_end:   { gender: "F", name: "fin du nouveau cours" },
+      added_start:       { gender: "M", name: "début du nouveau cours" },
+      added_end:         { gender: "F", name: "fin du nouveau cours" },
       deleted_start:     { gender: "M", name: "début du cours supprimé" },
       deleted_end:       { gender: "F", name: "fin du cours supprimé" },
       room:              { gender: "F", name: "salle" },
@@ -491,7 +491,7 @@ export const actions = {
   },
 
   async validateMutation({ commit, getters, rootGetters }, mutation) {
-    const [ start, end ] = [ mutation.rescheduled_start, mutation.rescheduled_end ]
+    const [ start, end ] = [ mutation.added_start, mutation.added_end ]
     const isRescheduled = start && end
     // Check if the start and end date are in the correct order
     if(!( isRescheduled && isBefore(start, end) ))

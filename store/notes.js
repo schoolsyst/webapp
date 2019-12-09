@@ -62,11 +62,18 @@ export const getters = {
   },
   validate: getValidator({
     constraints: {
-      required: ["subject", "name", "format"],
+      required: ["subject"],
       maxLength: {
         300: ["name"]
       }
     },
+    customConstraints: [
+      {
+        field: 'format',
+        message: 'Format de note non reconnu',
+        constraint: (getters, obj) => ['MARKDOWN','HTML'].includes(obj.format)
+      }
+    ],
     fieldNames: {
       subject:  { gender: "F", name: "matière" },
       name:     { gender: "M", name: "nom" },

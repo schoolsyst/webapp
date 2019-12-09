@@ -35,7 +35,6 @@ export const actions = {
     constraints: {
       maxLength: {
         300: ["name", "room"],
-        3: ["abbreviation"]
       },
       isAColor: ["color"],
       required: ["name", "color", "abbreviation", "weight"],
@@ -60,7 +59,6 @@ export const actions = {
     fieldNames: {
       color:        { gender: 'F', name: 'couleur' },
       name:         { gender: 'M', name: 'nom' },
-      abbreviation: { gender: 'F', name: 'abbréviation' },
       goal:         { gender: 'M', name: 'objectif de moyenne' },
       weight:       { gender: 'M', name: 'coefficient' },
       room:         { gender: 'F', name: 'salle' }
