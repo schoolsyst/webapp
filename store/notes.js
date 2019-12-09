@@ -104,7 +104,7 @@ export const actions = {
   async post({ commit, dispatch, rootGetters }, { note, force }) {
     force = force || false
     if(!force) {
-      const validation = getters.validate(note)()
+      const validation = getters.validate()(note)
       console.log(validation)
       if (!validation.validated) return validation
     }
@@ -120,19 +120,24 @@ export const actions = {
       }
     }
   },
-  async patch({ commit, getters, dispatch }, uuid, modifications, force = false) {
+  async patch({ commit, getters, dispatch }, {uuid, modifications, force}) {
+    force = force || false
+    await dispatch('load')
     const note = {
       ...getters.one(uuid),
       ...modifications
     }
+    note.subject = note.subject.uuid
     if(!force) {
       const validation = await getters.validate(note)
       if (!validation.validated) return validation
     }
     try {
-      const { data } = await this.$axios.patch(`/notes/${uuid}`, note)
+      let APIReady = modifications
+      APIReady.subject = APIReady.subject.uuid
+      const { data } = await this.$axios.patch(`/notes/${uuid}/`, APIReady)
       // console.log(`[from API] PATCH /notes/${uuid}/: OK`)
-      if (data) commit("PATCH", uuid, modifications)
+      if (data) commit("PATCH", {uuid, modifications})
     } catch (error) {
       // console.error(`[from API] PATCH /notes/${uuid}/: Error`)
       try {
@@ -171,10 +176,9 @@ export const actions = {
   },
   async save(
     { dispatch, getters, rootState },
-    uuid,
-    content = null,
-    force = false
+    { uuid, content, force }
   ) {
+    force = force || false
     try {
       const clientNoteContent = content || getters.note(uuid).content
       // If we are force-saving, no need to do any checks.
@@ -184,10 +188,10 @@ export const actions = {
           throw new Error(
             `Error while checking content of note #${uuid}: The note's content is equal to "${clientNoteContent}".`
           )
-        await dispatch("patchNote", uuid, {
+        await dispatch("patch", {uuid, modifications: {
           content: clientNoteContent,
           modified: rootState.now,
-        })
+        }})
       }
     } catch (error) {
       // console.error(`[macro-action] saveNote error: ${error}`)
@@ -214,5 +218,5 @@ export const actions = {
     searcher = searcher || await dispatch('initSearch')
     apply = apply || getters.note
     return searcher.search(query).map((uuid) => apply(uuid))
-  },
+  }
 }

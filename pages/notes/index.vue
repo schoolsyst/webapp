@@ -1,5 +1,6 @@
 <template lang="pug">
   .container
+    PickerSubject(@pick="newNote.subject = $event.uuid; create()")
     #loading(v-if="!loaded")
       p Chargement...
     .search(v-if="!!all.length")
@@ -13,7 +14,7 @@
     .current-subject(v-if="currentCourse && !!searched(all).length")
       HeadingSub {{ currentCourse.subject.name }}
       ul.notes
-        li.card-new
+        li.card-new(@click="create")
           Icon add
         li(
           v-for="note in orderBy()(searched(currentSubject), sortBy)" :key="note.uuid"
@@ -23,18 +24,18 @@
     .all(v-if="searched(all).length > 0")
       HeadingSub(v-if="currentCourse") Tout
       ul.notes
-        li.card-new(v-if="!currentCourse")
+        li.card-new(v-if="!currentCourse" @click="create")
           Icon add
         li(
           v-for="note in orderBy()(searched(all), sortBy)" :key="note.uuid" 
           @contextmenu.prevent="$refs.menu.open($event, { note })"
         )
           CardNote(v-bind="note" @more.prevent="$refs.menu.open($event, { note })")
-    ScreenEmpty(v-else-if="!!searchQuery" @cta="newNote")
+    ScreenEmpty(v-else-if="!!searchQuery" @cta="create")
       template(#smiley) :/
       p Votre recherche n'a pas donné de résultat.
       template(#cta) Nouvelle note
-    ScreenEmpty(v-else @cta="newNote")
+    ScreenEmpty(v-else @cta="create")
       template(#smiley) oO
       p C'est plutôt vide ici.
       template(#cta) Créer une note
@@ -60,22 +61,32 @@ import SubjectDot from '~/components/SubjectDot.vue'
 import ButtonNormal from '~/components/ButtonNormal.vue'
 import InputField from '~/components/InputField.vue'
 import CardNote from '~/components/CardNote.vue'
+import PickerSubject from '~/components/PickerSubject.vue'
 import Icon from '~/components/Icon.vue'
 import VueContext from 'vue-context'
 import 'vue-context/src/sass/vue-context.scss'
 import { mapGetters, mapActions } from 'vuex';
 import Fuse from 'fuse.js'
 export default {
-  components: { HeadingSub, CardNote, InputField, Icon, VueContext, ButtonNormal, ScreenEmpty },
+  components: { HeadingSub, CardNote, InputField, Icon, VueContext, ButtonNormal, ScreenEmpty, PickerSubject },
   data() {
     return {
       // User-editable data
       searchQuery: "",
       sortBy: 'added',
+      newNote: {
+        subject: null,
+        name: null,
+        content: '',
+        format: 'HTML',
+        modified: null,
+        added: null,
+        opened: null
+      },
       // UI data
       sortOptions: [
         { value: 'modified', name: "Date de création" },
-        { value: 'added',  name: "Date de modification" },
+        { value: 'added',    name: "Date de modification" },
         { value: 'subject',  name: "Matière" }
       ],
       openedContextMenuNote: null,
@@ -96,6 +107,7 @@ export default {
   methods: {
     ...mapGetters('notes', ['orderBy']),
     ...mapActions('notes', {del: 'delete'}),
+    ...mapActions('notes', ['post']),
     searched(toFilter) {
       if (this.searchQuery) {
         let uuids = this.fuse.search(this.searchQuery)
@@ -103,6 +115,22 @@ export default {
       } else {
         return toFilter
       }
+    },
+    async create() {
+      // --- Get the subject ---
+      // If newNote.subject already exists, a subject has been chosen. Use it.
+      if (this.newNote.subject !== null) {
+        // (nothing to do, we can skip to the call to the post vuex action)
+      // If we are currently in a course, get the subject from it.
+      } else if (this.currentCourse !== null) {
+        this.newNote.subject = this.currentCourse.subject
+      // Else, ask the user and stop the function (since we can't create a note w/o a subject)
+      } else {
+        this.$modal.show('subject-picker')
+        return
+      }
+      const createdNote = await this.$store.dispatch('notes/post', { note: this.newNote })
+      this.$router.push(`/notes/${createdNote.uuid}`)
     }
   },
   async mounted() {
