@@ -1,6 +1,6 @@
 <template lang="pug">
 component.BadgeSubject(
-  :style="{backgroundColor: color, color: textColor}"
+  :style="{backgroundColor: color, color: textColor()(color)}"
   @click="$emit('click')"
   :class="{clickable}"
   :is="clickable ? 'button' : 'span'"
@@ -8,7 +8,6 @@ component.BadgeSubject(
 </template>
 
 <script>
-import tinycolor from "tinycolor2"
 import { mapGetters } from 'vuex'
 
 export default {
@@ -31,8 +30,8 @@ export default {
       default: false
     }
   },
-    computed: {
-        ...mapGetters(['textColor'])
+    methods: {
+      ...mapGetters(['textColor'])
     }
 }
 </script>
@@ -42,7 +41,6 @@ export default {
   font-size: 0.8em
   padding: .3em .5em
   border-radius: var(--border-radius)
-  color: #fff
   display: flex
   white-space: nowrap
   justify-content: center

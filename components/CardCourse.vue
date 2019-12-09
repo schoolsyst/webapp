@@ -7,7 +7,7 @@
       :style="!empty ? {\
         backgroundColor,\
         color: backgroundColor \
-          ? textColor(backgroundColor)() \
+          ? textColor()(backgroundColor) \
           : false\
         } : false"
       :class="{empty, expanded}"
