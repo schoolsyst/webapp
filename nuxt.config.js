@@ -78,7 +78,7 @@ export default {
    ** Plugins to load before mounting the App
    */
   plugins: [
-    // '~/plugins/kbshortcuts.js'
+    '~plugins/vue-js-modal'
   ],
   /*
    ** Nuxt.js modules
