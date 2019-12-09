@@ -225,7 +225,10 @@ input:hover, input:focus
 input
   transition all .25s ease
 label
-  transition left .125s ease, top .125s ease, color .25s ease, background .01s ease
+  transition left .125s ease,
+             top .125s ease,
+             color .25s ease,
+             background .01s ease
 .action
   display none
 .field:hover, .field.active
