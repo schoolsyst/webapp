@@ -1,812 +1,377 @@
 <template lang="pug">
-//TODO: synchronized scrolling
-//TODO: button to upload || drag'n'drop source file to textarea
-//TODO: Jump to section
-//TODO: Search-and-replace
-//TODO: save scroll pos
+    .container
+        PickerSubject(
+            @pick="subject = $event"
+        )
+        .toolbar
+            .top
+                nuxt-link(to="/notes"): Icon.icon arrow_back
+                .title
+                    BadgeSubject.subject(
+                        v-bind="subject" 
+                        clickable @click="$modal.show('subject-picker')"
+                    )
+                    input.title-field(
+                        placeholder="Document sans titre"
+                        v-model.lazy="name"
+                        name="name"
+                        type="text"
+                    )
+                    a.unsaved-work(
+                        v-show="unsavedWork" 
+                        title="Modifications non sauvegardées"
+                        @click="save({toast: true})"
+                    ) &bull;
 
-.container
-  ModalAddNote(:subject="currentCourseSubject")
-  ModalAddExercise(:subject="currentCourseSubject")
-  ModalAddTest(:subject="currentCourseSubject")
-
-
-  TheNavbar(slide-out).slid-out
-  BarFloating
-    ButtonIcon(@click="saveSource" title="Télécharger la source (.md)") archive
-    //TODO: White transparent overlay on <BarFloating> bg to indicate uploading progress
-    ButtonIcon(@click="sync"        title="Synchroniser") import_export
-    ButtonIcon(@click="toggleViewMode", title="Changer la vue") {{viewModeIcon}}
-    ButtonIcon(@click="downloadPDF" title="Télécharger le rendu (.pdf)") file_copy
-  MainGroup(:full-size="viewMode !== 'both'")
-    MainGroupLeft(v-if="viewMode !== 'rendered'")
-      textarea#editor(v-model="content" :disabled="locked") 
-    MainGroupRight(v-if="content && viewMode !== 'source'")
-      #mirror(v-html="$md.render(content)")
-    .bottom-bar
-      ul.status
-        li(v-if="timeRemaining", title="Temps avant la fin du cours") {{timeRemaining.format(`H[h]m`)}}
-        li {{now.format('HH:mm')}}
-      ArrayButtonFlat.actions
-        //TODO: label-less icon, a bit bigger
-        li: ButtonIcon(
-          open-modal="add-note", 
-          open-at="self",
-          title="Nouveau chapitre"
-          color="black"
-        ) note_add
-        li: ButtonIcon(
-          open-modal="add-exercise", 
-          open-at="self",
-          title="Nouveau devoir"
-          color="black"
-        ) edit
-        li: ButtonIcon(
-          open-modal="add-test",
-          open-at="self",
-          title="Nouveau contrôle"
-          color="black"
-        ) format_list_bulleted
-  style#mirror-styles.
-    body {
-      overflow: hidden
-    },
-    h2 {
-      margin-top: 20px
-      margin-bottom: 5px
-      font-weight: 500
-      font-size: 45px
-    }
-    h1 {
-      font-family: 'Google Sans', 'Product Sans', 'Manrope', sans-serif
-      font-weight: lighter
-      font-size: 70px
-    }
-    h3 {
-      margin-top: 10px
-      margin-bottom: 5px
-      font-size: 30px
-      font-weight: normal
-    }
-    p {
-      line-height: 1.5
-      margin: 10px 0
-    }
-    code {
-      color: var(--blue)
-      line-height: 1.2
-    }
-    .footnotes-sep {
-      opacity: .75
-      margin-top: 10px
-    }
-    .footnotes-sep::before {
-      content: 'Notes de bas de page'
-      position: relative
-      bottom: 30px
-    }
-    .admonition {
-      background: var(--offset-blue)
-      border-radius: 10px
-      padding: 10px 20px
-      margin: 20px 0
-    }
-    .admonition-title {
-      color: var(--blue)
-      font-size: 24px
-      font-weight: bold
-    }
-    .admonition.failure,
-    .admonition.danger,
-    .admonition.bug {
-      background: var(--red)
-    }
-    .admonition.failure p,
-    .admonition.danger p,
-    .admonition.bug p,
-    .admonition.failure ul li,
-    .admonition.danger ul li,
-    .admonition.bug ul li {
-      color: white
-    }
-    .admonition.failure p:not(.admonition-title),
-    .admonition.danger p:not(.admonition-title),
-    .admonition.bug p:not(.admonition-title)  {
-      opacity: 0.75
-    }
-    /* TODO: change this in the parser instead: can't select thoses */
-    .admonition.quote .admonition-title::before {
-      content: '«'
-    }
-    .admonition.quote .admonition-title::after {
-      content: '»'
-    }
-    .admonition.quote .admonition-title + p::before {
-      content: '—\2009'
-      /*        |   |-> thin space */
-      /*        |-> em dash        */
-    }
-
-    ul {
-      padding-left: 30px
-      list-style: circle
-    }
-
-    #mirror ul li {
-      list-style: circle !important
-      margin-bottom: 10px
-    }
-
-    dd {
-      padding-left: 15px;
-      margin-bottom: 5px;
-      max-width: 25vw;
-    }
-
-    dd::before {
-      content: ':';
-      margin-right: 5px;
-    }
-
-    dt {
-      margin-top: 15px
-      font-weight: bold
-    }
-
-    dt math {
-      font-weight: normal; /* bold math is ugly as hell */
-    }
-
-    #mirror a, #mirror a:hover, #mirror a:focus {
-      text-decoration: underline
-    }
-
-    table {
-      background: var(--offset-blue)
-      border-radius: 7.5px
-      border: none
-      border-collapse: collapse
-    }
-    thead tr,
-    thead td {
-      color: var(--blue)
-    }
-    thead:empty {
-      display: none
-    }
-    thead th {
-      font-weight: normal
-    }
-    thead th math {
-      /* bold mathematics are ugly */
-      font-weight: normal
-    }
-    tbody tr {
-      background: #fff
-    }
-    tbody tr,
-    tbody td {
-      border-top: 2px solid #0005
-      border-bottom: 2px solid #0005
-    }
-    td,
-    tr {
-      padding: 20px
-    }
-    th {
-      padding: 10px 20px
-    }
-    tbody tr:hover {
-      background: #fff3
-    }
-
-    blockquote {
-      padding-left: 15px
-      border-left: 7.5px solid var(--blue)
-    }
-
-    #mirror img {
-      max-width: 100%
-    }
-
-    #mirror dl {
-      display: grid
-      grid-template-columns: max-content max-content
-    }
-
-    #mirror dl dd {
-      grid-column: 2
-      margin-top: 0px
-    }
-
-    #mirror dt {
-      grid-column: 1
-      margin-top: 0px
-    }
-
-    #mirror dt strong {
-      color: var(--blue)
-    }
-
-    hr.footnotes-sep {
-      margin-top: 100px
-    }
-
-    #mirror h1 {
-      text-align: center
-      font-size: 36px
-      margin: 50px 0
-    }
+            EditorMenuBar(:editor="editor" v-slot="{commands, isActive}")
+                .menubar
+                    button(@click="commands.undo" title="Annuler (Ctrl + Z)")
+                        Icon undo
+                    button(@click="commands.redo" title="Refaire (Ctrl + Shift + Z)")
+                        Icon redo
+                    span.sep |
+                    //- The key shortcut listener for Ctrl + S is managed with a manual event listener.
+                    //- See: https://stackoverflow.com/a/55323073
+                    button(
+                        @click="save({toast: true})"
+                        title="Sauvegarder (Ctrl + S)"
+                    )
+                        Icon(filled) save
+                    button(title="Télécharger en... (Ctrl + Shift + S)")
+                        Icon(filled) save_alt
+                    //- button
+                    //-     Icon share
+                    //-     | Partager
+                    button(title="Imprimmer (Ctrl + P)")
+                        Icon(filled) print
+                    button Apprendre...
+                    span.sep |
+                    button(title="Enlever le formatage (Ctrl + Shift + :)")
+                        Icon format_clear
+                    //- select Titre...
+                    //-     template(v-for="level in [0, 1, 2, 3, 4, 5, 6]")
+                    //-         option(@select="commands.heading({level})"): component(:is="`h${level}`") Titre
+                    span.sep |
+                    button(
+                        :class="{active: isActive.bold()}"
+                        @click="commands.bold"
+                        title="Gras (Ctrl + B)"
+                    )
+                        Icon format_bold
+                    button(
+                        :class="{active: isActive.italic()}"
+                        @click="commands.italic"
+                        title="Italique (Ctrl + I)"
+                    )
+                        Icon format_italic
+                    button(
+                        :class="{active: isActive.underline()}"
+                        @click="commands.underline"
+                        title="Souligné (Ctrl + U)"
+                    )
+                        Icon format_underlined
+                    button(
+                        :class="{active: isActive.strike()}"
+                        @click="commands.strike"
+                        title="Barré (Ctrl + D)"
+                    )
+                        Icon format_strikethrough
+                    button(title="Maths (Ctrl + E)"): math: mi x
+                    button(
+                        :class="{active: isActive.code()}"
+                        @click="commands.code"
+                        title=""
+                    )
+                        code M
+                    button(title="Superscript (Ctrl + Shift + ,)")
+                        span.low-opacity a
+                        sup n
+                    button(title="Indice (Ctrl + ,)")
+                        span.low-opacity a
+                        sub n
+                    span.sep |
+                    button(title="Couleur de texte")
+                        Icon(filled) format_color_text
+                    button(title="Note de bas de page (Ctrl + ;)")
+                        | Note#[sup 1]
+                    button(title="Lien (Ctrl + K)")
+                        Icon insert_link
+                    button(
+                        @click="commands.bullet_list"
+                        title="Liste à points (Ctrl + Shift + 8)"
+                    )
+                        Icon format_list_bulleted
+                    button(
+                        @click="commands.ordered_list"
+                        title="Liste numérotée (Ctrl + Shift + 9)"
+                    )
+                        Icon format_list_numbered
+                    button(title="Liste de définitions (Ctrl + Shift + 0)")
+                        | Def:
+                    button(title="Abbréviation (Ctrl + *)")
+                        | abbr
+                    span.sep |
+                    button(
+                        @click="commands.horizontal_rule"
+                        title="Ligne horizontale"
+                    ) 
+                        | —
+                    button(
+                        @click="commands.createTable({rowsCount: 2, colsCount: 2})"
+                        title="Tableau"
+                    )
+                        Icon table_chart
+                    //- button(@click="commands.blockquote")
+                    //-     Icon format_quote
+                    //dropdown: Admonitions (Ctrl + !)
+                    button(@click="commands.code_block" title="Bloc de code")
+                        Icon code
+                    button(title="Bloc de maths (Ctrl + Shift + E)"): Icon functions
+                    button(title="Image"): Icon image
+        .editor-page-wrapper
+            editor-content.editor-page(:editor="editor")
 </template>
 
-
 <script>
-//--- essentials ---
-import axios from "axios";
-import moment from "moment";
-import platform from "platform";
-import { mapState, mapGetters, mapMutations, mapActions } from "vuex";
+import { Editor, EditorContent, EditorMenuBar } from 'tiptap'
+import {
+    CodeBlock,
+    CodeBlockHighlight,
+    HardBreak,
+    Heading,
+    HorizontalRule,
+    Image,
+    ListItem,
+    Mention,
+    OrderedList,
+    Table,
+    TableHeader,
+    TableCell,
+    TableRow,
+    TodoItem,
+    TodoList,
+    Bold,
+    Code,
+    Italic,
+    Link,
+    Strike,
+    Underline,
+    History,
+    BulletList,
+} from 'tiptap-extensions'
+import Icon from '~/components/Icon.vue'
+import InputField from '~/components/InputField.vue'
+import BadgeSubject from '~/components/BadgeSubject.vue'
+import PickerSubject from '~/components/PickerSubject.vue'
+import { mapGetters, mapActions } from 'vuex'
+import debounce from 'lodash.debounce'
 
-//--- components ---
-import TheNavbar from "~/components/TheNavbar.vue"
-import ArrayButtonFlat from "~/components/ArrayButtonFlat.vue"
-import ButtonFlat from "~/components/ButtonFlat.vue"
-import MainGroup from "~/components/MainGroup.vue"
-import MainGroupLeft from "~/components/MainGroupLeft.vue"
-import MainGroupRight from "~/components/MainGroupRight.vue"
-import ButtonIcon from "~/components/ButtonIcon.vue"
-import BarFloating from "~/components/BarFloating.vue"
-import ModalAddExercise from "~/components/ModalAddExercise.vue"
-import ModalAddNote from "~/components/ModalAddNote.vue"
-import ModalAddTest from "~/components/ModalAddTest.vue"
 export default {
-  layout: "bare",
-  components: {
-    TheNavbar,
-    MainGroup,
-    MainGroupLeft,
-    MainGroupRight,
-    BarFloating,
-    ButtonIcon,
-    ArrayButtonFlat,
-    ButtonFlat,
-    ModalAddNote,
-    ModalAddExercise,
-    ModalAddTest
-  },
-
-  head() {
-    return {
-      title: `[${this.subject.abbreviation.toUpperCase()}] ${this.name}`
-    };
-  },
-
-  async asyncData({ store, app, route }) {
-    try {
-      let { uuid } = route.params
-      const { data } = await app.$axios.get(`/notes/${uuid}/`)
-      return {
-        locked: false,
-        name: data.name,
-        subject: data.subject,
-        created: data.created,
-        server_last_modified: data.last_modified,
-        server_content: data.content,
-        uuid: data.uuid,
-      }
-    } catch (e) {
-      if (e.response.status == 404) {
-        error = "Note non trouvée."
+    components: { Editor, InputField,  EditorContent, EditorMenuBar, Icon, BadgeSubject, PickerSubject },
+    layout: 'bare',
+    data() {
         return {
-          error,
+            editor: new Editor({
+                extensions: [
+                    new CodeBlock(),
+                    new HardBreak(),
+                    new Heading({ levels: [1, 2, 3, 4, 5, 6]}),
+                    new HorizontalRule(),
+                    new Image(),
+                    new ListItem(),
+                    new Mention(),
+                    new OrderedList(),
+                    new Table(),
+                    new TableHeader(),
+                    new TableCell(),
+                    new TableRow(),
+                    new TodoItem(),
+                    new TodoList(),
+                    new Bold(),
+                    new Code(),
+                    new Italic(),
+                    new Link(),
+                    new Strike(),
+                    new Underline(),
+                    new History(),
+                    new BulletList(),
+                ],
+                content: ``,
+                onUpdate: this.updateNote
+            }),
+            name: null,
+            subject: {
+                name: 'Chargement...',
+                color: '#000000'
+            },
+            uuid: null,
+            unsavedWork: false
         }
-        // app.$router.push('/notes')
-      }
-    }
-  },
-
-  data() {
-    return {
-      content: "Chargement...",
-      locked: true,
-      lastSave: moment(),
-      now: moment(),
-      autosyncInterval: null,
-      viewMode: "both",
-      shortcuts: [
-        {
-          name: "Gras",
-          shortcut: ["Control", "b"],
-          content: ["*", "*"]
+    },
+    methods: {
+        ...mapGetters('settings', {setting: 'value'}),
+        updateNote({getHTML}) {
+            this.$store.commit('notes/PATCH', {uuid: this.uuid, modifications: {
+                content: getHTML()
+            }})
+            this.unsavedWork = true
         },
-        {
-          name: "Italique",
-          shortcut: ["Control", "i"],
-          content: ["_", "_"]
-        },
-        {
-          name: "Souligné",
-          shortcut: ["Control", "u"],
-          content: ["__", "__"]
-        },
-        {
-          name: "Titre de 2e niveau",
-          shortcut: ["Control", "é"],
-          content: ["\n## ", ""]
-        },
-        {
-          name: "Titre de 3e niveau",
-          shortcut: ["Control", '"'],
-          content: ["\n### ", ""]
-        },
-        {
-          name: "Maths (en ligne)",
-          shortcut: ["Control", "e"],
-          content: ["$$", "$$"]
-        },
-        {
-          name: "Maths (centré)",
-          shortcut: ["Control", "m"],
-          content: ["\n$$$\n", "\n$$$"]
-        },
-        {
-          name: "Insérér un tableau",
-          shortcut: ["Alt", "t"],
-          exec: listenerEl => {
-            // Get array of column names for user
-            let cols = prompt(
-              "Titre des colonnes (séparées par des virgules)..."
-            )
-              .split(",")
-              .map(col => col.trim());
-            // Return nothing (just the cursor) if the array is empty
-            if (!cols.length) return ["", ""];
-
-            // Get the biggest number out of: longest-length column name OR 50
-            let colLength = Math.max(
-              cols.sort((a, b) => b.length - a.length)[0].length,
-              Math.floor(50 / cols.length - cols.length + 1)
-            );
-            // Compute the table's header separator
-            let headerSep =
-              "|" + ("-".repeat(colLength) + "|").repeat(cols.length);
-            // Compute the table's header
-            let header = "|";
-            // For each column...
-            cols.forEach(col => {
-              // Get the name, padded by spaces
-              name = col.padEnd(colLength, " ");
-              // Append it to the header str
-              header = header.concat(name + "|");
-            });
-
-            // Return the whole thing
-            return [`\n${header}\n${headerSep}\n|`, ""];
-          }
-        },
-        {
-          name: "Tracer une équation de droite",
-          shortcut: ["Control", "p"],
-          content: ["\n```plot\nplot ", "\n```"]
-        },
-        {
-          name: "Insérer un bloc de code",
-          shortcut: ["Control", "l"],
-          exec: listenerEl => {
-            let lang = prompt("Langage de ce bloc de code ?").toLowerCase();
-            return [`\n\`\`\`${lang}\n`, "\n```"];
-          }
-        },
-        {
-          name: "Insérér une boite d'infos",
-          shortcut: ["Control", "q"],
-          exec: listenerEl => {
-            let title = prompt("Titre de la boîte ?").trim();
-            return [`\n!!! info ${title}\n`, "\n!!!"];
-          }
-        },
-        {
-          name: 'Insérer une boîte "Attention"',
-          shortcut: ["Control", "Alt", "q"],
-          exec: listenerEl => {
-            let title = prompt("Titre de la boîte ?").trim();
-            return [`\n!!! danger ${title}\n\n`, "!!!"];
-          }
+        save: debounce(async function({toast}) {
+            toast = toast === null ? true : toast
+            await this.$store.dispatch('notes/save', { 
+                uuid: this.uuid, 
+                content: this.editor.getHTML()
+            })
+            if(toast) this.$toast.success('Note sauvegardée', {icon: 'check'})
+            this.unsavedWork = false
+        }, 1000, { leading: true, trailing: false }),
+        async kbShortcutSave(e) {
+            if (!(e.keyCode === 83 && e.ctrlKey)) return
+            e.preventDefault()
+            await this.save({toast: true})
         }
-      ]
-    };
-  },
-
-  mounted() {
-    setInterval(() => {
-      this.now = moment();
-    }, 1000);
-    let content;
-    let editor = document.getElementById("editor");
-    let mirror = document.getElementById("mirror");
-    let local = {
-      content: window.localStorage.getItem(`${this.uuid}--noteContent`),
-      modified: moment(
-        window.localStorage.getItem(`${this.uuid}--noteLastModified`)
-      ),
-    }
-    let server = {
-      content: this.server_content,
-      modified: moment(this.server_last_modified),
-    }
-    if (local.modified.isAfter(server.modified)) {
-      this.content = local.content
-      this.$toast.show(
-        "La note enregistrée ici est plus récente que celle du serveur, et a été restaurée."
-      )
-      this.uploadToServer(local.content, true)
-    } else {
-      this.content = server.content
-    }
-
-    //                         |-> keyup never fires for Ctrl-S
-    window.addEventListener("keydown", event => {
-      if (event.ctrlKey && event.key === "s") {
-        event.preventDefault();
-        this.sync();
-      }
-    });
-
-    // Keyboard shortcuts
-    /**
-    Depends on platform.js
-
-    listenerElement: queryselector to input element to modify text in
-    shortcutsMap: Array[Object]: {
-        name: String,
-        shortcut: Array of keyboard event names
-        content: Array [before cursor, after cursor] 
-            (or) 
-        exec: function: (listenerElement) => content
-    }
-    keyReprMode: String: "asTyped"||"fullName"||"keyCode": 
-        uses respectively event.key, event.code and event.keyCode
-    */
-    const KBShortcuts = (
-      listenerElement,
-      shortcutsMap,
-      keyReprMode = "asTyped"
-    ) => {
-      console.log(`[KBShortcuts] Loaded ${shortcutsMap.length} shortcut(s)`);
-      console.log(
-        `[KBShortcuts] Listening for shortcuts on ${listenerElement}`
-      );
-      const $ = document.querySelector.bind(document);
-      const e = $(listenerElement);
-      // Key(s) released
-      e.addEventListener("keydown", event => {
-        if (true) {
-          // Gather the keystrokes
-          let keystrokes = [];
-          // Ctrl or Cmd based on OS (this requires platform.js)
-          let ctrlOrCmd =
-            platform.os.family === "OS X" ? event.metaKey : event.ctrlKey;
-          if (ctrlOrCmd) keystrokes.push("Control");
-          if (event.shiftKey) keystrokes.push("Shift");
-          if (event.altKey) keystrokes.push("Alt");
-          switch (
-            keyReprMode // Choose which key naming to use
-          ) {
-            case "asTyped":
-              keystrokes.push(event.key);
-              break;
-            case "fullName":
-              keystrokes.push(event.code);
-              break;
-            default:
-              keystrokes.push(event.keyCode);
-              break;
-          }
-
-          const arrayEqual = (arr1, arr2) => {
-            arr1 = arr1.sort();
-            arr2 = arr2.sort();
-            if (arr1.length !== arr2.length) return false;
-            for (let i = 0; i < arr1.length; i++) {
-              if (arr1[i] !== arr2[i]) return false;
-            }
-            return true;
-          };
-
-          // Get corresponding shortcut body (repr)
-          let repr = null;
-          shortcutsMap.forEach(shortcut => {
-            if (arrayEqual(keystrokes, shortcut.shortcut)) {
-              console.log(
-                `[KBShortcuts] catched keystrokes ${keystrokes.join(" + ")}`
-              );
-              if ("exec" in shortcut) {
-                repr = shortcut.exec(e);
-              } else {
-                repr = shortcut.content;
-              }
-            }
-          });
-
-          // Get what to put before & after the cursor
-
-          if (repr && repr.length) {
-            console.log("preventing default");
-            event.preventDefault(event);
-            let before = repr[0];
-            let after = repr[1];
-            before = e.value.substring(0, e.selectionStart) + before;
-            after = after + e.value.substring(e.selectionStart);
-            let curPos = e.selectionStart + before.length;
-            let isSelection = e.selectionStart !== e.selectionEnd;
-            if (!isSelection) {
-              console.log(`--- ${keystrokes.join("+")} ---`);
-              console.log(
-                `${before}%c|%c${after}`,
-                "color: red;",
-                "color: black;"
-              );
-              console.log("------------");
-
-              e.value = before + after;
-              e.selectionStart = e.selectionEnd = before.length;
-            } else {
-              let selected = e.value.substring(
-                e.selectionStart,
-                e.selectionEnd
-              );
-              e.value = before + selected + after;
-              e.selectionStart += before.length;
-              e.selectionEnd -= after.length;
-            }
-            return false;
-          }
+    },
+    watch: {
+        async name() {
+            await this.$store.dispatch('notes/patch', { 
+                uuid: this.uuid, 
+                modifications: { 
+                    name: this.name
+                }
+            })
+        },
+        async subject() {
+            await this.$store.dispatch('notes/patch', {
+                uuid: this.uuid,
+                modifications: {
+                    subject: this.subject
+                }
+            })
         }
-      });
-    };
-    KBShortcuts("#editor", this.shortcuts);
-
-    // Scroll mirror to bottom (because scroll is broken af)
-    editor.addEventListener("scroll", event => {
-      mirror.scrollTop = mirror.scrollHeight;
-    });
-
-    // Slide the navabr back in only a few seconds after to show that it's here
-    setTimeout(() => {
-      document
-        .getElementsByClassName("TheNavbar")[0]
-        .classList.remove("slid-out");
-    }, 500);
-
-    //TODO: get setting from API
-    let autosave = 5;
-
-    this.autosyncInterval = setInterval(() => {
-      this.$toast.info("Sauvegarde automatique...");
-      this.sync();
-    }, autosave * 60 * 1000);
-  },
-
-  beforeRouteLeave(to, from, next) {
-    clearInterval(this.autosyncInterval);
-    this.sync(true);
-    next();
-  },
-
-  watch: {
-    content(newContent, oldContent) {
-      window.localStorage.setItem(`${this.uuid}--noteContent`, newContent)
-      window.localStorage.setItem(
-        `${this.uuid}--noteLastModified`,
-        moment().format()
-      )
-      this.content = newContent
+    }, 
+    async mounted() {
+        // Load some data
+        await this.$store.dispatch('settings/load')
+        await this.$store.dispatch('notes/load')
+        // Get note
+        const { data } = await this.$axios.get(`/notes/${this.$route.params.uuid}`)
+        console.log(data)
+        this.editor.setContent(data.content)
+        this.name = data.name
+        this.subject = data.subject
+        this.uuid = data.uuid
+        // Attach event listener for Ctrl + S (see: https://stackoverflow.com/a/55323073)
+        document.addEventListener('keydown', this.kbShortcutSave)
+        // Auto save every n minutes
+        console.log(this.setting('autosave'))
+        this.autosaveInterval = setInterval(() => {
+            this.$toast.info('Sauvegarde automatique effectuée', {icon: 'update'})
+            this.save({toast: false})
+        }, this.setting()('autosave') * 60 * 1000);
     },
-  },
-  computed: {
-    ...mapGetters('schedule', ['currentCourse']),
-    ...mapGetters({
-      note: 'notes/one'
-    }),
-    timeRemaining() {
-      let currentCourse = this.currentCourse;
-      if (!currentCourse) return null;
-      let seconds = Math.abs(
-        moment(currentCourse.end, "HH:mm").diff(moment(), "seconds")
-      );
-      return moment()
-        .startOf("day")
-        .seconds(seconds);
-    },
-    currentCourseSubject() {
-      return this.courseOrPlaceholder(this.currentCourse).subject
-    },
-    viewModeIcon() {
-      return {
-        both: "web",
-        rendered: "web_asset",
-        source: "subject"
-      }[this.viewMode];
+    beforeDestroy() {
+        clearInterval(this.autosaveInterval)
+        this.save({toast: false})
+        this.editor.destroy()
+        document.removeEventListener('keydown', this.kbShortcutSave)
     }
-  },
-
-  methods: {
-    ...mapGetters('schedule', ['courseOrPlaceholder']),
-    toggleViewMode() {
-      const modes = ["both", "rendered", "source"];
-      const clampIdx = idx => (idx < 0 ? 2 : idx > 2 ? 0 : idx);
-      let currentIdx = modes.indexOf(this.viewMode);
-      this.viewMode = modes[clampIdx(currentIdx + 1)];
-    },
-    downloadPDF() {
-      const initialBodyStyles = {
-        overflow: document.body.style.overflow,
-        margin: document.body.style.margin,
-        maxWidth: document.body.style.maxWidth,
-      }
-      const initialInnerHTML = document.body.innerHTML
-      document.body.style.overflow = 'auto'
-      document.body.style.margin = '20px'
-      document.body.style.maxWidth = '500px'
-      document.body.innerHTML = '<style>' + document.getElementById('mirror-styles').innerHTML + '</style>' + document.getElementById('mirror').innerHTML
-      print()
-      document.body.innerHTML = '<code>Veuillez patienter...</code>'
-      document.location.reload()
-      
-    },
-    async uploadToServer(content, force = false, updateNoteName = false) {
-      // rate limitting
-      if (moment().diff(this.lastSave, "seconds") < 5 && !force) {
-        this.$toast.error(
-          "Veuillez attendre un peu avant de synchroniser de nouveau."
-        )
-        return
-      } else {
-        this.lastSave = moment()
-      }
-      // request
-      let errored = false
-      let requestData = {
-        last_modified: moment().toISOString(),
-        content
-      };
-      // update title
-      if (updateNoteName) {
-        requestData.name = updateNoteName;
-      }
-      try {
-        const { data } = await this.$axios.patch(
-          `/notes/${this.uuid}/`,
-          requestData
-        );
-        this.$toast.success(`Note "${data.name}" sauvegardée`);
-      } catch (e) {
-        errored = true
-        this.$toast.error(`Erreur lors de la sauvegarde: ${e}`)
-      }
-      if (!errored) {
-        // remove from localStorage if synced correctly to avoid
-        // incorrect "local version is more recent" notifications
-        window.localStorage.removeItem(`${this.uuid}--noteContent`)
-        window.localStorage.removeItem(`${this.uuid}--noteLastModified`)
-      }
-    },
-    sync(force = false) {
-      // FIXME: update note name is fucked up, gets a h1 from anywhere (even the dashboard's h1 sometimes)
-      // let noteName = document.getElementsByTagName('h1')[0].innerText
-      // this.name = noteName
-      // this.$store.commit('notes/UPDATE_NOTE', {uuid: this.uuid, data: {name: this.name}})
-      this.uploadToServer(this.content, force, this.notes)
-    },
-    saveSource() {
-      var element = document.createElement("a")
-      element.setAttribute(
-        "href",
-        "data:text/plain;charset=utf-8," + encodeURIComponent(this.content)
-      )
-      element.setAttribute("download", this.name)
-
-      element.style.display = "none"
-      document.body.appendChild(element)
-
-      element.click()
-
-      document.body.removeChild(element)
-    },
-    savePDF() {
-      alert("Fonctionnalité non disponible");
-    }
-  }
-};
+}
 </script>
 
-<style lang="sass" scoped>
-@import '~/assets/defaults'
-.MainGroup
-  //--- positioning ---
-  
-  //--- dimensions  ---
-  
-  //---   margins   ---
-  margin-top: 20px
-  //---  appearance ---
-  
-  //---  animation  ---
-#editor
-  padding-left: 20px // Remove conflict with navbar handle
-  height: 100%
-  width: 100%
-  font-family: 'Fantasque Sans Mono', 'Roboto Mono', monospace
-  font-weight: 300
-  font-size: 18px
-  line-height: 1.2
-.MainGroupLeft, .MainGroupRight
-  margin-top: 0
-  height: calc(100vh - 200px)
-  width: 100%
-.MainGroup.full-size
-  .MainGroupLeft, .MainGroupRight
-    max-width: 60vw
-    margin-left: 50%
-    transform: translateX(-50%)
+<style lang="stylus" scoped>
+body
+    padding 1em
+    background var(--offset-grey)
+.toolbar
+    position fixed
+    top: 0
+    left: 0
+    right: 0
+    background var(--white)
+    z-index: 10
+    padding 1em
+    padding-bottom: 0
+    border-bottom 2px solid rgba(0,0,0,0.25)
+.top
+    margin-left: 0.5em
+    margin-bottom .75em
+    display flex
+    align-items center
+    .title
+        width: 100%
+        display: flex
+        align-items center
+        font-size: 2rem
+        .title-field
+            margin-left .5em
+            width: 100%
+            height 2.5rem
+        .subject
+            margin-left .75em
+    .icon
+        font-size: 2em
+    .title.untitled
+        opacity: 0.25
+    .unsaved-work
+        font-size: 0.85em
+        margin-left: 0.5em
+.menubar
+    padding-bottom .5em
+    display flex
+    align-items center
+    // justify-content center
+    transition opacity 0.5s ease
+.menubar button
+    display inline-flex
+    justify-content center
+    align-items center
+    padding: .5em
+    height 2em
+    &.active
+        color var(--blue)
+        background var(--offset-blue)
+    &:hover
+        color var(--blue)
+.low-opacity, .sep
+    opacity: 0.25
+.sep
+    font-weight thin
+    font-size 2em
+    padding 0 0.25em
 
+.ProseMirror::-moz-focus-inner
+    border none !important
+    padding 0
 
-+mobile
-  .MainGroupRight
-    height: auto
-    max-width: 100vw
-  .MainGroupLeft, .bottom-bar
-    display: none
-  .container
-    overflow-y: scroll
+.editor-page-wrapper
+    padding-top 7em
+    display flex
+    justify-content center
+    width 100%
+    height 100vh
+    background var(--offset-grey)
+    .editor-page
+        margin-top: 20px
+        padding 3em
+        width: 800px
+        background var(--white)
 
-.BarFloating
-  +mobile
-    display: none
+.editor-page table
+    td, tr
+        border 2px solid black
+.editor-page
+    font-family Arial, sans-serif
+    line-height 1.2em
+    p
+        margin-bottom 0.2em
 
-#mirror
-  height: 100%
-  width: 100%
-  overflow-y: scroll
-  overflow-x: hidden
-  line-height: 1.3
-  font-size: 18px
-  *
-    word-break: everywhere
-
-  +mobile
-    height: auto
-    overflow: visible
-    & /deep/ h1
-      font-size: 48px !important
-
-.status
-  position: fixed
-  bottom: 20px
-  right: 20px
-  //---------------------------------------------------
-  display: flex
-  li
-    font-size: 24px
-    //---------------------------------------------------
-    &:not(:last-child)
-      margin-right: 20px
-    //---------------------------------------------------
-    font-family: 'Roboto Mono', monospace
-    list-style: none
-
-.actions
-  position: fixed
-  bottom: 25px
-  //---------------------------------------------------
-  display: flex
-  li 
-    &:not(:last-child)
-      margin-right: 30px
-    .ButtonIcon
-      font-size: 30px
-      &:hover /deep/ .icon
-        color: var(--blue) !important
-      
-
+    .admonition
+        &::before
+            content 'more_vert'
+            font-family 'Material Icons'
+            
+        &-danger
+            background var(--offset-red)
+        &-note
+            background var(--offset-blue)
 </style>
