@@ -1,20 +1,12 @@
 <template lang="pug">
-BaseModal.PickerSubject(:name="`${parentModal}-subject-picker`" :class="{'dots':dots}")
-    //TODO: prop "first" (subject.slug) use as the first one in the forloop
-    //TODO: choose orientation from screen remaining 
-    template(v-if="dots")
-        SubjectDot(
-            v-for="subject in subjects" :key="subject.id"
-            v-bind="subject",
-            @mouseup.native="$emit('pick', subject)"
-            close-modal,
-        )
-    template(v-else)
+BaseModal.PickerSubject(:name="name")
+    span.heading Choisissez une matière...
+    ul.subjects
+      li(v-for="subject in subjects" :key="subject.id")
         BadgeSubject(
-            v-for="subject in subjects" :key="subject.id"
-            v-bind="subject",
-            @mouseup.native="$emit('pick', subject)"
-            close-modal,
+          v-bind="subject",
+          @click="$emit('pick', subject); $modal.hide(name)"
+          clickable
         )
 
 </template>
@@ -22,24 +14,28 @@ BaseModal.PickerSubject(:name="`${parentModal}-subject-picker`" :class="{'dots':
 <script>
 import BaseModal from "~/components/BaseModal.vue"
 import BadgeSubject from "~/components/BadgeSubject.vue"
-import SubjectDot from "~/components/SubjectDot.vue"
 import { mapGetters } from "vuex"
 
 export default {
   name: "PickerSubject",
-  components: { BaseModal, BadgeSubject, SubjectDot },
+  components: { BaseModal, BadgeSubject },
   props: {
-    parentModal: String,
-    dots: {
-      type: Boolean,
-      default: false,
+    parentModal: {
+      type: String,
+      default: null
     },
   },
   computed: {
     ...mapGetters({
       subjects: "subjects/all",
     }),
+    name() {
+      return this.parentModal ? `${this.parentModal}-subject-picker` : 'subject-picker'
+    }
   },
+  async mounted() {
+    await this.$store.dispatch('subjects/load')
+  }
 }
 </script>
 
@@ -50,28 +46,30 @@ export default {
   z-index: 2000 !important
 
 .PickerSubject
-  /deep/ .modal-wrapper
-    grid-gap: 0
+  /deep/ .v--modal-box
     padding: 0 !important
     +shadow(3)
+    width: auto
+    overflow: auto
 
-// badges (default)
-.PickerSubject:not(.dots) /deep/ .modal-wrapper
-  overflow: hidden
-  display: grid
-  grid-template-columns: repeat(4, 1fr)
-  +phone
-    grid-template-columns: repeat(3, 1fr)
+.subjects
+  width: 100%
+  list-style: none
 
-// dots
-.PickerSuject.dots /deep/ .modal-wrapper
-  display: flex
-  overflow-x: scroll
-  flex-direction: row
-  background: transparent
+.heading
+  font-size: 1.75rem
+  line-height: 1.75rem
+  padding: 2rem // Restore padding since it's remove from the parent div for the edge-to-edge subject badges
+  flex-grow: 0
+  display: block
 
 .BadgeSubject
     border-radius: 0 !important // !important needed to overwrite it
+    height: 3.25rem
+    @media (max-width: 650px)
+      height: 5rem
+    font-size: 1.1rem
+    width: 100%
 
 .BadgeSubject, .SubjectDot
     cursor: pointer
