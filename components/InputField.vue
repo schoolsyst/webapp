@@ -18,10 +18,10 @@
         :style="{fontFamily: `var(--fonts-${passwordShown ? 'monospace' : 'regular'}`}"
         v-bind="{value, tabindex, placeholder, disabled}"
         @input="active = true; initial = false; $emit('input', $event.target.value)"
-        @click="active = true; $emit('click')"
-        @blur="active = false; passwordShown = false; $emit('blur')"
-        @mouseover="$emit('mouseover')"
-        @mouseout="$emit('mouseout')"
+        @click="active = true; $emit('click', $event.target.value)"
+        @blur="active = false; passwordShown = false; $emit('blur', $event.target.value)"
+        @mouseover="$emit('mouseover', $event.target.value)"
+        @mouseout="$emit('mouseout', $event.target.value)"
       )
       label(
         :for="`input-field--${dName}`"
