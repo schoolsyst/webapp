@@ -71,4 +71,8 @@ main, .container
     display: none
 .side-by-side
   display: flex
+#page, 
+/deep/ #empty-state,
+/deep/ #loading-state
+  min-height: calc(100vh - 100px) // top bar height
 </style>

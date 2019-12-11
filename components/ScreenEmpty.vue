@@ -1,8 +1,9 @@
 <template lang="pug">
-  .empty
-    .smiley: slot(name="smiley")
-    p: slot
-    ButtonNormal(@click="$emit('cta')"): slot(name="cta")
+  .empty-wrapper#empty-state
+    .empty
+      .smiley: slot(name="smiley")
+      p: slot
+      ButtonNormal(@click="$emit('cta')"): slot(name="cta")
 </template>
 
 <script>
@@ -14,11 +15,15 @@ export default {
 </script>
 
 <style lang="stylus" scoped>
+.empty-wrapper
+  display flex
+  align-items center
+  justify-content center
 .empty
-  margin-top 10rem
   text-align: center
   display flex
   align-items center
+  justify-content center
   flex-direction column
   .smiley
     font-size 10rem
