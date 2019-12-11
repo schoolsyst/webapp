@@ -261,24 +261,15 @@ export default {
             this.subject = data.subject
             this.uuid = data.uuid
         }, { title: "Recherche du cahier au fond du sac" })
-        // Load some data
-        await this.$store.dispatch('settings/load')
-        await this.$store.dispatch('notes/load')
-        // Get note
-        const { data } = await this.$axios.get(`/notes/${this.$route.params.uuid}`)
-        console.log(data)
-        this.editor.setContent(data.content)
-        this.name = data.name
-        this.subject = data.subject
-        this.uuid = data.uuid
         // Attach event listener for Ctrl + S (see: https://stackoverflow.com/a/55323073)
         document.addEventListener('keydown', this.kbShortcutSave)
         // Auto save every n minutes
-        console.log(this.setting('autosave'))
+        console.log(this.setting()('autosave'))
+        let autosave = this.setting()('autosave') || 5
         this.autosaveInterval = setInterval(() => {
             this.$toast.info('Sauvegarde automatique effectuée', {icon: 'update'})
             this.save({toast: false})
-        }, this.setting()('autosave') * 60 * 1000);
+        }, 5 * 60 * 1000);
     },
     beforeDestroy() {
         clearInterval(this.autosaveInterval)
