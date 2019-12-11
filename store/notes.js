@@ -117,7 +117,12 @@ export const actions = {
     }
     try {
       const { data } = await this.$axios.post("/notes/", note)
-      if (data) commit("ADD", {...data, subject: note.subject})
+      note = {
+        ...data, 
+        subject: rootGetters['subjects/all'](data.subject)
+      }
+      if (data) commit("ADD", note)
+      return note
     } catch (error) {
       // console.error("[from API] POST /notes/: Error")
       try {
