@@ -1,6 +1,10 @@
 <template>
   <div class="app">
-    <nuxt />
+    <div id="loading-state">
+      <h1 class="title"></h1>
+      <p class="subtitle"></p>
+    </div>
+    <nuxt id="page" />
   </div>
 </template>
 

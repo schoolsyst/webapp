@@ -19,8 +19,10 @@ export default {
         ...mapGetters('homework', ['all'])
     },
     async mounted() {
-        await this.$store.dispatch('schedule/load')
-        await this.$store.dispatch('homework/load')
+        this.$loadingOverlay(async () => {
+            await this.$store.dispatch('schedule/load')
+            await this.$store.dispatch('homework/load')
+        }, { title: "Feuilletage de l'agenda" })
     }
 }
 </script>

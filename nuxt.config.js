@@ -78,7 +78,8 @@ export default {
    ** Plugins to load before mounting the App
    */
   plugins: [
-    '~plugins/vue-js-modal'
+    '~plugins/vue-js-modal',
+    '~plugins/loading-state'
   ],
   /*
    ** Nuxt.js modules

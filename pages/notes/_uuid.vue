@@ -250,6 +250,17 @@ export default {
         }
     }, 
     async mounted() {
+        this.$loadingOverlay(async () => {
+            // Load some data
+            await this.$store.dispatch('settings/load')
+            await this.$store.dispatch('notes/load')
+            // Get note
+            const { data } = await this.$axios.get(`/notes/${this.$route.params.uuid}`)
+            this.editor.setContent(data.content.replace(/\n/g, '<br/>'))
+            this.name = data.name
+            this.subject = data.subject
+            this.uuid = data.uuid
+        }, { title: "Recherche du cahier au fond du sac" })
         // Load some data
         await this.$store.dispatch('settings/load')
         await this.$store.dispatch('notes/load')

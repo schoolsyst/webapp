@@ -134,9 +134,10 @@ export default {
     }
   },
   async mounted() {
-    await this.$store.dispatch('schedule/load')
-    await this.$store.dispatch('notes/load')
-    this.loaded = true
+    this.$loadingOverlay(async () => {
+      await this.$store.dispatch('schedule/load')
+      await this.$store.dispatch('notes/load')
+    }, { title: "Triage des classeurs" })
     this.fuse = new Fuse(this.all, {
       keys: ["name", "subject.name"],
       id: "uuid",
@@ -150,21 +151,6 @@ export default {
 </script>
 
 <style lang="stylus" scoped>
-// LOADING SCREEN
-#loading
-  position fixed
-  top: 0
-  right: 0
-  bottom: 0
-  left: 0
-  width 100vw
-  height 100vh
-  background white
-  display flex
-  text-align center
-  justify-content center
-  align-items center
-  z-index 100
 // SEARCH BAR
 .search
   display flex

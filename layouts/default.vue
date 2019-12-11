@@ -1,11 +1,18 @@
 <template lang="pug">
-  .app
+  .app(@keyup.ctrl.32="console.log('ihtriughrtuihtri')")
+    BaseModal(name="quick-switcher")
+      p bonjour
     TheTopBar(@menu-click="drawerOpened = !drawerOpened")
     TheDrawer(@close="drawerOpened = false" :opened="drawerOpened")
     .side-by-side
-      TheSideRail
-      main
-        nuxt
+      aside.left
+        TheSideRail
+      main.right
+        nuxt#page
+        #loading-state
+          OverlayLoadingLogo(animation="loop")
+          h1.title Triage des classeurs
+          p.subtitle Chargement...
 </template>
 
 <script>
@@ -13,6 +20,8 @@ import TheDrawer from '~/components/TheDrawer.vue'
 import TheTopBar from "~/components/TheTopBar.vue"
 import TheFooter from "~/components/TheFooter.vue"
 import TheSideRail from '~/components/TheSideRail.vue'
+import BaseModal from '~/components/BaseModal.vue'
+import OverlayLoadingLogo from '~/components/OverlayLoadingLogo.vue'
 import { toDate } from 'date-fns'
 import { mapGetters, mapState } from 'vuex'
 
@@ -21,7 +30,9 @@ export default {
     TheFooter,
     TheDrawer,
     TheTopBar,
-    TheSideRail
+    TheSideRail,
+    BaseModal,
+    OverlayLoadingLogo
   },
   data() {
     return {

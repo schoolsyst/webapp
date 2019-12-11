@@ -85,7 +85,9 @@ export default {
 		}
 	},
 	async mounted() {
-		await this.$store.dispatch('schedule/load')
+		this.$loadingOverlay(async () => {
+			await this.$store.dispatch('schedule/load')
+		}, { title: "" })
 		this.loaded = true
 	},
 	watch: {
