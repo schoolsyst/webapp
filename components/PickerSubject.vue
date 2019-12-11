@@ -2,7 +2,7 @@
 BaseModal.PickerSubject(:name="name")
     span.heading Choisissez une matière...
     ul.subjects
-      li(v-for="subject in subjects" :key="subject.id")
+      li(v-for="subject in subjects" :key="subject.uuid")
         BadgeSubject(
           v-bind="subject",
           @click="$emit('pick', subject); $modal.hide(name)"
