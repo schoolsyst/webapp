@@ -83,4 +83,12 @@ main, .container
 /deep/ #empty-state,
 /deep/ #loading-state
   min-height: calc(100vh - 100px) // top bar height
+
+@media (max-width: 600px)
+  main
+    margin-left: 0
+    margin-right: 0
+    & /deep/ h2
+      margin-left: 20px
+      margin-right: 20px
 </style>
