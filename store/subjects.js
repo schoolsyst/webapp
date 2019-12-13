@@ -17,12 +17,18 @@ export const getters = {
   one: (state, getters) => (value, prop = "uuid") =>
     state.subjects.find((o) => o[prop] === value) || null,
   orderBy: (state, getters) => (what = "hue", subjects = null) => {
-    if(what === 'hue')
-      return [...subjects].sort(
-        firstBy((o) => tinycolor(o.color).toHsl().h)
-          .thenBy('uuid')
-      )
-    return subjects
+    const sorters = {
+      hue: firstBy((o) => tinycolor(o.color).toHsl().h),
+      weight: firstBy('weight'),
+      uuid: firstBy('uuid'),
+    }
+
+    if (!sorters.hasOwnProperty(what)) {
+      console.warn(`subjects/orderBy: unknown ordering method '${what}': defaulting to UUID sorting`)
+      what = 'uuid'
+    }
+
+    return [...subjects].sort(sorters[what].thenBy('uuid'))
   }
 }
 
