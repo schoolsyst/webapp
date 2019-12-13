@@ -19,9 +19,9 @@
 				)
 				CardCourse(v-else empty) Pas de cours en ce moment
 							
-			li.title
+			li.title(v-if="nextCourses().length")
 				span.time.empty
-				HeadingSub(v-if="nextCourses().length")
+				HeadingSub
 					| dans {{ formatDistance(nextCourses()[0].start) }}
 			//- For each course that are upcoming
 			li(v-for="(course, i) in nextCourses()" :key="course.uuid")
@@ -203,4 +203,7 @@ li
 //=====================
 .timeline
 	display flex
+	@media (max-width: 600px)
+		margin-left 20px
+		margin-right 20px
 </style>
