@@ -25,6 +25,8 @@
 
             EditorMenuBar(:editor="editor" v-slot="{commands, isActive}")
                 .menubar
+                    button(@click="$modal.show('edit-properties')" title="Propriétés de la note...")
+                        Icon settings
                     button(@click="commands.undo" title="Annuler (Ctrl + Z)")
                         Icon undo
                     button(@click="commands.redo" title="Refaire (Ctrl + Shift + Z)")
@@ -197,7 +199,7 @@ export default {
                     new BulletList(),
                 ],
                 content: ``,
-                onUpdate: this.updateNote
+                // onUpdate: this.updateNote
             }),
             name: null,
             subject: {
@@ -218,12 +220,14 @@ export default {
         },
         save: debounce(async function({toast}) {
             toast = toast === null ? true : toast
-            await this.$store.dispatch('notes/save', { 
+            let saved = await this.$store.dispatch('notes/save', { 
                 uuid: this.uuid, 
                 content: this.editor.getHTML()
             })
-            if(toast) this.$toast.success('Note sauvegardée', {icon: 'check'})
-            this.unsavedWork = false
+            if(toast && saved) {
+                this.$toast.success('Note sauvegardée', {icon: 'check'})
+                this.unsavedWork = false
+            }
         }, 1000, { leading: true, trailing: false }),
         async kbShortcutSave(e) {
             if (!(e.keyCode === 83 && e.ctrlKey)) return
@@ -271,9 +275,9 @@ export default {
             this.save({toast: false})
         }, 5 * 60 * 1000);
     },
-    beforeDestroy() {
+    async beforeDestroy() {
         clearInterval(this.autosaveInterval)
-        this.save({toast: false})
+        await this.save({toast: false})
         this.editor.destroy()
         document.removeEventListener('keydown', this.kbShortcutSave)
     }
