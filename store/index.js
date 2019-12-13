@@ -134,19 +134,23 @@ export const getValidator = ({
   constraints,
   resourceName,
   fieldNames,
-  customConstraints = []
+  customConstraints = [],
+  debug
 }) => (getters) => (object) => {
+  debug = debug || false
   /* Factory to create a validator.
   Describe constraints on fields, error messages are generated automatically.
   */
 
-  console.group(`[validator] validating resource "${resourceName.name}"`)
+  if(debug) {
+    console.group(`[validator] validating resource "${resourceName.name}"`)
   console.log(`Constraints:`)
   console.log({...constraints, ...customConstraints})
   console.log(`Fields:`)
   console.log(Object.fromEntries(
     Object.keys(fieldNames).map((field) => [field, object[field]])
   ))
+  }
 
   // Article in french
   const article = (noun, feminine, indeterminate = false) => {
@@ -290,18 +294,20 @@ export const getValidator = ({
     validated,
     errors: errorMessages
   }
-  if (ret.validated) {
-    console.log('Validated.')
-  } else {
-    console.log('Errors:')
-    Object.entries(ret.errors).forEach(([name, errors]) => {
-      if (errors.length) {
-        console.log(`    ${name}:`)
-        console.log(errors)
-      }
-    });
+  if (debug) {
+    if (ret.validated) {
+      console.log('Validated.')
+    } else {
+      console.log('Errors:')
+      Object.entries(ret.errors).forEach(([name, errors]) => {
+        if (errors.length) {
+          console.log(`    ${name}:`)
+          console.log(errors)
+        }
+      });
+    }
+    console.groupEnd()
   }
-  console.groupEnd()
 
   return ret
 }
@@ -343,7 +349,7 @@ export const getMutations = (
       // Get the requested item's index in the state array
 			let idx = state[whats].map((o) => o.uuid).indexOf(uuid)
 			// Apply modifications
-			state[whats][idx] = {...state[whats][idx], ...modifications}
+      state[whats][idx] = {...state[whats][idx], ...modifications}
 		}
 
 		return mutations
