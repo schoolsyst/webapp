@@ -1,5 +1,6 @@
 import { getMutations, getValidator } from "./index"
 import { firstBy, thenBy } from 'thenby'
+import tinycolor from 'tinycolor2'
 
 export const state = () => ({
   subjects: [],
@@ -12,11 +13,10 @@ export const state = () => ({
 })
 
 export const getters = {
-  all: (state, getters) => state.subjects,
+  all: (state, getters) => getters.orderBy('hue', state.subjects),
   one: (state, getters) => (value, prop = "uuid") =>
     state.subjects.find((o) => o[prop] === value) || null,
   orderBy: (state, getters) => (what = "hue", subjects = null) => {
-    subjects = subjects || getters.all
     if(what === 'hue')
       return [...subjects].sort(
         firstBy((o) => tinycolor(o.color).toHsl().h)
