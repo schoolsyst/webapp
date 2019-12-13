@@ -1,5 +1,5 @@
 import { firstBy } from "thenby"
-import { isBefore, parseISO, format } from "date-fns"
+import { isBefore, parseISO, format, parse } from "date-fns"
 import JsSearch from "js-search"
 import { getMutations, getValidator } from "./index"
 
@@ -13,11 +13,11 @@ const parseObjectDates = (object) => ({
   added: parseISO(object.added),
   opened: parseISO(object.opened),
 })
-
+// 
 export const getters = {
   all: (state, getters) => getters.orderBy(state.notes),
   one: (state, getters) => (value, prop = "uuid") =>
-    getters.all.find((o) => o[prop] === value) || null,
+    state.notes.find((o) => o[prop] === value) || null,
   of: (state, getters) => (value, what = "subject") => {
     if (what === "subject") {
       return getters.all.filter((o) => o.subject.uuid === value)
@@ -92,7 +92,7 @@ export const mutations = {
 }
 
 export const actions = {
-  async load({ commit, state }, force = false) {
+  async load({ commit, state, rootGetters }, force = false) {
     if (!force && state.notes.length) return
     console.log(`Loading notes :: force=${force}, state.notes.length=${state.notes.length}`)
     try {
@@ -115,22 +115,15 @@ export const actions = {
       console.log(validation)
       if (!validation.validated) return validation
     }
-    try {
-      const { data } = await this.$axios.post("/notes/", note)
-      note = {
-        ...data, 
-        subject: rootGetters['subjects/all'](data.subject)
-      }
-      if (data) commit("ADD", note)
-      return note
-    } catch (error) {
-      // console.error("[from API] POST /notes/: Error")
-      try {
-        // console.error(error.response.data)
-      } catch (_) {
-        // console.error(error)
-      }
+    note.subject = note.subject.uuid
+    const res = await this.$axios.post("/notes/", note)
+    let { data } = await this.$axios.get(`/notes/${res.data.uuid}`)
+    if (data) {
+      data = parseObjectDates(data)
+      commit("ADD", data)
+      return data
     }
+    return null
   },
   async patch({ commit, getters, dispatch }, {uuid, modifications, force}) {
     force = force || false
@@ -139,17 +132,20 @@ export const actions = {
       ...getters.one(uuid),
       ...modifications
     }
-    note.subject = note.subject.uuid
     if(!force) {
       const validation = await getters.validate(note)
       if (!validation.validated) return validation
     }
     try {
-      let APIReady = modifications
-      APIReady.subject = APIReady.subject.uuid
-      const { data } = await this.$axios.patch(`/notes/${uuid}/`, APIReady)
-      // console.log(`[from API] PATCH /notes/${uuid}/: OK`)
-      if (data) commit("PATCH", {uuid, modifications})
+      console.log(`PATCH /notes/${uuid}`)
+      if (modifications.subject)
+        modifications.subject = modifications.subject.uuid
+      await this.$axios.patch(`/notes/${uuid}/`, modifications)
+      const { data } = await this.$axios.get(`/notes/${uuid}`)
+      if (data) {
+        commit("PATCH", {uuid, modifications: parseObjectDates(data)})
+        console.log(`[from API] PATCH /notes/${uuid}/: OK`)
+      }
     } catch (error) {
       // console.error(`[from API] PATCH /notes/${uuid}/: Error`)
       try {
@@ -171,7 +167,7 @@ export const actions = {
         action: {
           text: "Annuler",
           onClick: async (e, toast) => {
-            await dispatch(`post`, {note: {...note, subject: note.subject.slug}, force: true})
+            await dispatch(`post`, {note})
             toast.goAway(0)
           }
         },
@@ -205,8 +201,9 @@ export const actions = {
           modified: rootState.now,
         }})
       }
+      return true
     } catch (error) {
-      // console.error(`[macro-action] saveNote error: ${error}`)
+      return false
     }
   },
   initSearch({ getters }, indexes = ["name", "subject.name"]) {

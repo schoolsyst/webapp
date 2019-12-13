@@ -1,6 +1,6 @@
 <template lang="pug">
   .container
-    PickerSubject(@pick="newNote.subject = $event.uuid; create()")
+    PickerSubject(@pick="newNote.subject = $event; create()")
     .search(v-if="!!all.length")
       Icon search
       InputField(
