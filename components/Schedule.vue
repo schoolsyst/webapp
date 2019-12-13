@@ -62,7 +62,7 @@ export default {
     ...mapGetters('schedule', ['startOfDay']),
     ...mapGetters(['textColor']),
     heightFromDates(left, right) {
-      return differenceInMinutes(left, right) 
+      return Math.abs(differenceInMinutes(left, right))
           * this.eventHeight 
           + 'rem'
     },
@@ -86,7 +86,7 @@ export default {
 .schedule
   position relative
   overflow auto
-  height auto
+  height 100vh //TODO: use computed Schedule height
 .event
   position absolute
   display flex
