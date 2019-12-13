@@ -46,14 +46,11 @@ export default {
     ...mapGetters('theme', {theme: 'current'})
   },
   async mounted() {
+    await this.$store.dispatch('theme/set')
     // Refresh time every second
     setInterval(() => {
       this.$store.commit('UPDATE_TIME', toDate(Date.now()))
     }, 1 * 1000)
-  },
-  async onBeforeRouteLeave() {
-    console.log('Refreshing theme')
-    await this.$store.dispatch('theme/set')
   }
 }
 </script>
