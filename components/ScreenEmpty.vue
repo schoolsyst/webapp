@@ -28,7 +28,7 @@ export default {
   .smiley
     font-size 10rem
     font-family var(--fonts-monospace)
-    color var(--grey-light)
+    color var(--offset-grey-dark)
   p
     font-size 1.5rem
     margin-top 3em
