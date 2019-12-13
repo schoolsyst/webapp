@@ -89,7 +89,7 @@ export default {
   align-items center
   flex-direction column
   text-align: center
-@media (min-width: 1001px)
+@media (min-width: calc(888px + 1px))
   form
     display grid
     grid-template-columns repeat(2, 1fr)
@@ -114,7 +114,7 @@ export default {
 .registered
   display flex
   align-items center
-  @media (max-width 1000px)
+  @media (max-width 888px)
     flex-direction column
     justify-content center
     img
@@ -124,13 +124,13 @@ export default {
     line-height 1.2em
   .text
     text-align left
-    @media (max-width 1000px)
+    @media (max-width 888px)
       text-align: center
     max-width 20em
     & /deep/ .btn
       margin-top 2em
 
-@media (max-width 1000px)
+@media (max-width 888px)
   .registered .logo
     display: none
 </style>

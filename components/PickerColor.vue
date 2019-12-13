@@ -109,7 +109,7 @@ export default {
   height: 36px;
   width: 36px;
 
-  @media (max-width: 1000px) {
+  @media (max-width: 888px) {
     height: 52px;
     width: 52px;
   }
@@ -126,7 +126,7 @@ export default {
 .hex {
   width: 70px;
 
-  @media (max-width: 1000px) {
+  @media (max-width: 888px) {
     width: 100px;
   }
 
@@ -137,7 +137,7 @@ export default {
   opacity: 0.5;
   margin: 0 5px;
 
-  @media (max-width: 1000px) {
+  @media (max-width: 888px) {
     margin-left: 15px;
   }
 
@@ -150,7 +150,7 @@ export default {
   align-items: center;
   padding: 10px 0; // padding-bottom on modal-wrapper doesn't work
 
-  @media (max-width: 1000px) {
+  @media (max-width: 888px) {
     font-size: 24px;
     padding: 20px 0;
   }

@@ -122,7 +122,7 @@ export default {
 .time
   display flex
   align-items center
-@media (max-width 1000px)
+@media (max-width 888px)
   .card-wrapper
     width: 100%
     display flex

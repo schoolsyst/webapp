@@ -123,7 +123,7 @@ export default {
 		position relative
 		left: 2.25em * 7.75
 		z-index: -10
-		@media (max-width 1000px)
+		@media (max-width 888px)
 			left 30px
 		opacity: 0.25
 		background url('/misc/timeline-line.svg')
@@ -138,9 +138,9 @@ li.title > :not(.time)
 	position relative
 	z-index: 10
 	padding 0.2em 0
-	@media (min-width 1001px)
+	@media (min-width calc(888px + 1px))
 		margin-left: var(--border-radius)
-	@media (max-width 1000px)
+	@media (max-width 888px)
 		width: 100%
 //=====================
 //     TIME STAMPS
@@ -155,9 +155,9 @@ li .time
 	i //<-- Caret icon between two time stamps
 		padding 0 .25em
 	// Mobile 
-	@media (min-width 1001px)
+	@media (min-width calc(888px + 1px))
 		margin-right 1.5rem
-	@media (max-width 1000px)
+	@media (max-width 888px)
 		justify-content flex-start
 		width: 100%
 		margin-bottom 0.5em
@@ -174,7 +174,7 @@ li.current .time
 ul
 	margin-left: 1em
 	list-style none
-	@media (max-width 1000px)
+	@media (max-width 888px)
 		margin-left: -1em //FIXME
 		width: 100%
 li
@@ -183,7 +183,7 @@ li
 		margin-bottom: 1em
 	display flex
 	align-items center
-	@media (max-width 1000px)
+	@media (max-width 888px)
 		flex-direction column
 //=====================
 //    SPECIAL CASES

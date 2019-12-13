@@ -205,7 +205,7 @@ export default {
   padding: 10px 20px !important;
   height: 300px;
 
-  @media (max-width: 1000px) {
+  @media (max-width: 888px) {
     height: 400px;
   }
 
@@ -261,7 +261,7 @@ input:not(.name-input) {
   display: grid;
   grid-template-columns: repeat(3, 200px);
 
-  @media (max-width: 1000px) {
+  @media (max-width: 888px) {
     grid-template-columns: repeat(2, 50%);
   }
 
@@ -278,12 +278,12 @@ input:not(.name-input) {
 }
 
 .confirm-button {
-  @media (min-width: 1001px) {
+  @media (min-width: calc(888px + 1px)) {
     right: 0px;
     top: -20px;
   }
 
-  @media (max-width: 1000px) {
+  @media (max-width: 888px) {
     right: 0;
     top: calc(-40px + 40px);
   }
@@ -294,12 +294,12 @@ input:not(.name-input) {
 }
 
 .delete-button {
-  @media (min-width: 1001px) {
+  @media (min-width: calc(888px + 1px)) {
     right: 65px;
     top: -10px;
   }
 
-  @media (max-width: 1000px) {
+  @media (max-width: 888px) {
     left: 0px;
     top: calc(-30px + 40px);
   }
@@ -315,7 +315,7 @@ input:not(.name-input) {
 
 .name {
   height 75px {
-    @media (max-width: 1000px) {
+    @media (max-width: 888px) {
       height: 60px;
     }
   }
@@ -323,7 +323,7 @@ input:not(.name-input) {
   input, p {
     font-size: 28px;
 
-    @media (max-width: 1000px) {
+    @media (max-width: 888px) {
       font-size: 20px;
     }
   }

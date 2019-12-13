@@ -194,7 +194,7 @@ export default {
 .ItemGrade > *:not(.BaseModal) {
   width: 500px;
 
-  @media (max-width: 1000px) {
+  @media (max-width: 888px) {
     width: auto;
   }
 }
