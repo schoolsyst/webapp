@@ -294,11 +294,13 @@ body
     padding 1em
     padding-bottom: 0
     border-bottom 2px solid rgba(0,0,0,0.25)
+    max-width: 100vw
 .top
     margin-left: 0.5em
     margin-bottom .75em
     display flex
     align-items center
+    color var(--black)
     .title
         width: 100%
         display: flex
@@ -308,9 +310,11 @@ body
             margin-left .5em
             width: 100%
             height 2.5rem
+            color var(--black)
         .subject
             margin-left .75em
     .icon
+        color var(--black)
         font-size: 2em
     .title.untitled
         opacity: 0.25
@@ -323,12 +327,14 @@ body
     align-items center
     // justify-content center
     transition opacity 0.5s ease
+    overflow: hidden
 .menubar button
     display inline-flex
     justify-content center
     align-items center
     padding: .5em
     height 2em
+    color var(--black)
     &.active
         color var(--blue)
         background var(--offset-blue)
