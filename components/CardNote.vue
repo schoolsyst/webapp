@@ -13,16 +13,21 @@
 <script>
 import Icon from '~/components/Icon.vue'
 import SubjectDot from '~/components/SubjectDot.vue'
+import { mapGetters } from 'vuex'
 export default {
   components: { Icon, SubjectDot },
   props: {
-    content: {
-      type: String,
-      default: ""
-    },
-    name: String,
-    subject: Object,
-    uuid: String
+    uuid: String,
+  },
+  data() {
+    return {
+      content: "",
+      name: null,
+      subject: {
+        name: '',
+        color: 'black'
+      }
+    }
   },
   computed: {
     openContextMenu() {
@@ -33,6 +38,14 @@ export default {
         return null
       }
     }
+  },
+  methods: mapGetters('notes', ['one']),
+  mounted() {
+    const note = this.one()(this.uuid)
+    console.log(note)
+    this.content = note.content
+    this.subject = note.subject
+    this.name = note.name
   }
 }
 </script>
