@@ -163,7 +163,11 @@ export default {
   & /deep/ input
     width 500px
     @media (max-width 600px)
-      width 200px
+      width 80vw
+  @media (max-width 375px)
+    i
+      display none
+
 // CONTEXT MENU
 .v-context li
   a
@@ -189,12 +193,16 @@ ul.notes
   margin: 0 auto
   display flex
   width 85vw
+  @media (max-width 600px)
+    width 100vw
+    ul.notes li 
+      margin: 0
 ul.notes
   list-style none
   flex-wrap wrap
   li
-    margin-right 2rem
-    margin-bottom 2rem
+    margin-right 1.5rem
+    margin-bottom 1.5rem
 //-----------------------
 //         CARD
 //-----------------------
@@ -217,4 +225,10 @@ ul.notes
   &:hover
     color var(--blue-dark)
     background var(--offset-blue-dark)
+  @media (max-width 600px)
+    width 50vw
+    // border solid 1px var(--grey)
+    border-radius 0
+  @media (max-width: 350px)
+    width 100vw
 </style>
