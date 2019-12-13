@@ -8,10 +8,12 @@ const setup = ({title, subtitle, overlay}) => {
 const start = ({page, overlay}) => {
     console.log('$loadingOverlay: starting')
     page.style.display = 'none'
+    overlay.classList.add('shown')
     overlay.style.display = 'flex'
 }
 const finish = ({page, overlay}) => {
     console.log('$loadingOverlay: finishing')
+    overlay.classList.remove('shown')
     overlay.style.display = 'none'
     page.style.display = 'block'
 }
