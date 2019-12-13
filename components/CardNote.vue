@@ -120,4 +120,17 @@ export default {
     background var(--grey)
   .infos
     background var(--offset-grey)
+
+@media (max-width 600px)
+  .card-wrapper
+    width 50vw
+  .card
+    border solid 1px var(--grey)
+    width: 100%
+    .preview, .infos
+      border-radius 0
+      border none
+@media (max-width: 350px)
+  .card-wrapper
+    width 100vw
 </style>
