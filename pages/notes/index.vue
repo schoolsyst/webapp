@@ -29,11 +29,11 @@
           @contextmenu.prevent="$refs.menu.open($event, { note })"
         )
           CardNote(v-bind="note" @more.prevent="$refs.menu.open($event, { note })")
-    ScreenEmpty(v-else-if="!!searchQuery" @cta="create")
+    ScreenEmpty(v-else-if="!!searchQuery" @cta="create").no-search-results
       template(#smiley) :/
       p Votre recherche n'a pas donné de résultat.
       template(#cta) Nouvelle note
-    ScreenEmpty(v-else @cta="create")
+    ScreenEmpty(v-else @cta="create").no-notes
       template(#smiley) oO
       p C'est plutôt vide ici.
       template(#cta) Créer une note
@@ -231,4 +231,9 @@ ul.notes
     border-radius 0
   @media (max-width: 350px)
     width 100vw
+//-----------------------
+// SCREEN EMPTY: NO SEARCH RESULTS
+//-----------------------
+.no-search-results /deep/
+  min-height calc(100vh - 200px) !important
 </style>
