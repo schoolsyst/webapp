@@ -56,6 +56,8 @@ body
     --yellow: #F2C94C
     --yellow-dark: #EEAA44
     --offset-yellow: #FAE192
+    // Special
+    --modal-backdrop: rgba(0,0,0,0.2)
     &[theme="DARK"]
         // Greys
         --white: #111111
@@ -84,6 +86,8 @@ body
         --yellow: #F2C94C
         --yellow-light: #EEAA44
         --offset-yellow: #FAE192
+        // Special
+        --modal-backdrop: rgba(0,0,0,0.7)
 body
     color: var(--black)
     background-color: var(--white)
@@ -267,3 +271,9 @@ p, pre
     p 
         margin-top: 10px
         opacity: 0.25
+
+//=====================
+//       MODALS
+//=====================
+.v--modal-overlay
+    background: var(--modal-backdrop) !important
