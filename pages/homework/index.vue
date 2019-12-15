@@ -15,6 +15,9 @@ import ScreenEmpty from '~/components/ScreenEmpty.vue'
 import { mapGetters } from 'vuex';
 export default {
     components: { CardHomework, ScreenEmpty },
+    head: {
+        title: 'Devoirs'
+    },
     computed: {
         ...mapGetters('homework', ['all'])
     },

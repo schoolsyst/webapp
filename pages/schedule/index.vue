@@ -9,6 +9,9 @@ import Schedule from '~/components/Schedule.vue'
 import { mapGetters, mapState } from 'vuex'
 export default {
   components: { Schedule },
+  head: {
+    title: 'Emploi du temps'
+  },
   computed: {
     ...mapState(['now']),
     scheduleDate() {

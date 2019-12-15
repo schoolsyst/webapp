@@ -66,7 +66,7 @@ export default {
   },
   head() {
     return {
-      // title: `${this.pageTitleCounter}Réglages`,
+      title: "Paramètres",
     }
   },
   computed: {

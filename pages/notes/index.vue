@@ -75,6 +75,9 @@ import { mapGetters, mapActions } from 'vuex';
 import Fuse from 'fuse.js'
 export default {
   components: { HeadingSub, CardNote, InputField, Icon, VueContext, ButtonNormal, ScreenEmpty, PickerSubject },
+  head: {
+    title: 'Cours'
+  },
   data() {
     return {
       // User-editable data

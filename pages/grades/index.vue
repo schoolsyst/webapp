@@ -41,10 +41,8 @@ export default {
     ItemGrade,
   },
 
-  head() {
-    return {
-      title: `${this.pageTitleCounter}Moyennes & notes`,
-    }
+  head: {
+    title: "Notes",
   },
 
   computed: {

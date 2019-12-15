@@ -53,7 +53,7 @@ export default {
   },
   head() {
     return {
-      title: `${this.pageTitleCounter}Cartable`,
+     title: "Cartable",
     }
   },
 

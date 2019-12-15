@@ -58,6 +58,9 @@ import { mapState, mapGetters } from 'vuex'
 
 export default {
 	components: { HeadingSub, Icon, CardCourse, ScreenEmpty },
+	head: {
+		title: 'Timeline'
+	},
 	data() {
 		return {
 			expandedCourse: null,
