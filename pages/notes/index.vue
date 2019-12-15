@@ -45,7 +45,15 @@
       :close-on-scroll="true"
     )
       template(slot-scope="child" v-if="child.data")
-        li: nuxt-link(:to="`/notes/${child.data.note.uuid}`" target="_blank") #[Icon open_in_new] Ouvrir dans un nouvel onglet
+        li
+          component(
+            :is="child.data.note.format === 'LINK' ? 'a' : 'nuxt-link'" 
+            :to="`/notes/${uuid}`" 
+            :href="child.data.note.format === 'LINK' ? child.data.note.content : `/notes/${child.data.note.uuid}`"
+            target="_blank"
+          )
+            Icon open_in_new 
+            | Ouvrir dans un nouvel onglet
         //- li: a(@click.prevent="ctxRename") #[Icon edit] Renommer
         //- li: a(@click.prevent="ctxChSubj") #[Icon bookmark_border] Changer la matière
         li: a(@click.prevent="del(child.data.note.uuid)") #[Icon delete] Supprimer

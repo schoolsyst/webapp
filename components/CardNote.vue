@@ -1,13 +1,27 @@
 <template lang="pug">
 .card-wrapper
-  nuxt-link.card(:to="`/notes/${uuid}`")
-    p.preview(v-html="content")
-    .infos
-      span.name(:title="name" :class="{'untitled': !name}") {{ name || '(Document sans titre)' }}
-      span.info(:title="subject.name")
-        SubjectDot(v-bind="subject").subject-color
-        span.subject-name {{ subject.name }}
-        span.more(@click.prevent="$emit('more')"): Icon more_vert
+    component.card(
+      :is="format === 'LINK' ? 'a' : 'nuxt-link'" 
+      :to="`/notes/${uuid}`" 
+      :href="format === 'LINK' ? content : `/notes/${uuid}`"
+      :class="`format-is-${format.toLowerCase()}`"
+    )
+      p.preview(
+        v-html="\
+          (\
+            format === 'LINK' \
+            ? '<em>Lien externe:</em> <br>' \
+            : ''\
+          )\
+          + content\
+        "
+      )
+      .infos
+        span.name(:title="name" :class="{'untitled': !name}") {{ name || '(Document sans titre)' }}
+        span.info(:title="subject.name")
+          SubjectDot(v-bind="subject").subject-color
+          span.subject-name {{ subject.name }}
+          span.more(@click.prevent="$emit('more')"): Icon more_vert
 </template>
 
 <script>
@@ -26,7 +40,8 @@ export default {
       subject: {
         name: '',
         color: 'black'
-      }
+      },
+      format: ''
     }
   },
   computed: {
@@ -46,6 +61,7 @@ export default {
     this.content = note.content
     this.subject = note.subject
     this.name = note.name
+    this.format = note.format
   }
 }
 </script>
@@ -66,7 +82,6 @@ export default {
   // Text
   font-size 0.5rem
   overflow: hidden
-  // font-family var(--fonts-monospace-light)
   line-height 1.2em
   // Colors
   background var(--offset-grey)
@@ -76,6 +91,20 @@ export default {
   border-bottom-left-radius 0
   border-bottom-right-radius 0
   border-bottom none
+.format-is-link .preview
+  // Text
+  font-family var(--fonts-monospace-light)
+  font-size: 1rem
+  // Layout
+  word-break break-all
+  text-overflow ellipsis
+  display flex
+  align-items center
+  justify-content center
+  flex-direction column
+  // Colors
+  color var(--grey-dark)
+
 .infos
   // Dimensions & spacing
   height: 25%
