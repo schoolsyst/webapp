@@ -48,7 +48,7 @@ export const state = () => ({
     },
     'separator',
     {
-        name: 'Réglages',
+        name: 'Paramètres',
         href: '/settings',
         icon: 'settings',
         id:   'settings'
