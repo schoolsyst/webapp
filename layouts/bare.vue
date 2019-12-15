@@ -19,11 +19,12 @@ export default {
       },
     }
   },
-  created() {
+  async mounted() {
+    await this.$store.dispatch('theme/set')
+    // Refresh time every second
     setInterval(() => {
-      this.$store.now = toDate(Date.now())
-      // // console.log(`[updateTime] ${this.$store.now}`)
-    }, 1000)
+      this.$store.commit('UPDATE_TIME', toDate(Date.now()))
+    }, 1 * 1000)
   },
 }
 </script>
