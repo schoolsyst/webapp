@@ -73,7 +73,7 @@ export default {
         backgroundColor: event.subject.color,
         color: this.textColor()(event.subject.color),
         top: this.heightFromDates(firstCourseStart, thisCourseStart),
-        right: event.day * this.eventWidth + 'rem',
+        left: (event.day - 1) * this.eventWidth + 'rem',
         width: this.eventWidth + 'rem',
         height: this.heightFromDates(event.start, event.end),
       }
@@ -85,7 +85,6 @@ export default {
 <style lang="stylus" scoped>
 .schedule
   position relative
-  overflow auto
   height 100vh //TODO: use computed Schedule height
 .event
   position absolute
