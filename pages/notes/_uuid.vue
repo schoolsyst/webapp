@@ -348,8 +348,13 @@ export default {
         clearInterval(this.autosaveInterval)
         await this.save({toast: false})
         // When the note is empty
-        if (this.editor.getHTML() === '') {
-
+        let html = this.editor.getHTML()
+        if (html === '' || html === '<p></p>') {
+            console.log('deleting empty note:' + this.editor.getHTML())
+            await this.$store.dispatch('notes/delete', { 
+                uuid: this.uuid, 
+                toastMessage: 'Note vide supprimée' 
+            })
         }
         this.editor.destroy()
         document.removeEventListener('keydown', this.kbShortcutSave)
