@@ -4,7 +4,7 @@ component.BadgeSubject(
   @click="$emit('click')"
   :class="{clickable}"
   :is="clickable ? 'button' : 'span'"
-) {{name}}
+) {{name || placeholderName}}
 </template>
 
 <script>
@@ -19,15 +19,15 @@ export default {
     },
     name: {
       type: String,
-      default() {
-        return this.abbreviation === "..."
-          ? "Choisissez une matière..."
-          : this.abbreviation
-      },
+      default: null,
     },
     clickable: {
       type: Boolean,
       default: false
+    },
+    placeholderName: {
+      type: String,
+      default: 'Choisir...'
     }
   },
     methods: {
