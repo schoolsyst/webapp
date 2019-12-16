@@ -9,7 +9,7 @@
             .first-line
                 SubjectDot.subject-color(v-bind="subject")
                 span.name {{ name }}
-            pre.notes(v-if="notes.length > 0" v-html="treatNotes(notes)")
+            pre.details(v-if="details.length > 0" v-html="details")
 </template>
 
 <script>
@@ -19,7 +19,10 @@ export default {
     components: { Icon, SubjectDot },
     props: {
         name: String,
-        notes: String,
+        details: {
+            type: String,
+            default: ""
+        },
         subject: Object,
         uuid: String,
         progress: Number
@@ -30,10 +33,6 @@ export default {
         }
     },
     methods: {
-        treatNotes(content) {
-            content = content.length > 150 ? content.substring(0, 150) + '…' : content            
-            return content.replace(/<<([^>]+)>>/g, ($0, $1) => `<a href="http://localhost:3000/${$1}">${$1}</a>`)
-        },
         async onClick() {
             this.clicked = true
             await setTimeout(async () => {
@@ -81,7 +80,7 @@ export default {
         white-space nowrap
     .name
         margin-left 0.5rem
-    .notes
+    .details
         margin-top .5em
         width 100%
         overflow hidden
