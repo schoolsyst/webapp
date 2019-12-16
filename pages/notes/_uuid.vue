@@ -323,7 +323,7 @@ export default {
         }
     }, 
     async mounted() {
-        this.$loadingOverlay(async () => {
+        this.$withLoadingScreen(async () => {
             // Load some data
             await this.$store.dispatch('settings/load')
             await this.$store.dispatch('notes/load')

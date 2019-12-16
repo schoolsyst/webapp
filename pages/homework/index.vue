@@ -22,7 +22,7 @@ export default {
         ...mapGetters('homework', ['all'])
     },
     async mounted() {
-        this.$loadingOverlay(async () => {
+        this.$withLoadingScreen(async () => {
             await this.$store.dispatch('schedule/load')
             await this.$store.dispatch('homework/load')
         }, { title: "Feuilletage de l'agenda" })

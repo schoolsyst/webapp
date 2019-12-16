@@ -82,7 +82,7 @@ export default {
    */
   plugins: [
     '~plugins/vue-js-modal',
-    '~plugins/loading-state'
+    '~plugins/loading-screen'
   ],
   /*
    ** Nuxt.js modules

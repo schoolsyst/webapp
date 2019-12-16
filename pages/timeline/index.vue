@@ -88,7 +88,7 @@ export default {
 		}
 	},
 	async mounted() {
-		this.$loadingOverlay(async () => {
+		this.$withLoadingScreen(async () => {
 			await this.$store.dispatch('schedule/load')
 		}, { title: "" })
 		this.loaded = true
