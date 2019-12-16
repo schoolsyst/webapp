@@ -155,7 +155,7 @@ export const actions = {
       }
     }
   },
-  async delete({ commit, getters, dispatch }, uuid) {
+  async delete({ commit, getters, dispatch }, { uuid, toastMessage }) {
     try {
       // Stores the note object because we want to be able to cancel the deletion
       const note = getters.one(uuid)
@@ -163,7 +163,7 @@ export const actions = {
       await this.$axios.delete(`/notes/${uuid}/`)
       console.log(note)
       commit("DEL", uuid)
-      this.$toast.show('Note supprimée', {
+      this.$toast.show((toastMessage || 'Note supprimée'), {
         action: {
           text: "Annuler",
           onClick: async (e, toast) => {

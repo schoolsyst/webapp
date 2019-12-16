@@ -1,7 +1,7 @@
 <template lang="pug">
 li.CardNoteFile
   ModalDialogConfirm(
-    @confirm="deleteNote(uuid)", 
+    @confirm="deleteNote({uuid})", 
     confirm-text="Supprimer", 
     :name="`delete-note-${uuid}`" 
     confirm-role="danger"
