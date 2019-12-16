@@ -178,10 +178,13 @@ export const actions = {
 			if (!validation.validated) return validation
 		}
 		try {
-			const { data } = await this.$axios.patch(
+			if (modifications.subject)
+				modifications.subject = modifications.subject.uuid
+			await this.$axios.patch(
 				`/homeworks/${uuid}`,
 				modifications
 			);
+			const { data } = await this.$axios.get(`/homeworks/${uuid}`)
 			if (data) commit("PATCH", uuid, data);
 			console.log(`[from API] PATCH /homeworks/${uuid}: OK`);
 		} catch (error) {
