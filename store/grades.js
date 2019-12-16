@@ -9,6 +9,7 @@ export const state = () => ({
 const parseGradeDates = (grade) => ({
   ...grade,
   added: parseISO(grade.added),
+  obtained_date: parseISO(grade.obtained),
 })
 
 export const getters = {
@@ -99,20 +100,43 @@ export const getters = {
         0: ["obtained", "expected", "goal", "weight"],
         1: ["unit"]
       },
-      maximum: {
-        1: ["obtained", "expected", "goal"],
-      },
-      required: ["name"],
+      required: ["name", "subject", "weight", "unit"],
     },
+    /* We use custom constraints because the default error message
+     * is "should be less than 1", which does not coincide 
+     * with the UI, which shows the "real", non-normalized grade
+     */
+    customConstraints: [
+      {
+        message: "La note obtenue est trop grande",
+        field: 'obtained',
+        constraint: (getters, object) => 
+          object.obtained === null || object.obtained <= 1
+      },
+      {
+        message: "La note estimée est trop grande",
+        field: 'expected',
+        constraint: (getters, object) => 
+          object.expected === null || object.expected <= 1
+      },
+      {
+        message: "L'objectif de note est trop grand",
+        field: 'goal',
+        constraint: (getters, object) => 
+          object.goal === null || object.goal <= 1
+      },
+    ],
     fieldNames: {
       name:     { gender: "M", name: "nom" },
       obtained: { gender: "F", name: "note obtenue" },
       expected: { gender: "F", name: "note estimée" },
-      goal:     { gender: "M", name: "objectif" },
+      goal:     { gender: "M", name: "objectif de note" },
       weight:   { gender: "M", name: "coefficient" },
       unit:     { gender: "F", name: "unité" },
+      subject:  { gender: "F", name: "matière" },
     },
-    resourceName: { gender: "F", name: "note" }
+    resourceName: { gender: "F", name: "note" },
+    debug: true
   }),
 }
 
@@ -136,18 +160,21 @@ export const actions = {
       }
     }
   },
-  async post({ commit, dispatch }, grade, force = false) {
+  async post({ commit, getters }, { grade, force }) {
+    force = force || false
     if(!force) {
-      const validation = await dispatch('validate', grade)
-      if(!validation.validated) return validation
+      const validation = getters.validate(grade)
+      if(!validation.validated) return false
     }
     try {
-      const { data } = await this.$axios.get(`/grades/`)
-      if (data) commit("ADD", grade)
-      // console.log(`[from API] POST /grades/: OK`)
+      grade.subject = grade.subject.uuid
+      const res = await this.$axios.post(`/grades/`, grade)
+      const { data } = this.$axios.get(`/grades/${res.data.uuid}`)
+      if (data) commit("ADD", data)
+      return true
     } catch (error) {
-      // console.error(`[from API] POST /grades/: Error`)
-      // console.error(error.response.data)
+      console.error(error)
+      return false
     }
   },
 
