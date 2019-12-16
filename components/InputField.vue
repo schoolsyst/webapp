@@ -264,5 +264,5 @@ label
   //==== Active state
   &.active input
     background transparent
-    border 2px solid var(--black)
+    border 2px solid var(--blue)
 </style>
