@@ -9,7 +9,7 @@
         TheSideRail
       main.right
         nuxt#page
-        #loading-state
+        #loading-screen
           OverlayLoadingLogo(animation="loop")
           h1.title Triage des classeurs
           p.subtitle Chargement...
@@ -81,7 +81,7 @@ main, .container
   display: flex
 #page, 
 /deep/ #empty-state,
-/deep/ #loading-state
+/deep/ #loading-screen
   min-height: calc(100vh - 100px) // top bar height
 
 @media (max-width: 600px)

@@ -1,6 +1,6 @@
 <template>
   <div class="app">
-    <div id="loading-state">
+    <div id="loading-screen">
       <h1 class="title"></h1>
       <p class="subtitle"></p>
     </div>
