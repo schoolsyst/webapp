@@ -30,7 +30,7 @@ export default {
         cursor: pointer
 
 .card /deep/
-    background: var(--offset-blue)
+    background: var(--blue-offset)
     height: 270px
     width: 100%
     margin-bottom: 10px

@@ -360,7 +360,7 @@ export default {
 <style lang="stylus" scoped>
 body
     padding 1em
-    background var(--offset-grey)
+    background var(--grey-offset)
 .toolbar
     position fixed
     top: 0
@@ -442,7 +442,7 @@ body
     color var(--black)
     &.active
         color var(--blue)
-        background var(--offset-blue)
+        background var(--blue-offset)
     &:hover
         color var(--blue)
 .low-opacity, .sep
@@ -463,7 +463,7 @@ body
     justify-content center
     width 100%
     min-height 100vh
-    background var(--offset-grey)
+    background var(--grey-offset)
     overflow auto
 
 .editor-page /deep/ 
@@ -502,7 +502,7 @@ body
             font-family 'Material Icons'
             
         &-danger
-            background var(--offset-red)
+            background var(--red-offset)
         &-note
-            background var(--offset-blue)
+            background var(--blue-offset)
 </style>

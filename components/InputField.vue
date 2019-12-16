@@ -255,7 +255,7 @@ label
 .variant-filled
   //==== Passive state
   input
-    background var(--offset-grey)
+    background var(--grey-offset)
     border 2px solid transparent
   //==== Hover state
   input:hover, input:active

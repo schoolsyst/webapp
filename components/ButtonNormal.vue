@@ -105,10 +105,10 @@ export default {
     &:active
         color rgba(255,255,255,0.25)
     &[disabled]
-        background var(--offset-grey)
+        background var(--grey-offset)
         color var(--grey-dark)
 .btn--secondary
-    background-color var(--offset-blue)
+    background-color var(--blue-offset)
     color var(--blue)
     &:hover, &:focus
         background-color var(--blue)

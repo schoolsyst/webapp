@@ -188,7 +188,7 @@ export default {
     margin-right 0.5rem
 // .v-context li:hover
 //     &, a
-//       background var(--offset-blue)
+//       background var(--blue-offset)
 //     a, i
 //       color var(--blue)
 //-----------------------
@@ -226,7 +226,7 @@ ul.notes
   transition all 0.25s ease
 .card-new
   cursor pointer
-  background var(--offset-blue)
+  background var(--blue-offset)
   color var(--blue)
   i
     font-size 5rem
@@ -235,7 +235,7 @@ ul.notes
   border-radius var(--border-radius)
   &:hover
     color var(--blue-dark)
-    background var(--offset-blue-dark)
+    background var(--blue-offset-dark)
   @media (max-width 600px)
     width 50vw
     // border solid 1px var(--grey)

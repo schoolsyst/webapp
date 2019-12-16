@@ -25,6 +25,6 @@ export default {
 @import '~/assets/defaults'
 
 .ButtonRegSecondary
-  background-color: var(--offset-blue)
+  background-color: var(--blue-offset)
   color: var(--blue)
 </style>

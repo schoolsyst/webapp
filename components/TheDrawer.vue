@@ -122,7 +122,7 @@ li
     margin .25em 0
     &.current
         color var(--blue)
-        background var(--offset-blue)
+        background var(--blue-offset)
         border-top-right-radius 3em
         border-bottom-right-radius 3em
 hr

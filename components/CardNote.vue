@@ -84,7 +84,7 @@ export default {
   overflow: hidden
   line-height 1.2em
   // Colors
-  background var(--offset-grey)
+  background var(--grey-offset)
   // Borders
   border 1px solid var(--grey-light)
   border-radius var(--border-radius)
@@ -148,7 +148,7 @@ export default {
   .preview
     background var(--grey)
   .infos
-    background var(--offset-grey)
+    background var(--grey-offset)
 
 @media (max-width 600px)
   .card-wrapper

@@ -322,7 +322,7 @@ export default {
 input, textarea
     font-size: 18px
     padding: 1px 20px
-    background: var(--offset-blue)
+    background: var(--blue-offset)
     border-radius: 10px
     color: var(--blue)
     font-family: 'Roboto Mono', monospace

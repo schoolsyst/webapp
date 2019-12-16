@@ -44,10 +44,10 @@ button[disabled]
     cursor default
     pointer-events none
 button.secondary
-    background-color: var(--offset-blue)
+    background-color: var(--blue-offset)
     color: var(--blue)
     &:hover
-      background-color: var(--offset-blue-dark)
+      background-color: var(--blue-offset-dark)
       // color: #ffffff
 button.primary
     background-color: var(--blue)
@@ -58,5 +58,5 @@ button.danger
     background-color: var(--red)
     color: #ffffff
     &:hover
-      color: var(--offset-red)
+      color: var(--red-offset)
 </style>

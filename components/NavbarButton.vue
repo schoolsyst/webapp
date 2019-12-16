@@ -66,7 +66,7 @@ export default {
 
 @media (min-width: $bk-sidebar)
     .NavbarButton.current-page 
-        background-color: var(--offset-blue)
+        background-color: var(--blue-offset)
 
 .NavbarButton:hover i,
 .NavbarButton.current-page i,
