@@ -387,3 +387,14 @@ select
 /* Always show a pointer cursor for buttons */
 button
   cursor: pointer
+
+/* Remove the default arrows on number inputs */
+/* Chrome, Safari, Edge, Opera */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button
+  -webkit-appearance: none
+  margin: 0
+
+/* Firefox */
+input[type=number] 
+  -moz-appearance: textfield
