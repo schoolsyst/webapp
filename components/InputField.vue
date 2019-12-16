@@ -176,7 +176,9 @@ label
 // ===== Passive state
 input
   // LAYOUT
-  min-width 300px
+  min-width 250px
+  &[type=number]
+    min-width 50px
   padding 15px side-padding
   padding-right (side-padding * 2 + 10px)
   // LOOKS
