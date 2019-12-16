@@ -211,6 +211,31 @@ $bk-sidebar: 650px
         -webkit-font-feature-settings: 'liga'
         -webkit-font-smoothing: antialiased
 
+//=====================
+//      RESPONSIVE 
+//    HELPER CLASSES
+//=====================
+@media (max-width: 888px)
+    .desktop-only
+        display: none !important
+@media (min-width: 889px)
+    .mobile-only
+        display: none !important
+  
+
+//=====================
+//      LAYOUT 
+//    HELPER CLASSES
+//=====================
+@media (max-width: 888px)
+    .-side-by-side
+        display: grid
+        grid-template-columns: 1fr
+@media (min-width: 889px)
+    .-side-by-side
+        display: grid
+        grid-template-columns: repeat(2, 1fr)
+  
 
 //=====================
 //       TOASTS
