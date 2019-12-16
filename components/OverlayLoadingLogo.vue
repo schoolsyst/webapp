@@ -23,12 +23,18 @@ export default {
       this.animation = 'animate-in'
     }
 
+    let white =
+      document.body.getAttribute('theme') === 'DARK'
+      && this.animation === 'loop'
+    
+    if (white) console.log('white overlayloadinglogo')
+
     this.lottieInstance = lottie.loadAnimation({
       container: document.getElementById("lottie-overlay-loading-logo"),
       renderer: "svg",
       loop: this.animation === "loop",
       autoplay: this.animateWhen === "page-loads",
-      path: `/animations/data-${this.animation}.json`,
+      path: `/animations/data-${this.animation}${white ? '-white' : ''}.json`,
     })
 
     if (this.animateWhen !== "page-loads") {
