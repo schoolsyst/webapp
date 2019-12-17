@@ -172,7 +172,7 @@ input
     margin-right 0.5em
     @media (max-width 650px)
       margin-bottom: 1.5rem
-      font-size: 2rem
+      font-size: 1.5rem
     &.dot
       font-size 2em
   .name
