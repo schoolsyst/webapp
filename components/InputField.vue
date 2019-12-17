@@ -11,7 +11,8 @@
         tabindex="-1"
       )
         i.material-icons-outlined {{actionButtonIcon}}
-      input(
+      component.input(
+        :is="type === 'block' ? 'textarea' : 'input'"
         :name="dName"
         :type="passwordShown ? 'text' : type"
         :id="`input-field--${dName}`"
@@ -164,7 +165,7 @@ errors-space = 2em
   // Vertically center the action button
   display flex
   align-items center
-input
+.input
   // Let the input take the whole .inner-field width
   width 100% 
 // ==== Typography
@@ -174,7 +175,7 @@ label
   font-size 0.75em
   font-weight 500
 // ===== Passive state
-input
+.input
   // LAYOUT
   min-width 250px
   &[type=number]
@@ -193,7 +194,7 @@ label
   top 0px
   background transparent
 // ===== Hover state
-input:hover, input:focus
+.input:hover, .input:focus
   &
     border-color var(--black)
     outline none
@@ -205,26 +206,26 @@ input:hover, input:focus
     top 15px
     left 10px
     color var(--blue)
-  input
+  .input
     border-color var(--blue)
 // ===== Errored state
 .field.errored
   label
     color var(--red)
-  input
+  .input
     border-color var(--red)
 // ===== Filled state
 :not(.active).field.filled label
   color var(--grey-dark)
 // ===== Disabled state
 .field.disabled
-  input
+  .input
     background var(--grey)
     pointer-events none
   label
     opacity: 0.25
 // ===== Interactions
-input
+.input
   transition all .25s ease
 label
   transition left .125s ease,
@@ -256,15 +257,15 @@ label
  */
 .variant-filled
   //==== Passive state
-  input
+  .input
     background var(--grey-offset)
     border 2px solid transparent
   //==== Hover state
-  input:hover, input:active
+  .input:hover, .input:active
     background transparent
     border 2px solid var(--grey-dark)
   //==== Active state
-  &.active input
+  &.active .input
     background transparent
     border 2px solid var(--blue)
 </style>
