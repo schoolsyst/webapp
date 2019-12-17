@@ -1,6 +1,5 @@
 <template lang="pug">
-BaseModal.PickerSubject(:name="name")
-    span.heading Choisissez une matière...
+BaseModal.PickerSubject(:name="name" title="Choisissez une matière..." edge-to-edge)
     ul.subjects
       li(v-for="subject in subjects" :key="subject.uuid")
         BadgeSubject(
@@ -44,24 +43,14 @@ export default {
 //!importants are needed to override the BaseModal's styling
 .PickerSubject
   z-index: 2000 !important
-
-.PickerSubject
-  /deep/ .v--modal-box
-    padding: 0 !important
-    +shadow(3)
-    width: auto
-    overflow: auto
-
+  
 .subjects
   width: 100%
   list-style: none
-
-.heading
-  font-size: 1.75rem
-  line-height: 1.75rem
-  padding: 2rem // Restore padding since it's remove from the parent div for the edge-to-edge subject badges
-  flex-grow: 0
-  display: block
+  //TODO: ↓ Not sure about this
+  @media (max-width: 650px)
+    display: grid
+    grid-template-columns: repeat(2, 1fr)
 
 .BadgeSubject
     border-radius: 0 !important // !important needed to overwrite it
@@ -73,10 +62,5 @@ export default {
 
 .BadgeSubject, .SubjectDot
     cursor: pointer
-
-.BaseModal.opened
-    background: rgba(0, 0, 0, 0)
-.BaseModal
-    transition: box-shadow .125s ease
-    // animation: none
+  
 </style>
