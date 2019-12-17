@@ -31,6 +31,6 @@ export default {
     color var(--grey-offset-dark)
   p
     font-size 1.5rem
-    margin-top 3em
+    margin-top 5vh
     margin-bottom .75em
 </style>
