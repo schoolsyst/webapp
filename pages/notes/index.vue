@@ -56,7 +56,7 @@
             | Ouvrir dans un nouvel onglet
         //- li: a(@click.prevent="ctxRename") #[Icon edit] Renommer
         //- li: a(@click.prevent="ctxChSubj") #[Icon bookmark_border] Changer la matière
-        li: a(@click.prevent="del(child.data.note.uuid)") #[Icon delete] Supprimer
+        li: a(@click.prevent="del({uuid: child.data.note.uuid})") #[Icon delete] Supprimer
 
 </template>
 
