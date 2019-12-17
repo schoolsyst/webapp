@@ -41,11 +41,19 @@ export default {
   font-size: 0.8em
   padding: .3em .5em
   border-radius: var(--border-radius)
-  display: flex
-  white-space: nowrap
-  justify-content: center
   align-items: center
+  // If white-space set to wrap, will allow multiline subject names 
+  // but no ellipsis (harsh overflow cutoff), 
+  // else will put ellipsis but restrict to one line.
+  // TODO: ellipsis after 2-3 lines
+  white-space: wrap 
   font-weight normal
+  overflow: hidden
+  position relative
+  display block
+  text-overflow ellipsis
+  max-height 25vh
+  
 .clickable
   &:focus, &:hover
     outline: none
