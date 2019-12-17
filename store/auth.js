@@ -55,7 +55,7 @@ export const actions = {
       this.$router.push('/')
     } catch (e) {
       this.$toast.error(
-        "Mot de passe ou non d'utilisateur incorrect",
+        "Mot de passe ou nom d'utilisateur incorrect",
         {icon: 'error_outline'}
       )
     }
