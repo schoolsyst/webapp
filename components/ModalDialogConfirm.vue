@@ -1,6 +1,6 @@
 <template lang="pug">
-BaseModal.ModalDialogConfirm(:name="`confirm-${name}`", show-close-button)
-    p.heading {{heading}}
+//TODO: Rewrite this
+BaseModal.ModalDialogConfirm(:name="`confirm-${name}`", :title="heading || 'Confirmation'")
     p.message: slot
     ArrayButtonReg.buttons(v-if="!challengeOpened")
         ButtonNormal(variant="secondary" close-modal) {{cancelText}}
@@ -72,9 +72,7 @@ export default {
     confirmAndClose() {
       this.endChallenge()
       this.$emit("confirm")
-      document
-        .querySelector(`#modal_confirm-${this.name}`)
-        .classList.remove("opened")
+      this.$modal.hide(`confirm-${this.name}`)
     },
     startChallenge() {
       // console.log(`[MODAL confirm-${name}] starting challenge`)
