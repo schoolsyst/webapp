@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "license": "MIT",
   "engines": {
-    "node": "8.10.0"
+    "node": "13.4.0"
   },
   "description": "Schoolsyst&#39;s frontend: a single-page web application built to be used offline and online.",
   "author": "Ewen Le Bihan",
