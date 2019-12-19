@@ -17,6 +17,20 @@
 import slugify from 'slugify'
 
 export default {
+    props: {
+        name: {
+            type: String,
+            required: true
+        },
+        values: {
+            type: Array,
+            default: () => ([])
+        },
+        defaultValue: {
+            type: String,
+            default: null
+        }
+    },
     data() {
         return {
             checked: this.value,
@@ -32,20 +46,6 @@ export default {
                 ? this.values.map((o) => o.key).indexOf(this.defaultValue)
                 : 0
             return this.values[idx].key
-        }
-    },
-    props: {
-        name: {
-            type: String,
-            required: true
-        },
-        values: {
-            type: Array,
-            default: () => ([])
-        },
-        defaultValue: {
-            type: String,
-            default: null
         }
     },
     methods: {
@@ -86,6 +86,10 @@ fieldset
     
 legend
     padding 0 10px
+    text-transform uppercase
+    letter-spacing 1px
+    font-size 0.75em
+    font-weight 500
 input:checked + label::before
     background var(--black)
     color var(--white)
