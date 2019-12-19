@@ -2,7 +2,7 @@
 component.BadgeSubject(
   :style="{backgroundColor: color, color: textColor()(color)}"
   @click="$emit('click')"
-  :class="{clickable}"
+  :class="{clickable, multiline}"
   :is="clickable ? 'button' : 'span'"
 ) {{name || placeholderName}}
 </template>
@@ -28,7 +28,11 @@ export default {
     placeholderName: {
       type: String,
       default: 'Choisir...'
-    }
+    },
+    multiline: {
+      type: Boolean,
+      default: false
+    },
   },
     methods: {
       ...mapGetters(['textColor'])
@@ -45,8 +49,11 @@ export default {
   // If white-space set to wrap, will allow multiline subject names 
   // but no ellipsis (harsh overflow cutoff), 
   // else will put ellipsis but restrict to one line.
-  // TODO: ellipsis after 2-3 lines
-  white-space: wrap 
+  &:not(.multiline)
+    white-space: nowrap
+    flex-shrink: 0
+  &.multiline
+    white-space wrap
   font-weight normal
   overflow: hidden
   position relative
