@@ -74,6 +74,8 @@ export default {
     max-width 100vw
     @media (max-width 650px)
       width 100vw
+      height 100vh
+      border-radius 0
 
 .edge-to-edge 
   .modal-wrapper
