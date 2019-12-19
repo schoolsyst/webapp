@@ -149,11 +149,11 @@ export default {
 </script>
 
 <style lang="stylus" scoped>
-// ===== Vars
+// === Vars
 side-padding = 15px
 stroke-thickness = 2px
 errors-space = 2em
-// ==== Setup
+// === Setup
 .field
   // Used for the label's absolute positionning
   position relative
@@ -168,13 +168,13 @@ errors-space = 2em
 .input
   // Let the input take the whole .inner-field width
   width 100% 
-// ==== Typography
+// === Typography
 label
   text-transform uppercase
   letter-spacing 1px
   font-size 0.75em
   font-weight 500
-// ===== Passive state
+// === Passive state
 .input
   // LAYOUT
   min-width 250px
@@ -193,14 +193,14 @@ label
   padding 0 5px
   top 0px
   background transparent
-// ===== Hover state
+// === Hover state
 .input:hover, .input:focus
   &
     border-color var(--black)
     outline none
   & + label
     left 10px
-// ===== Active state
+// === Active state
 .active
   label
     top 15px
@@ -208,23 +208,23 @@ label
     color var(--blue)
   .input
     border-color var(--blue)
-// ===== Errored state
+// === Errored state
 .field.errored
   label
     color var(--red)
   .input
     border-color var(--red)
-// ===== Filled state
+// === Filled state
 :not(.active).field.filled label
   color var(--grey-dark)
-// ===== Disabled state
+// === Disabled state
 .field.disabled
   .input
     background var(--grey)
     pointer-events none
   label
     opacity: 0.25
-// ===== Interactions
+// === Interactions
 .input
   transition all .25s ease
 label
@@ -237,7 +237,7 @@ label
 .field:hover, .field.active
   .action
     display block
-// ==== Other elements
+// === Other elements
 .action
   position absolute
   right: side-padding
@@ -256,15 +256,15 @@ label
  *
  */
 .variant-filled
-  //==== Passive state
+  // === Passive state
   .input
     background var(--grey-offset)
     border 2px solid transparent
-  //==== Hover state
+  // === Hover state
   .input:hover, .input:active
     background transparent
     border 2px solid var(--grey-dark)
-  //==== Active state
+  // === Active state
   &.active .input
     background transparent
     border 2px solid var(--blue)
