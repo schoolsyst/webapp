@@ -71,7 +71,7 @@ label::before
     display inline-block
     height 1.15em
     width 1.15em
-    border 2px solid black
+    border 2px solid var(--black)
     border-radius 50%
     margin-right 0.25rem
 .RadioButton
@@ -80,15 +80,15 @@ label::before
     margin-right: 1rem
 fieldset
     display flex
-    border 2px solid rgba(0,0,0,0.25)
+    border 2px solid var(--grey-dark)
     // padding 0.75em 0.625em
     border-radius 2.5px
     
 legend
     padding 0 10px
 input:checked + label::before
-    background #000
-    color white
+    background var(--black)
+    color var(--white)
 input[disabled] + label
     opacity: 0.5
 </style>
