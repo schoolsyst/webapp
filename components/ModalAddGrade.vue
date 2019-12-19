@@ -83,8 +83,8 @@ export default {
     return {
       obtained: null,
       expected: null,
-      unit: 20,   //TODO: get from settings
-      weight: 1,   //TODO: get from settings
+      unit: this.setting()('grades_unit'),
+      weight: this.setting()('default_grade_weight'),
       goal: null,
       subject: null,
       name: null
@@ -111,14 +111,20 @@ export default {
       if (isNaN(normalized)) return null
       return normalized
     },
-    ...mapGetters('grades', ['validate'])
+    ...mapGetters('grades', ['validate']),
+    ...mapGetters('settings', { setting: 'value' })
+  },
+  async mounted() {
+    this.$withLoadingScreen(async () => {
+      await this.$store.dispatch('settings/load')
+    })
   },
   watch: {
     unit() {
       this.obtained /= this.unit
       this.obtained *= this.unit
     }
-  }
+  },
 }
 </script>
 
