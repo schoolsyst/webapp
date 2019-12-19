@@ -55,14 +55,14 @@ BaseModal.grade(name="add-grade" title="Ajouter une note...")
           name="goal"
           :validation="validate()(gradeObject)"
           variant="filled"
-        ) Objectif ({{ unit === 100 ? 'en %' : `sur ${unit}` }})
+        ) Objectif ({{ unit == 100 ? 'en %' : `sur ${unit}` }})
         InputField(
           v-model="expected"
           type="number"
           name="expected"
           :validation="validate()(gradeObject)"
           variant="filled"
-        ) Note estimée ({{ unit === 100 ? 'en %' : `sur ${unit}` }})
+        ) Note estimée ({{ unit == 100 ? 'en %' : `sur ${unit}` }})
   ButtonNormal.submit(
     @click="$emit('submit', gradeObject)"
     :validation="validate()(gradeObject)"
