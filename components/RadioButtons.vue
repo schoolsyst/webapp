@@ -8,7 +8,7 @@
                 :id="`radio--${id}--${slugify(value.key)}`"
                 :name="id"
                 :value="value.key"
-                :selected="value.key === defaultValue"
+                :checked="value.key === defaultSelection"
             )
             label(:for="`radio--${id}--${slugify(value.key)}`") {{value.label}}
 </template>
