@@ -78,7 +78,7 @@ import BadgeSubject from '~/components/BadgeSubject.vue'
 import InputField from '~/components/InputField.vue'
 import PickerSubject from '~/components/PickerSubject.vue'
 import ButtonNormal from '~/components/ButtonNormal.vue'
-import { mapGetters } from 'vuex'
+import { mapGetters, mapState } from 'vuex'
 export default {
   components: {BaseModal, BadgeSubject, InputField, PickerSubject, ButtonNormal},
   data() {
@@ -93,8 +93,9 @@ export default {
     }
   },
   computed: {
+    ...mapState(['now']),
     gradeObject() {
-      console.log(this.subject)
+      let obtained_date = this.obtained !== null ? this.now : null
       return {
         obtained: this.normalizeGrade(this.obtained),
         expected: this.normalizeGrade(this.expected),
@@ -103,6 +104,7 @@ export default {
         weight: this.weight,
         subject: this.subject,
         name: this.name,
+        obtained_date
       }
     }
   },
