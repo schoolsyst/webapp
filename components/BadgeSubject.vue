@@ -96,7 +96,11 @@ dot-aspect()
   dot-aspect()
 .variant-pill
   badge-aspect()
-  border-radius 50%
+  size = 1.5em
+  height (size)
+  border-radius (size)
+  display flex
+  align-items center
 .variant-responsive
   @media (max-width 650px)
     badge-aspect()
