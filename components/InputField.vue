@@ -225,7 +225,7 @@ label
   .input
     border-color var(--blue)
 // === Errored state
-.field.errored
+.field.errored:not(.active)
   label
     color var(--red)
   .input
