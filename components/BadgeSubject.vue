@@ -2,7 +2,7 @@
 component.subject(
   :style="{backgroundColor: color || 'var(--black)', color: textColor()(color)}"
   @click="$emit('click')"
-  :class="{clickable, multiline, [`variant-${variant}`]: true}"
+  :class="{clickable, multiline, thin, [`variant-${variant}`]: true}"
   :is="clickable ? 'button' : 'span'"
   :title="name"
 )
@@ -41,6 +41,10 @@ export default {
     variant: {
       type: String,
       default: 'badge'
+    },
+    thin: {
+      type: Boolean,
+      default: false
     }
   },
     methods: {
@@ -86,6 +90,8 @@ dot-aspect()
 
 .variant-badge
   badge-aspect()
+  &.thin
+    padding: 0.3em 0.5em
 .variant-dot
   dot-aspect()
 .variant-pill
