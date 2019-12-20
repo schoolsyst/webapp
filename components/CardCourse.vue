@@ -13,7 +13,7 @@
       :class="{empty, expanded}"
     )
       template(v-if="subject")
-        SubjectDot.subject-color(v-bind="subject")
+        BadgeSubject.subject-color(v-bind="subject" variant="dot")
         .infos
           span.subject
             span.subject-name {{ subject.name }}
@@ -29,13 +29,13 @@
 </template>
 
 <script>
-import SubjectDot from '~/components/SubjectDot.vue'
+import BadgeSubject from '~/components/BadgeSubject.vue'
 import HeadingSub from '~/components/HeadingSub.vue'
 import Icon from '~/components/Icon.vue'
 import { mapState, mapGetters } from 'vuex'
 import { format } from 'date-fns'
 export default {
-  components: { Icon, SubjectDot, HeadingSub },
+  components: { Icon, BadgeSubject, HeadingSub },
   props: {
     subject: {
       type: Object,

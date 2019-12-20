@@ -8,16 +8,11 @@
 
 <script>
 import BaseCard from "~/components/BaseCard.vue"
-import SubjectDot from "~/components/SubjectDot.vue"
 import moment from "moment"
 
 export default {
   name: "CardNoteAdd",
-
-  components: {
-    BaseCard,
-    SubjectDot,
-  },
+  components: { BaseCard },
 }
 </script>
 

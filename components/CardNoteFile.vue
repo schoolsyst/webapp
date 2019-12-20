@@ -21,7 +21,6 @@ li.CardNoteFile
 
 <script>
 import BaseCard from "~/components/BaseCard.vue";
-import SubjectDot from "~/components/SubjectDot.vue";
 import ButtonIcon from '~/components/ButtonIcon.vue'
 import ModalDialogConfirm from '~/components/ModalDialogConfirm.vue'
 import moment from "moment";
@@ -30,7 +29,7 @@ import { mapActions } from 'vuex';
 export default {
 	name: "CardNoteFile",
 
-	components: {BaseCard, SubjectDot, ButtonIcon, ModalDialogConfirm},
+	components: {BaseCard, ButtonIcon, ModalDialogConfirm},
 
 	props: {
 		detail: String,

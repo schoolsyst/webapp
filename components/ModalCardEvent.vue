@@ -31,14 +31,14 @@ import debounce from "lodash.debounce"
 //------------------------------------------------------------------
 import BaseModal from "~/components/BaseModal.vue"
 import ButtonRegSecondary from "~/components/ButtonRegSecondary.vue"
-import SubjectDot from "~/components/SubjectDot.vue"
+
 import LabelFlat from "~/components/LabelFlat.vue"
 import moment from "moment"
 import { mapGetters } from "vuex"
 
 export default {
   name: "ModalCardEvent",
-  components: { ButtonRegSecondary, SubjectDot, LabelFlat, BaseModal },
+  components: { ButtonRegSecondary,  LabelFlat, BaseModal },
   props: {
     subject: {
       type: Object,

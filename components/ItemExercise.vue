@@ -40,7 +40,7 @@ li.ItemExercise(:class="{'expanded': mutExpanded && !mutCompleted}" :data-exerci
 
 <script>
 import BadgeSubject from "~/components/BadgeSubject.vue"
-import SubjectDot from "~/components/SubjectDot.vue"
+
 import ButtonFlat from "~/components/ButtonFlat.vue"
 import ModalDialogConfirm from "~/components/ModalDialogConfirm.vue"
 import moment from "moment"

@@ -25,7 +25,7 @@
 import slugify from "slugify"
 import BaseModal from "~/components/BaseModal.vue"
 import BadgeSubject from "~/components/BadgeSubject.vue"
-import SubjectDot from "~/components/SubjectDot.vue"
+
 import InputFlat from "~/components/InputFlat.vue"
 import ButtonFlat from "~/components/ButtonFlat.vue"
 import PickerSubject from "~/components/PickerSubject.vue"

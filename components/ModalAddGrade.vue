@@ -79,7 +79,7 @@ import InputField from '~/components/InputField.vue'
 import PickerSubject from '~/components/PickerSubject.vue'
 import { mapGetters } from 'vuex'
 export default {
-  components: {BaseModal, BadgeSubject, InputField, PickerSubject, ButtonNormal, SubjectDot},
+  components: {BaseModal, BadgeSubject, InputField, PickerSubject, ButtonNormal},
   data() {
     return {
       obtained: null,

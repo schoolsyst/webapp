@@ -61,11 +61,10 @@ import RadioButtons from '~/components/RadioButtons.vue'
 import InputField from '~/components/InputField.vue'
 import ButtonNormal from '~/components/ButtonNormal.vue'
 import BadgeSubject from '~/components/BadgeSubject.vue'
-import SubjectDot from '~/components/SubjectDot.vue'
 import { mapGetters, mapState } from 'vuex'
 
 export default {
-  components: { BaseModal, PickerSubject, HeadingSub, RadioButtons, InputField, ButtonNormal, BadgeSubject, SubjectDot },
+  components: { BaseModal, PickerSubject, HeadingSub, RadioButtons, InputField, ButtonNormal, BadgeSubject },
   data() {
     return {
       details: null,
