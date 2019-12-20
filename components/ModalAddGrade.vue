@@ -77,6 +77,7 @@ import BaseModal from '~/components/BaseModal.vue'
 import BadgeSubject from '~/components/BadgeSubject.vue'
 import InputField from '~/components/InputField.vue'
 import PickerSubject from '~/components/PickerSubject.vue'
+import ButtonNormal from '~/components/ButtonNormal.vue'
 import { mapGetters } from 'vuex'
 export default {
   components: {BaseModal, BadgeSubject, InputField, PickerSubject, ButtonNormal},
