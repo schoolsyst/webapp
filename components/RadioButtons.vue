@@ -1,5 +1,5 @@
 <template lang="pug">
-    fieldset.RadioButtons
+    fieldset.RadioButtons(:class="`variant-${variant}`")
         legend: slot
         .RadioButton(v-for="value in values" :key="value.key")
             input(
@@ -29,7 +29,8 @@ export default {
         defaultValue: {
             type: String,
             default: null
-        }
+        },
+        variant: String
     },
     data() {
         return {
@@ -55,10 +56,12 @@ export default {
 </script>
 
 <style lang="stylus" scoped>
+size = 1.15em
+
 input
     display none
 label
-    height: 1.15em
+    height: (size)
     display flex
     align-items center
     flex-shrink 0
@@ -69,11 +72,16 @@ label::before
     align-items center
     font-family 'Material Icons'
     display inline-block
-    height 1.15em
-    width 1.15em
-    border 2px solid var(--black)
+    height (size)
+    width (size)
+    border-style solid
+    border-width "calc(%s / 8)" % size
+    border-color var(--grey-dark)
     border-radius 50%
+    transition all 0.125s ease
     margin-right 0.25rem
+    // Fix the vertical alignement (might be because of the font 'Now')
+    margin-bottom: .125em
 .RadioButton
     display flex
     align-items center
@@ -82,7 +90,7 @@ fieldset
     display flex
     border 2px solid var(--grey-dark)
     // padding 0.75em 0.625em
-    border-radius 2.5px
+    border-radius var(--border-radius)
     
 legend
     padding 0 10px
@@ -90,9 +98,18 @@ legend
     letter-spacing 1px
     font-size 0.75em
     font-weight 500
+input:hover + label::before
+    border-color var(--black)
 input:checked + label::before
-    background var(--black)
-    color var(--white)
+    border-width "calc(%s / 2)" % size
+    border-color var(--black)
 input[disabled] + label
     opacity: 0.5
+input, label
+    cursor pointer
+
+/* Filled variant
+ */
+fieldset
+    border-color var(--grey-offset)
 </style>
