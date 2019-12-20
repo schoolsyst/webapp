@@ -44,7 +44,7 @@ export default {
 .PickerSubject
   z-index: 2000 !important
   
-.subjects
+ul.subjects
   width: 100%
   list-style: none
   //TODO: ↓ Not sure about this
@@ -52,15 +52,12 @@ export default {
     display: grid
     grid-template-columns: repeat(2, 1fr)
 
-.BadgeSubject
-    border-radius: 0 !important // !important needed to overwrite it
-    height: 3.25rem
-    @media (max-width: 650px)
-      height: 5rem
-    font-size: 1.1rem
-    width: 100%
-
-.BadgeSubject, .SubjectDot
-    cursor: pointer
+li > .subject
+  border-radius: 0 !important // !important needed to overwrite it
+  height: 3.25rem
+  @media (max-width: 650px)
+    height: 5rem
+  font-size: 1.1rem
+  width: 100%
   
 </style>
