@@ -5,7 +5,7 @@
       ul.mutations
         li.new: ButtonNormal Nouveau cours reporté ou supprimé
         li(v-for="mutation in mutations" :key="mutation.uuid")
-          | {{ mutation }}
+          CardMutation(v-bind="mutation")
     .schedule
       HeadingSub Emploi du temps
       Schedule(:now="scheduleDate")
@@ -15,9 +15,10 @@
 import Schedule from '~/components/Schedule.vue'
 import HeadingSub from '~/components/HeadingSub.vue'
 import ButtonNormal from '~/components/ButtonNormal.vue'
+import CardMutation from '~/components/CardMutation.vue'
 import { mapGetters, mapState } from 'vuex'
 export default {
-  components: { Schedule, HeadingSub, ButtonNormal },
+  components: { Schedule, HeadingSub, ButtonNormal, CardMutation },
   head: {
     title: 'Emploi du temps'
   },
