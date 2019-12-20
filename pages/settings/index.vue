@@ -25,7 +25,6 @@
                                         :show-labels="false"
                                         :name="s.key"
                                     )
-                                
                                 InputField(
                                     v-else
                                     :value="value()(s.uuid)",
@@ -57,6 +56,10 @@ export default {
     computed: {
         ...mapGetters('settings', ['grouped', 'all']),
         ...mapGetters('subjects', { subjects: 'all' })
+    },
+    async mounted() {
+        await this.$store.dispatch('settings/load')
+        await this.$store.dispatch('subjects/load')
     }
 }
 </script>
