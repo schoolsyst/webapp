@@ -1,5 +1,5 @@
 import { firstBy } from "thenby"
-import { isBefore, isWithinInterval, parseISO } from "date-fns"
+import { isBefore, isWithinInterval, parseISO, eachDayOfInterval } from "date-fns"
 import { getMutations, getValidator } from "./index"
 
 export const state = () => ({
@@ -99,6 +99,18 @@ export const getters = {
   absoluteUnit: (state, getters) => (value, unit=null) => {
     unit = unit || rootGetters['settings/value']('grade_max')
     return value / unit
+  },
+  meanOfDays: (state, getters, rootState, rootGetters) => (start=null, end=null) => {
+    let grades
+    if (start && end) {
+      grades = getters.of({start, end}, 'interval', 'obtained_date')
+    } else if (end === null) {
+      grades = getters.of(start, 'trimester', 'obtained_date')
+    } else {
+      grades = getters.of(null, 'trimester', 'obtained_date')
+    }
+    return getters.mean(grades)
+
   },
   validate: getValidator({
     constraints: {

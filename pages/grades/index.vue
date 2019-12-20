@@ -1,7 +1,16 @@
 <template lang="pug">
   .container
     ModalAddGrade.grade(@submit="postGrade($event)")
-    ScreenEmpty(@cta="$modal.show('add-grade')")
+    .-side-by-side(v-if="all")
+      .grades
+        HeadingSub Notes
+        ButtonNormal(@click="$modal.show('add-grade')") Ajouter une note
+      .means
+        HeadingSub Moyennes
+    .stats(v-if="all")
+        HeadingSub Statistiques
+        line-chart(:data="meanOfDays")
+    ScreenEmpty(v-else @cta="$modal.show('add-grade')")
       template(#smiley) -_-
       p Vous n'avez aucune note.
       template(#cta) Ajouter des notes
@@ -11,11 +20,26 @@
 import ModalAddGrade from '~/components/ModalAddGrade.vue'
 import ButtonNormal from '~/components/ButtonNormal.vue'
 import ScreenEmpty from '~/components/ScreenEmpty.vue'
+import HeadingSub from '~/components/HeadingSub.vue'
 import { mapGetters, mapActions } from 'vuex';
 export default {
-  components: { ModalAddGrade, ButtonNormal, ScreenEmpty },
+  components: { ModalAddGrade, ButtonNormal, ScreenEmpty, HeadingSub },
+  data() {
+    return {
+      chart: {
+        options: {
+          xAxes: {
+            display: true
+          },
+          yAxes: {
+            display: true
+          }
+        }
+      }
+    }
+  },
   computed: {
-    ...mapGetters('grades', ['all'])
+    ...mapGetters('grades', ['all', 'meanOfDays'])
   },
   methods: {
     ...mapActions('grades', ['post']),
@@ -24,11 +48,11 @@ export default {
       if (posted) {
         this.$modal.hide('add-grade')
         this.$toast.success('Note ajoutée',
-          { icon: 'check', duration: 100000000 }
+          { icon: 'check' }
         )
       } else {
         this.$toast.error("Erreur lors de l'ajout de la note",
-          { icon: 'error_outline', duration: 100000000 }
+          { icon: 'error_outline' }
         )
       }
     },
@@ -42,4 +66,6 @@ export default {
 </script>
 
 <style lang="stylus" scoped>
+h2
+  margin-bottom 2rem
 </style>

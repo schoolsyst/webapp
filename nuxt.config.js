@@ -82,7 +82,8 @@ export default {
    */
   plugins: [
     '~plugins/vue-js-modal',
-    '~plugins/loading-screen'
+    '~plugins/loading-screen',
+    '~plugins/vue-chartkick'
   ],
   /*
    ** Nuxt.js modules
