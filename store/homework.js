@@ -194,7 +194,8 @@ export const actions = {
 		}
 	},
 
-	async patch({ commit, dispatch, getters }, uuid, modifications, force = false) {
+	async patch({ commit, dispatch, getters }, { uuid, modifications, force }) {
+		force = force || false
 		if(!force) {
 			let homework = getters.one(uuid)
 			homework = {...homework, ...modifications}
@@ -205,14 +206,14 @@ export const actions = {
 			if (modifications.subject)
 				modifications.subject = modifications.subject.uuid
 			await this.$axios.patch(
-				`/homeworks/${uuid}`,
+				`/homework/${uuid}/`,
 				modifications
 			);
-			const { data } = await this.$axios.get(`/homeworks/${uuid}`)
+			const { data } = await this.$axios.get(`/homework/${uuid}`)
 			if (data) commit("PATCH", uuid, data);
-			console.log(`[from API] PATCH /homeworks/${uuid}: OK`);
+			console.log(`[from API] PATCH /homework/${uuid}: OK`);
 		} catch (error) {
-			console.error(`[from API] PATCH /homeworks/${uuid}: Error`);
+			console.error(`[from API] PATCH /homework/${uuid}: Error`);
 			try {
 				console.error(error.response.data);
 			} catch (_) {
