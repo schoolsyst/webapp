@@ -4,7 +4,7 @@
       li.day(v-for="events in days")
         ul.events
           li.event(
-            v-for="event in events" :key="uuid" 
+            v-for="event in events" :key="event.uuid" 
             :style="styles(event)"
             @click=""
             :class="{ deleted: event.deleted }"
