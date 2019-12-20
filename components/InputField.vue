@@ -146,6 +146,7 @@ export default {
   },
   methods: {
     clearField() {
+      this.$el.querySelector('input, textarea').value = ''
       this.$emit('input', '')
     },
     togglePasswordVisibility() {
