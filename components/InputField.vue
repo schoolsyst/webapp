@@ -27,21 +27,22 @@
           resize: resizable && type === 'block' ? resizable : 'none'\
         }"
         v-bind="{value, tabindex, placeholder, disabled}"
-        @input="active = true; initial = false; $emit('input', $event.target.value)"
-        @click="active = true; $emit('click', $event.target.value)"
-        @blur="active = false; passwordShown = false; $emit('blur', $event.target.value)"
-        @mouseover="$emit('mouseover', $event.target.value)"
-        @mouseout="$emit('mouseout', $event.target.value)"
+        @input="active = true; initial = false; $emit('input', getValue($event))"
+        @click="active = true"
+        @blur="active = false; passwordShown = false;"
       )
       label(
         :for="`input-field--${dName}`"
         :style="`background: ${active ? backgroundColor : 'transparent'};`"
       )
         slot
-    p.error(v-if="!noErrorMessages") {{errored ? validation.errors[camelCaseName][0] : ""}}
+    p.error(v-if="!noErrorMessages") 
+      | {{errored ? validation.errors[camelCaseName][0] : ""}}
 </template>
 
 <script>
+import { parseISO } from 'date-fns'
+
 export default {
   props: {
     type: {
@@ -158,6 +159,19 @@ export default {
       else
         this.clearField()
     },
+    getValue($event) {
+      let value = $event.target.value
+      switch (this.type) {
+        case 'date':
+          value = parseISO(value)
+          break;
+      
+        case 'number':
+          value = Number(value)
+          break;
+      }
+      return value
+    }
   }
 }
 </script>
@@ -179,6 +193,8 @@ errors-space = 2em
   // Vertically center the action button
   display flex
   align-items center
+  // Make it take the height of the parent element
+  height 100%
 .input
   // Let the input take the whole .inner-field width
   width 100% 
@@ -194,7 +210,7 @@ label
   min-width 250px
   &[type=number]
     min-width 50px
-  padding 15px side-padding
+  padding 15px (side-padding)
   padding-right (side-padding * 2 + 10px)
   // LOOKS
   background transparent
@@ -256,9 +272,25 @@ label
 // === Other elements
 .action
   position absolute
-  right: side-padding
+  right: (side-padding)
   z-index: 2
   color var(--black)
+// Align action button to top-left for type=block
+.type-block .action
+  top: 32px //FIXME: Pixel-perfect value
+// Remove type=date or type=time native clear button
+/* WARN: Does *not* work on Firefox.
+ * Another solution would be to set the date to required, but
+ * that would render our custom clear btn pointless...
+ * Though, this issue would be gone once the custom date & time pickers are
+ * implemented, as the date/time inputs will be of text type anyways
+ * I know this is bad for semantics, but the date/time input types
+ * do not offer enough customisability. (especially on FF)
+ */
+input[type="time"]::-webkit-clear-button
+input[type="date"]::-webkit-clear-button
+  display none
+
 .error
   text-align: center
   color var(--red)
