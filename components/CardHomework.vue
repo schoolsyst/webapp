@@ -9,7 +9,7 @@
             .first-line
                 SubjectDot.subject-color(v-bind="subject")
                 span.name {{ name }}
-            pre.details(v-if="details.length > 0" v-html="details")
+            pre.details(v-if="details" v-html="details")
 </template>
 
 <script>
