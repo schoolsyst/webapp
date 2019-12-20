@@ -1,8 +1,8 @@
 <template lang="pug">
     .container
         ModalAddHomework(@click="post({homework: $event})")
-        ul.homework(v-if="!!all.length")
-            li(v-for="hw in all", :key="hw.uuid")
+        ul.homework(v-if="!!currentOrNextWeek.length")
+            li(v-for="hw in currentOrNextWeek", :key="hw.uuid")
                 CardHomework(v-bind="hw")
         ScreenEmpty(v-else @cta="$modal.show('add-homework')")
             template(#smiley) \o/
@@ -21,7 +21,7 @@ export default {
         title: 'Devoirs'
     },
     computed: {
-        ...mapGetters('homework', ['all'])
+        ...mapGetters('homework', ['currentOrNextWeek'])
     },
     methods: {
         ...mapActions('homework', ['post'])
