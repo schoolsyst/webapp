@@ -1,6 +1,12 @@
 <template lang="pug">
   .field(
-    :class="{active, errored, filled: !!value, 'has-label': !noLabel, [`variant-${variant}`]: true, disabled}"
+    :class="{\
+      active, errored, disabled, \
+      filled: !!value, \
+      'has-label': !noLabel, \
+      [`variant-${variant}`]: true,\
+      [`type-${type}`]: true,\
+    }"
     :name="dName"
     :data-variant="variant"
   )
@@ -16,7 +22,10 @@
         :name="dName"
         :type="passwordShown ? 'text' : type"
         :id="`input-field--${dName}`"
-        :style="{fontFamily: `var(--fonts-${passwordShown ? 'monospace' : 'regular'}`}"
+        :style="{\
+          fontFamily: `var(--fonts-${passwordShown ? 'monospace' : 'regular'}`,\
+          resize: resizable && type === 'block' ? resizable : 'none'\
+        }"
         v-bind="{value, tabindex, placeholder, disabled}"
         @input="active = true; initial = false; $emit('input', $event.target.value)"
         @click="active = true; $emit('click', $event.target.value)"
@@ -77,6 +86,10 @@ export default {
     },
     disabled: {
       type: Boolean,
+      default: false
+    },
+    resizable: {
+      type: [Boolean, String],
       default: false
     }
   },
@@ -187,6 +200,8 @@ label
   border (stroke-thickness) solid var(--grey-dark)
   border-radius var(--border-radius)
   color var(--black)
+textarea
+  height 100%
 label
   position absolute
   left 5px
