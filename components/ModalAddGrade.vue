@@ -21,6 +21,11 @@ BaseModal.grade(name="add-grade" title="Ajouter une note...")
   .-side-by-side
     .obtained-grade
       .fraction
+        // comment #1
+        //FIXME: the step value causes the scroll to 
+        // increase by ridiculously small steps.
+        // consider using a custom JS implementation
+        // with <InputField type="number" variant="transparent">
         input.numerator(
           type="number"
           label="numerator"
@@ -28,12 +33,14 @@ BaseModal.grade(name="add-grade" title="Ajouter une note...")
           placeholder="?"
           min="0"
           :max="unit"
+          step="0.001"
         ) 
         input.denominator(
           type="number"
           label="denominator"
           v-model="unit"
           min="1"
+          step="0.001"
         )
     .date-and-other-grades
       .other-grades
@@ -139,7 +146,7 @@ export default {
       margin-bottom 0.2em
 input
   width: 100%
-  font-family var(--fonts-monospace-light)
+  font-family var(--fonts-monospace)
 .fraction
   display flex
   flex-direction column
