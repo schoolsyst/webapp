@@ -2,6 +2,7 @@
 import groupBy from "lodash.groupby"
 import { parseISO, parse } from "date-fns"
 import { getMutations } from "./index"
+import debounce from 'lodash.debounce'
 
 export const state = () => ({
   settings: [],
@@ -24,7 +25,7 @@ export const getters = {
       return []
     return setting.value
   },
-  group: (state, getters) => (settings, { removeHidden }) => {
+  group: () => (settings, { removeHidden }) => {
     /* Groups `settings` by category.
      * `removeHidden`: when set to true, categories that match the regex pattern below
      * get filtered out of the returned array:
@@ -33,10 +34,14 @@ export const getters = {
     if (removeHidden)
       settings = settings.filter((o) => !o.category.match(/^__.+__$/))
     settings = groupBy(settings, "category")
-    return settings
+    return [...Object.entries(settings)]
   },
-  grouped: (state, getters) =>
-    getters.group(getters.all, { removeHidden: true }),
+  grouped: ({}, { group, all }) =>
+    group(all, { removeHidden: true }),
+  userHasSetting: ({}, { one }) => (propval, prop = 'key') => {
+    const setting = one(propval, prop)
+    return setting ? setting.isDefaultValue : null
+  }
 }
 
 export const mutations = {
@@ -46,6 +51,7 @@ export const mutations = {
      */
     definitions.forEach((definition) => {
       let value
+      let { choices } = definition
       // Attempt to get the user's value for this setting definition
       const setting = settings.find((o) => o.setting.key === definition.key)
       // Set `value` property: if setting is undefined, fallback to the default
@@ -59,10 +65,13 @@ export const mutations = {
       let rawValue = value
       // Convert to the appropriate JS representation of the value
       value = parsedValue(value, definition)
+      if (choices) {
+        choices = choices.split(',')
+      }
       /* Adds the definition to the state as a setting object + the value prop
        * and a bool to tell if the setting is set to the default value.
        */
-      const hydratedDefinition = { ...definition, value, isDefaultValue, rawValue }
+      const hydratedDefinition = { ...definition, choices, value, isDefaultValue, rawValue }
       state.settings.push(hydratedDefinition)
     })
   },
@@ -114,7 +123,8 @@ export const actions = {
   },
   async post({ commit }, setting) {
     try {
-      const { data } = await this.$axios.post("/settings/", setting)
+      const res = await this.$axios.post("/settings/", setting)
+      const { data } = await this.$axios.get(`/settings/${res.data.setting}/`)
       if (data) commit("ADD", data)
       // console.log(`[from API] POST /settings/: OK`)
     } catch (error) {
@@ -147,16 +157,27 @@ export const actions = {
     try {
       const { data } = await this.$axios.delete(`/settings/${uuid}`)
       if (data) commit("DEL", uuid)
-      // console.log(`[from API] DELETE /settings/${uuid}: OK`)
     } catch (error) {
-      // console.error(`[from API] DELETE /settings/${uuid}: Error`)
-      try {
-        // console.error(error.response.data)
-      } catch (_) {
-        // console.error(error)
-      }
+      
     }
   },
+  setValue: debounce(async function ({ getters, commit, dispatch }, { key, value }) {
+    try {
+      // User already has that setting
+      if (getters.userHasSetting(key, 'key')) {
+        const uuid = getters.one(key)
+        await dispatch('patch', { uuid, modifications: { value } })
+      // The setting exist but that user has never set a value
+      } else if (getters.one(key)) {
+        await dispatch('post', { setting: key, value })
+      // The setting does not exist
+      } else {
+        this.$axios.error("Ce réglage n'exsite pas", {icon: 'error_outline'})
+      }
+    } catch (error) {
+      
+    }
+  }, 1000)
 }
 
 const parsedValue = (
