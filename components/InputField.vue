@@ -27,6 +27,7 @@
           resize: resizable && type === 'block' ? resizable : 'none'\
         }"
         v-bind="{value, tabindex, placeholder, disabled}"
+        :step="type === 'number' ? 0.001 : null"
         @input="active = true; initial = false; $emit('input', getValue($event))"
         @click="active = true"
         @blur="active = false; passwordShown = false;"
