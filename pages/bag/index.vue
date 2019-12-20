@@ -35,7 +35,7 @@ import MainGroupLeft from "~/components/MainGroupLeft.vue"
 import MainGroupRight from "~/components/MainGroupRight.vue"
 import HeadingSub from "~/components/HeadingSub.vue"
 import BigNumber from "~/components/BigNumber.vue"
-import SubjectDot from "~/components/SubjectDot.vue"
+
 import BadgeSubject from "~/components/BadgeSubject.vue"
 
 export default {

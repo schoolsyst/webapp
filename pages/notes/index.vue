@@ -63,7 +63,7 @@
 <script>
 import ScreenEmpty from '~/components/ScreenEmpty.vue'
 import HeadingSub from '~/components/HeadingSub.vue'
-import SubjectDot from '~/components/SubjectDot.vue'
+
 import ButtonNormal from '~/components/ButtonNormal.vue'
 import InputField from '~/components/InputField.vue'
 import CardNote from '~/components/CardNote.vue'
