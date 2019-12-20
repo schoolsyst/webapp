@@ -7,14 +7,21 @@ aside.BaseModal(:id="`modal_${name}`",
     @click.self="$modal.hide(name)" 
     :class="{'edge-to-edge': edgeToEdge}"
 ) 
-    .modal-wrapper
+    .modal-wrapper(
+      :style="{\
+        resize: resizable || 'none',\
+      }"
+    )
         .header(v-if="closeButton || title")
           p.title(v-if="title") {{ title }}
           button.close-modal(
             v-if="closeButton",
             @click="$modal.hide(name)"
           ): Icon close
-        slot 
+        template(v-if="closeButton || title")
+          .content: slot
+        template(v-else)
+          slot
  
 </template> 
  
@@ -34,7 +41,11 @@ export default {
       type: Boolean,
       default: false
     },
-    title: String
+    title: String,
+    resizable: {
+      type: [Boolean, String],
+      default: false
+    }
   }, 
   data() { 
     return { wasFocused: null } 
@@ -65,6 +76,9 @@ export default {
  
 .modal-wrapper 
     position: relative 
+    display grid
+    // 5em ~= header height
+    grid-template-rows 5em auto
     border-radius: var(--border-radius) 
     background: var(--white) 
     color var(--black) 
