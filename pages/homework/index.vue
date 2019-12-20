@@ -1,6 +1,6 @@
 <template lang="pug">
     .container
-        ModalAddHomework
+        ModalAddHomework(@click="post({homework: $event})")
         ul.homework(v-if="!!all.length")
             li(v-for="hw in all", :key="hw.uuid")
                 CardHomework(v-bind="hw")
@@ -14,7 +14,7 @@
 import CardHomework from '~/components/CardHomework.vue'
 import ScreenEmpty from '~/components/ScreenEmpty.vue'
 import ModalAddHomework from '~/components/ModalAddHomework.vue'
-import { mapGetters } from 'vuex';
+import { mapGetters, mapActions } from 'vuex';
 export default {
     components: { CardHomework, ScreenEmpty, ModalAddHomework },
     head: {
@@ -22,6 +22,9 @@ export default {
     },
     computed: {
         ...mapGetters('homework', ['all'])
+    },
+    methods: {
+        ...mapActions('homework', ['post'])
     },
     async mounted() {
         this.$withLoadingScreen(async () => {

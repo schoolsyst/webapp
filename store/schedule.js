@@ -283,6 +283,8 @@ export const getters = {
     if(!courses.length) return null
     return courses[courses.length-1].end
   },
+  currentSubject: (state, { currentCourse }) => 
+    currentCourse ? currentCourse.subject : null,
   validateEvent: getValidator({
     constraints: {
       required: ["subject", "start", "end", "day", "week_type"],

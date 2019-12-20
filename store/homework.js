@@ -4,7 +4,14 @@ import { isSameWeek, differenceInWeeks, isBefore, parseISO } from "date-fns";
 import { getValidator } from "./index"
 
 export const state = () => ({
-	homeworks: []
+	homeworks: [],
+	types: [
+		{ key: "EXERCISE", label: "Exercice"      },
+		{ key: "TEST",     label: "Contrôle"      },
+		{ key: "DM",       label: "Devoir maison" },
+		{ key: "TOBRING",  label: "À apporter"    },
+	],
+	loaded: false
 });
 
 const parseHomeworkDates = homework => ({
@@ -14,26 +21,25 @@ const parseHomeworkDates = homework => ({
 })
 
 export const getters = {
-	all: (state, getters) => getters.order(state.homeworks),
-	one: (state, getters) => (value, prop = "uuid") =>
-		getters.all.find(o => o[prop] === value) || null,
-	nextWeek: (state, getters, rootState) =>
-		getters.all.filter(o => differenceInWeeks(o.due, rootState.now) == 1),
-	currentWeek: (state, getters, rootState) =>
-		getters.all.filter(o => isSameWeek(o.due, rootState.now)),
-	currentOrNextWeek: (state, getters, rootState, rootGetters) => [
-		...getters.currentWeek,
-		...getters.nextWeek
-	],
-	pending: (state, getters, rootState) =>
-		getters.currentOrNextWeek.filter(o => o.progress != 1),
-	order: (state, getters, rootState) => homeworks =>
+	types: ({ types }) => types,
+	all: ({ homeworks }, { order }) => order(homeworks),
+	one: ({}, { all }) => (value, prop = "uuid") =>
+		all.find(o => o[prop] === value) || null,
+	nextWeek: ({}, { all }, rootState) =>
+		all.filter(o => differenceInWeeks(o.due, rootState.now) == 1),
+	currentWeek: ({}, { all }, rootState) =>
+		all.filter(o => isSameWeek(o.due, rootState.now)),
+	currentOrNextWeek: ({}, {currentWeek, nextWeek}) => 
+		[...currentWeek, ...nextWeek],
+	pending: ({}, { currentOrNextWeek }) =>
+		currentOrNextWeek.filter(o => o.progress != 1),
+	order: () => homeworks =>
 		[...homeworks].sort(
 			firstBy((o1, o2) => isBefore(o1.due, o2.due))
 				.thenBy(o => o.subject.weight)
 				.thenBy("uuid")
 		),
-	group: (state, getters, rootState) => homeworks => {
+	group: ({}, { _needToShowGroup },) => homeworks => {
 		/* Groups the provided array of homework by due date
 		* into an array of groups:
 		* [ { due: <date>, homeworks: [ ... ], shown: <bool> }, ... ]
@@ -45,12 +51,12 @@ export const getters = {
 			flat.push({
 				due,
 				homeworks,
-				shown: getters._needToShowGroup({ due, homeworks })
+				shown: _needToShowGroup({ due, homeworks })
 			})
 		}
 		return flat
 	},
-	_needToShowGroup: (state, getters, rootState, rootGetters) => group => {
+	_needToShowGroup: ({}, {}, {}, rootGetters) => group => {
 		/* Takes a group object ({due, homeworks}) and decides whether this
 		* group needs to be shown to the user.
 		*/
@@ -87,7 +93,39 @@ export const getters = {
   counts: (state, getters, rootState) => ({
     exercises: getters.only("exercises", getters.pending),
     tests: getters.only("tests", getters.currentOrNextWeek),
-  }),
+	}),
+	validate: getValidator({
+		constraints: {
+			required: ["subject", "name", "due"],
+			minimum: {
+				0: ["progress"]
+			},
+			maximum: {
+				1: ["progress"]
+			},
+			maxLength: {
+				300: ["name", "room"]
+			}
+		},
+		customConstraints: [
+			{
+				field: 'type',
+				message: "Type de devoir invalide",
+				constraint: ({ types }, object) => 
+					types.map(t => t.key).includes(object.type)
+			}
+		],
+		fieldNames: {
+			subject:  { gender: "F", name: "matière" },
+			name:     { gender: "M", name: "nom" },
+			type:     { gender: "M", name: "type" },
+			room:     { gender: "F", name: "salle" },
+			progress: { gender: "F", name: "progression" },
+			due:			{ gender: "F", name: "date due" },
+		},
+		resourceName: { gender: "M", name: "devoir" },
+		debug: true
+	}),
 }
 
 export const mutations = {
@@ -102,38 +140,19 @@ export const mutations = {
 		// Apply modifications
 		Object.assign(state.homeworks[idx], modifications);
 	},
-	validate: getValidator({
-		constraints: {
-			isAHomeworkType: ["subject"],
-			required: ["subject", "name"],
-			minimum: {
-				0: ["progress"]
-			},
-			maximum: {
-				1: ["progress"]
-			},
-			maxLength: {
-				300: ["name", "room"]
-			}
-		},
-		fieldNames: {
-			subject:  { gender: "F", name: "matière" },
-			name:     { gender: "M", name: "nom" },
-			type:     { gender: "M", name: "type" },
-			room:     { gender: "F", name: "salle" },
-			progress: { gender: "F", name: "progression" }
-		},
-		resourceName: { gender: "M", name: "devoir" }
-	}),
+	POSTLOAD: (state) => state.loaded = true
 };
 
 export const actions = {
 	async load({ commit, state }, force = false) {
-		if (!force && state.homeworks.length) return
+		if (!force && state.loaded) return
 		try {
 			const { data } = await this.$axios.get(`/homework/`);
 			console.log(`[from API] GET /homework/: OK`);
-			if (data) commit("SET", data);
+			if (data) {
+				commit("SET", data);
+				commit('POSTLOAD')
+			}
 		} catch (error) {
 			console.error(`[from API] GET /homework/: Error`);
 			try {
@@ -144,14 +163,19 @@ export const actions = {
 		}
 	},
 
-	async post({ commit, dispatch }, homework, force = false) {
+	async post({ commit, dispatch, getters }, {homework, force}) {
+		force = force || false
 		if(!force) {
-			const validation = await dispatch('validate', homework)
+			const validation = getters.validate(homework)
 			if (!validation.validated) return validation
 		}
 		try {
-			const { data } = await this.$axios.post(`/homework/`, homework);
-			if (data) commit("ADD", homework);
+			if(homework.subject) homework.subject = homework.subject.uuid
+			const res = await this.$axios.post(`/homework/`, homework);
+			const { data } = await this.$axios.get(`/homework/${res.data.uuid}`)
+			if (data) {
+				commit("ADD", homework);
+			}
 		} catch (error) {}
 	},
 
@@ -174,7 +198,7 @@ export const actions = {
 		if(!force) {
 			let homework = getters.one(uuid)
 			homework = {...homework, ...modifications}
-			const validation = await getters.validate(homework)
+			const validation = getters.validate()(homework)
 			if (!validation.validated) return validation
 		}
 		try {
