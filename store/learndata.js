@@ -21,19 +21,19 @@ export const getters = {
         .thenBy("uuid")
     ),
   all: (state) => state.learndatas,
-  one: (state, getters, rootState) => (value, prop = "uuid") =>
-    getters.learndatas.find((o) => o[prop] === value) || null,
-  of: (state, getters) => (value, prop = "note") => {
+  one: (state, {all}, rootState) => (value, prop = "uuid") =>
+    all.find((o) => o[prop] === value) || null,
+  of: ({learndatas}, getters) => (value, prop = "note") => {
     switch (prop) {
       case "note":
-        return state.learndatas.filter((o) =>
+        return learndatas.filter((o) =>
           // If the requested note's UUID is in
           // the array of UUIDs of notes linked to that learndata
           o.notes.map((n) => n.uuid).includes(value)
         )
 
       case "subject":
-        return state.learndatas.filter((o) => o.subject.uuid === value)
+        return learndatas.filter((o) => o.subject.uuid === value)
 
       default:
         // console.error(`[notes/learndatasOf] Unrecognized prop: ${prop}`)
@@ -74,15 +74,11 @@ export const actions = {
     if (!force && state.learndatas.length) return
     try {
       const { data } = await this.$axios.get("/learndata/")
-      // console.log("[from API] GET /learndata/: OK")
       if (data) commit("SET", data)
+      return false
     } catch (error) {
-      // console.error("[from API] GET /learndatas/: Error")
-      try {
-        // console.error(error.response.data)
-      } catch (_) {
-        // console.error(error)
-      }
+      this.$toast.error("Erreur interne lors du chargement", {icon: 'error_outline'})
+      return true
     }
   },
   async post({ commit, dispatch }, learndata, force = false) {
