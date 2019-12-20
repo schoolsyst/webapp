@@ -9,7 +9,8 @@
                 .title
                     BadgeSubject.subject(
                         v-bind="subject" 
-                        clickable @click="$modal.show('subject-picker')"
+                        @click="$modal.show('subject-picker')"
+                        clickable, thin
                     )
                     input.title-field(
                         placeholder="Document sans titre"
@@ -387,7 +388,7 @@ body
         width: 100%
         display: flex
         align-items center
-        font-size: 2rem
+        font-size: 1.5rem
         .title-field
             margin-left .5em
             width: 100%
@@ -395,6 +396,7 @@ body
             color var(--black)
         .subject
             margin-left .75em
+            // font-size: 1rem
     .icon
         color var(--black)
         font-size: 2em
