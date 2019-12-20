@@ -16,14 +16,23 @@ export const getters = {
   all: (state, getters) => getters.order(state.grades),
   one: (state, getters) => (value, prop = "uuid") =>
     getters.all.find((o) => o[prop] === value) || null,
-  of: (state, getters, rootState, rootGetters) => (value, what = 'trimester') => {
+  of: (state, getters, rootState, rootGetters) => (value, what = 'trimester', date="added") => {
     switch (what) {
       case "trimester":
-        if (![1, 2, 3].includes(value)) return []
-        const trimester = rootGetters["schedule/trimester"](value)
-        if (trimester === null) return []
+        let trimesterInterval
+        if (value === null) {
+          trimesterInterval = rootGetters['schedule/currentTrimester']
+        } else {
+          if (![1, 2, 3].includes(value)) return []
+          trimesterInterval = rootGetters["schedule/trimester"](value)
+        }
+        if (trimesterInterval === null) return []
         // Gets all the grades that have been added within the `value`th trimester
-        return getters.all.filter((o) => isWithinInterval(o.added, trimester))
+        return getters.all.filter((o) => o[date] && isWithinInterval(o[date], trimesterInterval))
+
+      case "interval":
+        return getters.all.filter((o) => o[date] && isWithinInterval(o[date], value))
+        break
 
       default:
         return []
