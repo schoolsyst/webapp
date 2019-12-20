@@ -4,7 +4,7 @@ div.ItemGrade
         | Confirmer supprimera cette note pour toujours (mais pas le contrôle associé)
 
     .name-area
-        SubjectDot.subject(v-bind="subject")
+        BadgeSubject.subject(v-bind="subject" variant="dot")
         h5.name {{testName}}
         .grade-max-field 
             label.grade-max(:for="`grade-max-${uuid}`") /
@@ -44,7 +44,6 @@ div.ItemGrade
 import { mapGetters } from "vuex"
 import debounce from "lodash.debounce"
 //---------------------------------------------------
-import SubjectDot from "~/components/SubjectDot.vue"
 import BadgeSubject from "~/components/BadgeSubject.vue"
 import BigNumber from "~/components/BigNumber.vue"
 import LabelFlat from "~/components/LabelFlat.vue"
@@ -57,7 +56,6 @@ export default {
     BadgeSubject,
     BigNumber,
     LabelFlat,
-    SubjectDot,
     ButtonIcon,
     ModalDialogConfirm,
   },

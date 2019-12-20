@@ -5,16 +5,12 @@ BaseModal.grade(name="add-grade" title="Ajouter une note...")
     @pick="subject = $event"
   )
   .header
-    BadgeSubject.subject.badge(
+    BadgeSubject(
       clickable
       @click="$modal.show('add-grade-subject-picker')"
       v-bind="subject"
-    ).mobile-only
-    SubjectDot.subject.dot(
-      clickable
-      @click="$modal.show('add-grade-subject-picker')"
-      v-bind="subject"
-    ).desktop-only
+      variant="responsive"
+    )
     InputField.name(
       v-model="name"
       placeholder="Nom de la note..."
@@ -74,8 +70,6 @@ import BaseModal from '~/components/BaseModal.vue'
 import BadgeSubject from '~/components/BadgeSubject.vue'
 import InputField from '~/components/InputField.vue'
 import PickerSubject from '~/components/PickerSubject.vue'
-import SubjectDot from '~/components/SubjectDot.vue'
-import ButtonNormal from '~/components/ButtonNormal.vue'
 import { mapGetters } from 'vuex'
 export default {
   components: {BaseModal, BadgeSubject, InputField, PickerSubject, ButtonNormal, SubjectDot},
