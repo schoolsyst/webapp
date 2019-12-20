@@ -171,6 +171,7 @@ export const actions = {
             toast.goAway(0)
           }
         },
+        duration: 8000
       })
       // console.log(`[from API] DELETE /notes/${uuid}/: OK`)
     } catch (error) {
