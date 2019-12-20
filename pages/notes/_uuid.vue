@@ -377,35 +377,6 @@ body
     padding-bottom: 0
     border-bottom 2px solid rgba(0,0,0,0.25)
     max-width: 100vw
-    .multiselect
-        sel-width = 12em
-        width (sel-width)
-        cursor pointer
-        & /deep/ .multiselect__content-wrapper
-            width (sel-width)
-            border-radius var(--border-radius)
-            border-top-left-radius 0
-            border-top-right-radius 0
-            background-color var(--white)
-            color var(--black)
-            overflow-x hidden
-            border-color var(--grey-light)
-            border-width 2px
-        & /deep/ .multiselect__option
-        & /deep/ .multiselect__tags
-            width (sel-width)
-            background-color var(--white)
-            color var(--black)
-            font-size 1rem
-            border-color var(--grey-light)
-            border-width 2px
-        & /deep/ .multiselect__single
-            background-color var(--white)
-            white-space nowrap
-            text-overflow ellipsis
-            overflow: hidden
-        & /deep/ .multiselect__select
-            color var(--black)
 .top
     margin-left: 0.5em
     margin-bottom .75em
