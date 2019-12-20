@@ -15,46 +15,46 @@ const parseObjectDates = (object) => ({
 })
 // 
 export const getters = {
-  all: (state, getters) => getters.orderBy(state.notes),
-  one: (state, getters) => (value, prop = "uuid") =>
-    state.notes.find((o) => o[prop] === value) || null,
-  of: (state, getters) => (value, what = "subject") => {
-    if (what === "subject") {
-      return getters.all.filter((o) => o.subject.uuid === value)
-    } else {
-      return getters.all.filter((o) => o[what] === value)
-    }
-  },
+  all: ({ notes }, { orderBy }) => 
+    orderBy(notes),
+  one: ({ notes }) => (value, prop = "uuid") =>
+    notes.find((o) => o[prop] === value) || null,
+  of: (state, { all }) => (value, what = "subject") =>
+    all.filter((o) => (
+      what === 'subject' 
+      ? o.subject.uuid 
+      : o[what]
+      ) === value
+    ),
   currentSubject: (state, getters, rootState, rootGetters) => {
     const currentCourse = rootGetters["schedule/currentCourse"]
     if (currentCourse === null) return null
     return getters.of(currentCourse.subject, "subject")
   },
-  orderBy: (state, getters, rootState) => (notesOrLearndatas, whichDate) =>
+  orderBy: () => (notesOrLearndatas, whichDate) =>
     [...notesOrLearndatas].sort(
       firstBy((o1, o2) => isBefore(o1[whichDate], o2[whichDate]))
         .thenBy("name")
         .thenBy("uuid")
     ),
-  learndatas: (state) => state.learndatas,
-  learndata: (state, getters, rootState) => (value, prop = "uuid") =>
-    getters.learndatas.find((o) => o[prop] === value) || null,
-  latest: (state, getters) => (notesOrLearndatas, by = "modified") => {
-    const sorted = getters.orderBy(notesOrLearndatas, by)
-    if (sorted.length) return sorted[0]
-    return null
+  learndatas: ({ learndatas }) => learndatas,
+  learndata: (state, { learndatas }) => (value, prop = "uuid") =>
+    learndatas.find((o) => o[prop] === value) || null,
+  latest: (state, { orderBy }) => (notesOrLearndatas, by = "modified") => {
+    const sorted = orderBy(notesOrLearndatas, by)
+    return sorted.length ? sorted[0] : null
   },
-  learndatasOf: (state, getters) => (value, prop = "note") => {
+  learndatasOf: (state, { all }) => (value, prop = "note") => {
     switch (prop) {
       case "note":
-        return state.learndatas.filter((o) =>
+        return all.filter((o) =>
           // If the requested note's UUID is in
           // the array of UUIDs of notes linked to that learndata
           o.notes.map((n) => n.uuid).includes(value)
         )
 
       case "subject":
-        return state.learndatas.filter((o) => o.subject.uuid === value)
+        return all.filter((o) => o.subject.uuid === value)
 
       default:
         return []
@@ -92,7 +92,7 @@ export const mutations = {
 }
 
 export const actions = {
-  async load({ commit, state, rootGetters }, force = false) {
+  async load({ commit, state }, force = false) {
     if (!force && state.notes.length) return
     console.log(`Loading notes :: force=${force}, state.notes.length=${state.notes.length}`)
     try {
