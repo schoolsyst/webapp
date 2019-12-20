@@ -19,17 +19,17 @@
       .infos
         span.name(:title="name" :class="{'untitled': !name}") {{ name || '(Document sans titre)' }}
         span.info(:title="subject.name")
-          SubjectDot(v-bind="subject").subject-color
+          BadgeSubject(v-bind="subject" variant="dot").subject-color
           span.subject-name {{ subject.name }}
           span.more(@click.prevent="$emit('more')"): Icon more_vert
 </template>
 
 <script>
 import Icon from '~/components/Icon.vue'
-import SubjectDot from '~/components/SubjectDot.vue'
+import BadgeSubject from '~/components/BadgeSubject.vue'
 import { mapGetters } from 'vuex'
 export default {
-  components: { Icon, SubjectDot },
+  components: { Icon, BadgeSubject },
   props: {
     uuid: String,
   },
@@ -48,7 +48,7 @@ export default {
     openContextMenu() {
       if(this.$refs.hasOwnProperty('menu')) {
         return this.$refs.menu.open
-      } else {
+      } else {  
         console.log('oops')
         return null
       }
