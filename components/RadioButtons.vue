@@ -1,7 +1,7 @@
 <template lang="pug">
     fieldset.RadioButtons(:class="`variant-${variant}`")
         legend: slot
-        .RadioButton(v-for="value in values" :key="value.key")
+        .RadioButton(v-for="value in choices" :key="value.key")
             input(
                 @change="$emit('input', value.key)"
                 type="radio"
@@ -47,6 +47,13 @@ export default {
                 ? this.values.map((o) => o.key).indexOf(this.defaultValue)
                 : 0
             return this.values[idx].key
+        },
+        choices() {
+            if (typeof this.values[0] !== 'object') {
+                return this.values.map(v => ({ key: v, label: v }))
+            } else {
+                return this.values
+            }
         }
     },
     methods: {
