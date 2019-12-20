@@ -1,22 +1,29 @@
 <template lang="pug">
     .card(
-        @click="onClick"
-        :class="{clicked, completed: progress >= 1}"
+        @click="opened = !opened"
+        :class="{clicked, completed, opened}"
     )
-        .complete-slider
-            Icon check
+        .complete-slider(
+            :style="{backgroundColor: `var(--${completed ? 'red' : 'green'})` }"
+            @click="toggleComplete"
+        )
+            Icon(v-show="completed") close
+            Icon(v-show="!completed") check
         .infos
             .first-line
-                SubjectDot.subject-color(v-bind="subject")
+                .strikethrough-line
+                BadgeSubject.subject-color(v-bind="subject" variant="dot")
                 span.name {{ name }}
             pre.details(v-if="details" v-html="details")
 </template>
 
 <script>
 import Icon from '~/components/Icon.vue'
-import SubjectDot from '~/components/SubjectDot.vue'
+import BadgeSubject from '~/components/BadgeSubject.vue'
+import InputField from '~/components/InputField.vue'
+import debounce from 'lodash.debounce'
 export default {
-    components: { Icon, SubjectDot },
+    components: { Icon, BadgeSubject, InputField },
     props: {
         name: String,
         details: {
@@ -30,18 +37,26 @@ export default {
     data() {
         return {
             clicked: false,
+            mProgress: this.progress,
+            opened: false
+        }
+    },
+    computed: {
+        completed() {
+            return this.mProgress >= 1
         }
     },
     methods: {
-        async onClick() {
-            this.clicked = true
-            await setTimeout(async () => {
-                this.clicked = false
-                await this.$store.dispatch('homework/patch', this.uuid, {
-                    progress: this.progress
-                })
-            }, 500);
-        }
+        toggleComplete: debounce(async function () {
+            this.mProgress = this.completed ? 0 : 1
+            await this.$store.dispatch('homework/patch', {
+                uuid: this.uuid, 
+                modifications: {
+                    progress: this.mProgress
+                },
+                force: true
+            })
+        }, 500, { leading: true, trailing: false })
     },
 }
 </script>
@@ -52,9 +67,16 @@ export default {
     display flex
     // height: 100px
     width: 500px
-    border 2px solid var(--grey-light)
-    border-radius var(--border-radius)
     overflow hidden
+.strikethrough-line
+    --strikethrough-line-offset: 0px
+    height 0.1em
+    background var(--black)
+    position absolute
+    top: 50%
+    left: calc((100% - (100% - (var(--strikethrough-line-offset) * 2))) / 2)
+    width: 0
+    transition: width 0.25s ease
 .complete-slider
     width: 0
     overflow hidden
@@ -65,12 +87,19 @@ export default {
     transition width 0.25s ease
     flex-shrink 0
     z-index: 10
+    border-radius var(--border-radius)
+    border-top-right-radius 0
+    border-bottom-right-radius 0
     i
         margin-left: 0.5em
 .infos
     padding 20px 25px
+    border 2px solid var(--grey-light)
+    border-radius var(--border-radius)
+    width 100%
     display flex
     flex-direction column
+    position relative
     .first-line
         align-items center
         display flex
@@ -78,6 +107,7 @@ export default {
         overflow hidden
         text-overflow ellipsis
         white-space nowrap
+        position relative
     .name
         margin-left 0.5rem
     .details
@@ -90,11 +120,15 @@ export default {
         flex-grow 0
 
 .card.completed
-    opacity: 0.5
-.card:not(.completed):hover
+    .infos
+        opacity: 0.5
+    .strikethrough-line
+        width calc(100% - (var(--strikethrough-line-offset) * 2))
+.card:hover
     .complete-slider
         width 3em
-.card:not(.completed).clicked
-    .complete-slider
-        width 100%
+    .infos
+        border-top-left-radius 0px
+        border-bottom-left-radius 0px
+        border-left 0px
 </style>
