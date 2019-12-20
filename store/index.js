@@ -354,3 +354,8 @@ export const getMutations = (
 
 		return mutations
 }
+
+export const removeByProp = (arrayOfObjects, propName, propValue) => {
+  arr = [...arrayOfObjects]
+  return arr.splice(arr.findIndex(obj => obj[propName] === propValue), 1)
+}
