@@ -82,17 +82,17 @@ export const getters = {
       )
     )
   },
-  grouped: (state, getters, rootState) => getters.group(getters.all),
-  only: (state, getters, rootState) => (what, homeworks = null) => {
-    homeworks = homeworks || getters.all
+  grouped: ({}, { group, all }) => group(all),
+  only: ({}, { all }) => (what, homeworks = null) => {
+    homeworks = homeworks || all
     return homeworks.filter(o => o.type === what.replace(/(.+)s$/, ($0, $1) => $1).toUpperCase());
   },
-  exercises: (state, getters, rootState) =>
-    getters.only("exercises", getters.all),
-  tests: (state, getters, rootState) => getters.only("tests", getters.all),
-  counts: (state, getters, rootState) => ({
-    exercises: getters.only("exercises", getters.pending),
-    tests: getters.only("tests", getters.currentOrNextWeek),
+  exercises: ({}, { only, all }) =>
+    only("exercises", all),
+  tests: ({}, { only, all }) => only("tests", all),
+  counts: ({}, { only, pending, currentOrNextWeek }) => ({
+    exercises: only("exercises", pending),
+    tests: only("tests", currentOrNextWeek),
 	}),
 	validate: getValidator({
 		constraints: {
