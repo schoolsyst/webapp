@@ -28,8 +28,11 @@ import {
   endOfDay,
   startOfDay,
   isValid,
+  differenceInYears,
+  lastDayOfISOWeekYear,
 } from "date-fns"
-import { getMutations, getValidator } from "./index"
+import { getMutations, getValidator, removeByProp } from "./index"
+import { roundToNearestMinutesWithOptions } from "date-fns/fp"
 
 export const state = () => ({
   events: [],
@@ -47,14 +50,14 @@ const _mergeDateAndTime = (date, time) => {
 }
 
 export const getters = {
-  events: (state, getters) => state.events,
-  event: (state, getters) => (value, prop = "uuid") =>
-    getters.events.find((o) => o[prop] === value) || null,
-  mutations: (state, getters) => state.mutations,
-  mutation: (state, getters) => (value, prop = "uuid") =>
-    getters.mutations.find((o) => o[prop] === value) || null,
-  course: (state, getters) => (value, prop = "uuid") =>
-    getters.currentWeekCourses.find((o) => o[prop] === value) || null,
+  events: ({ events }) => events,
+  mutations: ({ mutations }) => mutations,
+  event: (state, { events }) => (value, prop = "uuid") =>
+    events.find(o => o[prop] === value) || null,
+  mutation: (state, { mutations }) => (value, prop = "uuid") =>
+    mutations.find(o => o[prop] === value) || null,
+  course: (state, { currentWeekCourses }) => (value, prop = "uuid") =>
+    currentWeekCourses.find((o) => o[prop] === value) || null,
   trimester: (state, getters, rootState, rootGetters) => (idx) => {
     /*
      *  Returns an Interval to test dates against using isWithinInterval(date, Interval)
@@ -98,29 +101,18 @@ export const getters = {
      */
     return false
   },
-  currentTrimester: (state, getters, rootState) => {
+  currentTrimester: (state, { trimester }, { now }) =>
     /* Returns the index of the current trimester.
      * Returns null if the current date is outside any trimester
      */
-    const now = rootState.now
-    const t1 = getters.trimester(1)
-    const t2 = getters.trimester(2)
-    const t3 = getters.trimester(3)
-    try {
-      if (isWithinInterval(now, t1)) return 1
-      if (isWithinInterval(now, t2)) return 2
-      if (isWithinInterval(now, t3)) return 3
-    } catch (error) {
-      // console.error(error)
-      // console.error({ t1, t2, t3, now })
-    }
-    return null
-  },
-  mutationsOf: (state, getters, rootState) => ({ event, date }) => {
+      [1, 2, 3]
+        .map(idx => trimester(idx))
+        .find(trimester => isWithinInterval(now, trimester))
+      || null,
+  mutationsOf: (state, { mutations }) => ({ event, date }) => {
     /* Provided an event and a date, returns either a schedule mutation object
      * or null if no mutation matches the arguments given.
      */
-    let mutations = getters.mutations
     if (event) {
       // Filter by the given event.
       mutations = mutations.filter((o) => o.event.uuid === event.uuid)
@@ -141,15 +133,39 @@ export const getters = {
     }
     return mutations
   },
-  currrentWeekMutations: (state, getters, rootState) => {
+  mutationsIn: (state, { mutations }) => (start, end=null) => {
+    if (end === null) {
+      start = startOfDay(start)
+      end = endOfDay(start)
+    }
+    return mutations.filter((mutation) => {
+      let addedInRange = false
+      let deletedInRange = false
+      if (mutation.added_start && mutation.added_end) {
+        addedInRange = (
+          isAfter(mutation.added_start, start)
+          && isBefore(mutation.added_end, end)
+        )
+      }
+      if (mutation.deleted_start && mutation.deleted_end) {
+        deletedInRange = (
+          isAfter(mutation.deleted_start, start)
+          && isBefore(mutation.deleted_end, end)
+        )
+      }
+      return addedInRange || deletedInRange
+    })
+  },
+  currrentWeekMutations: (state, { mutationsOf }, rootState) => {
     let mutations = []
     const week = {
       start: startOfWeek(rootState.now),
       end: endOfWeek(rootState.now),
     }
     eachDayOfInterval(week).forEach((day) => {
-      const mutationsOfDay = getters.mutationsOf({ date: day, event: null })
-      mutations = [...mutations, ...mutationsOfDay]
+      mutations.push( 
+        ...mutationsOf({ date: day, event: null })
+      )
     })
   },
   orderCourses: (state, getters, rootState, rootGetters) => (courses) =>
@@ -159,12 +175,37 @@ export const getters = {
       firstBy("day").thenBy((o1, o2) => isAfter(o1.start, o2.start))
     ),
 
+  isDeleted: (state, getters) => (course, mutation) => {
+    if (!mutation.hasOwnProperty('event')) 
+      return false
+    if (course.uuid !== mutation.event.uuid)
+      return false
+    if (!mutation.deleted_start || !mutation.deleted_end)
+      return false
+    return (
+      isBefore(mutation.deleted_start, course.start)
+      && isAfter(mutation.deleted_end, course.end)
+    )
+  },
+  isAdded: (state, getters) => (course, mutation) => {
+    if (!mutation.hasOwnProperty('event')) 
+      return false
+    if (course.uuid !== mutation.event.uuid)
+      return false
+    if (!mutation.added_start || !mutation.added_end)
+      return false
+    return (
+      isBefore(mutation.added_start, course.start)
+      && isAfter(mutation.added_end, course.end)
+    )
+  },
+
   coursesIn: (state, getters, rootState, rootGetters) => (start, end=null, includeDeleted=false) => {
     if (end===null) {
       start = startOfDay(start)
       end = endOfDay(start)
     }
-    const courses = []
+    let courses = []
     for (const day of eachDayOfInterval({ start, end })) {
       // If this day is an offday, it doesn't contain any events
       if (getters.isOffday(day)) continue
@@ -174,27 +215,57 @@ export const getters = {
           o.day === getISODay(day) &&
           [getters.weekType(day), "BOTH"].includes(o.week_type)
       )
-      // Loop through the events
-      events.forEach((event) => {
-        // Handle mutations
-        const mutations = getters.mutationsOf(event, day)
-        /* getters.mutationsOf returns an array of mutations, but here we only want one.
-         * Since two mutations should never be on the same event & same day anyway, we just take
-         * the array's first item (or set to null if no mutations were found.)
-         */
-        const mutation = mutations.length
-          ? mutations[0]
-          : { deleted: null, rescheduled: null }
-        if (!mutations.deleted || includeDeleted)
-          delete mutation.subject // Mutation subject is just a number, while event's subject is a proper object.
-          courses.push({
-            ...event,
+      courses = [...courses, ...events.map((event) => ({
+        ...event,
+        start: _mergeDateAndTime(day, event.start),
+        end: _mergeDateAndTime(day, event.end),
+      }))]
+    }
+    getters.mutationsIn(start, end).forEach((mutation) => {
+      let courseIdx, course
+      if (mutation.event) {
+        courseIdx = courses.findIndex((o) => o.uuid === mutation.event.uuid)
+        course = courses[courseIdx]
+      }
+      switch (mutation.type) {
+        case 'RES':
+          courses[courseIdx] = {
+            ...course,
+            deleted: getters.isDeleted(course, mutation),
+            added: getters.isAdded(course, mutation)
+          }
+          break;
+      
+        case 'EDT':
+          course[courseIdx] = {
+            ...course,
             ...mutation,
-            start: _mergeDateAndTime(day, event.start),
-            end: _mergeDateAndTime(day, event.end),
-            placeholder: false // See getters.courseOrPlaceholder
+            deleted: false,
+            added: false
+          }
+          break;
+
+        case 'DEL':
+          course[courseIdx] = {
+            ...course,
+            deleted: getters.isDeleted(course, mutation),
+            added: false
+          }
+          break;
+
+        case 'ADD':
+          courses.push({
+            ...mutation,
+            start: parseISO(mutation.added_start),
+            end: parseISO(mutation.added_end),
+            added: true,
+            deleted: false
           })
-      })
+          break;
+      }
+    })
+    if (!includeDeleted) {
+      courses = courses.filter((course) => !course.deleted)
     }
     return getters.orderCourses(courses)
   },
