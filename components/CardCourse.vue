@@ -13,17 +13,17 @@
       :class="{empty, expanded}"
     )
       template(v-if="subject")
-        BadgeSubject.subject-color(v-bind="subject" variant="dot")
         .infos
+          BadgeSubject.subject-color(v-bind="subject" variant="dot")
           span.subject
             span.subject-name {{ subject.name }}
           .room-and-time 
             .room {{ room }}
-        .homework(v-if="currentWeek")
-          ul
-            li(v-for="hw in currentWeek" :key="hw.uuid")
-              .card
-                span.name {{ hw.name }}
+        //- .homework(v-if="currentWeek")
+        //-   ul
+        //-     li(v-for="hw in currentWeek" :key="hw.uuid")
+        //-       .card
+        //-         span.name {{ hw.name }}
       template(v-else)
         slot
 </template>
