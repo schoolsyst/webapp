@@ -182,8 +182,6 @@ export const getValidator = ({
       object.hasOwnProperty(fieldName) && object[fieldName] !== null,
     notEmpty: ({arg, fieldName}) =>
       object[fieldName].length > 0,
-    isAHomeworkType: ({arg, fieldName}) =>
-      ['TEST', 'DM', 'EXERCISE', 'TOBRING'].includes(object[fieldName]),
     isAWeekType: ({arg, fieldName}) =>
       ['Q1', 'Q2', 'BOTH'].includes(object[fieldName]),
     before: ({arg, fieldName}) =>
@@ -223,7 +221,6 @@ export const getValidator = ({
       minimum: `${fieldNameWithArticle} doit être d'au moins ${errorArg}`,
       maxLength: `${fieldNameWithArticle} ne doit pas dépasser ${errorArg} caractère${errorArg === 1 ? '' : 's'}`,
       required: `Veuillez renseigner ${indeterminateArticle}${name}`,
-      isAHomeworkType: `${fieldNameWithArticle} doit être un contrôle, un exercice, un DM ou quelque chose à apporter.`,
       isAWeekType: `${fieldNameWithArticle} doit être Q1, Q2 ou les deux.`,
       before: `${fieldNameWithArticle} doit être avant ${argNameWithArticle}`,
       isAColor: `${fieldNameWithArticle} doit être une couleur au format hexadécimal. Exemple: #09f ou #0479cf`,
