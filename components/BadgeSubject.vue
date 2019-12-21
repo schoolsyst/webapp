@@ -4,7 +4,7 @@ component.subject(
   @click="$emit('click')"
   :class="{clickable, multiline, thin, [`variant-${variant}`]: true}"
   :is="clickable ? 'button' : 'span'"
-  v-tooltip="name"
+  v-tooltip="!noTooltip ? name : null"
 )
   Icon.unknown-icon(v-if="!color") more_horiz
   span.name
@@ -45,7 +45,11 @@ export default {
     thin: {
       type: Boolean,
       default: false
-    }
+    },
+    noTooltip: {
+      type: Boolean,
+      default: false
+    },
   },
     methods: {
       ...mapGetters(['textColor'])
