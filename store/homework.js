@@ -8,7 +8,7 @@ export const state = () => ({
 	types: [
 		{ key: "EXERCISE",   label: "Exercice"      },
 		{ key: "TEST",       label: "Contrôle"      },
-		{ key: "COURSEWORK", label: "Devoir maison" },
+		{ key: "COURSEWORK", label: "Travail noté"  },
 		{ key: "TOBRING",    label: "À apporter"    },
 	],
 	loaded: false
