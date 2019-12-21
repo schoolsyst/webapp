@@ -317,7 +317,8 @@ export const getMutations = (
   mapWith = (o) => o,
   pure = true,
   verbs = ["add", "set", "del", "patch"],
-  primaryKey = 'uuid'
+  primaryKey = 'uuid',
+  debug = false
 ) => {
   /* Factory to create basic mutations while preserving DRYness of code
    * set, add, del & patch are booleans that—when set to false—disable
@@ -332,6 +333,7 @@ export const getMutations = (
    * @param mapWith: a function to map each object to when putting into the state
    *                 Defaults to `o => o`
    * @param primaryKey: the name of the primary key used for mutations acting on a single object.
+   * @param debug: Log every mutation if true
    */
 
   const mutations = {}
@@ -339,19 +341,67 @@ export const getMutations = (
   const whats = what + 's'
 
   if (verbs.includes("set"))
-    mutations[`SET${WHAT}${pure ? "" : "S"}`] = (state, items) =>
-      (state[whats] = items.map(mapWith))
+    mutations[`SET${WHAT}${pure ? "" : "S"}`] = (state, items) => {
+      if(debug) {
+        console.group(`${whats}/SET`)
+        console.log('before:')
+        console.log(state[whats])
+      }
+      state[whats] = items.map(mapWith)
+      if (debug) {
+        console.log('after:')
+        console.log(state[whats])
+        console.groupEnd()
+      }
+    }
   if (verbs.includes("add"))
-    mutations[`ADD${WHAT}`] = (state, item) => state[whats].push(mapWith(item))
+    mutations[`ADD${WHAT}`] = (state, item) => {
+      if(debug) {
+        console.group(`${whats}/ADD`)
+        console.log('before:')
+        console.log(state[whats])
+      }
+      state[whats].push(mapWith(item))
+      if (debug) {
+        console.log('after:')
+        console.log(state[whats])
+        console.groupEnd()
+      }
+    }
   if (verbs.includes("del"))
-    mutations[`DEL${WHAT}`] = (state, pk) =>
-      (state[whats] = state[whats].filter((o) => o[primaryKey] !== pk))
+    mutations[`DEL${WHAT}`] = (state, pk) => {
+      if(debug) {
+        console.group(`${whats}/DEL`)
+        console.log('before:')
+        console.log(state[whats])
+      }
+      state[whats] = state[whats].filter((o) => o[primaryKey] !== pk)
+      if (debug) {
+        console.log('after:')
+        console.log(state[whats])
+        console.groupEnd()
+      }
+    }
   if (verbs.includes("patch"))
     mutations[`PATCH${WHAT}`] = (state, {pk, modifications}) => {
+      if(debug) {
+        console.group(`${whats}/PATCH`)
+        console.log('before:')
+        console.log(state[whats])
+      }
       // Get the requested item's index in the state array
 			let idx = state[whats].map((o) => o[primaryKey]).indexOf(pk)
-			// Apply modifications
-      state[whats][idx] = {...state[whats][idx], ...modifications}
+      // Apply modifications
+      let item = {...state[whats][idx], ...modifications}
+      // Re-run mapWith
+      item = mapWith(item)
+      // Set in store
+      state[whats][idx] = item
+      if (debug) {
+        console.log('after:')
+        console.log(state[whats])
+        console.groupEnd()
+      }
 		}
 
 		return mutations
