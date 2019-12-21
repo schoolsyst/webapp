@@ -3,14 +3,16 @@
     .empty
       .smiley: slot(name="smiley")
       p: slot
-      ButtonNormal(@click="$emit('cta')"): slot(name="cta")
+      .ctas
+        ButtonNormal(@click="$emit('cta')"): slot(name="cta")
+        ButtonNormal(v-if="$slots['cta-secondary']" @click="$emit('cta-secondary')"): slot(name="cta-secondary")
 </template>
 
 <script>
 import ButtonNormal from '~/components/ButtonNormal.vue'
 
 export default {
-  components: { ButtonNormal }
+  components: { ButtonNormal },
 }
 </script>
 
