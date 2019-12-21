@@ -90,15 +90,19 @@ export const getters = {
     getters.mean(getters.currentTrimester),
   currentTrimesterEvolution: (state, getters, rootState, rootGetters) =>
     getters.evolution(getters.currentTrimester),
-  display: (state, getters, rootState, rootGetters) => (grade, unit=null, precision=2, abs=false) => {
+  display: ({}, {}, rootState, rootGetters) => (grade, unit=null, precision=2, abs=false) => {
     if (!grade && grade !== 0) return '—'
     grade = abs ? ~~grade : grade
     unit = unit || rootGetters['settings/value']('grade_max')
     return (grade * unit).toFixed(precision).replace('.', ',')
   },
-  absoluteUnit: (state, getters) => (value, unit=null) => {
+  absoluteUnit: () => (value, unit=null) => {
     unit = unit || rootGetters['settings/value']('grade_max')
     return value / unit
+  },
+  formatUnit: () => (value, unit=null) => {
+    unit = unit || rootGetters['settings/value']('grade_max')
+    return value * unit
   },
   meanOfDays: (state, getters, rootState, rootGetters) => (start=null, end=null) => {
     let grades
