@@ -49,24 +49,24 @@ label
     display flex
     align-items center
 label::before
-    content ''
+    content 'check'
     display flex
     align-items center
     text-align center
+    vertical-align middle
     font-family 'Material Icons'
-    display inline-block
     height 1.15em
     width 1.15em
     border 2px solid black
     border-radius 2.5px
-    margin-right 0.25rem
+    margin-right 0.5em
+    color transparent
 .Checkbox
     display flex
     align-items center
 input:checked + label::before
     background #000
     color white
-    content 'check'
 input[disabled] + label
     opacity: 0.5
 </style>
