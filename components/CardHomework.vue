@@ -63,6 +63,7 @@ export default {
     display flex
     // height: 100px
     width: 500px
+    max-width 100%
     overflow hidden
     border-radius var(--border-radius)
     transition box-shadow 0.25s ease
