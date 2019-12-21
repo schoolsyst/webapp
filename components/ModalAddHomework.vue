@@ -88,7 +88,7 @@ export default {
       return {
         EXERCISE: 'faire',
         TOBRING: 'apporter',
-        DM: 'faire',
+        COURSEWORK: 'faire',
         TEST: 'réviser'
       }[this.type]
     },
