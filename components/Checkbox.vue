@@ -67,7 +67,7 @@ label::before
     border-radius 2.5px
     margin-right 0.5em
     color transparent
-    transition all 0.25s ease
+    transition all 0.125s ease
 .Checkbox
     display flex
     align-items center
