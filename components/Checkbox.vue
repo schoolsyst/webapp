@@ -44,10 +44,12 @@ export default {
 </script>
 
 <style lang="stylus" scoped>
+checkbox-size = 1.15em
+
 input
     display none
 label
-    height: 1.15em
+    height: checkbox-size
     display flex
     align-items center
     cursor pointer
@@ -59,8 +61,8 @@ label::before
     text-align center
     vertical-align middle
     font-family 'Material Icons'
-    height 1.15em
-    width 1.15em
+    height checkbox-size
+    width checkbox-size
     border 2px solid black
     border-radius 2.5px
     margin-right 0.5em
@@ -73,14 +75,14 @@ label::before
     position absolute
     color var(--white)
     font-size: 1em
-    height 1.15em
-    width 1.15em
+    height checkbox-size
+    width checkbox-size
     text-align center
     transform scale(0)
 
 input:checked 
     & + label::before
-        border-width calc(1.15em / 2)
+        border-width "calc(%s / 2)" % checkbox-size
     & + label .checkmark
         transform scale(1)
         transition transform 0.125s ease 0.125s
