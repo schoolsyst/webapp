@@ -6,10 +6,10 @@ import { getValidator } from "./index"
 export const state = () => ({
 	homeworks: [],
 	types: [
-		{ key: "EXERCISE", label: "Exercice"      },
-		{ key: "TEST",     label: "Contrôle"      },
-		{ key: "DM",       label: "Devoir maison" },
-		{ key: "TOBRING",  label: "À apporter"    },
+		{ key: "EXERCISE",   label: "Exercice"      },
+		{ key: "TEST",       label: "Contrôle"      },
+		{ key: "COURSEWORK", label: "Devoir maison" },
+		{ key: "TOBRING",    label: "À apporter"    },
 	],
 	loaded: false
 });
