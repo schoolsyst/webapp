@@ -344,3 +344,28 @@ p, pre
         overflow: hidden
     & /deep/ .multiselect__select
         color: var(--black)
+
+//=====================
+//    CONTEXT MENUS
+//=====================
+// NOTE: The body before the selector is required to beat the specifity
+//       of vue-context's default styles, without using !important.
+body .v-context
+    background-color: var(--white)
+    border-radius: var(--border-radius)
+    box-shadow: var(--shadow-3)
+    border: 0
+body .v-context > li,
+body .v-context > ul > li
+  & > a
+    color: var(--black)
+    display: inline-flex
+    width: 100%
+    align-items: center
+  & > a > i
+    vertical-align: middle
+    margin-right: 0.5rem
+    color: inherit
+  & > a:hover
+    color: var(--blue)
+    background-color: var(--blue-offset)

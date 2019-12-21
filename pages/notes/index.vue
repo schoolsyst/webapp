@@ -179,13 +179,6 @@ export default {
     i
       display none
 
-// CONTEXT MENU
-.v-context li
-  a
-    display flex
-    align-items center
-  i
-    margin-right 0.5rem
 // .v-context li:hover
 //     &, a
 //       background var(--blue-offset)
