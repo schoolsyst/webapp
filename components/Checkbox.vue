@@ -8,13 +8,15 @@
             :name="id"
         )
         label(:for="`checkbox--${id}`")
+            Icon.checkmark check
             slot
 </template>
 
 <script>
 import slugify from 'slugify'
-
+import Icon from '~/components/Icon.vue'
 export default {
+    components: { Icon },
     data() {
         return {
             checked: this.value,
@@ -48,8 +50,10 @@ label
     height: 1.15em
     display flex
     align-items center
+    cursor pointer
+    position relative
 label::before
-    content 'check'
+    content ''
     display flex
     align-items center
     text-align center
@@ -61,12 +65,25 @@ label::before
     border-radius 2.5px
     margin-right 0.5em
     color transparent
+    transition all 0.25s ease
 .Checkbox
     display flex
     align-items center
-input:checked + label::before
-    background #000
-    color white
+.checkmark
+    position absolute
+    color var(--white)
+    font-size: 1em
+    height 1.15em
+    width 1.15em
+    text-align center
+    transform scale(0)
+
+input:checked 
+    & + label::before
+        border-width calc(1.15em / 2)
+    & + label .checkmark
+        transform scale(1)
+        transition transform 0.125s ease 0.125s
 input[disabled] + label
     opacity: 0.5
 </style>
