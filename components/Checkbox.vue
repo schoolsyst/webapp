@@ -24,7 +24,7 @@ export default {
     },
     computed: {
         id() {
-            const label = this.$slots.default[0].text
+            const label = this.$slots.default ? this.$slots.default[0].text : ""
             return slugify(label).toLowerCase()
         }
     },
