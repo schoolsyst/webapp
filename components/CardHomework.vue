@@ -38,7 +38,7 @@ export default {
     },
     computed: {
         completed() {
-            return this.one(this.uuid).progress == 1 //FIXME
+            return this.progress >= 1
         },
         sliderTooltip() {
             return `Marquer comme ${this.completed ? 'non-' : ''}terminé`
