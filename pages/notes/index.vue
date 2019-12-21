@@ -45,18 +45,22 @@
       :close-on-scroll="true"
     )
       template(slot-scope="child" v-if="child.data")
-        li
-          component(
+        li: component(
             :is="child.data.note.format === 'LINK' ? 'a' : 'nuxt-link'" 
             :to="`/notes/${uuid}`" 
             :href="child.data.note.format === 'LINK' ? child.data.note.content : `/notes/${child.data.note.uuid}`"
             target="_blank"
           )
-            Icon open_in_new 
-            | Ouvrir dans un nouvel onglet
-        //- li: a(@click.prevent="ctxRename") #[Icon edit] Renommer
-        //- li: a(@click.prevent="ctxChSubj") #[Icon bookmark_border] Changer la matière
-        li: a(@click.prevent="del({uuid: child.data.note.uuid})") #[Icon delete] Supprimer
+            | #[Icon open_in_new] Ouvrir dans un nouvel onglet
+        li: a(@click.prevent="$modal.show('rename-note')") 
+          Icon edit
+          | Renommer
+        li: a(@click.prevent="$modal.show('change-note-subjec')") 
+          Icon bookmark_border
+          | Changer la matière
+        li: a(@click.prevent="del({uuid: child.data.note.uuid})") 
+          Icon delete
+          | Supprimer
 
 </template>
 
@@ -74,7 +78,7 @@ import 'vue-context/src/sass/vue-context.scss'
 import { mapGetters, mapActions } from 'vuex';
 import Fuse from 'fuse.js'
 export default {
-  components: { HeadingSub, CardNote, InputField, Icon, VueContext, ButtonNormal, ScreenEmpty, PickerSubject },
+  components: { HeadingSub, CardNote, InputField, Icon, VueContext, ButtonNormal, ScreenEmpty, PickerSubject, VueContext },
   head: {
     title: 'Cours'
   },
