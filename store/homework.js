@@ -1,7 +1,7 @@
 import { firstBy } from "thenby";
 import groupBy from "lodash.groupby";
-import { isSameWeek, differenceInWeeks, isBefore, parseISO } from "date-fns";
-import { getValidator } from "./index"
+import { isSameWeek, differenceInWeeks, isBefore, parseISO, getUnixTime } from "date-fns";
+import { getValidator, getMutations } from "./index"
 
 export const state = () => ({
 	homeworks: [],
@@ -14,11 +14,13 @@ export const state = () => ({
 	loaded: false
 });
 
-const parseHomeworkDates = homework => ({
-	...homework,
-	due: parseISO(homework.due),
-	added: parseISO(homework.added)
-})
+const parseHomeworkDates = homework => {
+	if (homework.due && typeof homework.due === 'string') 
+		homework.due = parseISO(homework.due)
+	if (homework.added && typeof homework.added === 'string') 
+		homework.added = parseISO(homework.added)
+	return homework
+}
 
 export const getters = {
 	types: ({ types }) => types,
@@ -49,27 +51,26 @@ export const getters = {
 			homeworks = homeworks.map(hw => {
 				if (
 					specialGroups.includes('late')
-					&& isBefore(hw.due, rootState.now)
+					&& isBefore(hw.due, Date.now())
 				) {
 					return { ...hw, due: 'LATE' }
 				} else {
-					return hw
+					return { ...hw, due: getUnixTime(hw.due)}
 				}
 			})
 		}
+		console.log('GROUPPING HW\'s')
 		const map = groupBy(homeworks, "due")
 		let flat = []
 		for (const [due, homeworks] of Object.entries(map)) {
-			if (_needToShowGroup({ due, homeworks }))
-				flat.push({
-					// Lodash groupBy converts keys to strings, so Date objs need to be re-parsed
-					due: due === 'LATE' ? due : Date.parse(due), 
-					homeworks,
-				})
+			flat.push({ due, homeworks })
 		}
-		return flat.sort(firstBy('due'))
+
+		flat = flat.sort(firstBy('due'))
+		console.log({flat, map})
+		return flat
 	},
-	_needToShowGroup: ({}, {}, {}, rootGetters) => ({ due, homeworks }) => {
+	_needToShowGroup: ({}, {}, {}, rootGetters) => ({ due, homeworks, showCompleted }) => {
 		/* Takes a group object ({due, homeworks}) and decides whether this
 		* group needs to be shown to the user.
 		*/
@@ -85,13 +86,12 @@ export const getters = {
     const isEmpty = homeworks.length === 0
     const someHomeworkNotCompleted = !!homeworks.filter((o) => o.progress < 1).length
     const hasTests = homeworks.filter((o) => o.graded).length > 0
-		const completedExercisesShown = rootGetters['settings/value']('show_completed_exercises')
-    
+    // console.log({due, isEmpty, someHomeworkNotCompleted, hasTests, showCompleted})
 		if (isEmpty) return false
 		if (['LATE', 'TODAY'].includes(due)) {
 			return someHomeworkNotCompleted
 		}
-		return someHomeworkNotCompleted || hasTests || completedExercisesShown
+		return someHomeworkNotCompleted || hasTests || showCompleted
   },
   grouped: ({}, { group, all }) => group(all),
   only: ({}, { all }) => (what, homeworks = null) => {
@@ -105,6 +105,8 @@ export const getters = {
     exercises: only("exercises", pending),
     tests: only("tests", currentOrNextWeek),
 	}),
+	verboseType: ({}, { types }) => type =>
+		types.find(t => t.key === type).label,
 	validate: getValidator({
 		constraints: {
 			required: ["subject", "name", "due"],
@@ -139,17 +141,7 @@ export const getters = {
 }
 
 export const mutations = {
-  SET: (state, homeworks) =>
-    state.homeworks = homeworks.map(o => parseHomeworkDates(o)),
-  ADD: (state, homework) => state.homeworks.push(subject),
-  DEL: (state, uuid) =>
-    (state.homeworks = state.homeworks.filter(o => o.uuid !== uuid)),
-  PATCH: (state, uuid, modifications) => {
-    // Get the requested homework's index in the state array
-		let idx = state.homeworks.map(o => o.uuid).indexOf(uuid);
-		// Apply modifications
-		Object.assign(state.homeworks[idx], modifications);
-	},
+  ...getMutations('homework', parseHomeworkDates),
 	POSTLOAD: (state) => state.loaded = true
 };
 
@@ -184,7 +176,7 @@ export const actions = {
 			const res = await this.$axios.post(`/homework/`, homework);
 			const { data } = await this.$axios.get(`/homework/${res.data.uuid}`)
 			if (data) {
-				commit("ADD", homework);
+				commit("ADD", data);
 			}
 		} catch (error) {}
 	},
@@ -204,7 +196,8 @@ export const actions = {
 		}
 	},
 
-	async patch({ commit, dispatch, getters }, { uuid, modifications, force }) {
+	async patch({ commit, dispatch, getters }, { uuid, modifications, force, earlyMutation }) {
+		earlyMutation = earlyMutation || false
 		force = force || false
 		if(!force) {
 			let homework = getters.one(uuid)
@@ -213,14 +206,21 @@ export const actions = {
 			if (!validation.validated) return validation
 		}
 		try {
+			if (earlyMutation) {
+				commit("PATCH", {pk: uuid, modifications});
+			}
+
 			if (modifications.subject)
 				modifications.subject = modifications.subject.uuid
 			await this.$axios.patch(
 				`/homework/${uuid}/`,
 				modifications
-			);
+				);
 			const { data } = await this.$axios.get(`/homework/${uuid}`)
-			if (data) commit("PATCH", uuid, data);
+
+			if (!earlyMutation && data) {
+				commit("PATCH", {pk: uuid, modifications: data});
+			}
 			console.log(`[from API] PATCH /homework/${uuid}: OK`);
 		} catch (error) {
 			console.error(`[from API] PATCH /homework/${uuid}: Error`);
@@ -232,14 +232,19 @@ export const actions = {
 		}
 	},
 
-	async switchCompletion({ getters, dispatch }, { uuid }) {
+	async switchCompletion({ getters, dispatch }, { uuid, value }) {
 		const homework = getters.one(uuid)
+		let progress
 		if (homework === null) {
 			this.$toast.error("Erreur interne", { icon: 'error_outline' })
 			return null
 		}
-		let progress = homework.progress
-		progress = -progress + 1 // To "invert" a value in [0; 1], do y = -x + 1
-		await	dispatch('patch', {uuid, modifications: {progress}, force: true})
+		if (typeof value === 'number') {
+			progress = value
+		} else {
+			// To "invert" a value in [0; 1], do y = -x + 1
+			progress = - homework.progress + 1
+		}
+		await	dispatch('patch', {uuid, modifications: {progress}, force: true, earlyMutation: true})
 	}
 };
