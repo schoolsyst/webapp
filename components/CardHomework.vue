@@ -1,12 +1,9 @@
 <template lang="pug">
     .card(
-        @click="opened = !opened"
-        :class="{clicked, completed, opened}"
+        @click="$emit('click')"
+        :class="{completed, opened}"
     )
-        .complete-slider(
-            :style="{backgroundColor: `var(--${completed ? 'red' : 'green'})` }"
-            @click="toggleComplete"
-        )
+        .complete-slider(@click="toggleComplete" :title="sliderTooltip")
             Icon(v-show="completed") close
             Icon(v-show="!completed") check
         .infos
@@ -22,6 +19,7 @@ import Icon from '~/components/Icon.vue'
 import BadgeSubject from '~/components/BadgeSubject.vue'
 import InputField from '~/components/InputField.vue'
 import debounce from 'lodash.debounce'
+import { mapActions, mapGetters } from 'vuex'
 export default {
     components: { Icon, BadgeSubject, InputField },
     props: {
@@ -31,31 +29,26 @@ export default {
             default: ""
         },
         subject: Object,
-        uuid: String,
-        progress: Number
-    },
-    data() {
-        return {
-            clicked: false,
-            mProgress: this.progress,
-            opened: false
+        key: String,
+        progress: Number,
+        opened: {
+            type: Boolean,
+            default: false
         }
     },
     computed: {
         completed() {
-            return this.mProgress >= 1
+            return this.one(this.key).progress == 1 //FIXME
+        },
+        sliderTooltip() {
+            return `Marquer comme ${this.completed ? 'non-' : ''}terminé`
         }
     },
     methods: {
+        ...mapActions('homework', ['switchCompletion']),
+        ...mapGetters('homework', ['one']),
         toggleComplete: debounce(async function () {
-            this.mProgress = this.completed ? 0 : 1
-            await this.$store.dispatch('homework/patch', {
-                uuid: this.uuid, 
-                modifications: {
-                    progress: this.mProgress
-                },
-                force: true
-            })
+            await this.switchCompletion({ uuid: this.uuid })
         }, 500, { leading: true, trailing: false })
     },
 }
@@ -68,6 +61,8 @@ export default {
     // height: 100px
     width: 500px
     overflow hidden
+    border-radius var(--border-radius)
+    transition box-shadow 0.25s ease
 .strikethrough-line
     --strikethrough-line-offset: 0px
     height 0.1em
@@ -77,10 +72,13 @@ export default {
     left: calc((100% - (100% - (var(--strikethrough-line-offset) * 2))) / 2)
     width: 0
     transition: width 0.25s ease
+.card.completed .complete-slider
+    background-color var(--red)
+.card:not(.completed) .complete-slider
+    background-color var(--green)
 .complete-slider
     width: 0
     overflow hidden
-    background var(--blue)
     color var(--white)
     display flex
     align-items center
@@ -93,8 +91,8 @@ export default {
     i
         margin-left: 0.5em
 .infos
-    padding 20px 25px
-    border 2px solid var(--grey-light)
+    padding 1.1em 1.2em
+    border 1px solid var(--grey-light)
     border-radius var(--border-radius)
     width 100%
     display flex
@@ -125,8 +123,14 @@ export default {
     .strikethrough-line
         width calc(100% - (var(--strikethrough-line-offset) * 2))
 .card:hover
+    &
+        box-shadow var(--shadow-2)
     .complete-slider
         width 3em
+    &.completed .complete-slider:hover
+        background-color var(--red-light)
+    &:not(.completed) .complete-slider:hover
+        background-color var(--green-light)
     .infos
         border-top-left-radius 0px
         border-bottom-left-radius 0px
