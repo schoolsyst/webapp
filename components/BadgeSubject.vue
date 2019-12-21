@@ -111,6 +111,6 @@ dot-aspect()
   &:focus, &:hover
     outline: none
     opacity: 0.75
-.unknown-icon /deep/ i
+.unknown-icon
   color var(--white)
 </style>
