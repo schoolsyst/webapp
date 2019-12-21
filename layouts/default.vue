@@ -1,7 +1,5 @@
 <template lang="pug">
-  .app(@keyup.ctrl.32="console.log('ihtriughrtuihtri')")
-    BaseModal(name="quick-switcher")
-      p bonjour
+  .app
     TheTopBar(@menu-click="drawerOpened = !drawerOpened")
     TheDrawer(@close="drawerOpened = false" :opened="drawerOpened")
     .side-by-side
