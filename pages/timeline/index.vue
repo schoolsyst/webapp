@@ -1,7 +1,5 @@
 <template lang="pug">
-//-TODO: Real loading
 .container
-	.loading(v-if="!loaded") Chargement...
 	//- @ Main Timeline
 	.timeline(v-if="nextCourses().length || currentCourse")
 		//- Timeline's dotted line
@@ -64,7 +62,6 @@ export default {
 	data() {
 		return {
 			expandedCourse: null,
-			loaded: false
 		}
 	},
 	computed: {
