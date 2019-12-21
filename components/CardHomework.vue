@@ -11,6 +11,8 @@
                 .strikethrough-line
                 BadgeSubject.subject-color(v-bind="subject" variant="dot")
                 span.name {{ name }}
+                Icon.graded-indicator(v-if="['DM', 'TEST'].includes(type)" v-tooltip="'Noté'").
+                    error_outline
             pre.details(v-if="details" v-html="details")
 </template>
 
@@ -34,7 +36,8 @@ export default {
         opened: {
             type: Boolean,
             default: false
-        }
+        },
+        type: String
     },
     computed: {
         completed() {
@@ -116,6 +119,9 @@ export default {
         white-space wrap
         font-size: 0.75em
         flex-grow 0
+    .graded-indicator
+        font-size: 1.3em
+        margin-left auto    
 
 .card.completed
     .infos
