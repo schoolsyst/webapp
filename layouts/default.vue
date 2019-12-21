@@ -11,8 +11,8 @@
         nuxt#page
         #loading-screen
           OverlayLoadingLogo(animation="loop")
-          h1.title Triage des classeurs
-          p.subtitle Chargement...
+          h1.title Chargement...
+          p.subtitle 
 </template>
 
 <script>
