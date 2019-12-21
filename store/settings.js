@@ -40,7 +40,7 @@ export const getters = {
     group(all, { removeHidden: true }),
   userHasSetting: ({}, { one }) => (propval, prop = 'key') => {
     const setting = one(propval, prop)
-    return setting ? setting.isDefaultValue : null
+    return setting ? !setting.isDefaultValue : null
   }
 }
 
@@ -50,7 +50,7 @@ export const mutations = {
      * and a value (Setting.value in the backend)
      */
     definitions.forEach((definition) => {
-      let value
+      let value, uuid
       let { choices } = definition
       // Attempt to get the user's value for this setting definition
       const setting = settings.find((o) => o.setting.key === definition.key)
@@ -59,8 +59,10 @@ export const mutations = {
       const isDefaultValue = setting === undefined
       if (isDefaultValue) {
         value = definition.default
+        uuid = null
       } else {
         value = setting.value
+        uuid = setting.uuid
       }
       let rawValue = value
       // Convert to the appropriate JS representation of the value
@@ -71,11 +73,11 @@ export const mutations = {
       /* Adds the definition to the state as a setting object + the value prop
        * and a bool to tell if the setting is set to the default value.
        */
-      const hydratedDefinition = { ...definition, choices, value, isDefaultValue, rawValue }
+      const hydratedDefinition = { ...definition, choices, value, isDefaultValue, rawValue, uuid }
       state.settings.push(hydratedDefinition)
     })
   },
-  ...getMutations("setting", parsedValue, true, ["del", "add", "patch"]),
+  ...getMutations("setting", parsedValue, true, ["del", "add", "patch"], 'key'),
   //TODO validator: customConstraints from definitions
   // eg: if (definition.required) /* check if setting is not empty */ else return true
   // eg2: try { parseValue(definition.type, setting.value) } catch (e) { return false }
@@ -122,51 +124,36 @@ export const actions = {
     commit("SET", { definitions, settings })
   },
   async post({ commit }, setting) {
-    try {
-      const res = await this.$axios.post("/settings/", setting)
-      const { data } = await this.$axios.get(`/settings/${res.data.setting}/`)
-      if (data) commit("ADD", data)
-      // console.log(`[from API] POST /settings/: OK`)
-    } catch (error) {
-      // console.error("[from API] POST /settings/: Error")
-      try {
-        // console.error(error.response.data)
-      } catch (_) {
-        // console.error(error)
-      }
-    }
+    setting = {...setting, value: (setting.value ? 'true' : 'false'), user: this.$auth.user.id}
+    const res = await this.$axios.post("/settings/", setting)
+    const { data } = await this.$axios.get(`/settings/${res.data.setting}/`)
+    if (data) commit("ADD", data)
+    // console.log(`[from API] POST /settings/: OK`)
   },
-  async patch({ commit }, uuid, modifications) {
-    try {
-      const { data } = await this.$axios.patch(
-        `/settings/${uuid}`,
-        modifications
-      )
-      if (data) commit("PATCH", uuid, data)
-      // console.log(`[from API] PATCH /settings/${uuid}: OK`)
-    } catch (error) {
-      // console.error(`[from API] PATCH /settings/${uuid}: Error`)
-      try {
-        // console.error(error.response.data)
-      } catch (_) {
-        // console.error(error)
-      }
+  async patch({ commit }, {key, modifications}) {
+    if (modifications.hasOwnProperty('value')) {
+      modifications.value = modifications.value ? 'true' : 'false'
     }
+    const res = await this.$axios.patch(
+      `/settings/${key}/`,
+      modifications
+    )
+    const { data } = await this.$axios.get(`/settings/${res.data.setting}/`)
+    if (data) commit("PATCH", key, data)
   },
-  async delete({ commit }, uuid) {
+  async delete({ commit }, key) {
     try {
-      const { data } = await this.$axios.delete(`/settings/${uuid}`)
-      if (data) commit("DEL", uuid)
+      const { data } = await this.$axios.delete(`/settings/${key}`)
+      if (data) commit("DEL", key)
     } catch (error) {
       
     }
   },
-  setValue: debounce(async function ({ getters, commit, dispatch }, { key, value }) {
+  async setValue ({ getters, commit, dispatch }, { key, value }) {
     try {
       // User already has that setting
       if (getters.userHasSetting(key, 'key')) {
-        const uuid = getters.one(key)
-        await dispatch('patch', { uuid, modifications: { value } })
+        await dispatch('patch', { key, modifications: { value } })
       // The setting exist but that user has never set a value
       } else if (getters.one(key)) {
         await dispatch('post', { setting: key, value })
@@ -175,9 +162,9 @@ export const actions = {
         this.$axios.error("Ce réglage n'exsite pas", {icon: 'error_outline'})
       }
     } catch (error) {
-      
+      console.error(error)
     }
-  }, 1000)
+  }
 }
 
 const parsedValue = (
