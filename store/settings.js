@@ -97,12 +97,7 @@ export const actions = {
       // console.log(`[from API] GET /settings/: OK`)
       return data
     } catch (error) {
-      // console.error(`[from API] GET /settings/: Error`)
-      try {
-        // console.error(error.response.data)
-      } catch (_) {
-        // console.error(error)
-      }
+      console.error(error)
       return null
     }
   },
@@ -112,12 +107,7 @@ export const actions = {
       // console.log(`[from API] GET /settings-definitions/: OK`)
       return data
     } catch (error) {
-      // console.error(`[from API] GET /settings-definitions/: Error`)
-      try {
-        // console.error(error.response.data)
-      } catch (_) {
-        // console.error(error)
-      }
+      console.error(error)
       return null
     }
   },
