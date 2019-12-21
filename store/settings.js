@@ -2,7 +2,8 @@
 import groupBy from "lodash.groupby"
 import { parseISO, parse } from "date-fns"
 import { getMutations } from "./index"
-import debounce from 'lodash.debounce'
+import uniqBy from 'lodash.uniqby'
+import Vue from 'vue'
 
 export const state = () => ({
   settings: [],
@@ -49,6 +50,7 @@ export const mutations = {
     /* Set settings for the user, by combining a setting definition (SettinDefinition in the backend)
      * and a value (Setting.value in the backend)
      */
+    let hydratedSettings = []
     definitions.forEach((definition) => {
       let value, uuid
       let { choices } = definition
@@ -74,8 +76,13 @@ export const mutations = {
        * and a bool to tell if the setting is set to the default value.
        */
       const hydratedDefinition = { ...definition, choices, value, isDefaultValue, rawValue, uuid }
-      state.settings.push(hydratedDefinition)
+
+      hydratedSettings.push(hydratedDefinition)
     })
+    // Remove duplicate settings (by key)
+    hydratedSettings = uniqBy(hydratedSettings, 'key')
+    // Replace state's settings
+    Vue.set(state, 'settings', hydratedSettings)
   },
   ...getMutations("setting", parsedValue, true, ["del", "add", "patch"], 'key'),
   //TODO validator: customConstraints from definitions
@@ -124,10 +131,10 @@ export const actions = {
     commit("SET", { definitions, settings })
   },
   async post({ commit }, setting) {
-    setting = {...setting, value: (setting.value ? 'true' : 'false'), user: this.$auth.user.id}
+    setting = {...setting, user: this.$auth.user.id}
     const res = await this.$axios.post("/settings/", setting)
     const { data } = await this.$axios.get(`/settings/${res.data.setting}/`)
-    if (data) commit("ADD", data)
+    if (data) commit("PATCH", data)
     // console.log(`[from API] POST /settings/: OK`)
   },
   async patch({ commit }, {key, modifications}) {
