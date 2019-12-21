@@ -39,48 +39,59 @@ export const getters = {
 				.thenBy(o => o.subject.weight)
 				.thenBy("uuid")
 		),
-	group: ({}, { _needToShowGroup },) => homeworks => {
+	group: ({}, { _needToShowGroup }, rootState) => (homeworks, specialGroups = ['late', 'today']) => {
 		/* Groups the provided array of homework by due date
 		* into an array of groups:
 		* [ { due: <date>, homeworks: [ ... ], shown: <bool> }, ... ]
 		* the shown bool is computed by getters._needToShowGroup
 		*/
+		if (specialGroups.length) {
+			homeworks = homeworks.map(hw => {
+				if (
+					specialGroups.includes('late')
+					&& isBefore(hw.due, rootState.now)
+				) {
+					return { ...hw, due: 'LATE' }
+				} else {
+					return hw
+				}
+			})
+		}
 		const map = groupBy(homeworks, "due")
 		let flat = []
 		for (const [due, homeworks] of Object.entries(map)) {
-			flat.push({
-				due,
-				homeworks,
-				shown: _needToShowGroup({ due, homeworks })
-			})
+			if (_needToShowGroup({ due, homeworks }))
+				flat.push({
+					// Lodash groupBy converts keys to strings, so Date objs need to be re-parsed
+					due: due === 'LATE' ? due : Date.parse(due), 
+					homeworks,
+				})
 		}
-		return flat
+		return flat.sort(firstBy('due'))
 	},
-	_needToShowGroup: ({}, {}, {}, rootGetters) => group => {
+	_needToShowGroup: ({}, {}, {}, rootGetters) => ({ due, homeworks }) => {
 		/* Takes a group object ({due, homeworks}) and decides whether this
 		* group needs to be shown to the user.
 		*/
-		const { due, homeworks } = group
 
     /* Only show...
     - if the group is non-empty, and...
+		- - in case of a "late" or "today" group...
+		- - - if at least one homework is still not completed
     - - if at least one homework is still not completed, *or*
     - - if any test (completed or not) is present, *or*
-    - - if the setting "show completed exercises" is true
+		- - if the setting "show completed exercises" is true
     */
     const isEmpty = homeworks.length === 0
-    const allHomeworksCompleted = homeworks.filter((o) => o.progress !== 1) < 0
+    const someHomeworkNotCompleted = !!homeworks.filter((o) => o.progress < 1).length
     const hasTests = homeworks.filter((o) => o.graded).length > 0
-    const completedExercisesShown = rootGetters['settings/value']('show_completed_exercises')
+		const completedExercisesShown = rootGetters['settings/value']('show_completed_exercises')
     
-    return (
-      !isEmpty 
-      && (
-        !allHomeworksCompleted 
-        || hasTests 
-        || completedExercisesShown
-      )
-    )
+		if (isEmpty) return false
+		if (['LATE', 'TODAY'].includes(due)) {
+			return someHomeworkNotCompleted
+		}
+		return someHomeworkNotCompleted || hasTests || completedExercisesShown
   },
   grouped: ({}, { group, all }) => group(all),
   only: ({}, { all }) => (what, homeworks = null) => {
@@ -124,7 +135,6 @@ export const getters = {
 			due:			{ gender: "F", name: "date due" },
 		},
 		resourceName: { gender: "M", name: "devoir" },
-		debug: true
 	}),
 }
 
@@ -220,5 +230,16 @@ export const actions = {
 				console.error(error);
 			}
 		}
+	},
+
+	async switchCompletion({ getters, dispatch }, { uuid }) {
+		const homework = getters.one(uuid)
+		if (homework === null) {
+			this.$toast.error("Erreur interne", { icon: 'error_outline' })
+			return null
+		}
+		let progress = homework.progress
+		progress = -progress + 1 // To "invert" a value in [0; 1], do y = -x + 1
+		await	dispatch('patch', {uuid, modifications: {progress}, force: true})
 	}
 };
