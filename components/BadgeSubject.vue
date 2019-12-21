@@ -4,7 +4,7 @@ component.subject(
   @click="$emit('click')"
   :class="{clickable, multiline, thin, [`variant-${variant}`]: true}"
   :is="clickable ? 'button' : 'span'"
-  :title="name"
+  v-tooltip="name"
 )
   Icon.unknown-icon(v-if="!color") more_horiz
   span.name

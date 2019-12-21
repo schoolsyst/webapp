@@ -75,7 +75,9 @@ export default {
     "~/assets/fonts/FantasqueSansMono/import.css",
     "~/assets/fonts/Now/import.css",
     // Icons
-    "~/assets/fonts/Material-Icons/import.css"
+    "~/assets/fonts/Material-Icons/import.css",
+    // Plugins
+    "~/plugins/v-tooltip.scss",
   ],
   /*
    ** Plugins to load before mounting the App
@@ -83,7 +85,8 @@ export default {
   plugins: [
     '~plugins/vue-js-modal',
     '~plugins/loading-screen',
-    '~plugins/vue-chartkick'
+    '~plugins/vue-chartkick',
+    '~plugins/v-tooltip.js',
   ],
   /*
    ** Nuxt.js modules
@@ -91,7 +94,7 @@ export default {
   modules: [
     // Doc: https://axios.nuxtjs.org/usage
     "@nuxtjs/axios",
-    "@nuxtjs/pwa",
+    // "@nuxtjs/pwa",
     "@nuxtjs/auth",
     "@nuxtjs/toast",
     "@nuxtjs/toast",

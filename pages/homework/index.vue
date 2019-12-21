@@ -11,7 +11,7 @@
                         span.due(v-else) {{ relativeDate(group.due) }}
                         button(
                             v-if="group.homeworks.filter(o => o.progress < 1).length"
-                            title="Tout marquer comme terminé"
+                            v-tooltip="'Tout marquer comme terminé'"
                             @click="markAllAsDone(group.homeworks)"
                         ): Icon done_all
                     ul.homework

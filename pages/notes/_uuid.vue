@@ -20,36 +20,36 @@
                     )
                     a.unsaved-work(
                         v-show="unsavedWork" 
-                        title="Modifications non sauvegardées"
+                        v-tooltip.bottom="'Modifications non sauvegardées'"
                         @click="save({toast: true})"
                     ) &bull;
 
             EditorMenuBar(:editor="editor" v-slot="{commands, isActive}")
                 .menubar
-                    button(@click="$modal.show('edit-properties')" title="Propriétés de la note...")
+                    button(@click="$modal.show('edit-properties')" v-tooltip.bottom="'Propriétés de la note...'")
                         Icon settings
-                    button(@click="commands.undo" title="Annuler (Ctrl + Z)")
+                    button(@click="commands.undo" v-tooltip.bottom="'Annuler<br/><kbd>Ctrl</kbd> + <kbd>Z</kbd>'")
                         Icon undo
-                    button(@click="commands.redo" title="Refaire (Ctrl + Shift + Z)")
+                    button(@click="commands.redo" v-tooltip.bottom="'Refaire<br/><kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>Z</kbd>'")
                         Icon redo
                     span.sep |
                     //- The key shortcut listener for Ctrl + S is managed with a manual event listener.
                     //- See: https://stackoverflow.com/a/55323073
                     button(
                         @click="save({toast: true})"
-                        title="Sauvegarder (Ctrl + S)"
+                        v-tooltip.bottom="'Sauvegarder<br/><kbd>Ctrl</kbd> + <kbd>S</kbd>'"
                     )
                         Icon(filled) save
-                    button(title="Télécharger en... (Ctrl + Shift + S)" @click="$modal.show('download-as')")
+                    button(v-tooltip.bottom="'Télécharger en...<br/><kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>S</kbd>'" @click="$modal.show('download-as')")
                         Icon(filled) save_alt
                     //- button
                     //-     Icon share
                     //-     | Partager
-                    button(title="Imprimmer (Ctrl + P)")
+                    button(v-tooltip.bottom="'Imprimmer<br/><kbd>Ctrl</kbd> + <kbd>P</kbd>'")
                         Icon(filled) print
                     button Réviser...
                     span.sep |
-                    button(title="Enlever le formatage (Ctrl + Shift + :)")
+                    button(v-tooltip.bottom="'Enlever le formatage<br/><kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>:</kbd>'")
                         Icon format_clear
                     multiselect(
                         @select="\
@@ -78,31 +78,31 @@
                     button(
                         :class="{active: isActive.bold()}"
                         @click="commands.bold"
-                        title="Gras (Ctrl + B)"
+                        v-tooltip.bottom="'Gras<br/><kbd>Ctrl</kbd> + <kbd>B</kbd>'"
                     )
                         Icon format_bold
                     button(
                         :class="{active: isActive.italic()}"
                         @click="commands.italic"
-                        title="Italique (Ctrl + I)"
+                        v-tooltip.bottom="'Italique<br/><kbd>Ctrl</kbd> + <kbd>I</kbd>'"
                     )
                         Icon format_italic
                     button(
                         :class="{active: isActive.underline()}"
                         @click="commands.underline"
-                        title="Souligné (Ctrl + U)"
+                        v-tooltip.bottom="'Souligné<br/><kbd>Ctrl</kbd> + <kbd>U</kbd>'"
                     )
                         Icon format_underlined
                     button(
                         :class="{active: isActive.strike()}"
                         @click="commands.strike"
-                        title="Barré (Ctrl + D)"
+                        v-tooltip.bottom="'Barré<br/><kbd>Ctrl</kbd> + <kbd>D</kbd>'"
                     )
                         Icon format_strikethrough
                     button(
                         :class="{active: isActive.math()}"
                         @click="commands.math"
-                        title="Maths (Ctrl + E)"
+                        v-tooltip.bottom="'Maths<br/><kbd>Ctrl</kbd> + <kbd>E</kbd>'"
                     ): math: mi x
                     button(
                         :class="{active: isActive.code()}"
@@ -113,63 +113,63 @@
                     button(
                         :class="{active: isActive.superscript()}"
                         @click="commands.superscript"
-                        title="Superscript (Ctrl + ;)"
+                        v-tooltip.bottom="'Superscript<br/><kbd>Ctrl</kbd> + <kbd>;</kbd>'"
                     )
                         span.low-opacity a
                         sup n
                     button(
                         :class="{active: isActive.subscript()}"
                         @click="commands.subscript"
-                        title="Indice (Ctrl + ,)"
+                        v-tooltip.bottom="'Indice<br/><kbd>Ctrl</kbd> + <kbd>,</kbd>'"
                     )
                         span.low-opacity a
                         sub n
-                    button(title="Couleur de texte" @click="$modal.show('text-color')")
+                    button(v-tooltip.bottom="'Couleur de texte'" @click="$modal.show('text-color')")
                         Icon(filled) format_color_text
                     button(
                         :class="{active: isActive.marker()}"
                         @click="commands.marker"
-                        title="Surligné"
+                        v-tooltip.bottom="'Surligné'"
                     )
                         Icon(filled) border_color
                     span.sep |
-                    button(title="Note de bas de page (Ctrl + Alt + F)")
+                    button(v-tooltip.bottom="'Note de bas de page<br/><kbd>Ctrl</kbd> + <kbd>Alt</kbd> + <kbd>F</kbd>'")
                         | Note#[sup 1]
-                    button(title="Lien (Ctrl + K)")
+                    button(v-tooltip.bottom="'Lien<br/><kbd>Ctrl</kbd> + <kbd>K</kbd>'")
                         Icon insert_link
                     button(
                         @click="commands.bullet_list"
-                        title="Liste à points (Ctrl + Shift + 8)"
+                        v-tooltip.bottom="'Liste à points<br/><kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>8</kbd>'"
                     )
                         Icon format_list_bulleted
                     button(
                         @click="commands.ordered_list"
-                        title="Liste numérotée (Ctrl + Shift + 9)"
+                        v-tooltip.bottom="'Liste numérotée<br/><kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>9</kbd>'"
                     )
                         Icon format_list_numbered
-                    button(title="Liste de définitions (Ctrl + Shift + 0)")
+                    button(v-tooltip.bottom="'Liste de définitions<br/><kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>0</kbd>'")
                         | Def:
-                    button(title="Abbréviation (Ctrl + *)")
+                    button(v-tooltip.bottom="'Abbréviation<br/><kbd>Ctrl</kbd> + <kbd>*</kbd>'")
                         | abbr
                     span.sep |
                     button(
                         @click="commands.horizontal_rule"
-                        title="Ligne horizontale"
+                        v-tooltip.bottom="'Ligne horizontale'"
                     ) 
                         | —
                     button(
                         :class="{active: isActive.table()}"
                         @click="commands.createTable({rowsCount: 2, colsCount: 2})"
-                        title="Tableau"
+                        v-tooltip.bottom="'Tableau'"
                     )
                         Icon table_chart
                     //- button(@click="commands.blockquote")
                     //-     Icon format_quote
                     //dropdown: Admonitions (Ctrl + !)
-                    button(@click="commands.code_block" title="Bloc de code")
+                    button(@click="commands.code_block" v-tooltip.bottom="'Bloc de code'")
                         Icon code
-                    button(@click="commands.mathblock" title="Bloc de maths (Ctrl + Shift + E)"): Icon functions
-                    button(title="Image"): Icon image
+                    button(@click="commands.mathblock" v-tooltip.bottom="'Bloc de maths<br/><kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>E</kbd>'"): Icon functions
+                    button(v-tooltip.bottom="'Image'"): Icon image
                     button(@click="commands.addRowAfter") add row after
 
         .editor-page-wrapper

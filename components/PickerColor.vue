@@ -5,7 +5,7 @@
             li.swatch(
                 v-for="preset in presets" :key="preset.hex"
                 :style="{backgroundColor: preset.hex}"
-                :title="preset.name"
+                v-tooltip="preset.name"
                 @click="$emit('input', preset.hex)"
             )
         //- hr.sep

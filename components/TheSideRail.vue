@@ -1,13 +1,15 @@
 <template lang="pug">
   nav#side-rail
     ul
-      li.item(v-for="(link, i) in sideRailLinks" :key="link.href")
+      li.item(
+        v-for="(link, i) in sideRailLinks" :key="link.href"
+        v-tooltip.left="link.name"
+      )
         nuxt-link.link(
           :to="link.href"
           :class="{current: isCurrent(link), notifications: hasNotifications(link)}"
         )
           Icon.icon(:filled="isCurrent(link)") {{link.icon}}
-          span.name {{link.name}}
           span.notifications-badge(v-if="hasNotifications(link)")
 </template>
 
@@ -41,7 +43,7 @@ nav
   justify-content center
   width 4em
   overflow hidden
-  margin-bottom: 1.5em
+  margin-bottom: 2.5em
   padding .25em 0
 .link
   text-align center
@@ -63,9 +65,4 @@ nav
 .icon
   font-size 1.85em
   display block
-.name
-  white-space nowrap
-  text-overflow ellipsis
-  font-size: 0.85em
-  opacity: 0
 </style>
