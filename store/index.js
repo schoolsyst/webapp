@@ -316,7 +316,8 @@ export const getMutations = (
   what,
   mapWith = (o) => o,
   pure = true,
-  verbs = ["add", "set", "del", "patch"]
+  verbs = ["add", "set", "del", "patch"],
+  primaryKey = 'uuid'
 ) => {
   /* Factory to create basic mutations while preserving DRYness of code
    * set, add, del & patch are booleans that—when set to false—disable
@@ -330,6 +331,7 @@ export const getMutations = (
    *              state's array & mutations' names.
    * @param mapWith: a function to map each object to when putting into the state
    *                 Defaults to `o => o`
+   * @param primaryKey: the name of the primary key used for mutations acting on a single object.
    */
 
   const mutations = {}
@@ -342,12 +344,12 @@ export const getMutations = (
   if (verbs.includes("add"))
     mutations[`ADD${WHAT}`] = (state, item) => state[whats].push(mapWith(item))
   if (verbs.includes("del"))
-    mutations[`DEL${WHAT}`] = (state, uuid) =>
-      (state[whats] = state[whats].filter((o) => o.uuid !== uuid))
+    mutations[`DEL${WHAT}`] = (state, pk) =>
+      (state[whats] = state[whats].filter((o) => o[primaryKey] !== pk))
   if (verbs.includes("patch"))
-    mutations[`PATCH${WHAT}`] = (state, {uuid, modifications}) => {
+    mutations[`PATCH${WHAT}`] = (state, {pk, modifications}) => {
       // Get the requested item's index in the state array
-			let idx = state[whats].map((o) => o.uuid).indexOf(uuid)
+			let idx = state[whats].map((o) => o[primaryKey]).indexOf(pk)
 			// Apply modifications
       state[whats][idx] = {...state[whats][idx], ...modifications}
 		}
