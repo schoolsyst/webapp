@@ -5,7 +5,7 @@ BaseModal.PickerSubject(:name="name" title="Choisissez une matière..." edge-to-
         BadgeSubject(
           v-bind="subject",
           @click="$emit('pick', subject); $modal.hide(name)"
-          clickable, multiline
+          clickable, multiline, no-tooltip
         )
 
 </template>
