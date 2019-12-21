@@ -1,6 +1,7 @@
 import { toDate, addDays, isBefore, format } from "date-fns"
 import tinycolor from "tinycolor2"
 import constantCase from 'constant-case'
+import Vue from 'vue'
 
 export const state = () => ({
 	now: toDate(Date.now()), // For time-dependent getters.
@@ -344,7 +345,7 @@ export const getMutations = (
         console.log('before:')
         console.log(state[whats])
       }
-      state[whats] = items.map(mapWith)
+      Vue.set(state, whats, items.map(mapWith))
       if (debug) {
         console.log('after:')
         console.log(state[whats])
@@ -358,7 +359,7 @@ export const getMutations = (
         console.log('before:')
         console.log(state[whats])
       }
-      state[whats].push(mapWith(item))
+      Vue.set(state, whats, [...state[whats], mapWith(item)])
       if (debug) {
         console.log('after:')
         console.log(state[whats])
@@ -372,7 +373,7 @@ export const getMutations = (
         console.log('before:')
         console.log(state[whats])
       }
-      state[whats] = state[whats].filter((o) => o[primaryKey] !== pk)
+      Vue.set(state, whats, state[whats].filter((o) => o[primaryKey] !== pk))
       if (debug) {
         console.log('after:')
         console.log(state[whats])
@@ -393,7 +394,7 @@ export const getMutations = (
       // Re-run mapWith
       item = mapWith(item)
       // Set in store
-      state[whats][idx] = item
+      Vue.set(state[whats], idx, item)
       if (debug) {
         console.log('after:')
         console.log(state[whats])
