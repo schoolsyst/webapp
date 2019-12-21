@@ -161,7 +161,6 @@ export const getters = {
       subject:  { gender: "F", name: "matière" },
     },
     resourceName: { gender: "F", name: "note" },
-    debug: true
   }),
 }
 
