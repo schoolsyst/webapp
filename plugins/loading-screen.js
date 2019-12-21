@@ -10,10 +10,10 @@ const start = ({page, screen}) => {
     page.style.display = 'none'
     screen.style.display = 'flex'
 }
-const finish = ({page, screen}) => {
+const finish = ({page, screen, pageDisplayStyle}) => {
     console.log('$withLoadingScreen: finishing')
     screen.style.display = 'none'
-    page.style.display = 'block'
+    page.style.display = pageDisplayStyle
 }
 
 Vue.prototype.$withLoadingScreen = async (asyncFunc, { title, subtitle }) => {
@@ -21,8 +21,9 @@ Vue.prototype.$withLoadingScreen = async (asyncFunc, { title, subtitle }) => {
     subtitle = subtitle || (title ? "Chargement..." : "Veuillez patienter")
     const page = document.getElementById('page')
     const screen = document.getElementById('loading-screen')
+    const pageDisplayStyle = page.style.display
     setup({screen, title, subtitle})
     start({page, screen})
     await asyncFunc()
-    finish({page, screen})
+    finish({page, screen, pageDisplayStyle})
 }
