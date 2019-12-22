@@ -5,7 +5,7 @@ aside.BaseModal(:id="`modal_${name}`",
     aria-modal="false" 
     role="dialog" 
     @click.self="$modal.hide(name)" 
-    :class="{'edge-to-edge': edgeToEdge}"
+    :class="{'edge-to-edge': edgeToEdge, 'no-backdrop': noBackdrop, shadow}"
 ) 
     .modal-wrapper(
       :style="{\
@@ -41,11 +41,19 @@ export default {
       type: Boolean,
       default: false
     },
+    noBackdrop: {
+      type: Boolean,
+      default: false
+    },
+    shadow: {
+      type: Boolean,
+      default: false
+    },
     title: String,
     resizable: {
       type: [Boolean, String],
       default: false
-    }
+    },
   }, 
   data() { 
     return { wasFocused: null } 
@@ -64,7 +72,7 @@ export default {
     &.centered 
         justify-content: center 
         align-items: center 
-    &.opened 
+    &.opened:not(.no-backdrop)
         background: var(--modal-backdrop)
         opacity: 1 
     &:not(.opened) 
@@ -97,6 +105,12 @@ export default {
   .header
     padding: 20px
  
+.shadow
+  &.opened .modal-wrapper
+    box-shadow var(--shadow-2)
+  &
+    transition-duration 0.125s
+
 .BaseModal:not(.centered) .modal-wrapper 
     position: fixed
  
