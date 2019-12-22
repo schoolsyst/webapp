@@ -26,11 +26,13 @@
           fontFamily: `var(--fonts-${passwordShown ? 'monospace' : 'regular'}`,\
           resize: resizable && type === 'block' ? resizable : 'none'\
         }"
+        :value="toHTMLValue(value)"
         v-bind="{value, tabindex, placeholder, disabled}"
         :step="type === 'number' ? 0.001 : null"
-        @input="active = true; initial = false; $emit('input', getValue($event))"
-        @click="active = true"
-        @blur="active = false; passwordShown = false;"
+        @input="active = true; initial = false; $emit('input', toJSValue(value))"
+        @click="active = true; $emit('active', $event)"
+        @blur="active = false; passwordShown = false; $emit('blur', $event)"
+        @focus="active = false; $emit('active', $event)"
       )
       label(
         :for="`input-field--${dName}`"
@@ -42,7 +44,7 @@
 </template>
 
 <script>
-import { parseISO } from 'date-fns'
+import { parseISO, formatISO } from 'date-fns'
 
 export default {
   props: {
@@ -160,11 +162,26 @@ export default {
       else
         this.clearField()
     },
-    getValue($event) {
-      let value = $event.target.value
+    toJSValue(value) {
+      if (value === null) {
+        return null
+      }
       switch (this.type) {
         case 'date':
           value = parseISO(value)
+          break;
+      
+        case 'number':
+          value = Number(value)
+          break;
+      }
+      return value
+    },
+    toHTMLValue(value) {
+      if (value === null) return null
+      switch (this.type) {
+        case 'date':
+          value = formatISO(value, { representation: "date" })
           break;
       
         case 'number':
