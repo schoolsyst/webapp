@@ -30,6 +30,9 @@ import {
   isValid,
   differenceInYears,
   lastDayOfISOWeekYear,
+  addYears,
+  addDays,
+  addWeeks,
 } from "date-fns"
 import { getMutations, getValidator, removeByProp } from "./index"
 import { roundToNearestMinutesWithOptions } from "date-fns/fp"
@@ -310,38 +313,32 @@ export const getters = {
     )
     return course || null
   },
-  nextCourses: (state, getters, rootState, rootGetters) => (from = null) => {
-    from = from || rootState.now
-    let courses = getters.currentWeekCourses.filter(
-      (o) =>
-        // Is the same week day
-        isSameDay(o.start, from) &&
-        // Hasn't started yet
-        isAfter(o.start, from)
-    )
-    // Make sure the events are sorted
-    courses = getters.orderCourses(courses)
-    // Get the soonest courses or an empty array
-    return courses || []
-  },
-  nextCoursesOf: (state, getters, rootState, rootGetters) => (value, what = 'subject') => {
-    const nextCourses = getters.nextCourses()
-    if (!nextCourses.length) return []
+  nextCoursesIn: ({}, { coursesIn, orderCourses }, { now }) => (start = null, end = null) => 
+    coursesIn((start || now), end, false).filter(o => isAfter(o.start, (start))),
+  nextCoursesOf: ({}, { nextCoursesIn }, { now }) => (value, what = 'subject') => {
+    const courses = nextCoursesIn(now, addWeeks(now, 2))
+    if (what === 'subject' && typeof value === 'object') 
+      value = value.uuid || null
+    if (!courses.length) return []
     if (what === 'subject') {
-      return nextCourses.filter((o) => o.subject.uuid === value)
+      return courses.filter((o) => o.subject.uuid === value)
     }
-    return nextCourses.filter((o) => o[what] === value)
+    return courses.filter((o) => o[what] === value)
   },
   todayCourses: (state, getters, rootState, rootGetters) =>
     getters.coursesIn(rootState.now),
   tomorrowCourses: (state, getters, rootState, rootGetters) =>
     getters.coursesIn(rootState.tomorrow),
-  upcomingCourse: (state, getters, rootState) => {
-    const nextCourses = getters.nextCourses()
+  upcomingCourse: ({}, {nextCoursesIn}, {now}) => {
+    const nextCourses = nextCoursesIn(now)
     return nextCourses.length ? nextCourses[0] : null
   },
-  nextCourseOf: (state, getters) => (value, what = 'subject') =>
-    getters.nextCoursesOf(value, what)[0],
+  nextCourseOf: ({}, { nextCoursesOf }) => (value, what = 'subject') => {
+    if (value === null) return null
+    const nextCourses = nextCoursesOf(value, what)
+    let nextCourse = nextCourses.length ? nextCourses[0] : null
+    return nextCourse
+  },
   startOfDay: (state, getters, rootState) => (start, end=null) => {
     start = start || rootState.now
     const courses = getters.orderCourses(getters.coursesIn(start, end))

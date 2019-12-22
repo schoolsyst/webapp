@@ -1,7 +1,7 @@
 <template lang="pug">
 .container
 	//- @ Main Timeline
-	.timeline(v-if="nextCourses().length || currentCourse")
+	.timeline(v-if="nextCourses.length || currentCourse")
 		//- Timeline's dotted line
 		.line
 		ul.events
@@ -17,12 +17,12 @@
 				)
 				CardCourse(v-else empty) Pas de cours en ce moment
 							
-			li.title(v-if="nextCourses().length")
+			li.title(v-if="nextCourses.length")
 				span.time.empty
 				HeadingSub
-					| dans {{ formatDistance(nextCourses()[0].start) }}
+					| dans {{ formatDistance(nextCourses[0].start) }}
 			//- For each course that are upcoming
-			li(v-for="(course, i) in nextCourses()" :key="course.uuid")
+			li(v-for="(course, i) in nextCourses" :key="course.uuid")
 				span.time
 					| {{ formatTime()(course.start, 'HH:mm') }}
 					//- Don't show redundant info: hide end time when courses immediately follow
@@ -66,18 +66,21 @@ export default {
 	},
 	computed: {
 		...mapState(['now']),
-		...mapGetters('schedule', ['todayCourses', 'currentCourse', 'nextCourses', 'endOfDay']),
-		...mapGetters(['textColor'])
+		...mapGetters('schedule', ['todayCourses', 'currentCourse', 'nextCoursesIn', 'endOfDay']),
+		...mapGetters(['textColor']),
+		nextCourses() {
+			return this.nextCoursesIn(this.now)
+		}
 	},
 	methods: {
 		...mapGetters(['formatTime']),
 		nextCourse(i) {
 			let ret
 			// If that condition is true, we're already on the last course.
-			if (i === this.nextCourses().length - 1)
+			if (i === this.nextCourses.length - 1)
 				ret = { start: null }
 			else
-				ret = this.nextCourses()[i+1]
+				ret = this.nextCourses[i+1]
 			return ret
 		},
 		formatDistance(date) {
