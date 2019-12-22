@@ -58,11 +58,13 @@ const close = (name) => {
 }
 
 Vue.prototype.$modal = {
-	show: (name, openAt = 'center') => {
+	show: (name, opts = {at: null, from: null, stretch: null}) => {
+		let openAt = opts.at || 'center'
+		let calledBy = opts.from || null
 		const modal = document.getElementById(`modal_${name}`) 
 		setup(modal, () => {close(name)})
-		if (openAt !== 'center') {
-			console.warn('Not-centered modal summon positions not supported')
+		if (openAt === 'self' && !calledBy) {
+			console.warn("Summoning a modal at 'self' requires a `from` option")
 		}
 		// calculate the position of .modal-wrapper: 
 		// - cented: centered (use display:flex) (default) 
@@ -165,6 +167,10 @@ Vue.prototype.$modal = {
 				let { top, left, width, height } = calledBy.getBoundingClientRect() 
 
 				setPos({ top, left }) 
+				if (opts.stretch === 'width') {
+					console.log('stretching width of modal')
+					modal.querySelector('.modal-wrapper').style.width = width + 'px'
+				}
 				break 
 			} 
 
@@ -201,6 +207,25 @@ Vue.prototype.$modal = {
 					bottom: window.innerHeight - (top + height), 
 					left, 
 				}) 
+				break 
+			} 
+
+			case "self.below.left": { 
+				// get bottom/right coordinates of element 
+				// for absolute positionning 
+				let { top, left, width, height } = calledBy.getBoundingClientRect() 
+				let modalHeight = modal.querySelector('.modal-wrapper').getBoundingClientRect().height
+
+				setPos({ 
+					bottom: window.innerHeight - (top + modalHeight + height), 
+					left, 
+				}) 
+				
+				if (opts.stretch === 'width') {
+					console.log('stretching width of modal')
+					modal.querySelector('.modal-wrapper').style.width = width + 'px'
+				}
+
 				break 
 			} 
 
