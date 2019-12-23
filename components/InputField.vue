@@ -29,7 +29,7 @@
         :value="toHTMLValue(value)"
         v-bind="{value, tabindex, placeholder, disabled}"
         :step="type === 'number' ? 0.001 : null"
-        @input="active = true; initial = false; $emit('input', toJSValue(value))"
+        @input="active = true; initial = false; $emit('input', toJSValue($event.target.value))"
         @click="active = true; $emit('active', $event)"
         @blur="active = false; passwordShown = false; $emit('blur', $event)"
         @focus="active = false; $emit('active', $event)"
