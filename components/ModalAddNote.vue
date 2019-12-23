@@ -1,7 +1,7 @@
 <template lang="pug">
 .multimodal
     PickerSubject(
-      parent-modal="add-note"
+      namespace="add-note"
       @pick="pickSubject",
     )
     BaseModal(name="add-note", horizontal-items)

@@ -19,7 +19,7 @@ export default {
   name: "PickerSubject",
   components: { BaseModal, BadgeSubject },
   props: {
-    parentModal: {
+    namespace: {
       type: String,
       default: null
     },
@@ -29,7 +29,7 @@ export default {
       subjects: "subjects/all",
     }),
     name() {
-      return this.parentModal ? `${this.parentModal}-subject-picker` : 'subject-picker'
+      return this.namespace ? `${this.namespace}-subject-picker` : 'subject-picker'
     }
   },
   async mounted() {

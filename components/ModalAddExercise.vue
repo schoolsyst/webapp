@@ -1,6 +1,6 @@
 <template lang="pug">
 .multimodal
-    PickerSubject(parent-modal="add-exercise" @pick="pickSubject")
+    PickerSubject(namespace="add-exercise" @pick="pickSubject")
     BaseModal(name="add-exercise")
         .row.top
             BadgeSubject(

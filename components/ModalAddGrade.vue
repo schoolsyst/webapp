@@ -1,7 +1,7 @@
 <template lang="pug">
 BaseModal.grade(name="add-grade" title="Ajouter une note...")
   PickerSubject(
-    parent-modal="add-grade"
+    namespace="add-grade"
     @pick="subject = $event"
   )
   .header

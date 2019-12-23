@@ -1,7 +1,7 @@
 <template lang="pug">
 //TODO: Reset all fields after clicking "add" or "cancel"
 .multimodal
-    PickerSubject(parent-modal="add-test" @pick="pickSubject")
+    PickerSubject(namespace="add-test" @pick="pickSubject")
     BaseModal(name="add-test")
         .row.top
             BadgeSubject(
