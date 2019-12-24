@@ -5,7 +5,7 @@
             :is="href ? 'nuxt-link' : 'button'"
             :to="href ? href : ''"
             :type="type"
-            :class="`btn--${variant} ${small ? 'small' : ''}`"
+            :class="{[`btn--${variant}`]: true, small, smaller}"
             :disabled="disabled || !v.validated"
             :title="title"
             @click="!href ? $emit('click') : ''"
@@ -34,6 +34,10 @@ export default {
             default: false
         },
         small: {
+            type: Boolean,
+            default: false
+        },
+        smaller: {
             type: Boolean,
             default: false
         },
@@ -70,11 +74,14 @@ export default {
     padding 15px 20px
     font-size: 1.05em
     display flex
-    &.small
-        padding 13px 18px
+    &.small, &.smaller
         font-size: 0.9em
         margin 0 1.5em
         display inline
+    &.small
+        padding 13px 18px
+    &.smaller
+        padding 13px
     border-radius var(--border-radius)
     justify-content center
     align-items center
