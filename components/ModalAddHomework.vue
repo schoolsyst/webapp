@@ -5,7 +5,8 @@ BaseModal(
   resizable="both"
 )
   .content
-    PickerSubject(parent-modal="add-homework" @pick="subject = $event")
+    PickerSubject(namespace="add-homework" @pick="subject = $event")
+    PickerDateDue.date-picker(v-bind="{subject, due}" namespace="add-homework" @pick="due = $event")
     .header
       BadgeSubject(
         clickable
@@ -45,6 +46,15 @@ BaseModal(
           type="date"
           variant="filled"
           no-error-messages
+          action-icon="keyboard_arrow_down"
+          @action="\
+            $modal.show('add-homework-due-date-picker', {\
+              at: 'self.top.left', \
+              from: $event.target.parentElement.parentElement, \
+              stretch: 'width'\
+            })\
+          "
+          @input="due = $event"
         ) À {{dueLabelVerb}} pour le
     .submit-area
       ButtonNormal(
@@ -61,14 +71,15 @@ import RadioButtons from '~/components/RadioButtons.vue'
 import InputField from '~/components/InputField.vue'
 import ButtonNormal from '~/components/ButtonNormal.vue'
 import BadgeSubject from '~/components/BadgeSubject.vue'
+import PickerDateDue from '~/components/PickerDateDue.vue'
 import { mapGetters, mapState } from 'vuex'
 
 export default {
-  components: { BaseModal, PickerSubject, HeadingSub, RadioButtons, InputField, ButtonNormal, BadgeSubject },
+  components: { BaseModal, PickerSubject, HeadingSub, RadioButtons, InputField, ButtonNormal, BadgeSubject, PickerDateDue },
   data() {
     return {
       details: null,
-      due: null,
+      mDue: null,
       name: null,
       mSubject: null,
       type: 'EXERCISE'
@@ -76,10 +87,19 @@ export default {
   },
   computed: {
     ...mapState('homework', ['types']),
-    ...mapGetters('schedule', ['currentSubject']),
+    ...mapGetters('schedule', ['currentSubject', 'nextCourseOf']),
     subject: {
       get: function() { return this.mSubject || this.currentSubject },
       set: function(newSubject) { this.mSubject = newSubject }
+    },
+    due: {
+      get: function() { return (
+        this.mDue 
+        || this.nextCourseOf(this.subject) 
+          ? this.nextCourseOf(this.subject).start 
+          : null 
+      ) },
+      set: function(newDueDate) { this.mDue = newDueDate }
     },
     validation() {
       return this.validate()(this.homeworkObject)
@@ -104,6 +124,7 @@ export default {
   },
   methods: {
     ...mapGetters('homework', ['validate']),
+    cl(msg) { console.log(msg) }
   }
 }
 </script>
@@ -140,6 +161,9 @@ export default {
     margin-bottom 0.5em
   margin-bottom 1em
   margin-top: 0.75em //FIXME: Pixel perfect. (to vertically line it up w/ the .details field)
+.due.active
+  & /deep/ label
+    top 0
 .submit-area
   margin-top 2rem
   display flex
