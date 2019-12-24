@@ -315,8 +315,20 @@ export const getters = {
   },
   nextCoursesIn: ({}, { coursesIn, orderCourses }, { now }) => (start = null, end = null) => 
     coursesIn((start || now), end, false).filter(o => isAfter(o.start, (start))),
+  prevCoursesIn: ({}, { coursesIn, orderCourses }, { now }) => (start = null, end = null) => 
+    coursesIn((start || now), end, false).filter(o => isBefore(o.start, (start))),
   nextCoursesOf: ({}, { nextCoursesIn }, { now }) => (value, what = 'subject') => {
     const courses = nextCoursesIn(now, addWeeks(now, 2))
+    if (what === 'subject' && typeof value === 'object') 
+      value = value.uuid || null
+    if (!courses.length) return []
+    if (what === 'subject') {
+      return courses.filter((o) => o.subject.uuid === value)
+    }
+    return courses.filter((o) => o[what] === value)
+  },
+  prevCoursesOf: ({}, { prevCoursesIn }, { now }) => (value, what = 'subject') => {
+    const courses = prevCoursesIn(addWeeks(now, -2), now)
     if (what === 'subject' && typeof value === 'object') 
       value = value.uuid || null
     if (!courses.length) return []
