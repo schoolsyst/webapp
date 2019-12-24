@@ -12,8 +12,9 @@
   )
     .field-inner
       button.action(
-        v-if="showActionButton"
-        @click.prevent="action()"
+        v-if="actionIcon || showActionButton"
+        @click.prevent="action($event)"
+        :class="{'always-show': actionIcon}"
         tabindex="-1"
       )
         i.material-icons-outlined {{actionButtonIcon}}
@@ -67,6 +68,10 @@ export default {
       type: Boolean,
       default: false
     },
+    actionIcon: {
+      type: String,
+      default: null
+    },
     backgroundColor: {
       type: String,
       default: 'var(--white)'
@@ -110,6 +115,7 @@ export default {
       return !!this.value
     },
     actionButtonIcon() {
+      if (this.actionIcon !== null) return this.actionIcon
       if (this.type === 'password')
         return this.passwordShown ? 'visibility_off' : 'visibility'
       else
@@ -156,7 +162,9 @@ export default {
     togglePasswordVisibility() {
       this.passwordShown = !this.passwordShown
     },
-    action() {
+    action($event) {
+      if (this.actionIcon)
+        this.$emit('action', $event);
       if (this.type === 'password')
         this.togglePasswordVisibility()
       else
@@ -282,7 +290,7 @@ label
              top .125s ease,
              color .25s ease,
              background .01s ease
-.action
+.action:not(.always-show)
   display none
 .field:hover, .field.active
   .action
