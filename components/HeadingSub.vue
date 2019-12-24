@@ -1,7 +1,7 @@
 <template>
   <component :is="small ? 'h3' : 'h2'" class="HeadingSub" :class="{buttons, small}">
     <slot></slot>
-  </h2>
+  </component>
 </template>
 
 <script>
