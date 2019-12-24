@@ -1,5 +1,5 @@
 <template>
-  <h2 class="HeadingSub" :class="{buttons}">
+  <component :is="small ? 'h3' : 'h2'" class="HeadingSub" :class="{buttons, small}">
     <slot></slot>
   </h2>
 </template>
@@ -10,6 +10,10 @@ export default {
 
   props: {
     buttons: {
+      type: Boolean,
+      default: false
+    },
+    small: {
       type: Boolean,
       default: false
     }
@@ -25,6 +29,8 @@ export default {
   letter-spacing: 0.09em
   // margin-top: 60px
   font-size: 1.2em
+  &.small
+    font-size: 0.9em
 
 +desktop
   .HeadingSub.buttons 
