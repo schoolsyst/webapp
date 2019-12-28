@@ -4,21 +4,21 @@ aside.BaseModal(:id="`modal_${name}`",
     aria-hidden="true" 
     aria-modal="false" 
     role="dialog" 
-    @click.self="$modal.hide(name)" 
-    :class="{'edge-to-edge': edgeToEdge, 'no-backdrop': noBackdrop, shadow}"
+    @click.self="$emit('close'); $modal.hide(name)" 
+    :class="{'edge-to-edge': edgeToEdge, 'no-backdrop': noBackdrop, shadow, 'has-header': hasHeader}"
 ) 
     .modal-wrapper(
       :style="{\
         resize: resizable || 'none',\
       }"
     )
-        .header(v-if="closeButton || title")
+        .header(v-if="hasHeader")
           p.title(v-if="title") {{ title }}
           button.close-modal(
             v-if="closeButton",
             @click="$modal.hide(name)"
           ): Icon close
-        template(v-if="closeButton || title")
+        template(v-if="hasHeader")
           .content: slot
         template(v-else)
           slot
@@ -57,6 +57,9 @@ export default {
   }, 
   data() { 
     return { wasFocused: null } 
+  },
+  computed: {
+    hasHeader() { return this.closeButton || this.title }
   }
 } 
 </script> 
@@ -84,9 +87,6 @@ export default {
  
 .modal-wrapper 
     position: relative 
-    display grid
-    // 5em ~= header height
-    grid-template-rows 5em auto
     border-radius: var(--border-radius) 
     background: var(--white) 
     color var(--black) 
@@ -99,6 +99,13 @@ export default {
       height 100vh
       border-radius 0
 
+.has-header
+  .modal-wrapper
+    display grid
+    // 5em ~= header height
+    grid-template-rows 5em auto
+:not(.has-header) .modal-wrapper
+  display block
 .edge-to-edge 
   .modal-wrapper
     padding: 0
