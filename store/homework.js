@@ -1,6 +1,6 @@
 import { firstBy } from "thenby";
 import groupBy from "lodash.groupby";
-import { isSameWeek, differenceInWeeks, isBefore, parseISO, getUnixTime } from "date-fns";
+import { isSameWeek, differenceInWeeks, isBefore, parseISO, getUnixTime, fromUnixTime } from "date-fns";
 import { getValidator, getMutations } from "./index"
 
 export const state = () => ({
@@ -67,7 +67,7 @@ export const getters = {
 		}
 
 		flat = flat.sort(firstBy('due'))
-		console.log({flat, map})
+		flat = flat.map(g => ({...g, due: typeof g.due === 'number' ? fromUnixTime(g.due) : g.due}))
 		return flat
 	},
 	_needToShowGroup: ({}, {}, {}, rootGetters) => ({ due, homeworks, showCompleted }) => {

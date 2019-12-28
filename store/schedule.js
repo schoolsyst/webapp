@@ -313,12 +313,12 @@ export const getters = {
     )
     return course || null
   },
-  nextCoursesIn: ({}, { coursesIn, orderCourses }, { now }) => (start = null, end = null) => 
-    coursesIn((start || now), end, false).filter(o => isAfter(o.start, (start))),
-  prevCoursesIn: ({}, { coursesIn, orderCourses }, { now }) => (start = null, end = null) => 
-    coursesIn((start || now), end, false).filter(o => isBefore(o.start, (start))),
-  nextCoursesOf: ({}, { nextCoursesIn }, { now }) => (value, what = 'subject') => {
-    const courses = nextCoursesIn(now, addWeeks(now, 2))
+  nextCoursesIn: ({}, { coursesIn, orderCourses }) => (start = null, end = null) => 
+    coursesIn((start || Date.now()), end, false).filter(o => isAfter(o.start, (start))),
+  prevCoursesIn: ({}, { coursesIn, orderCourses }) => (start = null, end = null) => 
+    coursesIn(start, (end || Date.now()), false).filter(o => isBefore(o.start, (start))),
+  nextCoursesOf: ({}, { nextCoursesIn }) => (value, what = 'subject') => {
+    const courses = nextCoursesIn(Date.now(), addWeeks(Date.now(), 2))
     if (what === 'subject' && typeof value === 'object') 
       value = value.uuid || null
     if (!courses.length) return []
@@ -347,9 +347,13 @@ export const getters = {
   },
   nextCourseOf: ({}, { nextCoursesOf }) => (value, what = 'subject') => {
     if (value === null) return null
-    const nextCourses = nextCoursesOf(value, what)
-    let nextCourse = nextCourses.length ? nextCourses[0] : null
-    return nextCourse
+    const nextCourses = 
+      nextCoursesOf(value, what)
+      .sort((c1, c2) => isAfter(c1.start, c2.start))
+      .filter(c => !isSameDay(c.start, Date.now()))
+    if (nextCourses.length)
+      return nextCourses[0]
+    return null
   },
   startOfDay: (state, getters, rootState) => (start, end=null) => {
     start = start || rootState.now
