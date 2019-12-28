@@ -1,7 +1,7 @@
 <template lang="pug">
-BaseModal.grade(name="add-grade" title="Ajouter une note...")
+BaseModal.grade(:name="modalName" :title="(grade ? 'Modifier' : 'Ajouter') + ' une note...'")
   PickerSubject(
-    namespace="add-grade"
+    :namespace="modalName"
     @pick="subject = $event"
   )
   .header
@@ -67,9 +67,9 @@ BaseModal.grade(name="add-grade" title="Ajouter une note...")
           variant="filled"
         ) Note estimée ({{ unit == 100 ? 'en %' : `sur ${unit}` }})
   ButtonNormal.submit(
-    @click="$emit('submit', gradeObject)"
+    @click="$emit('submit', gradeObject); resetInputs()"
     :validation="validate()(gradeObject)"
-  ) Ajouter
+  ) {{ grade ? 'Modifier' : 'Ajouter' }}
 </template>
 
 <script>
@@ -81,6 +81,16 @@ import ButtonNormal from '~/components/ButtonNormal.vue'
 import { mapGetters, mapState } from 'vuex'
 export default {
   components: {BaseModal, BadgeSubject, InputField, PickerSubject, ButtonNormal},
+  props: {
+    grade: {
+      type: Object,
+      default: null
+    },
+    modalName: {
+      type: String,
+      default: 'add-grade'
+    }
+  },
   data() {
     return {
       obtained: null,
@@ -106,7 +116,7 @@ export default {
         name: this.name,
         obtained_date
       }
-    }
+    },
   },
   methods: {
     // Returns a grade in [0; 1]
@@ -116,7 +126,16 @@ export default {
       return normalized
     },
     ...mapGetters('grades', ['validate']),
-    ...mapGetters('settings', { setting: 'value' })
+    ...mapGetters('settings', { setting: 'value' }),
+    resetInputs() {
+      this.obtained = null,
+      this.expected = null,
+      this.unit = this.setting()('grades_unit'),
+      this.weight = this.setting()('default_grade_weight'),
+      this.goal = null,
+      this.subject = null,
+      this.name = null
+    }
   },
   async mounted() {
     this.$withLoadingScreen(async () => {
@@ -124,9 +143,19 @@ export default {
     })
   },
   watch: {
-    unit() {
-      this.obtained /= this.unit
-      this.obtained *= this.unit
+    grade() {
+      console.log('grade prop changed')
+      if (this.grade) {
+        console.log('Filling modal with data')
+        const { unit, obtained, expected, goal, weight, subject, name, obtained_date } = this.grade
+        this.obtained = obtained * unit
+        this.expected = expected * unit
+        this.goal     = goal * unit
+        this.name     = name
+        this.subject  = subject
+        this.weight   = weight
+        this.obtained_date = obtained_date
+      }
     }
   },
 }
