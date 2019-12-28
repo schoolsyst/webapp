@@ -13,7 +13,7 @@
                 span.name {{ name }}
                 Icon.graded-indicator(v-if="['DM', 'TEST'].includes(type)" v-tooltip="'Noté'").
                     error_outline
-            pre.details(v-if="details" v-html="details")
+            .details(v-if="details" v-html="details")
 </template>
 
 <script>
