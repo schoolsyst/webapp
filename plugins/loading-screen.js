@@ -13,10 +13,11 @@ const start = ({page, screen}) => {
 const finish = ({page, screen, pageDisplayStyle}) => {
     console.log('$withLoadingScreen: finishing')
     screen.style.display = 'none'
+    if (pageDisplayStyle === 'none') pageDisplayStyle = 'block'
     page.style.display = pageDisplayStyle
 }
 
-Vue.prototype.$withLoadingScreen = async (asyncFunc, { title, subtitle }) => {
+Vue.prototype.$withLoadingScreen = async (asyncFunc, { title, subtitle } = { title: 'Chargement...', subtitle: 'Veuillez patienter' }) => {
     title = title || "Chargement..."
     subtitle = subtitle || (title ? "Chargement..." : "Veuillez patienter")
     const page = document.getElementById('page')
