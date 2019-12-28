@@ -2,7 +2,7 @@
 component.subject(
   :style="{backgroundColor: color || 'var(--black)', color: textColor()(color)}"
   @click="$emit('click')"
-  :class="{clickable, multiline, thin, [`variant-${variant}`]: true}"
+  :class="{clickable, multiline, thin, inline, [`variant-${variant}`]: true}"
   :is="clickable ? 'button' : 'span'"
   v-tooltip="!noTooltip ? name : null"
 )
@@ -43,6 +43,10 @@ export default {
       default: 'badge'
     },
     thin: {
+      type: Boolean,
+      default: false
+    },
+    inline: {
       type: Boolean,
       default: false
     },
@@ -101,6 +105,7 @@ dot-aspect()
 .variant-pill
   badge-aspect()
   size = 1.5em
+  flex-shrink 1
   height (size)
   border-radius (size)
   display flex
@@ -110,7 +115,12 @@ dot-aspect()
     badge-aspect()
   @media (min-width 651px)
     dot-aspect()
-
+.inline
+  display inline-flex
+  height 1em
+  width 1em
+  padding: 0
+  padding-bottom: -0.5em
 .clickable
   &:focus, &:hover
     outline: none
