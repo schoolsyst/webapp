@@ -1,5 +1,7 @@
 <template lang="pug">
     //TODO: popup w/ errors
+    //TODO: https://stackoverflow.com/questions/31402576/enable-focus-only-on-keyboard-use-or-tab-press
+    //TODO: Rename this component
     .button
         component.btn(
             :is="href ? 'nuxt-link' : 'button'"
@@ -77,20 +79,20 @@ export default {
     &.small, &.smaller
         font-size: 0.9em
         margin 0 1.5em
-        display inline
+        display inline-flex
     &.small
         padding 13px 18px
     &.smaller
-        padding 13px
+        padding .75em .8em
     border-radius var(--border-radius)
     justify-content center
     align-items center
     text-align center
     &[disabled]
         cursor not-allowed
-    i
+    & /deep/ i
         margin-right 0.2em
-        font-size 1.8em
+        font-size 1.3em
 .btn--outline
     border 2px solid var(--blue)
     color var(--blue)
@@ -137,4 +139,6 @@ export default {
     color var(--blue)
     &:hover, &:focus
         color var(--blue-dark)
+    & /deep/ i
+        margin-bottom: 0.15em //vertical centering
 </style>
