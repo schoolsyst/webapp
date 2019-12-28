@@ -1,5 +1,5 @@
 import { firstBy } from "thenby"
-import { isBefore, isWithinInterval, parseISO, eachDayOfInterval } from "date-fns"
+import { isBefore, isWithinInterval, parseISO, eachDayOfInterval, isWeekend, differenceInWeeks, isSameWeek } from "date-fns"
 import { getMutations, getValidator } from "./index"
 
 export const state = () => ({
@@ -116,6 +116,14 @@ export const getters = {
     return getters.mean(grades)
 
   },
+  ofWeekSmart: ({}, { all }) =>
+    all.filter(o => {
+      const now = Date.now()
+      if (isWeekend(now))
+        return differenceInWeeks(o.added, now) === 1
+      else
+        return isSameWeek(o.added, now)
+    }),
   validate: getValidator({
     constraints: {
       maxLength: {
