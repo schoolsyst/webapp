@@ -84,7 +84,11 @@ Vue.prototype.$modal = {
 			} 
 		}
 
-		console.log(`opening modal ${name} at ${openAt}`); 
+		console.log(`opening modal ${name} at ${openAt}`);
+		if (/self/.test(openAt)) {
+			console.log(calledBy)
+			console.log(modal.querySelector('.modal-wrapper').getBoundingClientRect().height)
+		}
 
 		if (openAt === "self") { 
 			// Choose which self. to use 
@@ -214,7 +218,9 @@ Vue.prototype.$modal = {
 				// get bottom/right coordinates of element 
 				// for absolute positionning 
 				let { top, left, width, height } = calledBy.getBoundingClientRect() 
+				modal.classList.add("opened") 
 				let modalHeight = modal.querySelector('.modal-wrapper').getBoundingClientRect().height
+				modal.classList.remove("opened") 
 
 				setPos({ 
 					bottom: window.innerHeight - (top + modalHeight + height), 
