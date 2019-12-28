@@ -28,7 +28,7 @@
             template(#smiley) \o/
             p Bravo. Vous n'avez plus rien à travailler, pour le moment.
             template(#cta) Ajouter des devoirs
-            template(v-if="grouped.length" #cta-secondary) Voir les devoirs terminés
+            template(#cta-secondary v-if="grouped.length > 0") Voir les devoirs terminés
         vue-context(
             ref="menu" 
             :close-on-click="true" 
@@ -50,7 +50,7 @@ import VueContext from 'vue-context'
 import Icon from '~/components/Icon.vue'
 import 'vue-context/src/sass/vue-context.scss'
 import { mapGetters, mapActions, mapState, mapMutations } from 'vuex';
-import { formatDistance, format, getUnixTime, isSameWeek, isSameMonth, isSameYear, isTomorrow, fromUnixTime, isValid, differenceInDays } from 'date-fns'
+import { formatDistance, format, getUnixTime, isSameWeek, isSameMonth, isSameYear, isTomorrow, fromUnixTime, isValid, differenceInDays, isToday } from 'date-fns'
 import { fr } from 'date-fns/locale'
 import debounce from 'lodash.debounce'
 
@@ -68,12 +68,16 @@ export default {
         }
     },
     methods: {
+        getUnixTime,
         ...mapGetters('homework', ['group', '_needToShowGroup']),
         ...mapActions('homework', ['post', 'switchCompletion']),
         ...mapMutations({ setSetting: 'settings/PATCH' }),
         ...mapGetters({ getSetting: 'settings/value' }),
         compoundDate(date) {
+            if (date === 'LATE') return 'En retard'
             date = fromUnixTime(date)
+            if (isToday(date))
+                return "aujourd'hui"
             if (isTomorrow(date))
                 return 'demain'
             
