@@ -1,5 +1,5 @@
 <template lang="pug">
-  .card-wrapper
+  .card-wrapper(@click="$emit('click')")
     .card
       .header
         BadgeSubject(v-bind="subject" thin)
@@ -72,7 +72,6 @@ export default {
   border-color transparent
 .card-wrapper
   padding 3px
-  max-width 30em
 .header
   font-size 1.1rem
   display flex
