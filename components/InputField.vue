@@ -31,7 +31,7 @@
         v-bind="{value, tabindex, placeholder, disabled}"
         :step="type === 'number' ? 0.001 : null"
         @input="active = true; initial = false; $emit('input', toJSValue($event.target.value))"
-        @click="active = true; $emit('active', $event)"
+        @click="active = true; (preventDefaultClick ? $event.preventDefault() : ''); $emit('click', $event)"
         @blur="active = false; passwordShown = false; $emit('blur', $event)"
         @focus="active = false; $emit('active', $event)"
       )
@@ -100,6 +100,10 @@ export default {
     resizable: {
       type: [Boolean, String],
       default: false
+    },
+    preventDefaultClick: {
+      type: Boolean,
+      default: false
     }
   },
   data() {
@@ -152,12 +156,20 @@ export default {
                         .replace('-', '')
                         .replace('_', '')
       )
+    },
+    HTMLValue() {
+      const v = this.toHTMLValue(this.value)
+      this.$el.querySelector('input').value = v
+      return v
+    },
+    JSValue() {
+      return this.toJSValue(this.value)
     }
   },
   methods: {
     clearField() {
       this.$el.querySelector('input, textarea').value = ''
-      this.$emit('input', '')
+      this.$emit('input', null)
     },
     togglePasswordVisibility() {
       this.passwordShown = !this.passwordShown
@@ -165,7 +177,7 @@ export default {
     action($event) {
       if (this.actionIcon)
         this.$emit('action', $event);
-      if (this.type === 'password')
+      else if (this.type === 'password')
         this.togglePasswordVisibility()
       else
         this.clearField()
@@ -176,6 +188,7 @@ export default {
       }
       switch (this.type) {
         case 'date':
+          console.log(['toJSValue', value])
           value = parseISO(value)
           break;
       
@@ -187,6 +200,7 @@ export default {
     },
     toHTMLValue(value) {
       if (value === null) return null
+      if (typeof value === 'string') return value
       switch (this.type) {
         case 'date':
           value = formatISO(value, { representation: "date" })
