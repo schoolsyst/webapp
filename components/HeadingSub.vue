@@ -33,11 +33,10 @@ export default {
     font-size: 0.9em
 
 +desktop
-  .HeadingSub.buttons 
+  .HeadingSub
     display: inline-flex
     align-items: center
-    white-space: nowrap
 +mobile
-  .HeadingSub.buttons > *
+  .HeadingSub
     margin-top: 10px
 </style>
