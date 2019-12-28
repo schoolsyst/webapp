@@ -5,8 +5,7 @@ BaseModal(
   resizable="both"
 )
   .content
-    PickerSubject(namespace="add-homework" @pick="subject = $event")
-    PickerDateDue.date-picker(v-bind="{subject, due}" namespace="add-homework" @pick="due = $event")
+    PickerSubject(namespace="add-homework" @pick="cl($event); subject = $event")
     .header
       BadgeSubject(
         clickable
@@ -39,22 +38,11 @@ BaseModal(
           variant="filled"
           :values="types" 
         ) Type de devoir
-        InputField.due(
-          v-model="due"
-          v-bind="{validation}"
-          name="due" 
-          type="date"
+        PickerDateDue(
+          namespace="add-homework"
           variant="filled"
-          no-error-messages
-          action-icon="keyboard_arrow_down"
-          @action="\
-            $modal.show('add-homework-due-date-picker', {\
-              at: 'self.top.left', \
-              from: $event.target.parentElement.parentElement, \
-              stretch: 'width'\
-            })\
-          "
-          @input="due = $event"
+          v-model="due"
+          v-bind="{subject}"
         ) À {{dueLabelVerb}} pour le
     .submit-area
       ButtonNormal(
@@ -93,12 +81,13 @@ export default {
       set: function(newSubject) { this.mSubject = newSubject }
     },
     due: {
-      get: function() { return (
-        this.mDue 
-        || this.nextCourseOf(this.subject) 
-          ? this.nextCourseOf(this.subject).start 
-          : null 
-      ) },
+      get: function() { 
+        console.log(['due:get', !!this.mDue]); 
+        if (this.mDue) return this.mDue
+        const nextCourse = this.nextCourseOf(this.subject) 
+        if (nextCourse) return nextCourse.start
+        return null
+      },
       set: function(newDueDate) { this.mDue = newDueDate }
     },
     validation() {
@@ -125,6 +114,9 @@ export default {
   methods: {
     ...mapGetters('homework', ['validate']),
     cl(msg) { console.log(msg) }
+  },
+  watch: {
+    due() { this.cl(this.due) }
   }
 }
 </script>
