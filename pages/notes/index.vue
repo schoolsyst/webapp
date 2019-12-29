@@ -21,18 +21,10 @@
         placeholder="Recherche par titre ou nom de la matière"
       )
       Icon filter_list
-      InputSelect(
-        :options="subjects" v-model="filterSubject"
-        placeholder="Choisir une matière"
+      InputSelectSubject(
+        v-model="filterSubject"
+        name="filter"
       )
-        template(slot="singleLabel" slot-scope="props")
-          BadgeSubject(v-bind="props.option" variant="dot" no-tooltip)
-          span.subject-name {{ props.option.name }}
-        template(slot="option" slot-scope="props")
-          BadgeSubject(v-bind="props.option" variant="dot" no-tooltip)
-          span.subject-name {{ props.option.name }}
-        template(slot="noOptions")
-          p Aucun résultat.
       Icon sort
       InputSelect(
         :options="sortOptions" v-model="sortBy" 
@@ -96,6 +88,7 @@ import ButtonNormal from '~/components/ButtonNormal.vue'
 import BadgeSubject from '~/components/BadgeSubject.vue'
 import InputField from '~/components/InputField.vue'
 import InputSelect from '~/components/InputSelect.vue'
+import InputSelectSubject from '~/components/InputSelectSubject.vue'
 import CardNote from '~/components/CardNote.vue'
 import PickerSubject from '~/components/PickerSubject.vue'
 import Icon from '~/components/Icon.vue'
@@ -104,7 +97,7 @@ import 'vue-context/src/sass/vue-context.scss'
 import { mapGetters, mapActions, mapState } from 'vuex';
 import Fuse from 'fuse.js'
 export default {
-  components: { HeadingSub, CardNote, InputField, Icon, BaseModal, VueContext, ButtonNormal, ScreenEmpty, PickerSubject, VueContext, InputSelect, BadgeSubject },
+  components: { HeadingSub, CardNote, InputField, Icon, BaseModal, VueContext, ButtonNormal, ScreenEmpty, PickerSubject, VueContext, InputSelect, BadgeSubject, InputSelectSubject },
   head: {
     title: 'Cours'
   },
