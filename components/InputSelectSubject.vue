@@ -1,8 +1,9 @@
 <template lang="pug">
 InputSelect(
 	:options="filter(choices)"
-	@input="$emit('input', ($event.uuid === null ? null : $event))"
-		:value="value === null ? emptyChoiceObj : value"
+	@input="$emit('input', ($event && ($event.uuid === null ? null : $event)))"
+	:value="value === null ? emptyChoiceObj : value"
+	label="name"
 	v-bind="{placeholder, name}"
 	:allow-empty="!!emptyChoice"
 	searchable
@@ -14,7 +15,7 @@ InputSelect(
 			template(v-if="props.option.uuid === null")
 				slot(name="empty-option")
 					Icon.icon(filled) donut_small
-					span {{ props.option.text }} 
+					span {{ props.option.name }} 
 			template(v-else)
 				BadgeSubject(v-bind="props.option" variant="dot" no-tooltip)
 				span.subject-name {{ props.option.name }}
@@ -32,7 +33,10 @@ export default {
 	components: { BadgeSubject, InputSelect, Icon },
 	props: {
 		value: Object,
-		placeholder: String,
+		placeholder: {
+			type: String,
+			default: "Choisissez une matière"	
+		},
 		name: String,
 		filter: {
 			type: Function,
@@ -46,7 +50,7 @@ export default {
 	computed: {
 		...mapGetters('subjects', ['all']),
 			emptyChoiceObj() {
-				return { uuid: null, text: this.emptyChoice }
+				return { uuid: null, name: this.emptyChoice }
 			},
 		choices() {
 			if (!this.emptyChoice) return this.all
