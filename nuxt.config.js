@@ -1,10 +1,13 @@
 export default {
-  mode: "universal",
+  mode: "spa",
   /*
    ** Headers of the page
    */
   head: {
     title: "Schoolsyst" || process.env.npm_package_name || "",
+    titleTemplate: (titleChunk) => {
+      return (!titleChunk || titleChunk === 'Schoolsyst') ? 'Schoolsyst' : titleChunk + " · Schoolsyst"
+    },
     meta: [
       { charset: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
@@ -26,11 +29,6 @@ export default {
       {
         rel: "stylesheet",
         href: "https://fonts.googleapis.com/css?family=Roboto+Mono"
-      },
-      {
-        rel: "stylesheet",
-        href:
-          "https://fonts.googleapis.com/css?family=Material+Icons|Material+Icons+Outlined"
       },
       {
         rel: "apple-touch-icon",
@@ -55,7 +53,7 @@ export default {
     script: [
       {
         src:
-          "https://cdnjs.cloudflare.com/ajax/libs/bodymovin/5.5.7/lottie.min.js"
+          "/lottie.min.js"
       }
     ]
   },
@@ -63,24 +61,32 @@ export default {
    ** Customize the progress-bar color
    */
   loading: {
-    color: "#268CCE",
+    color: "var(--blue)",
     height: "2px"
   },
   /*
    ** Global CSS
    */
   css: [
+    // Global
     "~/assets/reset.sass",
     "~/assets/defaults.sass",
     // Fonts
-    "~/assets/fonts/Manrope/import.css",
-    "~/assets/fonts/FantasqueSansMono/import.css"
+    "~/assets/fonts/FantasqueSansMono/import.css",
+    "~/assets/fonts/Now/import.css",
+    // Icons
+    "~/assets/fonts/Material-Icons/import.css",
+    // Plugins
+    "~/plugins/v-tooltip.scss",
   ],
   /*
    ** Plugins to load before mounting the App
    */
   plugins: [
-    // '~/plugins/kbshortcuts.js'
+    '~plugins/vue-js-modal',
+    '~plugins/loading-screen',
+    '~plugins/vue-chartkick',
+    '~plugins/v-tooltip.js',
   ],
   /*
    ** Nuxt.js modules
@@ -92,7 +98,8 @@ export default {
     "@nuxtjs/auth",
     "@nuxtjs/toast",
     "@nuxtjs/toast",
-    "@nuxtjs/markdownit"
+    "@nuxtjs/markdownit",
+    ["nuxt-vue-select", {}]
   ],
   /*
    ** Markdown-it configuration
@@ -100,7 +107,7 @@ export default {
    ** and https://github.com/markdown-it/markdown-it
    */
   markdownit: {
-    injected: true,
+    injected: false,
     breaks: true,
     linkify: true,
     typographer: true,
@@ -131,7 +138,7 @@ export default {
    */
   toast: {
     position: "bottom-left",
-    duration: 5000
+    duration: 3000,
   },
   /*
    ** Auth module configuration.
@@ -166,7 +173,7 @@ export default {
    ** See https://axios.nuxtjs.org/options
    */
   axios: {
-    baseURL: "http://51.89.116.101:9999/api/"
+    baseURL: "http://localhost:9999/api/"
   },
   /*
    ** Build configuration

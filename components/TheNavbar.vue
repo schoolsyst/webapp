@@ -45,46 +45,46 @@ nav.TheNavbar(:class="{'slide-out': slideOut}", tabindex="1")
 </template>
 
 <script>
-import NavbarButton from "~/components/NavbarButton.vue";
+import NavbarButton from "~/components/NavbarButton.vue"
 
 export default {
   name: "TheNavbar",
 
   components: {
-    NavbarButton
+    NavbarButton,
   },
 
   props: {
     slideOut: {
       type: Boolean,
-      default: false
-    }
+      default: false,
+    },
   },
 
   updated() {
     // Fix the work_outline icon
-    let badIcon = document.querySelector("nav a.bad-icon");
+    let badIcon = document.querySelector("nav a.bad-icon")
 
-      badIcon.addEventListener('mouseover', event => {
-        if (!badIcon.classList.contains("current-page")) {
-          badIcon.querySelector("i").innerText = "work";
-        }
-      });
-      badIcon.addEventListener('mouseout', event => {
-        if (!badIcon.classList.contains("current-page")) {
-          badIcon.querySelector("i").innerText = "work_outline";
-        }
-      });
+    badIcon.addEventListener("mouseover", (event) => {
+      if (!badIcon.classList.contains("current-page")) {
+        badIcon.querySelector("i").innerText = "work"
+      }
+    })
+    badIcon.addEventListener("mouseout", (event) => {
+      if (!badIcon.classList.contains("current-page")) {
+        badIcon.querySelector("i").innerText = "work_outline"
+      }
+    })
   },
 
-  methods: {}
-};
+  methods: {},
+}
 </script>
 
 <style lang="sass" scoped>
 @import '~/assets/defaults'
 
-$nav-padding: 20px
+$nav-padding: 15px
 .TheNavbar
   position: fixed
   @media (min-width: $bk-sidebar)
@@ -95,7 +95,7 @@ $nav-padding: 20px
     left: 0
     transform: translateY(-50%)
     .NavbarButton:not(:last-child)
-      margin-bottom: 20px
+      margin-bottom: 10px
 
   //TODO hide on scroll on mobile ?
   @media (max-width: $bk-sidebar - 1px)
@@ -116,7 +116,7 @@ $nav-padding: 20px
 +tablet
   .TheNavbar.slide-out
     // positioning
-    left: -95px
+    left: -72px - $nav-padding
     // dimensions
     padding: $nav-padding
     // appearance

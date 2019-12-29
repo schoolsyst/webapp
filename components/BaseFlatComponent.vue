@@ -12,38 +12,38 @@ export default {
     icon: String,
     iconStyle: {
       type: String,
-      default: "outlined"
+      default: "outlined",
     },
     labelFor: String,
     largeIcon: {
       type: Boolean,
-      default: false
+      default: false,
     },
     small: {
-      type:Boolean,
-      default: false
+      type: Boolean,
+      default: false,
     },
   },
 
   data() {
-    return {};
+    return {}
   },
 
   computed: {
     iconStyleClass() {
       return (
         "material-icons" + (this.iconStyle === "baseline" ? "" : "-outlined")
-      );
-    }
+      )
+    },
   },
 
   mounted() {
     //TODO: fill label icon on <slot>:focus
-    //this.$slots.default.forEach(vnode => console.log(vnode))
+    //this.$slots.default.forEach(vnode => // console.log(vnode))
   },
 
-  methods: {}
-};
+  methods: {},
+}
 </script>
 
 <style lang="sass" scoped>

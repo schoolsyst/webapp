@@ -1,50 +1,130 @@
 <template lang="pug">
-button.BadgeSubject(:style="{backgroundColor: color, color: textColor}" :title="name" @click="$emit('click')") {{abbreviation}}
+component.subject(
+  :style="{backgroundColor: color || 'var(--black)', color: textColor()(color)}"
+  @click="$emit('click')"
+  :class="{clickable, multiline, thin, inline, [`variant-${variant}`]: true}"
+  :is="clickable ? 'button' : 'span'"
+  v-tooltip="!noTooltip ? name : null"
+)
+  Icon.unknown-icon(v-if="!color") more_horiz
+  span.name
+    | {{name || placeholderName}}
 </template>
 
 <script>
-import tinycolor from 'tinycolor2'
+import { mapGetters } from 'vuex'
+import Icon from '~/components/Icon.vue'
 export default {
-    name: 'BadgeSubject',
-    props: {
-        abbreviation: {
-            type:String,
-            default:'...'
-        },
-        color: {
-            type:String,
-            default:'#000000'
-        },
-        name: {
-            type: String,
-            default() { return this.abbreviation === '...' ? 'Choisissez une matière...' : this.abbreviation }
-        }
+  name: "BadgeSubject",
+  components: { Icon },
+  props: {
+    color: {
+      type: String,
+      default: null,
     },
-    computed: {
-        textColor() {
-            return tinycolor(this.color).isDark() ? 'white' : 'black'
-        }
+    name: {
+      type: String,
+      default: null,
+    },
+    clickable: {
+      type: Boolean,
+      default: false
+    },
+    placeholderName: {
+      type: String,
+      default: 'Choisir...'
+    },
+    multiline: {
+      type: Boolean,
+      default: false
+    },
+    variant: {
+      type: String,
+      default: 'badge'
+    },
+    thin: {
+      type: Boolean,
+      default: false
+    },
+    inline: {
+      type: Boolean,
+      default: false
+    },
+    noTooltip: {
+      type: Boolean,
+      default: false
+    },
+  },
+    methods: {
+      ...mapGetters(['textColor'])
     }
 }
 </script>
 
-<style lang="sass" scoped>
-@import '~/assets/defaults'
-
-.BadgeSubject
-    width: 100px
-    height: 50px
-    font-family: 'Roboto Mono', monospace
-    font-size: 30px
-    padding: 10px 15px
-    border-radius: 10px
-    color: #fff
-    display: flex
+<style lang="stylus" scoped>
+badge-aspect()
+  padding: .7em .7em
+  border-radius: var(--border-radius)
+  align-items: center
+  // If white-space set to wrap, will allow multiline subject names 
+  // but no ellipsis (harsh overflow cutoff), 
+  // else will put ellipsis but restrict to one line.
+  &:not(.multiline)
     white-space: nowrap
-    justify-content: center
-    align-items: center
-    text-transform: uppercase
-    &:focus, &:hover
-        outline: none
-        opacity: 0.75
+    flex-shrink: 0
+  &.multiline
+    white-space wrap
+  font-weight normal
+  overflow: hidden
+  position relative
+  display block
+  text-overflow ellipsis
+  max-height 25vh
+  .unknown-icon
+    display none
+dot-aspect()
+  size = 1.2em
+  height: (size)
+  width: (size)
+  min-width: (size) / 2
+  min-height: (size) / 2
+  border-radius: 50%
+  display: flex
+  flex-shrink: 0
+  justify-content: center
+  align-items: center
+  .name
+    display none
+
+.variant-badge
+  badge-aspect()
+  &.thin
+    padding: 0.3em 0.5em
+.variant-dot
+  dot-aspect()
+.variant-pill
+  badge-aspect()
+  size = 1.5em
+  flex-shrink 1
+  height (size)
+  border-radius (size)
+  display flex
+  align-items center
+.variant-responsive
+  @media (max-width 650px)
+    badge-aspect()
+  @media (min-width 651px)
+    dot-aspect()
+.inline
+  display inline-flex
+  height 1em
+  width 1em
+  padding: 0
+  padding-bottom: -0.5em
+.clickable
+  &:focus, &:hover
+    outline: none
+    opacity: 0.75
+.unknown-icon
+  color var(--white)
 </style>

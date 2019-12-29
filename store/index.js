@@ -1,205 +1,411 @@
-import flatten from "lodash.flatten";
+import { toDate, addDays, isBefore, format } from "date-fns"
+import tinycolor from "tinycolor2"
+import constantCase from 'constant-case'
+import Vue from 'vue'
 
 export const state = () => ({
-  //Don't forget to add new state objects to the module's CLEAR_ALL!
-  subjects: [],
-  settings: [],
-  defaultSettings: []
-});
+	now: toDate(Date.now()), // For time-dependent getters.
+  tomorrow: addDays(toDate(Date.now()), 1),
+  location: {
+    latitude: null,
+    longitude: null
+  },
+  links: [
+    { 
+        name: 'Timeline',
+        href: '/timeline', 
+        icon: 'timeline' ,
+        id:   'timeline'
+    },
+    { 
+        name: 'Cours',
+        href: '/notes', 
+        icon: 'insert_drive_file' ,
+        id:   'notes'
+    },
+    { 
+        name: 'Devoirs',
+        href: '/homework', 
+        icon: 'book' ,
+        id:   'homework'
+    },
+    { 
+        name: 'Emploi du temps',
+        href: '/schedule', 
+        icon: 'today' ,
+        id:   'schedule'
+    },
+    { 
+        name: 'Notes',
+        href: '/grades', 
+        icon: 'school' ,
+        id:   'grades'
+    },
+    { 
+        name: 'Sac',
+        href: '/bag', 
+        icon: 'work_outline',
+        id:   'bag'
+    },
+    'separator',
+    {
+        name: 'Paramètres',
+        href: '/settings',
+        icon: 'settings',
+        id:   'settings'
+    },
+    {
+        name: 'Signaler un bug',
+        href: '/bug-report',
+        icon: 'bug_report',
+        id:   'bug-report'
+    }
+],
+})
 
 export const getters = {
-  subjects: (state, getters) => state.subjects,
-  allSettings: (state, getters) => state.settings,
-  defaultSettings: (state, getters) => state.defaultSettings,
-
-  setting: (state, getters) => settingKey => {
-    if (!getters.allSettings) {
-      console.error("getters.allSettings is falsey. WTF‽");
-      return { value: null };
-    }
-    let defaultSetting = getters.defaultSettings.find(
-      setting => setting.key === settingKey
-    );
-    if (!defaultSetting) return { value: null };
-    let userSetting = getters.allSettings.find(
-      setting => setting.setting.key === settingKey
-    );
-    // Convert to boolean
-    let defaultSettingDefault;
-    if (defaultSetting.kind == "boolean") {
-      defaultSettingDefault =
-        defaultSetting.default === "true" || defaultSetting.default === "yes";
-    } else {
-      defaultSettingDefault = defaultSetting.default;
-    }
-    if (!userSetting) {
-      // add quotes to know if convertion occured correctly
-      let q = typeof defaultSettingDefault === "string" ? '"' : "";
-      console.warn(
-        `falling back to default value for setting ${settingKey}(=${q}${defaultSettingDefault}${q})`
-      );
-      return {
-        ...defaultSetting,
-        value: defaultSettingDefault,
-        _is_default: true
-      };
-    }
-    return Object.assign({}, defaultSetting, userSetting, {
-      _is_default: false
-    });
+	/* Why `=> () =>` ? To turn the getter into a function
+		* and therefore prevent caching.
+		*/
+	requireInitialSetup: (state, getters, rootState, rootGetters) => () => {
+		const settings = rootGetters["settings/all"]
+		// Non-optional settings that haven't been set by the user are considered "bad".
+    const badSettings = settings.filter(
+      (o) => o.isDefaultSetting && !o.optional
+    )
+    return badSettings.length > 0
   },
-  subjectBySlug: (state, getters) => subjSlug => {
-    return state.subjects.find(subj => subj.slug === subjSlug);
+  textColor: (state, getters) => (backgroundColor) =>
+    /* returns the corresponding text color most visible
+     * on backgroundColor: either 'black' or 'white'.
+     */
+    tinycolor(backgroundColor).isLight() ? "black" : "white",
+  formatTime: (state, getters) => (time) => {
+    if (time === null) return null
+    return format(time, 'HH:mm')
   },
-  // This is a functionnal getter to prevent caching
-  requireInitialSetup: (state, getters) => () => {
-    let ret;
-    // Crude check, if not subjects or no settings are set,
-    // we obviously require a setup
-    ret = !(state.subjects.length && state.settings.length);
-    if (ret) return true;
-
-    ret = 
-      getters.setting("year_start")._is_default ||
-      getters.setting("year_end")._is_default;
-  }
-};
+  drawerLinks: (state) => (state.links),
+  sideRailLinks: (state) =>
+    state.links.filter((link) => {
+      if (link === 'separator') return false
+      return ['timeline', 'notes', 'homework', 'grades'].includes(link.id)
+    }),
+}
 
 export const mutations = {
-  SET_SUBJECTS: (state, subjects) => {
-    state.subjects = subjects;
+  UPDATE_TIME: (state, newTime) => {
+    state.now = newTime
+    state.tomorrow = addDays(newTime, 1)
   },
-  SET_SETTING(state, newSetting) {
-    state.settings.push(newSetting);
-  },
-  SET_DEFAULT_SETTINGS(state, defaultSettings) {
-    state.defaultSettings = defaultSettings;
-  },
-  SET_SETTINGS(state, settings) {
-    state.settings = settings;
-  },
-  ADD_SUBJECT(state, data) {
-    state.subjects.push(data);
-  },
-  UPDATE_SUBJECT(state, { uuid, data }) {
-    let subject = state.subjects.find(s => s.uuid === uuid);
-    state.subjects = state.subjects.filter(s => s.uuid !== uuid);
-    Object.assign(subject, data);
-    state.subjects.push(subject);
-  },
-  DELETE_SUBJECT(state, uuid) {
-    state.subjects = state.subjects.filter(s => s.uuid !== uuid);
-  },
-  CLEAR_SUBJECTS(state) {
-    state.subjects = [];
-  },
-  CLEAR_SETTINGS(state) {
-    state.settings = [];
-    state.defaultSettings = [];
+  UPDATE_LOCATION: (state, newLocation) => {
+    state.location = newLocation
   }
-};
+}
 
 export const actions = {
-  async nuxtServerInit({ commit }, { app }) {
-    console.group("----[ nuxtServerInit ]----");
-    let res;
-
-    // try {
-    try {
-      res = await app.$axios.get("/subjects/");
-      commit("SET_SUBJECTS", res.data);
-      console.log(`${res.data.length} subject(s) set.`);
-    } catch (error) {
-      console.error(`[Get from API] Error while GET'ing '/subjects/':`);
-      console.error(error.response.data);
-    }
-
-    try {
-      res = await app.$axios.get("/default-settings/");
-      commit("SET_DEFAULT_SETTINGS", res.data);
-      console.log(`${res.data.length} default-setting(s) set.`);
-    } catch (error) {
-      console.error(`[Get from API] Error while GET'ing '/default-settings/':`);
-      console.error(error.response.data);
-    }
-
-    try {
-      res = await app.$axios.get("/settings/");
-      commit("SET_SETTINGS", res.data);
-      console.log(`${res.data.length} setting(s) set.`);
-    } catch (error) {
-      console.error(`[Get from API] Error while GET'ing '/settings/':`);
-      console.error(error.response.data);
-    }
-
-    try {
-      res = await app.$axios.get("/events/");
-      commit("schedule/SET_EVENTS", res.data);
-      console.log(`${res.data.length} event(s) set.`);
-    } catch (error) {
-      console.error(`[Get from API] Error while GET'ing "/events/":`);
-      console.error(error.response.data);
-    }
-
-    try {
-      res = await app.$axios.get("/event-additions/");
-      commit("schedule/SET_ADDITIONS", res.data);
-      console.log(`${res.data.length} event-addition(s) set.`);
-    } catch (error) {
-      console.error(`[Get from API] Error while GET'ing "/event-additions/":`);
-      console.error(error.response.data);
-    }
-
-    try {
-      res = await app.$axios.get("/event-deletions/");
-      commit("schedule/SET_DELETIONS", res.data);
-      console.log(`${res.data.length} event-deletion(s) set.`);
-    } catch (error) {
-      console.error(`[Get from API] Error while GET'ing "/event-deletions/":`);
-      console.error(error.response.data);
-    }
-
-    try {
-      res = await app.$axios.get("/notes/");
-      commit("notes/SET_NOTES", res.data);
-      console.log(`${res.data.length} note(s) set.`);
-    } catch (error) {
-      console.error(`[Get from API] Error while GET'ing '/notes/':`);
-      console.error(error.response.data);
-    }
-
-    try {
-      res = await app.$axios.get("/exercises/");
-      commit("homework/SET_EXERCISES", res.data);
-      console.log(`${res.data.length} exercise(s) set.`);
-    } catch (error) {
-      console.error(`[Get from API] Error while GET'ing '/exercises/':`);
-      console.error(error.response.data);
-    }
-
-    try {
-      res = await app.$axios.get("/tests/");
-      commit("homework/SET_TESTS", res.data);
-      console.log(`${res.data.length} test(s) set.`);
-      let grades = flatten(res.data.map(test => test.grades));
-      commit("homework/SET_GRADES", grades);
-      console.log(`${grades.length} grade(s) set.`);
-    } catch (error) {
-      console.error(`[Get from API] Error while GET'ing "/tests/":`);
-      console.error(error.response.data);
-    }
-
-    // } catch (error) {
-    //     console.error(error)
-    // }
-
-    console.groupEnd();
+  async loadAll({ dispatch }) {
+    await dispatch("settings/load")
+    await dispatch("subjects/load")
+    await dispatch("homework/load")
+    await dispatch("grades/load")
+    await dispatch("schedule/load")
+    await dispatch("notes/load")
+    await dispatch("learndata/load")
   },
-  clearAllData({ commit }) {
-    commit("CLEAR_SUBJECTS");
-    commit("CLEAR_SETTINGS");
-    commit("homework/CLEAR_ALL");
-    commit("schedule/CLEAR_ALL");
-    commit("notes/CLEAR_ALL");
+
+  async nuxtServerInit({ dispatch }) {
+    await dispatch("settings/load")
+    await dispatch("subjects/load")
+  },
+
+  async acquireLocation({commit, state}) {
+    if (state.longitude === null || state.latitude === null)
+      navigator.geolocation.getCurrentPosition(
+        (pos) => {
+          commit('UPDATE_LOCATION', pos.coords)
+        },
+        (err) => {
+          console.error(`[store] acquireLocation: error while requesting for location: ${err}`)
+        }
+      )
   }
-};
+}
+
+export const getValidator = ({ 
+  constraints,
+  resourceName,
+  fieldNames,
+  customConstraints = [],
+  debug
+}) => (getters) => (object) => {
+  debug = debug || false
+  /* Factory to create a validator.
+  Describe constraints on fields, error messages are generated automatically.
+  */
+
+  if(debug) {
+    console.group(`[validator] validating resource "${resourceName.name}"`)
+  console.log(`Constraints:`)
+  console.log({...constraints, ...customConstraints})
+  console.log(`Fields:`)
+  console.log(Object.fromEntries(
+    Object.keys(fieldNames).map((field) => [field, object[field]])
+  ))
+  }
+
+  // Article in french
+  const article = (noun, feminine, indeterminate = false) => {
+    const vowels = ["a", "e", "i", "o", "u", "y"]
+    if (vowels.includes(noun[0]) && !indeterminate)
+      return "l'"
+    else if (feminine)
+      return indeterminate ? "une " : "la "
+    else
+      return indeterminate ? "un " : "le "
+  }
+
+  // Resource name article & indeterminate article
+  resourceName.article = article(resourceName.name, resourceName.gender === 'F', false)
+  resourceName.indeterminateArticle = article(resourceName.name, resourceName.gender === 'F', true)
+
+  // Uppercase first char
+  const upperFirst = (string) => string[0].toUpperCase() + string.slice(1)
+
+  // Checkers
+  const checkers = {
+    maximum: ({arg, fieldName}) => 
+      object[fieldName] <= arg,
+    minimum: ({arg, fieldName}) => 
+      object[fieldName] >= arg,
+    maxLength: ({arg, fieldName}) => 
+      typeof object[fieldName] === 'string' ? object[fieldName].length <= arg : true,
+    required: ({arg, fieldName}) => 
+      object.hasOwnProperty(fieldName) && object[fieldName] !== null,
+    notEmpty: ({arg, fieldName}) =>
+      object[fieldName].length > 0,
+    isAWeekType: ({arg, fieldName}) =>
+      ['Q1', 'Q2', 'BOTH'].includes(object[fieldName]),
+    before: ({arg, fieldName}) =>
+      isBefore(object[fieldName], object[arg]),
+    isAColor: ({arg, fieldName}) =>
+      object[fieldName].match(/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/) !== null,
+    isAnEmail: ({arg, fieldName}) =>
+      // regex source: https://emailregex.com/
+      object[fieldName].match(/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/) !== null
+  }
+  const check = ({errorName, fieldName, errorArg}) => {
+    // Wrap checkers with object property existential check
+    /* Special case for required, which checks if the property exist
+       and returnes *false* instead.
+    */
+    if (errorName !== 'required' 
+        && !object.hasOwnProperty(fieldName)) {
+        return true
+    }
+    return checkers[errorName]({arg: errorArg, fieldName})
+  }
+
+  // Error messages
+  const message = ({errorName, errorArg, fieldName}) => {
+    const {gender, name} = fieldNames[fieldName]
+    const fieldIsFeminine = gender === 'F'
+    const determinateArticle = article(name, fieldIsFeminine, false)
+    const indeterminateArticle = article(name, fieldIsFeminine, true)
+    const argNameWithArticle = article(
+      fieldNames[fieldName].name,
+      fieldNames[fieldName].gender === 'F',
+      false
+    ) + fieldNames[fieldName].name
+    const fieldNameWithArticle = determinateArticle + name
+    return upperFirst({
+      maximum: `${fieldNameWithArticle} ne doit pas dépasser ${errorArg}`,
+      minimum: `${fieldNameWithArticle} doit être d'au moins ${errorArg}`,
+      maxLength: `${fieldNameWithArticle} ne doit pas dépasser ${errorArg} caractère${errorArg === 1 ? '' : 's'}`,
+      required: `Veuillez renseigner ${indeterminateArticle}${name}`,
+      isAWeekType: `${fieldNameWithArticle} doit être Q1, Q2 ou les deux.`,
+      before: `${fieldNameWithArticle} doit être avant ${argNameWithArticle}`,
+      isAColor: `${fieldNameWithArticle} doit être une couleur au format hexadécimal. Exemple: #09f ou #0479cf`,
+      notEmpty: `${fieldNameWithArticle} est requis${fieldIsFeminine ? 'e' : ''}`,
+      isAnEmail: 
+        name === 'adresse email'
+          ? `${fieldNameWithArticle} doit être valide`
+          : `${fieldNameWithArticle} doit être une adresse email valide`
+    }[errorName])
+  }
+
+  // Stores the errors
+  let errorMessages = {}
+  // Fill each field with an empty array
+  Object.keys(fieldNames).forEach((field) => {errorMessages[field] = []})
+  let validated = true
+
+  // Go through the constraints
+  for (const errorName in constraints) {
+    if (constraints.hasOwnProperty(errorName)) {
+      const fieldsOrArgs = constraints[errorName];
+      // No arguments, field names are passed directly
+      if (fieldsOrArgs instanceof Array) {
+        fieldsOrArgs.forEach(fieldName => {
+          if (!check({errorName, fieldName, errorArg: null})) {
+            // Some error occured, add the error message
+            errorMessages[fieldName].push(
+              message({errorName, fieldName, errorArg: null})
+            )
+            validated = false
+          }
+        });
+      } 
+      // Error arguments, multiple cases. eg: maximum
+      else {
+        for (const errorArg in fieldsOrArgs) {
+          if (fieldsOrArgs.hasOwnProperty(errorArg)) {
+            const fields = fieldsOrArgs[errorArg];
+            fields.forEach((fieldName) => {
+              if (!check({errorName, fieldName, errorArg})) {
+                errorMessages[fieldName].push(
+                  message({errorName, fieldName, errorArg})
+                )
+                validated = false
+              }
+            })
+          }
+        }
+      }
+    }
+  }
+
+  // Go through custom constraints
+  customConstraints.forEach(({message, constraint, field}) => {
+    if (!constraint(getters, object)) {
+      field = field === null ? 'nonFieldErrors' : field
+      if (errorMessages.hasOwnProperty(field)) {
+        errorMessages[field].push(message)
+      } else {
+        errorMessages[field] = [message]
+      }
+      validated = false
+    }
+  })
+
+  // returns the object
+  const ret = {
+    validated,
+    errors: errorMessages
+  }
+  if (debug) {
+    if (ret.validated) {
+      console.log('Validated.')
+    } else {
+      console.log('Errors:')
+      Object.entries(ret.errors).forEach(([name, errors]) => {
+        if (errors.length) {
+          console.log(`    ${name}:`)
+          console.log(errors)
+        }
+      });
+    }
+    console.groupEnd()
+  }
+
+  return ret
+}
+
+export const getMutations = (
+  what,
+  mapWith = (o) => o,
+  pure = true,
+  verbs = ["add", "set", "del", "patch"],
+  primaryKey = 'uuid',
+  debug = false
+) => {
+  /* Factory to create basic mutations while preserving DRYness of code
+   * set, add, del & patch are booleans that—when set to false—disable
+   * a particular mutation from being built & returned.
+   *
+   * @param pure: makes the function return solely the verb as the function name.
+   *              useful for store modules consisting of *one* resource only.
+   *              example: {SET:..., ADD:... ...} instead of {SET_THINGS:..., ADD_THING:... ...}
+   *
+   * @param what: the name of the resource. Will be used to calculate the
+   *              state's array & mutations' names.
+   * @param mapWith: a function to map each object to when putting into the state
+   *                 Defaults to `o => o`
+   * @param primaryKey: the name of the primary key used for mutations acting on a single object.
+   * @param debug: Log every mutation if true
+   */
+
+  const mutations = {}
+  const WHAT = pure ? "" : "_" + constantCase(what)
+  const whats = what + 's'
+
+  if (verbs.includes("set"))
+    mutations[`SET${WHAT}${pure ? "" : "S"}`] = (state, items) => {
+      if(debug) {
+        console.group(`${whats}/SET`)
+        console.log('before:')
+        console.log(state[whats])
+      }
+      Vue.set(state, whats, items.map(mapWith))
+      if (debug) {
+        console.log('after:')
+        console.log(state[whats])
+        console.groupEnd()
+      }
+    }
+  if (verbs.includes("add"))
+    mutations[`ADD${WHAT}`] = (state, item) => {
+      if(debug) {
+        console.group(`${whats}/ADD`)
+        console.log('before:')
+        console.log(state[whats])
+      }
+      Vue.set(state, whats, [...state[whats], mapWith(item)])
+      if (debug) {
+        console.log('after:')
+        console.log(state[whats])
+        console.groupEnd()
+      }
+    }
+  if (verbs.includes("del"))
+    mutations[`DEL${WHAT}`] = (state, pk) => {
+      if(debug) {
+        console.group(`${whats}/DEL`)
+        console.log('before:')
+        console.log(state[whats])
+      }
+      Vue.set(state, whats, state[whats].filter((o) => o[primaryKey] !== pk))
+      if (debug) {
+        console.log('after:')
+        console.log(state[whats])
+        console.groupEnd()
+      }
+    }
+  if (verbs.includes("patch"))
+    mutations[`PATCH${WHAT}`] = (state, {pk, modifications}) => {
+      if(debug) {
+        console.group(`${whats}/PATCH`)
+        console.log('before:')
+        console.log(state[whats])
+      }
+      // Get the requested item's index in the state array
+			let idx = state[whats].map((o) => o[primaryKey]).indexOf(pk)
+      // Apply modifications
+      let item = {...state[whats][idx], ...modifications}
+      // Re-run mapWith
+      item = mapWith(item)
+      // Set in store
+      Vue.set(state[whats], idx, item)
+      if (debug) {
+        console.log('after:')
+        console.log(state[whats])
+        console.groupEnd()
+      }
+		}
+
+		return mutations
+}
+
+export const removeByProp = (arrayOfObjects, propName, propValue) => {
+  arr = [...arrayOfObjects]
+  return arr.splice(arr.findIndex(obj => obj[propName] === propValue), 1)
+}

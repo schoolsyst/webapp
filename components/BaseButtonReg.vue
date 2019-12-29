@@ -9,9 +9,9 @@ export default {
   name: "BaseButtonReg",
   props: {
     type: String,
-    icon: String
+    icon: String,
   },
-};
+}
 </script>
 
 <style lang="sass" scoped>

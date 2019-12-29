@@ -1,7 +1,7 @@
 <template>
-    <div class="BaseCard">
-        <slot></slot>
-    </div>
+  <div class="BaseCard">
+    <slot></slot>
+  </div>
 </template>
 
 <style lang="sass" scoped>

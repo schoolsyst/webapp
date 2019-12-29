@@ -2,7 +2,7 @@
 //TODO: click to expand & show exercise notes, full title. Complete w/ the subject badge/dot
 //TODO: On expanded notes, linkify http[s]://domain.tld and also domain.tld if domain in ICANN domains.
 //TODO: expand less others when expanding this one (also for CardTest)
-li.ItemExercise(:class="{'expanded': expanded && !mutCompleted}" :data-exercise-id="uuid")
+li.ItemExercise(:class="{'expanded': mutExpanded && !mutCompleted}" :data-exercise-id="uuid")
   ModalDialogConfirm(
       :name="`delete-exercise-${uuid}`", 
       @confirm="deleteExercise"
@@ -23,10 +23,10 @@ li.ItemExercise(:class="{'expanded': expanded && !mutCompleted}" :data-exercise-
       BadgeSubject(v-bind="subject" v-else)
       h4.name {{name}}
     button.expand(
-      @click="expanded = !expanded"
+      @click="$emit('expand', !mutExpanded); mutExpanded = !mutExpanded"
       v-if="!mutCompleted"
     )
-      i.material-icons.icon {{expanded ? 'expand_less' : 'expand_more'}}
+      i.material-icons.icon {{mutExpanded ? 'expand_less' : 'expand_more'}}
   .expanded-content
     p.full-name {{name}}
     textarea.notes(v-model="mutNotes", :id="`field_${uuid}-notes`", cols=0, rows=0)
@@ -39,13 +39,13 @@ li.ItemExercise(:class="{'expanded': expanded && !mutCompleted}" :data-exercise-
 </template>
 
 <script>
-import BadgeSubject from "~/components/BadgeSubject.vue";
-import SubjectDot from "~/components/SubjectDot.vue";
-import ButtonFlat from "~/components/ButtonFlat.vue";
-import ModalDialogConfirm from "~/components/ModalDialogConfirm.vue";
-import moment from "moment";
-import debounce from "lodash.debounce";
-import { mapMutations } from "vuex";
+import BadgeSubject from "~/components/BadgeSubject.vue"
+
+import ButtonFlat from "~/components/ButtonFlat.vue"
+import ModalDialogConfirm from "~/components/ModalDialogConfirm.vue"
+import moment from "moment"
+import debounce from "lodash.debounce"
+import { mapMutations } from "vuex"
 
 export default {
   name: "ItemExercise",
@@ -53,20 +53,24 @@ export default {
     BadgeSubject,
     SubjectDot,
     ButtonFlat,
-    ModalDialogConfirm
+    ModalDialogConfirm,
   },
   props: {
     subject: Object,
     name: String,
     notes: String,
     uuid: String,
-    due: String,
-    completed: Boolean,
+    due: Date,
+    progress: Number,
     showCompleted: {
       type: Boolean,
-      default: true
+      default: true,
     },
     mnml: {
+      type: Boolean,
+      default: false,
+    },
+    expanded: {
       type: Boolean,
       default: false
     }
@@ -77,109 +81,111 @@ export default {
       badgeHasCheckmark: false,
       initialInnerHTML: "",
       lastCompletionSync: null,
-      mutCompleted: this.completed,
+      mutCompleted: this.progress === 1,
       mutDue: this.due,
       mutNotes: this.notes,
-      expanded: false
-    };
+      mutExpanded: this.expanded
+    }
   },
 
   methods: {
     switchCompleteStatus() {
-      let item = document.querySelector(`[data-exercise-id="${this.uuid}"]`);
-      this.mutCompleted = !this.mutCompleted;
+      let item = document.querySelector(`[data-exercise-id="${this.uuid}"]`)
+      this.mutCompleted = !this.mutCompleted
       // Remove icon from badge innerHTML
       // TODO: maybe do this with a .switching class instead? (this removes focus, no good for accessibility)
-      item.blur(); // Remove focus automatically, removing weird styling conflicts
+      item.blur() // Remove focus automatically, removing weird styling conflicts
       item.querySelector(
         ".BadgeSubject, .SubjectDot"
-      ).innerHTML = this.initialInnerHTML;
-      this.syncCompletionStatus(this.mutCompleted);
+      ).innerHTML = this.initialInnerHTML
+      this.syncCompletionStatus(this.mutCompleted)
     },
     async syncCompletionStatus(completed) {
-      // don't sync too much (every 5 secs. max)
+      // don't sync too much (every 3 secs. max)
       if (this.lastCompletionSync)
-        console.log(moment().diff(this.lastCompletionSync, "seconds"));
-      if (
-        this.lastCompletionSync &&
-        moment().diff(this.lastCompletionSync, "seconds") < 3
-      )
-        return;
+        if (
+          this.lastCompletionSync &&
+          moment().diff(this.lastCompletionSync, "seconds") < 3
+        )
+          // console.log(moment().diff(this.lastCompletionSync, "seconds"));
+          return
 
       try {
         const { data } = await this.$axios.patch(`/exercises/${this.uuid}/`, {
-          completed
-        });
-        this.lastCompletionSync = moment();
-        console.log();
+          progress: completed ? 1 : 0,
+        })
+        this.$store.commit('PATCH_EXERCISE', this.uuid, { progress: completed ? 1 : 0 })
+
+        this.lastCompletionSync = moment()
+        // console.log();
       } catch (error) {
-        this.$toast.error(`Erreur lors de la synchronisation: ${error}`);
+        this.$toast.error(`Erreur lors de la synchronisation: ${error}`)
       }
     },
     deleteExercise() {
       try {
-        this.$store.commit("homework/DELETE_EXERCISE", this.uuid);
-        this.$axios.delete(`/exercises/${this.uuid}/`);
-        this.$toast.success(`Contrôle de ${this.subject.name} supprimé`);
+        this.$store.commit("homework/DELETE_EXERCISE", this.uuid)
+        this.$axios.delete(`/exercises/${this.uuid}/`)
+        this.$toast.success(`Contrôle de ${this.subject.name} supprimé`)
       } catch (error) {
-        this.$toast.error(`Erreur lors de la suppression: ${error}`);
+        this.$toast.error(`Erreur lors de la suppression: ${error}`)
       }
-    }
+    },
   },
 
   watch: {
     mutDue() {
       try {
         this.$store.commit("CHANGE_EXERCISE", this.uuid, {
-          due: this.mutDue
-        });
+          due: this.mutDue,
+        })
         this.$axios.patch(`/exercises/${this.uuid}/`, {
-          due: this.mutDue
-        });
+          due: this.mutDue,
+        })
       } catch (error) {
         this.$toast.error(
           `Impossible de changer la date de cet exercice: ${error}`
-        );
+        )
       }
     },
     mutNotes: debounce(function() {
-      console.log("syncing notes");
+      // console.log("syncing notes");
       try {
         this.$store.commit("homework/CHANGE_EXERCISE", this.uuid, {
-          notes: this.mutNotes
-        });
+          notes: this.mutNotes,
+        })
         this.$axios.patch(`/exercises/${this.uuid}/`, {
-          notes: this.mutNotes
-        });
+          notes: this.mutNotes,
+        })
       } catch (error) {
         this.$toast.error(
           `Impossible de changer les notes de cet exercice: ${error}`
-        );
+        )
       }
-    }, 1000)
+    }, 1000),
   },
 
   mounted() {
     let item = document.querySelector(
       `.ItemExercise[data-exercise-id="${this.uuid}"] .main-content`
-    );
-    if (!item) return;
-    let badge = item.querySelector(".BadgeSubject, .SubjectDot");
-    this.initialInnerHTML = badge.innerHTML;
+    )
+    if (!item) return
+    let badge = item.querySelector(".BadgeSubject, .SubjectDot")
+    this.initialInnerHTML = badge.innerHTML
 
-    item.addEventListener("mouseover", event => {
+    item.addEventListener("mouseover", (event) => {
       if (!item.classList.contains("completed")) {
         badge.innerHTML =
-          '<i class="material-icons" style="color:white;">check</span>';
+          '<i class="material-icons" style="color:white;">check</span>'
       }
-    });
-    item.addEventListener("mouseout", event => {
+    })
+    item.addEventListener("mouseout", (event) => {
       if (!item.classList.contains("completed")) {
-        badge.innerHTML = this.initialInnerHTML;
+        badge.innerHTML = this.initialInnerHTML
       }
-    });
-  }
-};
+    })
+  },
+}
 </script>
 
 <style lang="sass" scoped>
@@ -322,6 +328,8 @@ export default {
   //--- dimensions  ---
   height: 40px
   width: 40px
+  flex-shrink: 0
+  flex-grow: 0
   //---   margins   ---
   
   //---  appearance ---

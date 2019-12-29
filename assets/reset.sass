@@ -371,10 +371,6 @@ ul:not(.default-styles) li
     margin: 0
 
 
-*:not(p) 
-  line-height: 1em
-
-
 button, input, select, textarea 
   background: none
   border: none
@@ -387,3 +383,18 @@ select
   text-indent: 1px
   text-overflow: ''
   appearance: none
+
+/* Always show a pointer cursor for buttons */
+button
+  cursor: pointer
+
+/* Remove the default arrows on number inputs */
+/* Chrome, Safari, Edge, Opera */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button
+  -webkit-appearance: none
+  margin: 0
+
+/* Firefox */
+input[type=number] 
+  -moz-appearance: textfield

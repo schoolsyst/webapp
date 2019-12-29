@@ -1,14 +1,10 @@
 <template>
-    <ROOT_ELEMENT class="COMPONENT_NAME">
-
-    </ROOT_ELEMENT>
+  <ROOT_ELEMENT class="COMPONENT_NAME"></ROOT_ELEMENT>
 </template>
 
 <script>
 export default {
-    name: 'COMPONENT_NAME',
-
-
+  name: "COMPONENT_NAME",
 }
 </script>
 

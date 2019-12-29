@@ -1,7 +1,7 @@
 <template lang="pug">
 .multimodal
     PickerSubject(
-      parent-modal="add-note"
+      namespace="add-note"
       @pick="pickSubject",
     )
     BaseModal(name="add-note", horizontal-items)
@@ -22,15 +22,15 @@
 </template>
 
 <script>
-import slugify from "slugify";
-import BaseModal from "~/components/BaseModal.vue";
-import BadgeSubject from "~/components/BadgeSubject.vue";
-import SubjectDot from "~/components/SubjectDot.vue";
-import InputFlat from "~/components/InputFlat.vue";
-import ButtonFlat from "~/components/ButtonFlat.vue";
-import PickerSubject from "~/components/PickerSubject.vue";
-import moment from "moment";
-import { mapGetters } from 'vuex';
+import slugify from "slugify"
+import BaseModal from "~/components/BaseModal.vue"
+import BadgeSubject from "~/components/BadgeSubject.vue"
+
+import InputFlat from "~/components/InputFlat.vue"
+import ButtonFlat from "~/components/ButtonFlat.vue"
+import PickerSubject from "~/components/PickerSubject.vue"
+import moment from "moment"
+import { mapGetters } from "vuex"
 
 export default {
   name: "ModalAddNote",
@@ -40,7 +40,7 @@ export default {
     InputFlat,
     ButtonFlat,
     PickerSubject,
-    BadgeSubject
+    BadgeSubject,
   },
   props: {
     subject: {
@@ -48,36 +48,36 @@ export default {
       default: () => {
         return {
           color: "black",
-          abbreviation: "..."
-        };
-      }
-    }
+          abbreviation: "...",
+        }
+      },
+    },
   },
   data() {
     return {
       newNoteName: "",
-      mutSubject: this.subject
-    };
+      mutSubject: this.subject,
+    }
   },
   computed: {
     ...mapGetters({
-      subjectBySlug: 'subjectBySlug'
-    })
+      subjectBySlug: "subjectBySlug",
+    }),
   },
   methods: {
     async addNote() {
-      let errs = [];
-      console.log(`ADD NOTE [${this.mutSubject.abbreviation.toUpperCase()}] "${this.newNoteName}"`);
+      let errs = []
+      // console.log(`ADD NOTE [${this.mutSubject.abbreviation.toUpperCase()}] "${this.newNoteName}"`)
       // --- validate data ---
       if (!this.newNoteName) {
-        errs.push("Donnez un nom à cette note");
+        errs.push("Donnez un nom à cette note")
       }
       if ("_isPlaceholder" in this.mutSubject) {
-        errs.push("Sélectionnez une matière avec le rond à gauche du titre");
+        errs.push("Sélectionnez une matière avec le rond à gauche du titre")
       }
       if (errs.length) {
-        errs.forEach(err => this.$toast.error(err))
-        return; // abort API call if any validation failed
+        errs.forEach((err) => this.$toast.error(err))
+        return // abort API call if any validation failed
       }
 
       try {
@@ -86,29 +86,25 @@ export default {
           name: this.newNoteName,
           subject: this.mutSubject.slug,
           created: moment().toISOString(),
-          last_modified: moment().toISOString()
-        });
+          last_modified: moment().toISOString(),
+        })
         data.subject = this.subjectBySlug(data.subject)
-        this.$store.commit('notes/ADD_NOTE', data)
-        this.$toast.success(
-          `Note "${this.newNoteName}" créée`
-        );
-        this.$toast.show("Ouverture de la note...");
-        this.$router.push(
-          `/notes/${data.uuid}`
-        );
+        this.$store.commit("notes/ADD_NOTE", data)
+        this.$toast.success(`Note "${this.newNoteName}" créée`)
+        this.$toast.show("Ouverture de la note...")
+        this.$router.push(`/notes/${data.uuid}`)
       } catch (error) {
-        this.$toast.error(`Erreur lors de la création de la note: ${error}`);
+        this.$toast.error(`Erreur lors de la création de la note: ${error}`)
       }
     },
     pickSubject($event) {
-      this.mutSubject = $event;
+      this.mutSubject = $event
       document
         .getElementById("modal_add-note-subject-picker")
-        .classList.remove("opened");
-    }
-  }
-};
+        .classList.remove("opened")
+    },
+  },
+}
 </script>
 
 <style lang="sass" scoped>

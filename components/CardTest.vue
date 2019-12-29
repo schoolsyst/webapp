@@ -17,12 +17,12 @@ div.CardTest(:style="{backgroundColor: subject.color, color: textColor}")
 
     p.details(v-if="details") {{details}}
     HeadingSub(v-if="notes.length") À apprendre
-    ul.notes(:class="{'expanded': expanded}" v-if="notes.length")
+    ul.notes(:class="{'expanded': mutExpanded}" v-if="notes.length")
         li(v-for="note in getNotes" :key="note.uuid")
-            CardTestNoteItem(v-if="expanded", v-bind="note" :test-uuid="uuid")
+            CardTestNoteItem(v-if="mutExpanded", v-bind="note" :test-uuid="uuid")
             template(v-else) {{ note.name }}
     //TODO: make the infos modifiable
-    .infos(:class="{'opened': expanded}")
+    .infos(:class="{'opened': mutExpanded}")
         p.grade-and-room
             |sur 
             span.info {{gradeMax}}
@@ -34,9 +34,9 @@ div.CardTest(:style="{backgroundColor: subject.color, color: textColor}")
             |le 
             input(type="date" v-model="mutDate").info
         ButtonIcon(:open-modal="`confirm-delete-test-${uuid}`", open-at="center", :color="textColor" title="Supprimer ce contrôle").delete-test delete
-    button.expand(@click="expanded = !expanded")
+    button.expand(@click="$emit('expanded', !mutExpanded); mutExpanded = !mutExpanded")
         i.material-icons
-            template(v-if="expanded") expand_less
+            template(v-if="mutExpanded") expand_less
             template(v-else) expand_more
 
 
@@ -70,12 +70,16 @@ export default {
         grades: {
             type: Array,
             default: () => []
+        },
+        expanded: {
+            type: Boolean,
+            default: false
         }
     },
 
     data() { 
         return {
-            expanded: false,
+            mutExpanded: this.expanded,
             mutDate: this.due
         }
     },

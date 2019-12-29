@@ -3,12 +3,26 @@
 //====================
 
 html
-    font-family:  'Google Sans', 'Product Sans', 'Manrope', sans-serif
+    --fonts-regular: 'Now', sans-serif
+    --fonts-monospace: 'Cascadia Code', 'Roboto Mono', monospace
+    --fonts-monospace-light: 'Roboto Mono', monospace
+
+html
+    font-family:  var(--fonts-regular)
 
 
-pre, code, source
-    font-family: 'Roboto Mono', monospace
+code, source
+    font-family: var(--fonts-monospace)
 
+p, pre
+    line-height: 1.5em
+
+
+//=====================
+//  VARIOUS CSS VARS
+//=====================
+html
+    --border-radius: 5px
 
 //=====================
 //       COLORS
@@ -16,13 +30,72 @@ pre, code, source
 
 $blue: #1389FD
 
-html
+body
+    // Greys
+    --black: #111111
+    --white: #ffffff
+    --grey-light: #c0c0c0
+    --grey: #d4d3d3
+    --grey-dark: #757575
+    --grey-offset: #F3F3F3
+    --grey-offset-dark: #e6e6e6
+    // Blues
     --blue: #1389FD
-    --offset-blue: #E7F8FF
-    --grey: #F3F3F3
+    --blue-light: #89c4fe
+    --blue-dark: #006BD4
+    --blue-offset: #E7F8FF
+    --blue-offset-dark: #c7edff
+    // Reds
     --red: #D50000
-    --offset-red: #FF9E9E
-
+    --red-light: #ff3519
+    --red-dark: #940000
+    --red-offset: #FF9E9E
+    // Greens
+    --green: #27CE5F
+    --green-light: #86e6b1
+    --green-dark: #09AA5D
+    --green-offset: #BFEFCC
+    // Yellows
+    --yellow: #F2C94C
+    --yellow-dark: #EEAA44
+    --yellow-offset: #FAE192
+    // Special
+    --modal-backdrop: rgba(0,0,0,0.2)
+    &[theme="DARK"]
+        // Greys
+        --white: #111111
+        --black: #ececec
+        --grey-dark: #c0c0c0
+        --grey: #5e5e5e
+        --grey-light: #4F4F4F
+        --grey-offset: #242424
+        --grey-offset-dark: #3b3b3b
+        // Blues
+        --blue: #3e9dfc
+        --blue-light: #89c4fe
+        --blue-dark: #006BD4
+        --blue-offset: #0b123a
+        --blue-offset-dark: #0d143a
+        // Reds
+        --red: #D50000
+        --red-light: #ff3519
+        --red-dark: #940000
+        --red-offset: #FF9E9E
+        // Greens
+        --green: #27CE5F
+        --green-light: #09AA5D
+        --green-offset: #BFEFCC
+        // Yellows
+        --yellow: #F2C94C
+        --yellow-light: #EEAA44
+        --yellow-offset: #FAE192
+        // Special
+        --modal-backdrop: rgba(0,0,0,0.7)
+body
+    color: var(--black)
+    background-color: var(--white)
+input
+    color: var(--black)
 
 //=====================
 //       SHADOWS
@@ -32,20 +105,12 @@ html
 //=====================
 
 //Values from https://codepen.io/sdthornton/pen/wBZdXq
-=shadow($level:2)
-    @if $level == 1
-        box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
-    @else if $level == 2
-        box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
-    @else if $level == 3
-        box-shadow: 0 10px 20px rgba(0,0,0,0.19), 0 6px 6px rgba(0,0,0,0.23);
-    @else if $level == 4
-        box-shadow: 0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22);
-    @else if $level == 5
-        box-shadow: 0 19px 38px rgba(0,0,0,0.30), 0 15px 12px rgba(0,0,0,0.22);
-    @else
-        box-shadow: none
-
+body
+    --shadow-1: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24)
+    --shadow-2: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23)
+    --shadow-3: 0 10px 20px rgba(0,0,0,0.19), 0 6px 6px rgba(0,0,0,0.23)
+    --shadow-4: 0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22)
+    --shadow-5: 0 19px 38px rgba(0,0,0,0.30), 0 15px 12px rgba(0,0,0,0.22)
 
 // ====================
 //     INTERACTIONS
@@ -84,9 +149,6 @@ button, a, select
     100%
         opacity: 1
 
-.anim--blink
-    animation: blink 1s linear infinite
-
 @keyframes fade-in
     0%
         opacity: 0
@@ -103,7 +165,7 @@ button, a, select
 //    BREAKPOINTS
 //=====================
 
-$bk-desktop: 1000px
+$bk-desktop: 888px
 $bk-tablet: 500px
 $bk-sidebar: 650px
 
@@ -146,8 +208,132 @@ $bk-sidebar: 650px
         -webkit-font-feature-settings: 'liga'
         -webkit-font-smoothing: antialiased
 
+//=====================
+//      RESPONSIVE 
+//    HELPER CLASSES
+//=====================
+@media (max-width: 888px)
+    .desktop-only
+        display: none !important
+@media (min-width: 889px)
+    .mobile-only
+        display: none !important
+  
 
 //=====================
-//       MODULES
+//      LAYOUT 
+//    HELPER CLASSES
 //=====================
-@import 'toasts.sass'
+@media (max-width: 888px)
+    .-side-by-side
+        display: grid
+        grid-template-columns: 1fr
+        &:not(.no-margin) > :first-child
+            margin-bottom: 1rem
+@media (min-width: 889px)
+    .-side-by-side
+        display: grid
+        grid-template-columns: repeat(2, 1fr)
+        &:not(.no-margin) > :first-child
+            margin-right: 1rem
+  
+
+//=====================
+//       TOASTS
+//=====================
+.toasted-container .toasted.toasted-primary
+    height: 50px
+    border-radius: var(--border-radius)
+    font-weight: 400
+    font-size: 1em
+    box-shadow: none
+    color: var(--white)
+    &.error
+        background-color: var(--red)
+        color: white
+    &.success
+        background-color: var(--green)
+    &.info
+        background-color: var(--blue)
+    &.warn
+        background-color: var(--yellow)
+        color: black
+    &.default
+        background-color: var(--black)
+    .action
+        color: var(--blue-light)
+        letter-spacing: 1px
+        &:hover
+            color: var(--blue)
+            text-decoration: none
+
+    @media (max-width: 650px)
+        width: 100vw
+        &:last-child
+            border-radius: calc(var(--border-radius) * 2)
+            border-bottom-left-radius: 0
+            border-bottom-right-radius: 0
+
+
+//=====================
+//        LINKS
+//=====================
+
+p, pre
+    font-family: var(--fonts-normal)
+    a:not([no-default])
+        color: var(--blue)
+        border-bottom: 2px solid var(--blue)
+        &:hover,
+        &:focus,
+        &:active
+            color: var(--blue-dark)
+            border-color: var(--blue-dark)
+
+//=====================
+//    LOADING SCREEN
+//=====================
+#loading-screen
+    width: 100%
+    height: calc(100vh - 100px)
+    background: var(--white)
+    color: var(--black)
+    z-index: 100
+    display: none
+    justify-content: center
+    align-items: center
+    flex-direction: column
+    p 
+        margin-top: 10px
+        opacity: 0.25
+
+//=====================
+//       MODALS
+//=====================
+.v--modal-overlay
+    background: var(--modal-backdrop) !important
+
+//=====================
+//    CONTEXT MENUS
+//=====================
+// NOTE: The body before the selector is required to beat the specifity
+//       of vue-context's default styles, without using !important.
+body .v-context
+    background-color: var(--white)
+    border-radius: var(--border-radius)
+    box-shadow: var(--shadow-3)
+    border: 0
+body .v-context > li,
+body .v-context > ul > li
+  & > a
+    color: var(--black)
+    display: inline-flex
+    width: 100%
+    align-items: center
+  & > a > i
+    vertical-align: middle
+    margin-right: 0.5rem
+    color: inherit
+  & > a:hover
+    color: var(--blue)
+    background-color: var(--blue-offset)

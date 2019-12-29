@@ -1,51 +1,92 @@
-<template>
-  <div class="app">
-    <TheNavbar />
-    <nuxt />
-    <TheFooter />
-  </div>
+<template lang="pug">
+  .app
+    TheTopBar(@menu-click="drawerOpened = !drawerOpened")
+    TheDrawer(@close="drawerOpened = false" :opened="drawerOpened")
+    .side-by-side
+      aside.left
+        TheSideRail
+      main.right
+        nuxt#page
+        #loading-screen
+          OverlayLoadingLogo(animation="loop")
+          h1.title Chargement...
+          p.subtitle 
 </template>
 
 <script>
-import TheNavbar from "~/components/TheNavbar.vue";
-import TheFooter from "~/components/TheFooter.vue";
+import TheDrawer from '~/components/TheDrawer.vue'
+import TheTopBar from "~/components/TheTopBar.vue"
+import TheFooter from "~/components/TheFooter.vue"
+import TheSideRail from '~/components/TheSideRail.vue'
+import BaseModal from '~/components/BaseModal.vue'
+import OverlayLoadingLogo from '~/components/OverlayLoadingLogo.vue'
+import { toDate } from 'date-fns'
+import { mapGetters, mapState } from 'vuex'
 
 export default {
   components: {
-    TheNavbar,
-    TheFooter
+    TheFooter,
+    TheDrawer,
+    TheTopBar,
+    TheSideRail,
+    BaseModal,
+    OverlayLoadingLogo
   },
-  mounted() {
-    // fix weird nuxt bug where the exercises+test arrays are duped outside of the #__nuxt container
-    document.querySelectorAll('body > *:not(#__nuxt)').forEach(e => e.remove())
+  data() {
+    return {
+      drawerOpened: false
+    }
   },
-};
+  computed: {
+    ...mapState(['now']),
+  },
+  methods: {
+    ...mapGetters('theme', {theme: 'current'})
+  },
+  async mounted() {
+    await this.$store.dispatch('theme/set')
+    // Refresh time every second
+    setInterval(() => {
+      this.$store.commit('UPDATE_TIME', toDate(Date.now()))
+    }, 1 * 1000)
+  }
+}
 </script>
 
 <style scoped lang="sass">
 @import '~/assets/defaults'
 
 // Keep footer outta the first page
-.container
+.TheNavbar + div
   min-height: 100vh
-
-/* DESKTOP */
-+desktop 
-  .container 
-    margin: 50px 0 0 calc(50px + 60px)
-
-
-/* MOBILE */
-+mobile 
-  .container 
-    margin: 20px
-    padding-bottom: calc((100vw - 30px) / 6)
-    
-@media (min-width: $bk-sidebar)
-  .container
+  
+main
+  margin-top: 100px
+  +desktop
     margin-left: 110px
+  +mobile
+    margin-left: 20px
+    margin-right: 20px
+main, .container
+  width: 100%
+  height: 100%
+#side-rail
+  margin-top: 80px
+  padding-left: 15px
+  +mobile
+    display: none
+.side-by-side
+  display: flex
+#page, 
+/deep/ #empty-state,
+/deep/ #loading-screen
+  min-height: calc(100vh - 100px) // top bar height
 
-@media (max-width: $bk-sidebar - 1px)
-  .container
-    padding-bottom: 100px
+@media (max-width: 600px)
+  main
+    margin-left: 0
+    margin-right: 0
+    & /deep/ h2
+      margin-left: 20px
+      margin-right: 20px
 </style>

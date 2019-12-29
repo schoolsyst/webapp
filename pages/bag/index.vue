@@ -25,18 +25,18 @@
 </template>
 
 <script>
-import moment from "moment";
-import { mapState, mapGetters, mapMutations, mapActions } from "vuex";
-import TheHeading from "~/components/TheHeading.vue";
-import ArrayButtonFlat from "~/components/ArrayButtonFlat.vue";
-import ButtonFlat from "~/components/ButtonFlat.vue";
-import MainGroup from "~/components/MainGroup.vue";
-import MainGroupLeft from "~/components/MainGroupLeft.vue";
-import MainGroupRight from "~/components/MainGroupRight.vue";
-import HeadingSub from "~/components/HeadingSub.vue";
-import BigNumber from "~/components/BigNumber.vue";
-import SubjectDot from "~/components/SubjectDot.vue";
-import BadgeSubject from "~/components/BadgeSubject.vue";
+import moment from "moment"
+import { mapState, mapGetters, mapMutations, mapActions } from "vuex"
+import TheHeading from "~/components/TheHeading.vue"
+import ArrayButtonFlat from "~/components/ArrayButtonFlat.vue"
+import ButtonFlat from "~/components/ButtonFlat.vue"
+import MainGroup from "~/components/MainGroup.vue"
+import MainGroupLeft from "~/components/MainGroupLeft.vue"
+import MainGroupRight from "~/components/MainGroupRight.vue"
+import HeadingSub from "~/components/HeadingSub.vue"
+import BigNumber from "~/components/BigNumber.vue"
+
+import BadgeSubject from "~/components/BadgeSubject.vue"
 
 export default {
   components: {
@@ -49,18 +49,18 @@ export default {
     HeadingSub,
     BigNumber,
     SubjectDot,
-    BadgeSubject
+    BadgeSubject,
   },
   head() {
     return {
-      title: `${this.pageTitleCounter}Cartable`
-    };
+     title: "Cartable",
+    }
   },
 
   data() {
     return {
-      mnml: false
-    };
+      mnml: false,
+    }
   },
 
   computed: {
@@ -68,19 +68,19 @@ export default {
       subjectsToAddFor: "schedule/subjectsToAddFor",
       subjectsToRemoveFor: "schedule/subjectsToRemoveFor",
       hoursCountFor: "schedule/hoursCountFor",
-      pageTitleCounter: "homework/pageTitleCounter"
+      pageTitleCounter: "homework/pageTitleCounter",
     }),
     subjectsToAdd() {
-      return this.subjectsToAddFor(moment().add(1, "day"));
+      return this.subjectsToAddFor(moment().add(1, "day"))
     },
     subjectsToRemove() {
-      return this.subjectsToRemoveFor(moment().add(1, "day"));
+      return this.subjectsToRemoveFor(moment().add(1, "day"))
     },
     tomorrowHoursCount() {
-      return this.hoursCountFor(moment().add(1, "day"));
-    }
-  }
-};
+      return this.hoursCountFor(moment().add(1, "day"))
+    },
+  },
+}
 </script>
 
 <style lang="sass" scoped>

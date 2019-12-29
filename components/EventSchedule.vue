@@ -1,15 +1,10 @@
 <template>
-    <div class="EventSchedule">
-
-    </div>
+  <div class="EventSchedule"></div>
 </template>
 
 <script>
-
 export default {
-    name: 'EventSchedule',
-
-
+  name: "EventSchedule",
 }
 </script>
 

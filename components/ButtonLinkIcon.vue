@@ -4,9 +4,8 @@ nuxt-link.ButtonLinkIcon
 </template>
 
 <script>
-
 export default {
-    name: 'ButtonLinkIcon',
+  name: "ButtonLinkIcon",
 }
 </script>
 

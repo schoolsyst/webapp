@@ -1,61 +1,36 @@
 <template>
-    <BaseCard class="CardEmpty">
-        <span class="text"><slot></slot></span>
-    </BaseCard>
+	<BaseCard class="CardEmpty">
+		<span class="text"><slot></slot></span>
+	</BaseCard>
 </template>
 
 <script>
-import BaseCard from '~/components/BaseCard.vue'
+import BaseCard from "~/components/BaseCard.vue"
 
 export default {
-    name: 'CardEmpty',
+	name: 'CardEmpty',
 
-    components: {
-        BaseCard
-    },
-
-    props: {
-        
-    },
-
-
-    data() {
-        return {
-            
-        }
-    },
-
-    computed: {
-        
-    },
-
-
-    created() {
-
-    },
-
-
-    methods: {
-
-    }
+	components: {
+		BaseCard
+	},
 }
 </script>
 
 <style lang="sass" scoped>
 @import '~/assets/defaults'
 .CardEmpty 
-    padding: 50px 50px
-    max-width: 500px
-    width: 100%
-    background: var(--grey)
-    display: flex
-    align-items: center
-    justify-content: center
+	padding: 50px 50px
+	max-width: 500px
+	width: 100%
+	background: var(--grey)
+	display: flex
+	align-items: center
+	justify-content: center
 
 .text 
-    color: black
-    opacity: 0.75
-    font-size: 30px
-    text-align: center
+	color: black
+	opacity: 0.75
+	font-size: 30px
+	text-align: center
 
 </style>

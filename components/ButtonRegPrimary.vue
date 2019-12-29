@@ -4,27 +4,27 @@ BaseButtonReg.ButtonRegPrimary(:role="role" :icon="icon" @click="$emit('click')"
 </template>
 
 <script>
-import BaseButtonReg from '~/components/BaseButtonReg.vue'
+import BaseButtonReg from "~/components/BaseButtonReg.vue"
 
 export default {
-    name: 'ButtonRegPrimary',
-    components: {
-        BaseButtonReg
+  name: "ButtonRegPrimary",
+  components: {
+    BaseButtonReg,
+  },
+  props: {
+    role: {
+      type: String,
+      default: "normal",
     },
-    props: {
-        role: {
-            type: String,
-            default: "normal"
-        },
-        icon: {
-            type: String,
-            default: ''
-        },
-        type: {
-            type: String,
-            default: ''
-        }
-    }
+    icon: {
+      type: String,
+      default: "",
+    },
+    type: {
+      type: String,
+      default: "",
+    },
+  },
 }
 </script>
 

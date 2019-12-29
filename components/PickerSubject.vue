@@ -1,46 +1,41 @@
 <template lang="pug">
-BaseModal.PickerSubject(:name="`${parentModal}-subject-picker`" :class="{'dots':dots}")
-    //TODO: prop "first" (subject.slug) use as the first one in the forloop
-    //TODO: choose orientation from screen remaining 
-    template(v-if="dots")
-        SubjectDot(
-            v-for="subject in subjects" :key="subject.id"
-            v-bind="subject",
-            @mouseup.native="$emit('pick', subject)"
-            close-modal,
-        )
-    template(v-else)
+BaseModal.PickerSubject(:name="name" title="Choisissez une matière..." edge-to-edge)
+    ul.subjects
+      li(v-for="subject in subjects" :key="subject.uuid")
         BadgeSubject(
-            v-for="subject in subjects" :key="subject.id"
-            v-bind="subject",
-            @mouseup.native="$emit('pick', subject)"
-            close-modal,
+          v-bind="subject",
+          @click="$emit('pick', subject); $modal.hide(name)"
+          clickable, multiline, no-tooltip
         )
 
 </template>
 
 <script>
-import BaseModal from "~/components/BaseModal.vue";
-import BadgeSubject from "~/components/BadgeSubject.vue";
-import SubjectDot from "~/components/SubjectDot.vue";
-import { mapGetters } from "vuex";
+import BaseModal from "~/components/BaseModal.vue"
+import BadgeSubject from "~/components/BadgeSubject.vue"
+import { mapGetters } from "vuex"
 
 export default {
   name: "PickerSubject",
-  components: { BaseModal, BadgeSubject, SubjectDot },
+  components: { BaseModal, BadgeSubject },
   props: {
-    parentModal: String,
-    dots: {
-      type: Boolean,
-      default: false
-    }
+    namespace: {
+      type: String,
+      default: null
+    },
   },
   computed: {
     ...mapGetters({
-      subjects: "subjects"
-    })
+      subjects: "subjects/all",
+    }),
+    name() {
+      return this.namespace ? `${this.namespace}-subject-picker` : 'subject-picker'
+    }
   },
-};
+  async mounted() {
+    await this.$store.dispatch('subjects/load')
+  }
+}
 </script>
 
 <style lang="sass" scoped>
@@ -48,37 +43,21 @@ export default {
 //!importants are needed to override the BaseModal's styling
 .PickerSubject
   z-index: 2000 !important
+  
+ul.subjects
+  width: 100%
+  list-style: none
+  //TODO: ↓ Not sure about this
+  @media (max-width: 650px)
+    display: grid
+    grid-template-columns: repeat(2, 1fr)
 
-.PickerSubject
-  /deep/ .modal-wrapper
-    grid-gap: 0
-    padding: 0 !important
-    +shadow(3)
-
-// badges (default)
-.PickerSubject:not(.dots) /deep/ .modal-wrapper
-  overflow: hidden
-  display: grid
-  grid-template-columns: repeat(4, 1fr)
-  +phone
-    grid-template-columns: repeat(3, 1fr)
-
-// dots
-.PickerSuject.dots /deep/ .modal-wrapper
-  display: flex
-  overflow-x: scroll
-  flex-direction: row
-  background: transparent
-
-.BadgeSubject
-    border-radius: 0 !important // !important needed to overwrite it
-
-.BadgeSubject, .SubjectDot
-    cursor: pointer
-
-.BaseModal.opened
-    background: rgba(0, 0, 0, 0)
-.BaseModal
-    transition: box-shadow .125s ease
-    // animation: none
+li > .subject
+  border-radius: 0 !important // !important needed to overwrite it
+  height: 3.25rem
+  @media (max-width: 650px)
+    height: 5rem
+  font-size: 1.1rem
+  width: 100%
+  
 </style>

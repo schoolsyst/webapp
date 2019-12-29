@@ -6,8 +6,8 @@
 
 <script>
 export default {
-  name: "TheHeading"
-};
+  name: "TheHeading",
+}
 </script>
 
 <style lang="sass" scoped>
@@ -18,7 +18,7 @@ export default {
         font-size: 48px
         margin-bottom: 5px
     +desktop 
-        font-size: 96px
-        line-height: 96px
+        font-size: 3rem
+        line-height: 3rem
 
 </style>

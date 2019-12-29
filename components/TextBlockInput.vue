@@ -3,9 +3,8 @@ textarea.TextBlockInput(@input="$emit('input', $event.target.value)")
 </template>
 
 <script>
-
 export default {
-    name: 'TextBlockInput',
+  name: "TextBlockInput",
 }
 </script>
 

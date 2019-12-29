@@ -4,9 +4,7 @@ section.MainGroupLeft: slot
 
 <script>
 export default {
-    name: 'MainGroupLeft',
-
-
+  name: "MainGroupLeft",
 }
 </script>
 

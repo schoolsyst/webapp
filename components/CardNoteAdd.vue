@@ -7,18 +7,13 @@
 </template>
 
 <script>
-import BaseCard from "~/components/BaseCard.vue";
-import SubjectDot from "~/components/SubjectDot.vue";
-import moment from "moment";
+import BaseCard from "~/components/BaseCard.vue"
+import moment from "moment"
 
 export default {
   name: "CardNoteAdd",
-
-  components: {
-    BaseCard,
-    SubjectDot
-  },
-};
+  components: { BaseCard },
+}
 </script>
 
 <style lang="sass" scoped>
@@ -30,7 +25,7 @@ export default {
         cursor: pointer
 
 .card /deep/
-    background: var(--offset-blue)
+    background: var(--blue-offset)
     height: 270px
     width: 100%
     margin-bottom: 10px

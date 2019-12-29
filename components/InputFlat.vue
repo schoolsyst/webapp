@@ -14,55 +14,56 @@ BaseFlatComponent.InputFlat(:class="`input_${name}`" :icon="icon" :icon-style="i
 </template>
 
 <script>
-import BaseFlatComponent from "~/components/BaseFlatComponent.vue";
+import BaseFlatComponent from "~/components/BaseFlatComponent.vue"
 
 export default {
   name: "InputFlat",
 
   components: {
-    BaseFlatComponent
+    BaseFlatComponent,
   },
 
   props: {
     icon: String,
     iconStyle: {
       type: String,
-      default: "outlined"
+      default: "outlined",
     },
     name: String,
-    value: String,
+    value: {
+      default: ''
+    },
     placeholder: String,
     type: {
       type: String,
-      default: "text"
+      default: "text",
     },
     autofocus: {
       type: Boolean,
-      default: false
+      default: false,
     },
     maxlength: {
       type: [String, Boolean],
-      default: false
+      default: false,
     },
   },
 
   data() {
     return {
       inputVal: this.value,
-    };
+    }
   },
 
-  computed: {
-  },
+  computed: {},
 
   watch: {
     value(newVal, oldVal) {
       this.inputVal = newVal
-    }
+    },
   },
 
-  methods: {}
-};
+  methods: {},
+}
 </script>
 
 <style lang="sass" scoped>

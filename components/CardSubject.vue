@@ -1,5 +1,5 @@
 <template lang="pug">
-BaseCard.CardSubject(:style="{backgroundColor: mutColor, color: textColor}", :class="{isEditing}")
+BaseCard.CardSubject(:style="{backgroundColor: mutColor, color: textColor}", :class="{expanded}")
   //TODO: type in the name of the subject to confirm deletion
   ModalDialogConfirm.confirm-delete(
     :name="`delete-subject-${uuid}`" 
@@ -7,7 +7,7 @@ BaseCard.CardSubject(:style="{backgroundColor: mutColor, color: textColor}", :cl
     confirm-text="Supprimer" 
     challenge-message="Pour confirmer, écrivez le nom de la matière"
     :challenge="(input) => input === name"
-    @confirm="isEditing = false; $emit('editing-finished', subject); deleteSubject()"
+    @confirm="deleteSubject(); $emit('expand', false)"
   )
     | Supprimer cette matière supprimera #[strong tout] ce qui était en lien avec:
     br
@@ -18,9 +18,9 @@ BaseCard.CardSubject(:style="{backgroundColor: mutColor, color: textColor}", :cl
     br
     | Cette action est #[strong irréversible]
   p.name 
-    input.name-input(v-model="mutName" placeholder="Nom de la matière..." :readonly="!isEditing")
+    input.name-input(v-model="mutName" placeholder="Nom de la matière..." :readonly="!expanded")
     //-TODO: close button reverts values to those passed in props
-    ButtonIcon.edit-button(@click="toggleAndCancel()" :color="textColor" v-if="uuid !== 'new' && !noEditButton") {{ isEditing ? 'close' : 'edit' }}
+    ButtonIcon.edit-button(@click="toggleAndCancel(); $emit('expand', true)" :color="textColor" v-if="uuid !== 'new' && !noEditButton") {{ expanded ? 'close' : 'edit' }}
   .row
     .field
       LabelFlat Abbreviation*
@@ -56,21 +56,21 @@ BaseCard.CardSubject(:style="{backgroundColor: mutColor, color: textColor}", :cl
       )
   .button-row
     ButtonIcon.delete-button(:open-modal="`confirm-delete-subject-${uuid}`" open-at="center" :color="textColor" v-if="uuid !== 'new'") delete
-    ButtonIcon.confirm-button(@click="isEditing = false; $emit('editing-finished', subject); uploadChanges()" :color="textColor") check
+    ButtonIcon.confirm-button(@click="$emit('expand', false); uploadChanges()" :color="textColor") check
 </template>
 
 <script>
-import BigNumber from "~/components/BigNumber.vue";
-import ButtonIcon from "~/components/ButtonIcon.vue";
-import LabelFlat from "~/components/LabelFlat.vue";
-import PickerColor from "~/components/PickerColor.vue";
-import ModalDialogConfirm from '~/components/ModalDialogConfirm.vue'
-import BaseCard from "~/components/BaseCard.vue";
-import InputFlat from '~/components/InputFlat.vue'
-import { mapGetters } from 'vuex';
-import tinycolor from 'tinycolor2'
-import debounce from 'lodash.debounce'
-import slugify from 'slugify'
+import BigNumber from "~/components/BigNumber.vue"
+import ButtonIcon from "~/components/ButtonIcon.vue"
+import LabelFlat from "~/components/LabelFlat.vue"
+import PickerColor from "~/components/PickerColor.vue"
+import ModalDialogConfirm from "~/components/ModalDialogConfirm.vue"
+import BaseCard from "~/components/BaseCard.vue"
+import InputFlat from "~/components/InputFlat.vue"
+import { mapGetters } from "vuex"
+import tinycolor from "tinycolor2"
+import debounce from "lodash.debounce"
+import slugify from "slugify"
 
 export default {
   name: "CardSubject",
@@ -88,7 +88,7 @@ export default {
   props: {
     color: {
       type: String,
-      default: '#000000'
+      default: "#000000",
     },
     name: String,
     uuid: String,
@@ -99,12 +99,12 @@ export default {
     slug: String,
     noEditButton: {
       type: Boolean,
-      default: false
+      default: false,
     },
-    editing: {
+    expanded: {
       type: Boolean,
-      default: false
-    }
+      default: false,
+    },
   },
 
   data() {
@@ -115,36 +115,40 @@ export default {
       mutRoom: this.room,
       mutPhysical_weight: this.physical_weight || 0,
       mutAbbreviation: this.abbreviation,
-      isEditing: this.editing
+      isEditing: this.editing,
     }
   },
-  
+
   computed: {
     ...mapGetters({
-      setting: 'setting'
+      setting: "settings/value",
     }),
     gradeUnit() {
-      return Number(this.setting('grade_max').value)
+      return Number(this.setting("grade_max"))
     },
     textColor() {
-      return tinycolor(this.mutColor).isLight() ? 'black' : 'white'
+      return tinycolor(this.mutColor).isLight() ? "black" : "white"
     },
     subject() {
       return {
         color: this.mutColor,
         name: this.mutName,
-        grade_goal: isNaN(this.mutGrade_goal) ? null : (Number(this.mutGrade_goal) / this.gradeUnit),
+        grade_goal: isNaN(this.mutGrade_goal)
+          ? null
+          : Number(this.mutGrade_goal) / this.gradeUnit,
         room: this.mutRoom,
         physical_weight: this.mutPhysical_weight,
         abbreviation: this.mutAbbreviation.toLowerCase(),
-        slug: this.slug || slugify(`${this.$auth.user.username}--${this.mutName}`).toLowerCase()
+        slug:
+          this.slug ||
+          slugify(`${this.$auth.user.username}--${this.mutName}`).toLowerCase(),
       }
     },
   },
 
   methods: {
     toggleAndCancel() {
-      if (this.isEditing) {
+      if (this.expanded) {
         this.mutColor = this.$props.color
         this.mutName = this.$props.name
         this.mutGrade_goal = this.$props.grade_goal
@@ -153,26 +157,29 @@ export default {
         this.mutAbbreviation = this.$props.abbreviation
         this.mutSlug = this.$props.slug
       }
-      this.isEditing = !this.isEditing
+      this.$emit('expand', !this.expanded)
     },
     uploadChanges: debounce(function() {
       try {
-        let res;
-        if (this.uuid === 'new') {
+        let res
+        if (this.uuid === "new") {
           res = this.$axios.post(`/subjects/`, this.subject)
-          this.$store.commit('ADD_SUBJECT', res.data)
+          this.$store.commit("subjects/ADD", res.data)
           this.$toast.success(`Matière "${res.data.name}" ajoutée`)
         } else {
           res = this.$axios.patch(`/subjects/${this.uuid}/`, this.subject)
-          this.$store.commit('UPDATE_SUBJECT', {uuid: this.uuid, data: res.data})
+          this.$store.commit("subjects/PATCH", {
+            uuid: this.uuid,
+            data: res.data,
+          })
           this.$toast.success(`Matière "${res.data.name}" modifiée`)
         }
       } catch (error) {
         let verb
-        if (this.uuid === 'new') {
-          verb = 'création'
+        if (this.uuid === "new") {
+          verb = "création"
         } else {
-          verb = 'modification'
+          verb = "modification"
         }
         this.$toast.error(`Erreur lors de la ${verb} de la matière: ${error}`)
       }
@@ -180,112 +187,157 @@ export default {
     deleteSubject() {
       try {
         this.$axios.delete(`subjects/${this.uuid}/`)
-        this.$store.commit('DELETE_SUBJECT', this.uuid)
+        this.$store.commit("DELETE_SUBJECT", this.uuid)
       } catch (error) {
-        this.$toast.error(`Erreur lors de la suppression de la matière: ${error}`)
+        this.$toast.error(
+          `Erreur lors de la suppression de la matière: ${error}`
+        )
       }
-    }
-  }
-};
+    },
+  },
+}
 </script>
 
 <style lang="stylus" scoped>
-.CardSubject
-  width 600px
+.CardSubject {
+  width: 600px;
+  max-width: calc(100% - 40px);
+  padding: 10px 20px !important;
+  height: 300px;
 
-  max-width calc(100% - 40px)
-  padding 10px 20px !important
-  height: 300px
-  @media (max-width: 1000px)
-    height: 400px
-  overflow hidden
-  &:not(.isEditing)
-    height 60px
-  transition all 0.25s ease
+  @media (max-width: 888px) {
+    height: 400px;
+  }
 
-.confirm-delete /deep/ .message
-  text-align left
+  overflow: hidden;
+
+  &:not(.expanded) {
+    height: 60px;
+  }
+
+  transition: all 0.25s ease;
+}
+
+.confirm-delete /deep/ .message {
+  text-align: left;
+}
 
 // Fix some colors
-.BigNumber /deep/ *, input
-  color inherit
+.BigNumber /deep/ *, input {
+  color: inherit;
+}
 
-.BigNumber
-    margin-top: -5px
-    line-height 36px !important
-    & /deep/ .value
-        height 36px
-        font-size 36px
-    & /deep/ .unit
-        font-size calc(2/3 * 36px)
-        line-height calc(2/3 * 36px)
-        opacity: 1
+.BigNumber {
+  margin-top: -5px;
+  line-height: 36px !important;
 
-input:not(.name-input)
-  font-size 36px
-  padding-bottom: 5px //Correct 'g'/'q's being cut off
-  width: 200px
+  & /deep/ .value {
+    height: 36px;
+    font-size: 36px;
+  }
 
-//TODO: make a new <LabelFlat> (call it <LabelAlt>)
-.LabelFlat
-  text-transform none !important
-  opacity 1 !important
-  font-weight normal !important
-  font-size: 22px !important
+  & /deep/ .unit {
+    font-size: calc(2 / 3 * 36px);
+    line-height: calc(2 / 3 * 36px);
+    opacity: 1;
+  }
+}
 
-.row
-  display grid
-  grid-template-columns repeat(3, 200px)
-  @media (max-width 1000px)
-    grid-template-columns repeat(2, 50%)
-  grid-gap 10px
-  margin-top: 25px
+input:not(.name-input) {
+  font-size: 36px;
+  padding-bottom: 5px; // Correct 'g'/'q's being cut off
+  width: 200px;
+}
 
-.button-row
-  position relative
+// TODO: make a new <LabelFlat> (call it <LabelAlt>)
+.LabelFlat {
+  text-transform: none !important;
+  opacity: 1 !important;
+  font-weight: normal !important;
+  font-size: 22px !important;
+}
 
-.confirm-button, .delete-button
-  position absolute
-.confirm-button
-  @media (min-width 1001px)
-    right 0px
-    top -20px
-  @media (max-width 1000px)
-    right 0
-    top calc(-40px + 40px)
-  & /deep/ .icon
-    font-size: 48px
+.row {
+  display: grid;
+  grid-template-columns: repeat(3, 200px);
 
-.delete-button
-  @media (min-width 1001px)
-    right 65px
-    top -10px
-  @media (max-width 1000px)
-    left 0px
-    top calc(-30px + 40px)
-  & /deep/ .icon
-    font-size: 32px
+  @media (max-width: 888px) {
+    grid-template-columns: repeat(2, 50%);
+  }
 
-.edit-button /deep/ .icon
-    font-size: 36px
+  grid-gap: 10px;
+  margin-top: 25px;
+}
 
-.name
-  height 75px
-    @media (max-width: 1000px)
-      height: 60px
-  input, p
-    font-size: 28px
-    @media (max-width: 1000px)
-      font-size: 20px
-  margin-bottom: 20px
-  font-weight bold
-  display grid
-  
-  align-items center
-  grid-template-columns calc(100% - 36px) 36px
+.button-row {
+  position: relative;
+}
 
-.abbreviation
-  text-transform uppercase
-  font-family 'Roboto Mono', monospace
-  letter-spacing 2px
+.confirm-button, .delete-button {
+  position: absolute;
+}
+
+.confirm-button {
+  @media (min-width: calc(888px + 1px)) {
+    right: 0px;
+    top: -20px;
+  }
+
+  @media (max-width: 888px) {
+    right: 0;
+    top: calc(-40px + 40px);
+  }
+
+  & /deep/ .icon {
+    font-size: 48px;
+  }
+}
+
+.delete-button {
+  @media (min-width: calc(888px + 1px)) {
+    right: 65px;
+    top: -10px;
+  }
+
+  @media (max-width: 888px) {
+    left: 0px;
+    top: calc(-30px + 40px);
+  }
+
+  & /deep/ .icon {
+    font-size: 32px;
+  }
+}
+
+.edit-button /deep/ .icon {
+  font-size: 36px;
+}
+
+.name {
+  height 75px {
+    @media (max-width: 888px) {
+      height: 60px;
+    }
+  }
+
+  input, p {
+    font-size: 28px;
+
+    @media (max-width: 888px) {
+      font-size: 20px;
+    }
+  }
+
+  margin-bottom: 20px;
+  font-weight: bold;
+  display: grid;
+  align-items: center;
+  grid-template-columns: calc(100% - 36px) 36px;
+}
+
+.abbreviation {
+  text-transform: uppercase;
+  font-family: 'Roboto Mono', monospace;
+  letter-spacing: 2px;
+}
 </style>

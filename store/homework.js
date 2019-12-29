@@ -1,285 +1,250 @@
-import moment from "moment";
+import { firstBy } from "thenby";
 import groupBy from "lodash.groupby";
-import { get } from "https";
+import { isSameWeek, differenceInWeeks, isBefore, parseISO, getUnixTime, fromUnixTime } from "date-fns";
+import { getValidator, getMutations } from "./index"
 
 export const state = () => ({
-  //Don't forget to add new state objects to the module's CLEAR_ALL!
-  grades: [],
-  tests: [],
-  exercises: []
+	homeworks: [],
+	types: [
+		{ key: "EXERCISE",   label: "Exercice"      },
+		{ key: "TEST",       label: "Contrôle"      },
+		{ key: "COURSEWORK", label: "Travail noté"  },
+		{ key: "TOBRING",    label: "À apporter"    },
+	],
+	loaded: false
 });
 
+const parseHomeworkDates = homework => {
+	if (homework.due && typeof homework.due === 'string') 
+		homework.due = parseISO(homework.due)
+	if (homework.added && typeof homework.added === 'string') 
+		homework.added = parseISO(homework.added)
+	return homework
+}
+
 export const getters = {
-  allGrades(state, getters) {
-    return state.grades;
-  },
-  gradesOf: (state, getters, rootState, rootGetters) => subjectOrTrimester => {
-    // its a trimester: get the date boundary for the requested trimester
-    if (typeof subjectOrTrimester === "number") {
-      let start = rootGetters["schedule/trimesterStart"](subjectOrTrimester);
-      // get the end (aka the start of the next one, or the end of the year)
-      let end = rootGetters["schedule/trimesterStart"](subjectOrTrimester + 1);
+	types: ({ types }) => types,
+	all: ({ homeworks }, { order }) => order(homeworks),
+	one: ({}, { all }) => (value, prop = "uuid") =>
+		all.find(o => o[prop] === value) || null,
+	nextWeek: ({}, { all }, rootState) =>
+		all.filter(o => differenceInWeeks(o.due, rootState.now) == 1),
+	currentWeek: ({}, { all }, rootState) =>
+		all.filter(o => isSameWeek(o.due, rootState.now)),
+	currentOrNextWeek: ({}, {currentWeek, nextWeek}) => 
+		[...currentWeek, ...nextWeek],
+	pending: ({}, { currentOrNextWeek }) =>
+		currentOrNextWeek.filter(o => o.progress != 1),
+	order: () => homeworks =>
+		[...homeworks].sort(
+			firstBy((o1, o2) => isBefore(o1.due, o2.due))
+				.thenBy(o => o.subject.weight)
+				.thenBy("uuid")
+		),
+	group: ({}, { _needToShowGroup }, rootState) => (homeworks, specialGroups = ['late', 'today']) => {
+		/* Groups the provided array of homework by due date
+		* into an array of groups:
+		* [ { due: <date>, homeworks: [ ... ], shown: <bool> }, ... ]
+		* the shown bool is computed by getters._needToShowGroup
+		*/
+		if (specialGroups.length) {
+			homeworks = homeworks.map(hw => {
+				if (
+					specialGroups.includes('late')
+					&& isBefore(hw.due, Date.now())
+				) {
+					return { ...hw, due: 'LATE' }
+				} else {
+					return { ...hw, due: getUnixTime(hw.due)}
+				}
+			})
+		}
+		console.log('GROUPPING HW\'s')
+		const map = groupBy(homeworks, "due")
+		let flat = []
+		for (const [due, homeworks] of Object.entries(map)) {
+			flat.push({ due, homeworks })
+		}
 
-      console.log(`[gradesOf] start=${start} end=${end}`);
+		flat = flat.sort(firstBy('due'))
+		flat = flat.map(g => ({...g, due: typeof g.due === 'number' ? fromUnixTime(g.due) : g.due}))
+		return flat
+	},
+	_needToShowGroup: ({}, {}, {}, rootGetters) => ({ due, homeworks, showCompleted }) => {
+		/* Takes a group object ({due, homeworks}) and decides whether this
+		* group needs to be shown to the user.
+		*/
 
-      return state.grades.filter(grade => {
-        let added = moment(grade.added, "YYYY-MM-DD");
-        return added.isSameOrAfter(start) && added.isSameOrBefore(end);
-      });
-      // its a subject
-    } else {
-      return getters.allTests
-        .filter(t => t.subject.uuid === subjectOrTrimester)
-        .map(t => t.grades[0]);
-    }
+    /* Only show...
+    - if the group is non-empty, and...
+		- - in case of a "late" or "today" group...
+		- - - if at least one homework is still not completed
+    - - if at least one homework is still not completed, *or*
+    - - if any test (completed or not) is present, *or*
+		- - if the setting "show completed exercises" is true
+    */
+    const isEmpty = homeworks.length === 0
+    const someHomeworkNotCompleted = !!homeworks.filter((o) => o.progress < 1).length
+    const hasTests = homeworks.filter((o) => o.graded).length > 0
+    // console.log({due, isEmpty, someHomeworkNotCompleted, hasTests, showCompleted})
+		if (isEmpty) return false
+		if (['LATE', 'TODAY'].includes(due)) {
+			return someHomeworkNotCompleted
+		}
+		return someHomeworkNotCompleted || hasTests || showCompleted
   },
-  gradesIn: (state, getters) => (from, upto) => {
-    return state.grades.filter(
-      grade => grade.added >= from && grade.added <= upto
-    );
+  grouped: ({}, { group, all }) => group(all),
+  only: ({}, { all }) => (what, homeworks = null) => {
+    homeworks = homeworks || all
+    return homeworks.filter(o => o.type === what.replace(/(.+)s$/, ($0, $1) => $1).toUpperCase());
   },
-  latestGrade: (state, getters) => (grades = null) => {
-    grades = grades || getters.allGrades;
-    let sorted = grades
-      .filter(g => !isNaN(g.actual) && g.actual !== null)
-      .sort((a, b) =>
-        moment(a.added, "YYYY-MM-DD").isBefore(moment(b.added, "YYYY-MM-DD"))
-          ? 1
-          : -1
-      );
-    return sorted.length ? sorted[0] : null;
-  },
-  gradesEvolution: (state, getters) => (grades = null) => {
-    // Get a grades array, default to all grades
-    grades = grades || getters.allGrades;
-    // Get the latest grade, if we can't find it, return NaN
-    let latestGrade = getters.latestGrade(grades);
-    if (!latestGrade) return NaN;
-
-    // Get mean of "now"
-    let meanNow = getters.meanOfGrades(grades);
-    // Get an array of grades that contains all of them but the last one
-    // If this array is empty, return NaN: there's nothing to compare the mean against.
-    let gradesExceptLast = grades.filter(g => g.uuid !== latestGrade.uuid);
-    if (!gradesExceptLast.length) return NaN;
-    // Get mean of "then" (all the provided grades but the last one)
-    let meanThen = getters.meanOfGrades(gradesExceptLast);
-
-    // Compute the relative difference between the two means
-    let relativeDiff = (meanNow - meanThen) / meanThen
-
-    // Also return the two means, could be useful for an absolute difference
-    // or simply displaying the mean before the latest grade
-    return { relativeDiff, meanThen, meanNow };
-  },
-  currentTrimesterGradesEvolution(state, getters) {
-    return getters.gradesEvolution(getters.currentTrimesterGrades);
-  },
-  allTests(state, getters) {
-    return state.tests;
-  },
-  dueTests(state, getters) {
-    return getters.allTests.filter(test =>
-      moment(test.due, "YYYY-MM-DD").isAfter(moment())
-    );
-  },
-  dueTestsOrToday(state, getters) {
-    return getters.allTests.filter(test =>
-      moment(test.due, 'YYYY-MM-DD').isSameOrAfter(moment(), 'day')
-    );
-  },
-  pastTests(state, getters) {
-    return getters.allTests.filter(test =>
-      moment(test.due, "YYYY-MM-DD").isSameOrBefore(moment())
-    );
-  },
-  ungradedTests(state, getters) {
-    return getters.allTests.filter(test => !test.grades && !test.grades.length);
-  },
-  gradedTests(state, getters) {
-    let tests = [];
-    for (const grade of state.grades) {
-      tests.push(grade.test);
-    }
-    return tests;
-  },
-  meanOfGrades: (state, getters) => grades => {
-    let vals = grades.map(g => g.actual).filter(v => !isNaN(v) && v !== null);
-    if (!vals.length) return NaN;
-    let sum = vals.reduce((acc, cur) => acc + cur);
-    return sum / vals.length;
-  },
-  meanOf: (state, getters, rootState, rootGetters) => subjectOrTrimester => {
-    // get an array containing the grade values from the requested subject/trimester
-    let grades = getters.gradesOf(subjectOrTrimester);
-    let mean = getters.meanOfGrades(grades);
-    return mean;
-  },
-  globalMean: (state, getters, rootState, rootGetters) => {
-    console.group("globalMean");
-    let grades = getters.allGrades
-      .map(grade => grade.actual)
-      .filter(actual => !isNaN(actual) && actual !== null);
-    let mean = getters.meanOfGrades(grades);
-    console.groupEnd();
-    return mean;
-  },
-  currentTrimesterGrades(state, getters, rootState, rootGetters) {
-    return getters.gradesOf(rootGetters["schedule/currentTrimester"]);
-  },
-  currentTrimesterMean(state, getters) {
-    console.log(getters.currentTrimesterGrades);
-    return getters.meanOfGrades(getters.currentTrimesterGrades);
-  },
-
-  allExercises(state, getters) {
-    return state.exercises;
-  },
-  dueExercises(state, getters) {
-    return getters.allExercises.filter(exercise =>
-      moment(exercise.due, "YYYY-MM-DD").isAfter(moment())
-    );
-  },
-  dueExercisesOrToday(state, getters) {
-    return getters.allExercises.filter(exercise =>
-      moment(exercise.due, 'YYYY-MM-DD').isSameOrAfter(moment(), 'day')
-    );
-  },
-  pendingExercises(state, getters) {
-    return getters.dueExercisesOrToday.filter(exercise => !exercise.completed);
-  },
-  uncompleteExercises(state, getters) {
-    return getters.allExercises.filter(exercise => !exercise.completed);
-  },
-  groupedHomework(state, getters) {
-    let exercises = getters.dueExercisesOrToday
-    let tests = getters.dueTests;
-    let grouppedExs = groupBy(exercises, "due");
-    let grouppedTests = groupBy(tests, "due");
-    let groupped = {};
-    for (const [due, exercises] of Object.entries(grouppedExs)) {
-      if (due in groupped) {
-        groupped[due]["exercises"] = exercises;
-      } else {
-        groupped[due] = { exercises };
-      }
-    }
-    for (const [due, tests] of Object.entries(grouppedTests)) {
-      if (due in groupped) {
-        groupped[due]["tests"] = tests;
-      } else {
-        groupped[due] = { tests };
-      }
-    }
-    let arrayed = Object.keys(groupped).map(k => [k, groupped[k]]);
-    let sorted = arrayed.sort((a, b) => {
-      let adate = moment(a[0], "YYYY-MM-DD");
-      let bdate = moment(b[0], "YYYY-MM-DD");
-      return adate.isAfter(bdate) ? 1 : -1;
-    });
-    return sorted;
-  },
-  test: (state, getters) => uuid => {
-    return state.tests.find(t => t.uuid === uuid);
-  },
-  pageTitleCounter(state, getters) {
-    let isTomorrowOrToday = x => moment(x.due, 'YYYY-MM-DD').set({hours:0,minutes:0,seconds:0}).diff(moment().set({hours:0,minutes:0,seconds:0}), 'days') <= 1
-    let testsCount = getters.dueTestsOrToday.filter(t => isTomorrowOrToday(t)).length
-    let exercisesCount = getters.dueExercisesOrToday.filter(t => isTomorrowOrToday(t)).length
-    if (testsCount+exercisesCount > 0)
-        return `${exercisesCount}|${testsCount} `;
-    return "";
-  },  
-};
+  exercises: ({}, { only, all }) =>
+    only("exercises", all),
+  tests: ({}, { only, all }) => only("tests", all),
+  counts: ({}, { only, pending, currentOrNextWeek }) => ({
+    exercises: only("exercises", pending),
+    tests: only("tests", currentOrNextWeek),
+	}),
+	verboseType: ({}, { types }) => type =>
+		types.find(t => t.key === type).label,
+	validate: getValidator({
+		constraints: {
+			required: ["subject", "name", "due"],
+			minimum: {
+				0: ["progress"]
+			},
+			maximum: {
+				1: ["progress"]
+			},
+			maxLength: {
+				300: ["name", "room"]
+			}
+		},
+		customConstraints: [
+			{
+				field: 'type',
+				message: "Type de devoir invalide",
+				constraint: ({ types }, object) => 
+					types.map(t => t.key).includes(object.type)
+			}
+		],
+		fieldNames: {
+			subject:  { gender: "F", name: "matière" },
+			name:     { gender: "M", name: "nom" },
+			type:     { gender: "M", name: "type" },
+			room:     { gender: "F", name: "salle" },
+			progress: { gender: "F", name: "progression" },
+			due:			{ gender: "F", name: "date due" },
+		},
+		resourceName: { gender: "M", name: "devoir" },
+	}),
+}
 
 export const mutations = {
-  CLEAR_ALL(state) {
-    state.exercises = [];
-    state.grades = [];
-    state.tests = [];
-  },
-  UPDATE_GRADE(state, args) {
-    let { uuid, data } = args;
-    // Get grade
-    let grade = state.grades.find(grade => grade.uuid === uuid);
-
-    // Compute new grade
-    Object.assign(grade, data);
-
-    // Remove the original grade
-    state.grades = state.grades.filter(grade => grade.uuid !== uuid);
-
-    // Add the modified grade
-    state.grades.push(grade);
-  },
-  UPDATE_EXERCISE(state, args) {
-    let { uuid, data } = args;
-    // Get exercise
-    let exercise = state.exercises.find(exercise => exercise.uuid === uuid);
-
-    // Compute new exercise
-    Object.assign(exercise, data);
-
-    // Remove the original exercise
-    state.exercises = state.exercises.filter(
-      exercise => exercise.uuid !== uuid
-    );
-
-    // Add the modified exercise
-    state.exercises.push(exercise);
-  },
-  UPDATE_TEST(state, args) {
-    let { uuid, data } = args;
-    // Get test
-    let test = state.tests.find(test => test.uuid === uuid);
-
-    // Compute new test
-    Object.assign(test, data);
-
-    // Remove the original test
-    state.tests = state.tests.filter(test => test.uuid !== uuid);
-
-    // Add the modified test
-    state.tests.push(test);
-  },
-  SET_TESTS(state, tests) {
-    state.tests = tests;
-  },
-  SET_EXERCISES(state, exercises) {
-    state.exercises = exercises;
-  },
-  SET_GRADES(state, grades) {
-    state.grades = grades;
-  },
-  ADD_EXERCISE(state, exercise) {
-    state.exercises.push(exercise);
-  },
-  ADD_TEST(state, test) {
-    state.tests.push(test);
-  },
-  SWITCH_EXERCISE_COMPLETED(state, exerciseUUID) {
-    let exercise = state.exercises.find(ex => ex.uuid === exerciseUUID);
-    if (!exercise) return;
-    state.exercises[
-      state.exercises.indexOf(exercise)
-    ].completed = !exercise.completed;
-  },
-  ADD_GRADE(state, grade) {
-    state.grades.push(grade);
-  },
-  DELETE_TEST(state, testUUID) {
-    //FIXME
-    state.tests = state.tests.filter(t => t.uuid !== testUUID);
-  },
-  DELETE_EXERCISE(state, exerciseUUID) {
-    state.exercises = state.exercises.filter(e => e.uuid !== exerciseUUID);
-  },
-  CHANGE_EXERCISE(state, exerciseUUID, newExerciseData) {
-    let i = state.exercises.indexOf(
-      state.exercises.find(e => e.uuid === exerciseUUID)
-    );
-    Object.assign(state.exercises[i], newExerciseData);
-  }
+  ...getMutations('homework', parseHomeworkDates),
+	POSTLOAD: (state) => state.loaded = true
 };
 
-export const actions = {};
+export const actions = {
+	async load({ commit, state }, force = false) {
+		if (!force && state.loaded) return
+		try {
+			const { data } = await this.$axios.get(`/homework/`);
+			console.log(`[from API] GET /homework/: OK`);
+			if (data) {
+				commit("SET", data);
+				commit('POSTLOAD')
+			}
+		} catch (error) {
+			console.error(`[from API] GET /homework/: Error`);
+			try {
+				console.error(error.response.data);
+			} catch (_) {
+				console.error(error)
+			}
+		}
+	},
+
+	async post({ commit, dispatch, getters }, {homework, force}) {
+		force = force || false
+		if(!force) {
+			const validation = getters.validate(homework)
+			if (!validation.validated) return validation
+		}
+		try {
+			if(homework.subject) homework.subject = homework.subject.uuid
+			const res = await this.$axios.post(`/homework/`, homework);
+			const { data } = await this.$axios.get(`/homework/${res.data.uuid}`)
+			if (data) {
+				commit("ADD", data);
+			}
+		} catch (error) {}
+	},
+
+	async delete({ commit }, uuid) {
+		try {
+			const { data } = await this.$axios.delete(`/homeworks/${uuid}`);
+			if (data) commit("DEL", uuid);
+			console.log(`[from API] DELETE /homeworks/${uuid}: OK`);
+		} catch (error) {
+			console.error(`[from API] DELETE /homeworks/${uuid}: Error`);
+			try {
+				console.error(error.response.data);
+			} catch (_) {
+				console.error(error);
+			}
+		}
+	},
+
+	async patch({ commit, dispatch, getters }, { uuid, modifications, force, earlyMutation }) {
+		earlyMutation = earlyMutation || false
+		force = force || false
+		if(!force) {
+			let homework = getters.one(uuid)
+			homework = {...homework, ...modifications}
+			const validation = getters.validate()(homework)
+			if (!validation.validated) return validation
+		}
+		try {
+			if (earlyMutation) {
+				commit("PATCH", {pk: uuid, modifications});
+			}
+
+			if (modifications.subject)
+				modifications.subject = modifications.subject.uuid
+			await this.$axios.patch(
+				`/homework/${uuid}/`,
+				modifications
+				);
+			const { data } = await this.$axios.get(`/homework/${uuid}`)
+
+			if (!earlyMutation && data) {
+				commit("PATCH", {pk: uuid, modifications: data});
+			}
+			console.log(`[from API] PATCH /homework/${uuid}: OK`);
+		} catch (error) {
+			console.error(`[from API] PATCH /homework/${uuid}: Error`);
+			try {
+				console.error(error.response.data);
+			} catch (_) {
+				console.error(error);
+			}
+		}
+	},
+
+	async switchCompletion({ getters, dispatch }, { uuid, value }) {
+		const homework = getters.one(uuid)
+		let progress
+		if (homework === null) {
+			this.$toast.error("Erreur interne", { icon: 'error_outline' })
+			return null
+		}
+		if (typeof value === 'number') {
+			progress = value
+		} else {
+			// To "invert" a value in [0; 1], do y = -x + 1
+			progress = - homework.progress + 1
+		}
+		await	dispatch('patch', {uuid, modifications: {progress}, force: true, earlyMutation: true})
+	}
+};

@@ -4,9 +4,8 @@ label.LabelFlat
 </template>
 
 <script>
-
 export default {
-    name: 'LabelFlat',
+  name: "LabelFlat",
 }
 </script>
 

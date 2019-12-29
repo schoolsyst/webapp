@@ -1,0 +1,37 @@
+@charset "UTF-8";
+@font-face {
+    font-family: "Now";
+    src: url("NOW-BLACK.OTF") format("truetype");
+    font-style: normal;
+    font-weight: 900;
+}
+@font-face {
+    font-family: "Now";
+    src: url("NOW-BOLD.OTF") format("truetype");
+    font-style: normal;
+    font-weight: 700;
+}
+@font-face {
+    font-family: "Now";
+    src: url("NOW-MEDIUM.OTF") format("truetype");
+    font-style: normal;
+    font-weight: 500;
+}
+@font-face {
+    font-family: "Now";
+    src: url("NOW-REGULAR.OTF") format("truetype");
+    font-style: normal;
+    font-weight: 400;
+}
+@font-face {
+    font-family: "Now";
+    src: url("NOW-LIGHT.OTF") format("truetype");
+    font-style: normal;
+    font-weight: 300;
+}
+@font-face {
+    font-family: "Now";
+    src: url("NOW-THIN.OTF") format("truetype");
+    font-style: normal;
+    font-weight: 100;
+}

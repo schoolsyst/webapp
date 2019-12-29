@@ -4,27 +4,27 @@ BaseButtonReg.ButtonRegSecondary(@click="$emit('click')" :icon="icon")
 </template>
 
 <script>
-import BaseButtonReg from "~/components/BaseButtonReg.vue";
+import BaseButtonReg from "~/components/BaseButtonReg.vue"
 
 export default {
   name: "ButtonRegSecondary",
   components: {
-    BaseButtonReg
+    BaseButtonReg,
   },
 
   props: {
     icon: {
       type: String,
-      default: ''
-    }
-  }
-};
+      default: "",
+    },
+  },
+}
 </script>
 
 <style lang="sass">
 @import '~/assets/defaults'
 
 .ButtonRegSecondary
-  background-color: var(--offset-blue)
+  background-color: var(--blue-offset)
   color: var(--blue)
 </style>

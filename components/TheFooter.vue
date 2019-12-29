@@ -4,20 +4,21 @@
         h6.logo-title schoolsyst
         p.logo-subtitle 
             |by 
-            a(href="https://mx3creations.com") Mx3
+            a(href="https://mx3creations.com" no-default) Mx3
         p.version #[code alpha v0.0.666]
     </footer>
 </template>
 
 <script>
-import HeadingSub from '~/components/HeadingSub.vue'
-import OverlayLoadingLogo from '~/components/OverlayLoadingLogo.vue'
+import HeadingSub from "~/components/HeadingSub.vue"
+import OverlayLoadingLogo from "~/components/OverlayLoadingLogo.vue"
 export default {
-    name: 'TheFooter',
+  name: "TheFooter",
 
-    components: {
-        HeadingSub, OverlayLoadingLogo
-    }
+  components: {
+    HeadingSub,
+    OverlayLoadingLogo,
+  },
 }
 </script>
 
@@ -25,7 +26,8 @@ export default {
 @import '~/assets/defaults'
 
 .TheFooter
-    margin-top: 210px
+    margin-top: 100vh //debugging
+    // margin-top: 210px
     width: 100%
     height: 50vh
     +mobile
@@ -78,17 +80,6 @@ export default {
     
     //---  appearance ---
     color: #ffffff
-    //---  animation  ---
-    a::after
-        //--- positioning ---
-        
-        //--- dimensions  ---
-        
-        //---   margins   ---
-        
-        //---  appearance ---
-        
-        //---  animation  ---
 .version
     //--- positioning ---
     position: absolute

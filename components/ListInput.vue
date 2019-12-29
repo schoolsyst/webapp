@@ -3,9 +3,8 @@ ul.ListInput
 </template>
 
 <script>
-
 export default {
-    name: 'ListInput',
+  name: "ListInput",
 }
 </script>
 

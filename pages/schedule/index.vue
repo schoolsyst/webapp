@@ -1,105 +1,46 @@
 <template lang="pug">
-//-
-    COMPONENT TREE
-    Excluding single-use components (TheHeading, TheNavbar, TheFooter,...)
-
-    ArrayButtonFlat
-    MainGroup
-        MainGroupRight
-        MainGroupLeft
-        MainGroupRight
-
-.container
-    MainGroup
-        MainGroupLeft
-            TheHeading {{date}}
-            p.heading-detail 
-                | Semaine du {{scheduleNow.startOf('week').format('D/M')}} 
-                | au {{scheduleNow.endOf('week').format('D/M')}} 
-                | ({{weekType}})
-            HeadingSub Cours reportés & supprimés
-            ButtonLargeFlat.new-mutation Nouvelle modification…
-        MainGroupRight
-            Schedule(:now="scheduleNow")
+  .container.-sideby-side
+    .mutations-area
+      HeadingSub Cours supprimés / reportés
+      ul.mutations
+        li.new: ButtonNormal Nouveau cours reporté ou supprimé
+        li(v-for="mutation in mutations" :key="mutation.uuid")
+          CardMutation(v-bind="mutation")
+    .schedule
+      HeadingSub Emploi du temps
+      Schedule(:now="scheduleDate")
 </template>
 
 <script>
-import moment from 'moment';
-import { mapState, mapGetters, mapMutations, mapActions } from 'vuex'
-//-------------------------------------------------------------------
-import TheHeading from '~/components/TheHeading.vue'
-import ArrayButtonFlat from '~/components/ArrayButtonFlat.vue'
-import ButtonFlat from '~/components/ButtonFlat.vue'
-import MainGroup from '~/components/MainGroup.vue'
-import MainGroupLeft from '~/components/MainGroupLeft.vue'
-import MainGroupRight from '~/components/MainGroupRight.vue'
-import HeadingSub from '~/components/HeadingSub.vue'
-import ArrayItemScheduleMutation from '~/components/ArrayItemScheduleMutation.vue'
-import ItemScheduleMutation from '~/components/ItemScheduleMutation.vue'
-import BarFloating from '~/components/BarFloating.vue'
-import EventSchedule from '~/components/EventSchedule.vue'
-import ButtonLargeFlat from '~/components/ButtonLargeFlat.vue'
 import Schedule from '~/components/Schedule.vue'
-
+import HeadingSub from '~/components/HeadingSub.vue'
+import ButtonNormal from '~/components/ButtonNormal.vue'
+import CardMutation from '~/components/CardMutation.vue'
+import { mapGetters, mapState } from 'vuex'
 export default {
-    components: {
-        TheHeading,
-        ArrayButtonFlat,
-        ButtonFlat,
-        MainGroup,
-        MainGroupLeft,
-        MainGroupRight,
-        HeadingSub,
-        ArrayItemScheduleMutation,
-        ItemScheduleMutation,
-        BarFloating,
-        EventSchedule,
-        ButtonLargeFlat,
-        Schedule
-    },
-
-    head() {
-        return {
-            title: `${this.pageTitleCounter}Emploi du temps`
-        }
-    },
-
-    data() {
-        return {
-            scheduleNow: moment(),
-            now: moment(),
-            //TODO: dynamically determine PX_PER_MIN & EVENT_WIDTH to fit neatly into 100vh & 2/3*100vw
-        }
-    },
-
-    computed: {
-        ...mapGetters({
-            getWeekType: 'schedule/weekType',
-            pageTitleCounter: "homework/pageTitleCounter",
-        }),
-        weekType() {
-            return this.getWeekType(this.scheduleNow.format('YYYY-MM-DD'))
-        },
-        date() {
-            moment.locale('fr')
-            let fmt = moment().format('dddd')
-            return fmt.charAt(0).toUpperCase() + fmt.substr(1)
-        },
-    },
+  components: { Schedule, HeadingSub, ButtonNormal, CardMutation },
+  head: {
+    title: 'Emploi du temps'
+  },
+  computed: {
+    ...mapState(['now']),
+    ...mapGetters('schedule', ['mutations']),
+    scheduleDate() {
+      return this.now
+    }
+  },
+  async mounted() {
+    await this.$store.dispatch('schedule/load')
+  }
 }
 </script>
 
-<style lang="sass" scoped>
-@import '~/assets/defaults'
-.heading-detail
-    font-size: 24px
-.HeadingSub 
-    margin-right: 50px
-    font-size: 24px
-.Schedule
-    width: 100%
-+desktop
-    .MainGroup
-        grid-template-columns: 2fr 3fr
+<style lang="stylus" scoped>
+.schedule
+  overflow-x auto
+  // Cheap hack, if overflow-x is auto, overflow-y becomes either auto or scroll.
+  // See: https://stackoverflow.com/a/39554003
+  padding-bottom 500px 
+h2
+  margin-bottom 1em
 </style>
-

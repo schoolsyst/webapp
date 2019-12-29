@@ -1,97 +1,145 @@
-<template>
-    <BaseCard class="CardHomework" :style="{backgroundColor: subject.color}">
-        <h4 class="name">{{name}}</h4>
-        <div class="progress-bar">
-            <div class="completed" :style="{width: percentProgress}"></div>
-            <span class="percent">{{progress == 1 ? 'TERMINÉ' : percentProgress}}</span>
-        </div>
-    </BaseCard>
+<template lang="pug">
+    .card(
+        @click="$emit('click')"
+        :class="{completed, opened}"
+    )
+        .complete-slider(@click="toggleComplete" :title="sliderTooltip")
+            Icon(v-show="completed") close
+            Icon(v-show="!completed") check
+        .infos
+            .first-line
+                .strikethrough-line
+                BadgeSubject.subject-color(v-bind="subject" variant="dot")
+                span.name {{ name }}
+                Icon.graded-indicator(v-if="['DM', 'TEST'].includes(type)" v-tooltip="'Noté'").
+                    error_outline
+            .details(v-if="details" v-html="details")
 </template>
 
 <script>
-import BaseCard from '~/components/BaseCard.vue'
-
+import Icon from '~/components/Icon.vue'
+import BadgeSubject from '~/components/BadgeSubject.vue'
+import InputField from '~/components/InputField.vue'
+import debounce from 'lodash.debounce'
+import { mapActions, mapGetters } from 'vuex'
 export default {
-    name: 'CardHomework',
-
-    components: {
-        BaseCard
-    },
-
+    components: { Icon, BadgeSubject, InputField },
     props: {
-        progress: {
-            // float in [0;1]
-            validator: function(value) { return value <= 1 && value >= 0},
-            default: 1
-        },
-        subject: {
-            type: Object,
-            required: true
-        },
-        name: {
+        name: String,
+        details: {
             type: String,
-            required: true,
-        }
+            default: ""
+        },
+        subject: Object,
+        uuid: String,
+        progress: Number,
+        opened: {
+            type: Boolean,
+            default: false
+        },
+        type: String
     },
-
-
-    data() {
-        return {
-            
-        }
-    },
-
     computed: {
-        percentProgress() {
-            return this.progress * 100 + '%'
+        completed() {
+            return this.progress >= 1
+        },
+        sliderTooltip() {
+            return `Marquer comme ${this.completed ? 'non-' : ''}terminé`
         }
     },
-
-
-    created() {
-
-    },
-
-
     methods: {
-
-    }
+        ...mapActions('homework', ['switchCompletion']),
+        ...mapGetters('homework', ['one']),
+        toggleComplete: debounce(async function () {
+            await this.switchCompletion({ uuid: this.uuid })
+        }, 500, { leading: true, trailing: false })
+    },
 }
 </script>
 
-<style lang="sass" scoped>
-@import '~/assets/defaults'
-.CardHomework 
-    border-radius: 10px
-    height: auto
-    max-width: 500px
-    padding: 0
+<style lang="stylus" scoped>
+.card
+    cursor pointer
+    display flex
+    // height: 100px
+    width: 500px
+    max-width 100%
+    overflow hidden
+    border-radius var(--border-radius)
+    transition box-shadow 0.25s ease
+.strikethrough-line
+    --strikethrough-line-offset: 0px
+    height 0.1em
+    background var(--black)
+    position absolute
+    top: 50%
+    left: calc((100% - (100% - (var(--strikethrough-line-offset) * 2))) / 2)
+    width: 0
+    transition: width 0.25s ease
+.card.completed .complete-slider
+    background-color var(--red)
+.card:not(.completed) .complete-slider
+    background-color var(--green)
+.complete-slider
+    width: 0
+    overflow hidden
+    color var(--white)
+    display flex
+    align-items center
+    transition width 0.25s ease
+    flex-shrink 0
+    z-index: 10
+    border-radius var(--border-radius)
+    border-top-right-radius 0
+    border-bottom-right-radius 0
+    i
+        margin-left: 0.5em
+.infos
+    padding 1.1em 1.2em
+    border 1px solid var(--grey-light)
+    border-radius var(--border-radius)
+    width 100%
+    display flex
+    flex-direction column
+    position relative
+    .first-line
+        align-items center
+        display flex
+        width 100%
+        overflow hidden
+        text-overflow ellipsis
+        white-space nowrap
+        position relative
+    .name
+        margin-left 0.5rem
+    .details
+        margin-top .5em
+        width 100%
+        overflow hidden
+        text-overflow ellipsis
+        white-space wrap
+        font-size: 0.75em
+        flex-grow 0
+    .graded-indicator
+        font-size: 1.3em
+        margin-left auto    
 
-.name, .percent 
-    padding: 0 20px
-    color: white
-
-.name 
-    padding: 10px 20px
-    line-height: 56px
-    font-size: 48px
-    font-weight: normal
-
-.percent 
-    font-size: 24px
-    padding: 20px
-
-.progress-bar 
-    position: relative
-    display: flex
-    align-items: center
-
-.progress-bar .completed 
-    position: absolute
-    background: rgba(255,255,255,0.5)
-    width: 100%
-
-.progress-bar, .progress-bar .completed 
-    height: 40px
-
+.card.completed
+    .infos
+        opacity: 0.5
+    .strikethrough-line
+        width calc(100% - (var(--strikethrough-line-offset) * 2))
+.card:hover
+    &
+        box-shadow var(--shadow-2)
+    .complete-slider
+        width 3em
+    &.completed .complete-slider:hover
+        background-color var(--red-light)
+    &:not(.completed) .complete-slider:hover
+        background-color var(--green-light)
+    .infos
+        border-top-left-radius 0px
+        border-bottom-left-radius 0px
+        border-left 0px
 </style>

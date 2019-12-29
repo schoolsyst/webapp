@@ -5,19 +5,20 @@
 </template>
 
 <script>
-
 export default {
-    name: 'ButtonFloating',
-    props: {
-        icon: String,
-        iconStyle: String
-    },
+  name: "ButtonFloating",
+  props: {
+    icon: String,
+    iconStyle: String,
+  },
 
-    computed: {
-        iconClass() {
-            return 'material-icons' + (this.iconStyle === 'baseline' ? '' : '-outlined')
-        }
-    }
+  computed: {
+    iconClass() {
+      return (
+        "material-icons" + (this.iconStyle === "baseline" ? "" : "-outlined")
+      )
+    },
+  },
 }
 </script>
 
@@ -25,7 +26,7 @@ export default {
 @import '~/assets/defaults'
 
 .ButtonFloating
-    $height: 75px
+    $height: 3.5rem
     // self-positionning
     position: fixed
     +desktop
@@ -35,7 +36,7 @@ export default {
         right: 25px
         bottom: 125px
     // inner items positionning
-    padding-left: $height / 2 - 20px
+    padding-left: $height / 2 - 1rem
     padding-right: $height / 2
     height: $height
     display: flex
@@ -51,13 +52,13 @@ export default {
         +shadow(5)
     // inner items appearance
     color: white
-    font-size: 35px
+    font-size: 1.2rem
     font-weight: normal
     z-index: 100
 
 
 .icon
-    font-size: 50px
-    margin-right: 20px
+    font-size: 2rem
+    margin-right: .5rem
 
 </style>

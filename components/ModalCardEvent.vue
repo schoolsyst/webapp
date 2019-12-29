@@ -27,77 +27,86 @@ BaseModal.ModalCardEvent(name="event-card")
 </template>
 
 <script>
-
-import debounce from 'lodash.debounce'
+import debounce from "lodash.debounce"
 //------------------------------------------------------------------
-import BaseModal from '~/components/BaseModal.vue'
-import ButtonRegSecondary from '~/components/ButtonRegSecondary.vue'
-import SubjectDot from '~/components/SubjectDot.vue'
-import LabelFlat from '~/components/LabelFlat.vue'
-import moment from 'moment';
-import { mapGetters } from 'vuex';
+import BaseModal from "~/components/BaseModal.vue"
+import ButtonRegSecondary from "~/components/ButtonRegSecondary.vue"
+
+import LabelFlat from "~/components/LabelFlat.vue"
+import moment from "moment"
+import { mapGetters } from "vuex"
 
 export default {
-    name: 'ModalCardEvent',
-    components: {ButtonRegSecondary, SubjectDot, LabelFlat, BaseModal},
-    props: {
-        subject: {
-            type: Object,
-            default: () => {return {name: '...'}}
-        },
-        room: {
-            type: String,
-            default: '—'
-        },
-        start: String,
-        end: String,
-        uuid: String,
-        day:String,
-        homework: {
-            type: Object,
-            default: () => {return {exercises: [], tests: []} }
-        }
+  name: "ModalCardEvent",
+  components: { ButtonRegSecondary,  LabelFlat, BaseModal },
+  props: {
+    subject: {
+      type: Object,
+      default: () => {
+        return { name: "..." }
+      },
     },
-    data() {
-        return {
-            mutRoom: this.room
-        }
+    room: {
+      type: String,
+      default: "—",
     },
-    computed: {
-        ...mapGetters({
-            homeworkOf: 'homework/'
-        })
+    start: String,
+    end: String,
+    uuid: String,
+    day: String,
+    homework: {
+      type: Object,
+      default: () => {
+        return { exercises: [], tests: [] }
+      },
     },
-    watch: {
-        mutRoom: debounce(function() {
-            this.updateRoom()
-        }, 1000)
-    },
-    methods: {
-        async updateRoom() {
-            try {
-                const { data } = await this.$axios.patch(`/events/${this.uuid}`, {room:this.mutRoom})
-                this.$store.commit('schedule/CHANGE_EVENT', this.uuid, {room:this.mutRoom})
-                this.$toast.success(`Salle modifiée avec succès`)
-            } catch(error) {
-                this.$toast.error(`Erreur lors de la modification de la salle: ${error}`)
-            }
-        },
-        formatTime(time) {
-            return moment(time, 'HH:mm:ss').format('HH:mm')
-        },
-        getFrenchWeekday(weekday) {
-            return {
-                monday: 'Lundi',
-                tuesday: 'Mardi',
-                wednesday: 'Mercredi',
-                thursday: 'Jeudi',
-                friday: 'Vendredi',
-                saturday: 'Samedi',
-                sunday: 'Dimanche'
-            }[weekday]
-        }
+  },
+  data() {
+    return {
+      mutRoom: this.room,
     }
+  },
+  computed: {
+    ...mapGetters({
+      homeworkOf: "homework/",
+    }),
+  },
+  watch: {
+    mutRoom: debounce(function() {
+      this.updateRoom()
+    }, 1000),
+  },
+  methods: {
+    async updateRoom() {
+      try {
+        const { data } = await this.$axios.patch(`/events/${this.uuid}`, {
+          room: this.mutRoom,
+        })
+        this.$store.commit("schedule/CHANGE_EVENT", this.uuid, {
+          room: this.mutRoom,
+        })
+        this.$toast.success(`Salle modifiée avec succès`)
+      } catch (error) {
+        this.$toast.error(
+          `Erreur lors de la modification de la salle: ${error}`
+        )
+      }
+    },
+    formatTime(time) {
+      return moment(time, "HH:mm:ss").format("HH:mm")
+    },
+    getFrenchWeekday(weekday) {
+      return {
+        monday: "Lundi",
+        tuesday: "Mardi",
+        wednesday: "Mercredi",
+        thursday: "Jeudi",
+        friday: "Vendredi",
+        saturday: "Samedi",
+        sunday: "Dimanche",
+      }[weekday]
+    },
+  },
 }
 </script>
 
