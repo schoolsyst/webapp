@@ -31,7 +31,9 @@ export const getters = {
     return [...subjects].sort(sorters[what].thenBy('uuid'))
   },
   lowercaseName: ({}, { one }) => (value, prop = 'uuid') => {
-    let name = one(value, prop).name
+    let subject = one(value, prop)
+    if (!subject) return null
+    let name = subject.name
     const isAllUppercase = name.toUpperCase() === name
     if (!isAllUppercase) name = name.toLowerCase()
     return name
