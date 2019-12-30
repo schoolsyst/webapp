@@ -217,7 +217,6 @@ export default {
       shouldSort: false,
       threshold: 0.2,
       maxPatternLength: 64,
-      minMatchCharLength: 3,
     })
     // Default value for separateGroupSubject
     this.filterSubject = this.currentCourse ? this.currentCourse.subject : null
