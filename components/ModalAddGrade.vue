@@ -154,6 +154,7 @@ export default {
         this.name     = name
         this.subject  = subject
         this.weight   = weight
+        this.unit     = unit
         this.obtained_date = obtained_date
       }
     }
