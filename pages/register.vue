@@ -5,7 +5,7 @@
       .login-link
         p
           | Déjà un compte ?
-          ButtonNormal(small variant="outline" href="/login") Connectez-vous
+          ButtonNormal(smaller variant="outline" href="/login") Connectez-vous
       form(method="post" @submit.prevent="registered = register({username, password})")
         .group-left
           InputField(

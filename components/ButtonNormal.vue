@@ -82,9 +82,9 @@ export default {
         margin 0 1.5em
         display inline-flex
     &.small
-        padding 13px 18px
+        padding .75em 1em
     &.smaller
-        padding .75em .8em
+        padding .5em .8em
     border-radius var(--border-radius)
     justify-content center
     align-items center

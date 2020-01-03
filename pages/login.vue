@@ -5,8 +5,9 @@
   .register-link
     p 
       | Pas de compte ?
-      ButtonNormal(small variant="outline" href="/register") Créez-en un
+      ButtonNormal(smaller variant="outline" href="/register") Créez-en un
   form(method="post" @submit.prevent="login({username, password}); submitted = true")
+    //TODO: social login
     //TODO: remember username
     InputField(
       name="username"
