@@ -67,6 +67,7 @@ BaseModal.grade(:name="modalName" :title="(grade ? 'Modifier' : 'Ajouter') + ' u
           variant="filled"
         ) Note estimée ({{ unit == 100 ? 'en %' : `sur ${unit}` }})
   ButtonNormal.submit(
+    variant="primary"
     @click="$emit('submit', gradeObject); resetInputs()"
     :validation="validate()(gradeObject)"
   ) {{ grade ? 'Modifier' : 'Ajouter' }}
