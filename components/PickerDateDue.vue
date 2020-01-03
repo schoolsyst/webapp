@@ -138,7 +138,7 @@ export default {
 
   },
   methods: {
-    format(date, fmt) { return format(date, fmt, { locale: fr }).toTitleCase() },
+    format(date, fmt) { return this.toTitleCase(format(date, fmt, { locale: fr })) },
     modalAction() {
       if (this.opened) {
         this.$modal.hide(this.name)
@@ -151,15 +151,13 @@ export default {
         })
         this.opened = true
       }
-    }
-  },
-  mounted() {
-    String.prototype.toTitleCase = function() {
-      return this.replace(/\w\S*/g, txt => 
+    },
+    toTitleCase(str) {
+      return str.replace(/\w\S*/g, txt => 
         txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase()
       )
     }
-  }
+  },
 }
 </script>
 
