@@ -11,6 +11,7 @@
             :disabled="disabled || !v.validated"
             :title="title"
             @click="!href ? $emit('click') : ''"
+            no-default
         )
             slot
 </template>
@@ -94,14 +95,15 @@ export default {
         margin-right 0.2em
         font-size 1.3em
 .btn--outline
-    border 2px solid var(--blue)
+    border 2px solid var(--grey)
     color var(--blue)
     &:hover, &:focus
-        background-color var(--blue)
-        color white
+        background-color var(--blue-offset)
+        border-color var(--blue-offset)
     &:active
         background-color var(--blue-dark)
         border-color var(--blue-dark)
+        color white
     &[disabled]
         color var(--grey)
         border-color var(--grey)
