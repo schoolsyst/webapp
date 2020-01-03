@@ -7,7 +7,7 @@ BaseModal.grade(:name="modalName" :title="(grade ? 'Modifier' : 'Ajouter') + ' u
   .header
     BadgeSubject(
       clickable
-      @click="$modal.show('add-grade-subject-picker')"
+      @click="$modal.show(`${modalName}-subject-picker`)"
       v-bind="subject"
       variant="responsive"
     )
