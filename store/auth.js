@@ -5,6 +5,16 @@ export const store = () => ({
   loggedIn: false
 })
 
+const passwordConfirmationConstraint = {
+  field: 'passwordConfirmation',
+  message: "Les deux mot de passe ne correspondent pas",
+  constraint({}, object) {
+    const pwd1 = object['password']
+    const pwd2 = object['passwordConfirmation']
+    return pwd1 === pwd2
+  }
+}
+
 export const getters = {
   validateLogin: getValidator({
     resourceName: { gender: 'M', name: 'compte' },
@@ -23,8 +33,8 @@ export const getters = {
     resourceName: { gender: 'M', name: 'compte' },
     fieldNames: {
       username: { gender: 'M', name: "nom d'utilisateur" },
-      password: { gender: 'M', name: 'mot de passe'      },
       email:    { gender: 'F', name: 'adresse email'     },
+      password: { gender: 'M', name: 'mot de passe'      },
       passwordConfirmation: { gender: 'F', name: 'confirmation du mot de passe'},
     },
     constraints: {
@@ -34,17 +44,34 @@ export const getters = {
       },
       isAnEmail: ['email']
     },
-    customConstraints: [
-      {
-        field: 'passwordConfirmation',
-        message: "Les deux mot de passe ne correspondent pas",
-        constraint({getters}, object) {
-          const pwd1 = object['password']
-          const pwd2 = object['passwordConfirmation']
-          return pwd1 === pwd2
-        }
+    customConstraints: [passwordConfirmationConstraint]
+  }),
+  validatePasswordReset: getValidator({
+    resourceName: { gender: 'M', name: 'mot de passe' },
+    fieldNames: {
+      password: { gender: 'M', name: 'mot de passe'      },
+      passwordConfirmation: { gender: 'F', name: 'confirmation du mot de passe'},
+      email:    { gender: 'F', name: 'adresse email'     },
+    },
+    constraints: {
+      required: ['password'],
+      isAnEmail: ['email'],
+      maxLength: {
+        300: ['email']
       }
-    ]
+    },
+    customConstraints: [passwordConfirmationConstraint],
+    debug: true
+  }),
+  validateEmailAdress: getValidator({
+    resourceName: { gender: 'M', name: 'addresse email' },
+    fieldNames: {
+      email:    { gender: 'F', name: 'adresse email'     },
+    },
+    constraints: {
+      required: ['email'],
+      isAnEmail: ['email']
+    }
   })
 }
 
@@ -71,5 +98,21 @@ export const actions = {
       )
       return false
     }
-  }
+  },
+  async requestPasswordReset({}, data) {
+    try {
+      const res = await this.$axios.post('/password-reset/', data)
+      return res.data.status === 'OK'
+    } catch (error) {
+      return false
+    }
+  },
+  async changePassword({}, data) {
+    try {
+      const res = await this.$axios.post('/password-reset/confirm/', data)
+      return res.data.status === 'OK'
+    } catch (error) {
+      return false
+    }
+  },
 }
