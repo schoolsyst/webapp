@@ -191,7 +191,7 @@ export const getValidator = ({
       object[fieldName].match(/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/) !== null,
     isAnEmail: ({arg, fieldName}) =>
       // regex source: https://emailregex.com/
-      object[fieldName].match(/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/) !== null
+      typeof object[fieldName] === 'string' && object[fieldName].match(/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/) !== null
   }
   const check = ({errorName, fieldName, errorArg}) => {
     // Wrap checkers with object property existential check
