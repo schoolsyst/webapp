@@ -4,12 +4,14 @@
     //TODO: Rename this component
     .button
         component.btn(
-            :is="href ? 'nuxt-link' : 'button'"
-            :to="href ? href : ''"
+            :is="href ? (externalHref ? 'a' : 'nuxt-link') : 'button'"
+            :to="href && !externalHref ? href : false"
+            :href="externalHref ? href : false"
+            :target="externalHref && !inPlace ? '_blank' : false"
             :type="type"
             :class="{[`btn--${variant}`]: true, small, smaller}"
             :disabled="disabled || !v.validated"
-            :title="title"
+            v-tooltip="validationErrors"
             @click="!href ? $emit('click') : ''"
             no-default
         )
@@ -47,6 +49,11 @@ export default {
         href: {
             type: String,
             default: null
+        },
+        inPlace: {
+            // Open external links in-place
+            type: String,
+            default: false
         }
     },
     computed: {
@@ -55,14 +62,17 @@ export default {
                 return { validated: true, errors: {} }
             return this.validation
         },
-        title() {
+        validationErrors() {
             if (this.v.validated) return false
-            return (
+            return '<ul class="default-styles" style="padding-left:1em;text-align:left">' + (
                 Object.values(this.v.errors)
                 .filter((v) => v.length)
-                .map((v) => v[0])
-                .join('\n')
-            )
+                .map((v) => '<li>' + v[0] + '</li>')
+                .join('')
+            ) + '</ul>'
+        },
+        externalHref() {
+            return this.href && /^https?:\/\//.test(this.href)
         }
     }
 }
