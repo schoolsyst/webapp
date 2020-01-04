@@ -1,13 +1,16 @@
 <template lang="pug">
 .container
-  template(v-if="reset")
+  template(v-if="changed === true")
     img(src="/misc/registered-checkmark.svg")
     h1 Votre mot de passe a été changé
     p Vous n'avez plus qu'à vous re-connecter avec votre tout nouveau mot de passe!
     ButtonNormal(variant="outline" href="/login") Se connecter
+  template(v-else-if="changed === false")
+    h1 Erreur lors de la modification du mot de passe.
+    p Il se peut que le lien soit expiré. Essayez de #[nuxt-link(to="/reset-password") refaire une demande].
   template(v-else)
     h1 Choisissez votre nouveau mot de passe
-    form(@submit.prevent="changePassword({password, token: $route.query.token})")
+    form(@submit.prevent="changePassword")
       InputField(
         v-if="!email"
         v-model="email"
@@ -28,7 +31,7 @@
         variant="primary"
         v-bind="{validation}"
       ) Changer
-  p.go-back(v-if="!reset"): nuxt-link(to="/") Retour
+  p.go-back(v-if="!changed"): nuxt-link(to="/") Retour
   p.token Token:&nbsp; #[code {{$route.query.token}}] #[Icon(v-tooltip="`Utilisez-le quand vous souhaitez obtenir de l'aide`") help_outline]
 </template>
 
@@ -48,7 +51,7 @@ export default {
       password: null,
       passwordConfirmation: null,
       mEmail: null,
-      reset: true
+      changed: null
     }
   },
   computed: {
@@ -66,7 +69,13 @@ export default {
   },
   methods: {
     ...mapGetters('auth', ['validatePasswordReset']),
-    ...mapActions('auth', ['changePassword'])
+    ...mapActions('auth', { _changePassword: 'changePassword'}),
+    async changePassword() {
+      this.changed = await this._changePassword({
+        password: this.password,
+        token: this.$route.query.token
+      })
+    }
   }
 }
 </script>
