@@ -9,6 +9,7 @@
     }"
     :name="dName"
     :data-variant="variant"
+    v-tooltip="validation && validation.errors[camelCaseName] && noErrorMessages ? validation.errors[camelCaseName][0] : false"
   )
     .field-inner
       button.action(
