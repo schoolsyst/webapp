@@ -52,7 +52,7 @@ export default {
         },
         inPlace: {
             // Open external links in-place
-            type: String,
+            type: Boolean,
             default: false
         }
     },
