@@ -1,16 +1,16 @@
 <template lang="pug">
     fieldset.RadioButtons(:class="`variant-${variant}`")
         legend: slot
-        .RadioButton(v-for="value in choices" :key="value.key")
+        .RadioButton(v-for="choice in choices" :key="choice.key")
             input(
-                @change="$emit('input', value.key)"
+                @change="$emit('input', choice.key)"
                 type="radio"
-                :id="`radio--${id}--${slugify(value.key)}`"
+                :id="`radio--${id}--${slugify(choice.key)}`"
                 :name="id"
-                :value="value.key"
-                :checked="value.key === defaultSelection"
+                :value="choice.key"
+                :checked="choice.key === value"
             )
-            label(:for="`radio--${id}--${slugify(value.key)}`") {{value.label}}
+            label(:for="`radio--${id}--${slugify(choice.key)}`") {{choice.label}}
 </template>
 
 <script>
@@ -26,7 +26,7 @@ export default {
             type: Array,
             default: () => ([])
         },
-        defaultValue: {
+        value: {
             type: String,
             default: null
         },
@@ -41,12 +41,6 @@ export default {
         id() {
             const label = this.$slots.default[0].text
             return slugify(label).toLowerCase()
-        },
-        defaultSelection() {
-            const idx = this.defaultValue 
-                ? this.values.map((o) => o.key).indexOf(this.defaultValue)
-                : 0
-            return this.values[idx].key
         },
         choices() {
             if (typeof this.values[0] !== 'object') {
