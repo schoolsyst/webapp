@@ -3,7 +3,7 @@
 	//- @ Main Timeline
 	.timeline(v-if="nextCourses.length || currentCourse")
 		//- Timeline's dotted line
-		.line
+		.line.-invert-on-dark-theme
 		ul.events
 			//- Current event
 			li.current
