@@ -5,11 +5,10 @@
 <script>
 export default {
   mounted() {
-    if (this.$auth.user.is_setup) {
-      this.$router.push('/timeline')
-    } else {
-      this.$router.push('/setup')
-    }
+    let step = this.$auth.user.setup_step
+    console.log(step)
+    if (step) this.$router.push(`/setup/${step}`)
+    else this.$router.push('/timeline')
   }
 }
 </script>
