@@ -3,6 +3,7 @@ import groupBy from "lodash.groupby"
 import { parseISO, parse } from "date-fns"
 import { getMutations } from "./index"
 import uniqBy from 'lodash.uniqby'
+import debounce from 'lodash.debounce'
 import Vue from 'vue'
 
 export const state = () => ({
@@ -146,7 +147,8 @@ export const actions = {
       
     }
   },
-  async setValue ({ getters, commit, dispatch }, { key, value }) {
+  setValue: debounce(async function({ getters, commit, dispatch }, { key, value }) {
+    console.log(`Setting ${key} = ${value}`)
     try {
       // User already has that setting
       if (getters.userHasSetting(key, 'key')) {
@@ -161,7 +163,7 @@ export const actions = {
     } catch (error) {
       console.error(error)
     }
-  }
+  }, 1000)
 }
 
 const parsedValue = (
