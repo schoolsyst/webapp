@@ -1,12 +1,13 @@
 <template lang="pug">
   .container(:class="{registered}")
+    //TODO: "email already taken" / "username already taken" / "password too weak" cases
     OverlayLoadingLogo.logo(animation="animate-in-compound")
     template(v-if="!registered")
       .login-link
         p
           | Déjà un compte ?
           ButtonNormal(smaller variant="outline" href="/login") Connectez-vous
-      form(method="post" @submit.prevent="registered = register({username, password})")
+      form(method="post" @submit.prevent="register")
         .group-left
           InputField(
             name="username"
@@ -75,7 +76,10 @@ export default {
   },
   methods: {
     ...mapGetters('auth', ['validateRegister']),
-    ...mapActions('auth', ['register'])
+    ...mapActions('auth', {_register: 'register'}),
+    async register() {
+      this.registered = await this._register({email: this.email, username: this.username, password: this.password})
+    }
   }
 }
 </script>
