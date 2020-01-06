@@ -31,7 +31,7 @@
         variant="primary"
         v-bind="{validation}"
       ) Changer
-  p.go-back(v-if="!changed"): nuxt-link(to="/") Retour
+  p.go-back: nuxt-link(to="/") Retour
   p.token Token:&nbsp; #[code {{$route.query.token}}] #[Icon(v-tooltip="`Utilisez-le quand vous souhaitez obtenir de l'aide`") help_outline]
 </template>
 
