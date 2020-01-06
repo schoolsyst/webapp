@@ -192,13 +192,14 @@ h3
   button 
     &
       height spinner-buttons-height
-    &[disabled]
-      opacity: 0.25
+    &[disabled] i
+      color var(--grey-offset)
     &.before
       margin-right spinner-buttons-spacing
     &.after
       margin-left spinner-buttons-spacing
     i
+      color var(--black)
       font-size spinner-buttons-width
   
 .buttons 
