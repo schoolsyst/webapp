@@ -182,7 +182,7 @@ export const getValidator = ({
     required: ({arg, fieldName}) => 
       object.hasOwnProperty(fieldName) && object[fieldName] !== null,
     notEmpty: ({arg, fieldName}) =>
-      object[fieldName].length > 0,
+    object[fieldName] && object[fieldName].length > 0,
     isAWeekType: ({arg, fieldName}) =>
       ['Q1', 'Q2', 'BOTH'].includes(object[fieldName]),
     before: ({arg, fieldName}) =>
