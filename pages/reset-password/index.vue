@@ -10,7 +10,8 @@
         Comme ce site est tout neuf, 
         il se peut que le mail se retrouve dans vos spams.
       template(v-if="email.endsWith('@gmail.com')")
-        ButtonNormal.login(href="https://mail.google.com/" target="_blank") Ouvrir Gmail
+        ButtonNormal.login(href="https://mail.google.com/" in-place) Ouvrir Gmail
+      
     template(v-else-if="sent === false")
       h1 Impossible d'envoyer un mail.
       p Vérifiez votre adresse email
