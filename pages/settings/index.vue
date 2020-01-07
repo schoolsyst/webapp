@@ -7,32 +7,8 @@
                 li(v-for="g in grouped")
                     HeadingSub {{ g[0] }}
                     ul.settings
-                        li(v-for="s in g[1]" :key="s.uuid")
-                            .input(v-tooltip="s.description || false")
-                                template(v-if="s.type === 'SELECT'" )
-                                    RadioButtons(
-                                        v-if="s.choices.length < 5"
-                                        :values="s.choices"
-                                        :value="s.value"
-                                        @input="setValue({key: s.key, value: $event})"
-                                        :name="s.key"
-                                    ) {{ s.name }}
-                                    multiselect(
-                                        v-else
-                                        :options="s.choices"
-                                        :value="s.value"
-                                        @select="setValue({key: s.key, value: $event})"
-                                        :show-labels="false"
-                                        :name="s.key"
-                                    )
-                                //TODO: proper multiple field
-                                InputField(
-                                    v-else
-                                    :value="s.value",
-                                    @input="setValue({key: s.key, value: $event })",
-                                    :name="s.key"
-                                    :type="s.multiple ? 'block' : s.type.toLowerCase()"
-                                ) {{ s.name }}
+                        li(v-for="setting in g[1]" :key="setting.uuid")
+                            InputSetting(v-bind="{...setting, _key: setting.key}")
             ul.subjects
                 li(v-for="subject in subjects")
                     CardSubject(v-bind="subject")
@@ -46,14 +22,10 @@ import CardSubject from '~/components/CardSubject.vue'
 import Multiselect from 'vue-multiselect'
 import 'vue-multiselect/dist/vue-multiselect.min.css'
 import Checkbox from '~/components/Checkbox.vue'
-import RadioButtons from '~/components/RadioButtons.vue'
+import InputSetting from '~/components/InputSetting.vue'
 import { mapActions, mapGetters } from 'vuex'
 export default {
-    components: { HeadingSub, InputField, CardSubject, Multiselect, Checkbox, RadioButtons },
-    methods: {
-        ...mapActions('settings', ['post', 'setValue']),
-        ...mapGetters('settings', ['value']),
-    },
+    components: { HeadingSub, InputField, CardSubject, Multiselect, Checkbox, InputSetting },
     computed: {
         ...mapGetters('settings', ['grouped', 'all']),
         ...mapGetters('subjects', { subjects: 'all' })
