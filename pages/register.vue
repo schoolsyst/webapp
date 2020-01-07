@@ -62,7 +62,7 @@ export default {
   components: { OverlayLoadingLogo, InputField, ButtonNormal },
   data() {
     return {
-      username: "ewen-le-bihan",
+      username: "",
       email: "",
       password: "",
       passwordConfirmation: "",
