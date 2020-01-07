@@ -158,7 +158,7 @@ export const actions = {
         await dispatch('post', { setting: key, value })
       // The setting does not exist
       } else {
-        this.$axios.error("Ce réglage n'exsite pas", {icon: 'error_outline'})
+        this.$toast.error("Ce réglage n'exsite pas", {icon: 'error_outline'})
       }
     } catch (error) {
       console.error(error)
