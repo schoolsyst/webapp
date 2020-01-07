@@ -29,6 +29,7 @@
         @input="setValue({key: _key, value: $event })",
         :name="_key"
         :type="multiple ? 'block' : type.toLowerCase()"
+        no-error-messages
       ) {{ name }}
 </template>
 
