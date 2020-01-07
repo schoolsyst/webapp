@@ -63,7 +63,7 @@ label::before
     font-family 'Material Icons'
     height checkbox-size
     width checkbox-size
-    border 2px solid black
+    border 2px solid var(--black)
     border-radius 2.5px
     margin-right 0.5em
     color transparent
