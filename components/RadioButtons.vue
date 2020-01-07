@@ -1,4 +1,5 @@
 <template lang="pug">
+    //TODO: merge w/ <InputSelect>, choose radio buttons based on choices.length, prop to force radio/select
     fieldset.RadioButtons(:class="`variant-${variant}`")
         legend: slot
         .RadioButton(v-for="choice in choices" :key="choice.key")
