@@ -33,8 +33,9 @@ export default {
 @import '~/assets/defaults'
 
 .container
-  height: 100vh
-  width: 100vw
+  min-height: 100vh
+  min-width: 100vw
+  padding: 20px
 
 +mobile
   .container
