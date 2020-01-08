@@ -33,6 +33,7 @@ import {
   addYears,
   addDays,
   addWeeks,
+  parse,
 } from "date-fns"
 import { getMutations, getValidator, removeByProp } from "./index"
 import { roundToNearestMinutesWithOptions } from "date-fns/fp"
@@ -373,21 +374,28 @@ export const getters = {
     constraints: {
       required: ["subject", "start", "end", "day", "week_type"],
       isAWeekType: ["week_type"],
-      before: {
-        end: ["start"]
-      }
     },
     customConstraints: [
       {
         message: "Cet emplacement est déjà pris par un autre cours",
         field: null,
-        constraint: ({getters}, object) =>
-          !getters.events.filter((o) => 
+        constraint: ({ events }, object) =>
+          !events.filter((o) => 
             o.start === object.start &&
             o.end === object.end &&
             o.day === object.day && 
             (o.week_type === object.week_type || o.week_type === 'BOTH')
           ).length
+      },
+      {
+        message: "L'heure de début doit être avant l'heure de fin",
+        field: 'start',
+        constraint: ({}, object) => {
+          let {start, end} = object
+          start = parse(start, 'HH:mm:ss', Date.now())
+          end = parse(end, 'HH:mm:ss', Date.now())
+          return isBefore(start, end)
+        }
       }
     ],
     fieldNames: {
@@ -538,13 +546,16 @@ export const actions = {
     }
   },
 
-  async postEvent({ commit, dispatch }, event, force = false) {
+  async postEvent({ commit, getters }, {event, force}) {
+    force = force || false
     if(!force) {
-      const validation = await dispatch('validateEvent', mutation)
+      const validation = getters.validateEvent(event)
       if (!validation.validated) return validation 
     }
     try {
-      const { data } = await this.$axios.post(`/events/`, event)
+      if (event.subject) event.subject = event.subject.uuid
+      const res = await this.$axios.post(`/events/`, event)
+      const { data } = await this.$axios.get(`/events/${res.data.uuid}`)
       if (data) commit("ADD_EVENT", data)
       // console.log("[from API] POST /events/: OK")
     } catch (error) {
