@@ -2,9 +2,9 @@
 //TODO: Rewrite this
 BaseModal.ModalDialogConfirm(:name="`confirm-${name}`", :title="heading || 'Confirmation'")
     p.message: slot
-    ArrayButtonReg.buttons(v-if="!challengeOpened")
-        ButtonNormal(variant="secondary" close-modal) {{cancelText}}
-        ButtonNormal(variant="primary" @click="challenge ? startChallenge() : confirmAndClose()", :role="confirmRole") {{confirmText}}
+    ul.buttons(v-if="!challengeOpened")
+        li: ButtonNormal(variant="outline" @click="$modal.close(`confirm-${name}`)") {{cancelText}}
+        li: ButtonNormal(variant="primary" @click="challenge ? startChallenge() : confirmAndClose()", :role="confirmRole") {{confirmText}}
     .challenge(:class="{'errored': challengeError}" v-else)
         LabelFlat(:for="`confirm-${name}-challenge`") {{challengeMessage}}
         .inputs
@@ -103,6 +103,8 @@ export default {
 
 .buttons {
   margin-top: 20px;
+  display flex
+  justify-content flex-end
 }
 
 .heading, .message {
