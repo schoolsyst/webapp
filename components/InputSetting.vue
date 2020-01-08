@@ -43,10 +43,15 @@ import Checkbox from '~/components/Checkbox.vue'
 export default {
   components: { InputField, InputSelect, RadioButtons, Checkbox },
   props: {
-    choices: [Array, Object],
+    choices: {
+      type: [Array, Object, String],
+      default: []
+    },
     name: String,
     _key: String,
-    value: [String, Boolean, Array, Number],
+    value: {
+      default: null
+    },
     multiple: Boolean,
     type: String,
     description: String
