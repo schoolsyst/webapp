@@ -1,37 +1,68 @@
 <template lang="pug">
-BaseModal.ModalAddSubject(name="add-subject")
-    CardSubject(editing v-bind="subject" @editing-finished="addSubject" :no-edit-button="noEditButton")
+  BaseModal(
+    :name="modalName"
+    title="Ajouter une matière..."
+  )
+    .content
+      InputField(
+        v-model="value.name"
+        variant="filled"
+        name="name"
+        v-bind="{validation}"
+      ) Nom
+      .color-and-weight
+        PickerColor(v-model="value.color") Couleur
+        InputField(
+          v-model="value.weight"
+          variant="filled"
+          name="weight"
+          type="number"
+          v-bind="{validation}"
+          no-error-messages
+        ) Coefficient
+      ButtonNormal.submit(variant="primary") Ajouter
 </template>
 
 <script>
-import CardSubject from "~/components/CardSubject.vue"
-import BaseModal from "~/components/BaseModal.vue"
+import BaseModal from '~/components/BaseModal.vue'
+import InputField from '~/components/InputField.vue'
+import PickerColor from '~/components/PickerColor.vue'
+import ButtonNormal from '~/components/ButtonNormal.vue'
+import { mapGetters } from 'vuex'
+
 export default {
-  name: "ModalAddSubject",
-
-  components: {
-    BaseModal,
-    CardSubject,
-  },
-
+  components: { InputField, BaseModal, PickerColor, ButtonNormal },
   props: {
-    subject: Object,
-    noEditButton: {
-      type: Boolean,
-      default: false,
+    value: {
+      type: Object,
+      default: () => ({
+        color: null,
+        name: null,
+        weight: null
+      })
     },
+    modalName: {
+      type: String,
+      default: 'add-subject'
+    }
   },
-
+  computed: {
+    validation() {
+      return this.validate(this.value)
+    }
+  },
   methods: {
-    addSubject() {
-      document.querySelector("#modal_add-subject").classList.remove("opened")
-    },
-  },
+    ...mapGetters('subjects', ['validate'])
+  }
 }
 </script>
 
 <style lang="stylus" scoped>
-.BaseModal /deep/ .modal-wrapper {
-  padding: 0; // <CardSubject> already takes care of the padding
-}
+.color-and-weight
+  display flex
+  align-items center
+.submit
+  margin-top 1.5em
+  display flex
+  align-self flex-end
 </style>

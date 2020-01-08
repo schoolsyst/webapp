@@ -1,39 +1,43 @@
 <template lang="pug">
 .PickerColor
-    BaseModal.picker(:name="`color-picker-${modalId}`")
+    BaseModal.picker(:name="modalName" :close-button="false")
         ul.swatches
             li.swatch(
                 v-for="preset in presets" :key="preset.hex"
                 :style="{backgroundColor: preset.hex}"
-                v-tooltip="preset.name"
-                @click="$emit('input', preset.hex)"
+                :title="preset.name"
+                @click="$emit('input', preset.hex); $modal.hide(modalName)"
             )
         //- hr.sep
         .hex-input
             span.octothorpe #
-            input.hex(type="text" maxlength="6" :value="value.substring(1)" @input="emitInputEvent($event)")
-    .color-picker(:open-modal="`color-picker-${modalId}`" open-at="self.rightof" :class="color")
+            input.hex(
+              type="text"
+              maxlength="6"
+              :value="value.substring(1)"
+              @input="emitInputEvent($event)"
+            )
+    .color-picker(@click="$modal.show(modalName)" :class="value")
 </template>
 
 <script>
 import tinycolor from "tinycolor2"
 import BaseModal from "~/components/BaseModal.vue"
-import TextBlockInput from "~/components/TextBlockInput.vue"
+import InputField from '~/components/InputField.vue'
 export default {
   name: "PickerColor",
 
   components: {
     BaseModal,
-    TextBlockInput,
+    InputField,
   },
 
   props: {
-    value: String,
-    modalId: String,
-    color: {
+    value: {
       type: String,
-      default: "black",
+      default: "#000000"
     },
+    namespace: String,
   },
 
   data() {
@@ -62,6 +66,10 @@ export default {
         { hex: "#6d4c41", name: "Marron" },
       ],
     }
+  },
+
+  computed() {
+    return `${this.namespace}-color-picker`
   },
 
   methods: {
@@ -145,7 +153,7 @@ export default {
 }
 
 .hex-input {
-  font-family: 'Roboto Mono', monospace;
+  font-family: var(--fonts-monospace)
   display: flex;
   align-items: center;
   padding: 10px 0; // padding-bottom on modal-wrapper doesn't work
