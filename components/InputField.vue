@@ -1,9 +1,10 @@
 <template lang="pug">
   .field(
     :class="{\
-      active, errored, disabled, \
+      active, errored, disabled, narrow, \
       filled: !!value, \
       'has-label': !noLabel, \
+      'has-action-button': !noActionButton, \
       [`variant-${variant}`]: true,\
       [`type-${type}`]: true,\
     }"
@@ -103,6 +104,10 @@ export default {
       default: false
     },
     preventDefaultClick: {
+      type: Boolean,
+      default: false
+    },
+    narrow: {
       type: Boolean,
       default: false
     }
@@ -249,10 +254,14 @@ label
 .input
   // LAYOUT
   min-width 250px
-  &[type=number]
-    min-width 50px
   padding 15px (side-padding)
+.input[type=number]
+.input[type=time]
+.narrow .input
+    min-width 50px
+.has-action-button .input
   padding-right (side-padding * 2 + 10px)
+.input
   // LOOKS
   background transparent
   border (stroke-thickness) solid var(--grey-dark)

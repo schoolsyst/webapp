@@ -260,3 +260,6 @@ Vue.prototype.$modal = {
 	},
 	hide: close
 }
+
+Vue.prototype.$modal.open = Vue.prototype.$modal.show
+Vue.prototype.$modal.close = Vue.prototype.$modal.hide

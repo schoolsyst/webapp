@@ -6,12 +6,12 @@
             input(
                 @change="$emit('input', choice.key)"
                 type="radio"
-                :id="`radio--${id}--${slugify(choice.key)}`"
+                :id="`radio--${id}--${slugify(choice.key.toString())}`"
                 :name="id"
                 :value="choice.key"
                 :checked="choice.key === value"
             )
-            label(:for="`radio--${id}--${slugify(choice.key)}`") {{choice.label}}
+            label(:for="`radio--${id}--${slugify(choice.key.toString())}`") {{choice.label}}
 </template>
 
 <script>
@@ -28,7 +28,6 @@ export default {
             default: () => ([])
         },
         value: {
-            type: String,
             default: null
         },
         variant: String
@@ -85,7 +84,7 @@ label::before
     // Fix the vertical alignement (might be because of the font 'Now')
     margin-bottom: .125em
 .RadioButton
-    display flex
+    display inline-flex
     align-items center
     margin-right: 1rem
 fieldset
@@ -93,6 +92,7 @@ fieldset
     border 2px solid var(--grey-dark)
     // padding 0.75em 0.625em
     border-radius var(--border-radius)
+    flex-wrap wrap
     
 legend
     padding 0 10px
