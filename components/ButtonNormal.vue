@@ -120,22 +120,28 @@ export default {
         background transparent
 .btn--primary
     background-color var(--blue)
+    border 2px solid var(--blue)
     color white
     &:hover, &:focus
         background-color var(--blue-dark)
+        border 2px solid var(--blue-dark)
     &:active
         color rgba(255,255,255,0.25)
     &[disabled]
         background var(--grey-offset)
+        border 2px solid var(--grey-offset)
         color var(--grey-dark)
 .btn--secondary
     background-color var(--blue-offset)
+    border 2px solid var(--blue-offset)
     color var(--blue)
     &:hover, &:focus
         background-color var(--blue)
+        border 2px solid var(--blue)
         color white
     &:active
         background-color var(--blue-dark)
+        border 2px solid var(--blue-dark)
 .btn--text
     background-color transparent
     border 2px solid transparent
