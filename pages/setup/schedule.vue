@@ -28,6 +28,7 @@
       ButtonNormal.go-back(variant="text-blue" href="/setup/settings")
         Icon arrow_back
         | Retour
+      .progress 3 #[span.slash /] 3
       ButtonNormal.skip(variant="outline" @click="$modal.open('confirm-skip')" ) Passer
       ButtonNormal.done(variant="primary" href="/") Terminer
 </template>
@@ -86,6 +87,12 @@ ul.settings
   left: 0
   display flex
   align-items center
+  .progress
+    font-family var(--fonts-monospace)
+    font-size: 1.3em
+    margin-left 1em
+    .slash
+      color var(--grey-dark)
   .go-back
     font-size: 1.2em
   .skip

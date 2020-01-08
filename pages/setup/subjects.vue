@@ -6,6 +6,9 @@
     ul.subjects
       li(v-for="subject in all" :key="subject.uuid")
         CardSubject(@click="$modal.show('edit-subject')" v-bind="subject")
+    .bottom-bar
+      .progress 1 #[span.slash /] 3
+      ButtonNormal.continue(variant="primary" href="/setup/settings") Continuer
 </template>
 
 <script>
@@ -67,4 +70,19 @@ ul.subjects
   li:last-child
     flex-grow 1
     margin-left spacing
+.bottom-bar
+  padding 2em
+  position fixed
+  bottom: 0
+  right: 0
+  left: 0
+  display flex
+  align-items center
+  .progress
+    font-family var(--fonts-monospace)
+    font-size: 1.3em
+    .slash
+      color var(--grey-dark)
+  .continue
+    margin-left auto
 </style>
