@@ -12,6 +12,8 @@ export const state = () => ({
 
 export const getters = {
   all: (state, getters) => state.settings,
+  fromCategory: (state, getters) => (category) => 
+    state.settings.filter(s => s.category === category),
   one: (state, getters) => (propval, prop = "key") =>
     state.settings.find((o) => o[prop] === propval) || null,
   value: (state, getters) => (propval, fallback = null, prop = "key") => {
@@ -179,6 +181,7 @@ const parsedValue = (
    */
   let parsed
   if (value === null) return null
+  if (value.trim() === '') return null
 
   if (multiple) {
     // Handle multiple values
