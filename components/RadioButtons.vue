@@ -6,12 +6,12 @@
             input(
                 @change="$emit('input', choice.key)"
                 type="radio"
-                :id="`radio--${id}--${slugify(choice.key)}`"
+                :id="`radio--${id}--${slugify(choice.key.toString())}`"
                 :name="id"
                 :value="choice.key"
                 :checked="choice.key === value"
             )
-            label(:for="`radio--${id}--${slugify(choice.key)}`") {{choice.label}}
+            label(:for="`radio--${id}--${slugify(choice.key.toString())}`") {{choice.label}}
 </template>
 
 <script>
@@ -28,7 +28,6 @@ export default {
             default: () => ([])
         },
         value: {
-            type: String,
             default: null
         },
         variant: String
