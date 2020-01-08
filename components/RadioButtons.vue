@@ -84,7 +84,7 @@ label::before
     // Fix the vertical alignement (might be because of the font 'Now')
     margin-bottom: .125em
 .RadioButton
-    display flex
+    display inline-flex
     align-items center
     margin-right: 1rem
 fieldset
@@ -92,6 +92,7 @@ fieldset
     border 2px solid var(--grey-dark)
     // padding 0.75em 0.625em
     border-radius var(--border-radius)
+    flex-wrap wrap
     
 legend
     padding 0 10px
