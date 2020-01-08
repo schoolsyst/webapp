@@ -159,4 +159,10 @@ export default {
         color var(--blue-dark)
     & /deep/ i
         margin-bottom: 0.15em //vertical centering
+.btn--text-blue
+    padding: 0
+    background-color transparent
+    color var(--blue)
+    &:hover, &:focus
+        color var(--blue-dark)
 </style>
