@@ -163,6 +163,7 @@ export default {
     padding: 0
     background-color transparent
     color var(--blue)
+    font-size: 1.2em
     &:hover, &:focus
         color var(--blue-dark)
 </style>
