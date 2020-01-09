@@ -1,5 +1,7 @@
 <template lang="pug">
 //TODO: Rewrite this
+//TODO: default styles for <ul>'s inside <slot>, not centered.
+//TODO?: no text-align:center on <slot>, let the consumer decide
 BaseModal.ModalDialogConfirm(:name="`confirm-${name}`", :title="heading || 'Confirmation'")
     p.message: slot
     ul.buttons(v-if="!challengeOpened")
@@ -97,12 +99,11 @@ export default {
 
 <style lang="stylus" scoped>
 .ModalDialogConfirm /deep/ .modal-wrapper {
-  padding-top: 30px
   max-width: 500px;
 }
 
 .buttons {
-  margin-top: 20px;
+  margin-top: 2.5em;
   display flex
   justify-content flex-end
 }
