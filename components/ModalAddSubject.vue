@@ -20,7 +20,7 @@
           v-bind="{validation}"
           no-error-messages
         ) Coefficient
-      ButtonNormal.submit(variant="primary") Ajouter
+      ButtonNormal.submit(variant="primary" @click="$emit('post', value)") Ajouter
 </template>
 
 <script>
@@ -48,7 +48,7 @@ export default {
   },
   computed: {
     validation() {
-      return this.validate(this.value)
+      return this.validate()(this.value)
     }
   },
   methods: {
