@@ -1,6 +1,6 @@
 <template lang="pug">
   .container
-    ModalAddSubject(v-model="newSubject")
+    ModalAddSubject(v-model="newSubject" @post="post({subject: $event})")
     h1 Ajoutez vos matières.
     button.add(@click="$modal.show('add-subject')"): Icon add
     ul.subjects
