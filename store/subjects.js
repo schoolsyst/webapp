@@ -37,21 +37,14 @@ export const getters = {
     const isAllUppercase = name.toUpperCase() === name
     if (!isAllUppercase) name = name.toLowerCase()
     return name
-  }
-}
-
-export const mutations = {
-  ...getMutations("subject"),
-}
-
-export const actions = {
+  },
   validate: getValidator({
     constraints: {
       maxLength: {
         300: ["name", "room"],
       },
       isAColor: ["color"],
-      required: ["name", "color", "abbreviation", "weight"],
+      required: ["name", "color", "weight"],
       maximum: {
         1: ["goal"]
       },
@@ -60,15 +53,13 @@ export const actions = {
       }
     },
     customConstraints: [
-      {
-        message: "Veuillez ne pas mettre d'espaces dans l'abbréviation",
-        field: 'abbreviation',
-        constraint: (ctx, object) => {
-          if (object.abbreviation.length > 3)
-            return true
-          return object.abbreviation.match(/^[^\s]{,3}$/) !== null
-        }
-      }
+      // {
+      //   message: "Il y a déjà une matière avec ce nom",
+      //   field: 'name',
+      //   constraint: (getters, object) => {
+      //     return !getters.all.map(s => s.name).includes(object.name)
+      //   }
+      // }
     ],
     fieldNames: {
       color:        { gender: 'F', name: 'couleur' },
@@ -79,6 +70,13 @@ export const actions = {
     },
     resourceName: { gender: 'F', name: 'matière' }
   }),
+}
+
+export const mutations = {
+  ...getMutations("subject"),
+}
+
+export const actions = {
   async load({ commit, state }, force = false) {
     if (!force && state.subjects.length) return
     console.log(window)
@@ -96,18 +94,18 @@ export const actions = {
     }
   },
 
-  async post({ commit }, subject, force = false) {
+  async post({ commit, getters }, {subject, force}) {
+    force = force || false
+    if(!force) {
+      let validation = getters.validate(subject)
+      if (!validation.validated) return validation
+    }
     try {
-      const { data } = await this.$axios.post(`/subjects/`, subject)
+      const res = await this.$axios.post(`/subjects/`, subject)
+      const { data } = await this.$axios.get(`/subjects/${res.data.uuid}`)
       if (data) commit("ADD", data)
-      console.log("[from API] POST /subjects/: OK")
     } catch (error) {
-      console.error(`[from API] POST /subjects/: Error`)
-      try {
-        console.error(error.response.data)
-      } catch (_) {
-        console.error(error)
-      }
+      console.error(error)
     }
   },
 
