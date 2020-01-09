@@ -56,7 +56,7 @@ export const mutations = {
     let hydratedSettings = []
     definitions.forEach((definition) => {
       let value, uuid
-      let { choices } = definition
+      let { choices, category } = definition
       // Attempt to get the user's value for this setting definition
       const setting = settings.find((o) => o.setting.key === definition.key)
       // Set `value` property: if setting is undefined, fallback to the default
@@ -75,10 +75,12 @@ export const mutations = {
       if (choices) {
         choices = choices.split(',')
       }
+      let hidden = category.startsWith('__') && category.endsWith('__')
+
       /* Adds the definition to the state as a setting object + the value prop
        * and a bool to tell if the setting is set to the default value.
        */
-      const hydratedDefinition = { ...definition, choices, value, isDefaultValue, rawValue, uuid }
+      const hydratedDefinition = { ...definition, choices, value, isDefaultValue, rawValue, uuid, hidden }
 
       hydratedSettings.push(hydratedDefinition)
     })
@@ -181,7 +183,10 @@ const parsedValue = (
    */
   let parsed
   if (value === null) return null
-  if (value.trim() === '') return null
+  if (value.trim() === '') {
+    if (multiple) return []
+    else return null
+  }
 
   if (multiple) {
     // Handle multiple values
