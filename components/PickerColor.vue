@@ -68,8 +68,10 @@ export default {
     }
   },
 
-  computed() {
-    return `${this.namespace}-color-picker`
+  computed: {
+    modalName() {
+      return `${this.namespace}-color-picker`
+    }
   },
 
   methods: {
