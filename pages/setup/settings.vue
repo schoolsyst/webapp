@@ -1,5 +1,8 @@
 <template lang="pug">
 .container
+  ul.settings
+    li(v-for="setting in settings" :key="setting.uuid")
+      InputSetting(v-bind="setting")
   .bottom-bar
       ButtonNormal.go-back(variant="text-blue" href="/setup/subjects")
         Icon arrow_back
@@ -9,13 +12,25 @@
 </template>
 
 <script>
-import ButtonNormal from '~/components/ButtonNormal.vue'
 import Icon from '~/components/Icon.vue'
+import ButtonNormal from '~/components/ButtonNormal.vue'
 import InputSetting from '~/components/InputSetting.vue'
+import { mapGetters } from 'vuex';
 
 export default {
-  components: { ButtonNormal, Icon, InputSetting },
+  components: { Icon, ButtonNormal, InputSetting },
   layout: 'bare',
+  computed: {
+    ...mapGetters('settings', ['all']),
+    settings() {
+      return this.all.filter(s => !s.optional && !s.hidden && s.category != 'Emploi du temps')
+    }
+  },
+  mounted() {
+    this.$withLoadingScreen(async () => {
+      await this.$store.dispatch('settings/load')
+    })
+  }
 }
 </script>
 
@@ -38,4 +53,6 @@ export default {
       color var(--grey-dark)
   .continue
     margin-left auto
+ul.settings li
+  margin-bottom 1em
 </style>
