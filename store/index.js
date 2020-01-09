@@ -145,10 +145,10 @@ export const getValidator = ({
 
   if(debug) {
     console.group(`[validator] validating resource "${resourceName.name}"`)
-  console.log(`Constraints:`)
-  console.log({...constraints, ...customConstraints})
-  console.log(`Fields:`)
-  console.log(Object.fromEntries(
+    console.log(`Constraints:`)
+    console.log({...constraints, ...customConstraints})
+    console.log(`Fields:`)
+    console.log(Object.fromEntries(
     Object.keys(fieldNames).map((field) => [field, object[field]])
   ))
   }
