@@ -6,20 +6,21 @@
     ul.subjects
       li(v-for="subject in all" :key="subject.uuid")
         CardSubject(@click="$modal.show('edit-subject')" v-bind="subject")
-    .bottom-bar
-      .progress 1 #[span.slash /] 3
-      ButtonNormal.continue(variant="primary" href="/setup/settings") Continuer
+    TheBottomBar
+      ButtonNormal(variant="text-blue" href="/logout") #[Icon cancel] Annuler
+      ButtonNormal.to-right(variant="primary" href="/setup/settings") Continuer
 </template>
 
 <script>
 import ModalAddSubject from '~/components/ModalAddSubject.vue'
+import TheBottomBar from '~/components/TheBottomBar.vue'
 import CardSubject from '~/components/CardSubject.vue'
 import ButtonNormal from '~/components/ButtonNormal.vue'
 import Icon from '~/components/Icon.vue'
 import { mapActions, mapGetters } from 'vuex'
 
 export default {
-  components: { ModalAddSubject, CardSubject, ButtonNormal, Icon },
+  components: { ModalAddSubject, CardSubject, ButtonNormal, Icon, TheBottomBar },
   layout: 'bare',
   data() {
     return {
@@ -70,19 +71,4 @@ ul.subjects
   li:last-child
     flex-grow 1
     margin-left spacing
-.bottom-bar
-  padding 2em
-  position fixed
-  bottom: 0
-  right: 0
-  left: 0
-  display flex
-  align-items center
-  .progress
-    font-family var(--fonts-monospace)
-    font-size: 1.3em
-    .slash
-      color var(--grey-dark)
-  .continue
-    margin-left auto
 </style>
