@@ -1,17 +1,18 @@
-<template>
+<template lang="pug">
   <div class="app">
-    <div id="loading-screen">
-      <h1 class="title"></h1>
-      <p class="subtitle"></p>
-    </div>
-    <nuxt id="page" />
+    #loading-screen
+      OverlayLoadingLogo(animation="loop")
+      h1.title Chargement...
+      p.subtitle 
+    nuxt#page
   </div>
 </template>
 
 <script>
 import { toDate } from "date-fns"
-
+import OverlayLoadingLogo from '~/components/OverlayLoadingLogo.vue'
 export default {
+  components: { OverlayLoadingLogo },
   head() {
     return {
       bodyAttrs: {
