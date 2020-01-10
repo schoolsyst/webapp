@@ -1,5 +1,5 @@
 <template>
-  <div class="OverlayLoadingLogo" :class="animation" id="lottie-overlay-loading-logo"></div>
+  <div class="OverlayLoadingLogo" :class="animation" v-bind="{id}"></div>
 </template>
 
 <script>
@@ -18,6 +18,12 @@ export default {
     },
   },
 
+  computed: {
+    id() {
+      return 'lottie-overlay-loading-logo-' + this._uid
+    }
+  },
+
   mounted() {
     if (window.innerWidth < 500 && this.animation === 'animate-in-compound') {
       this.animation = 'animate-in'
@@ -30,7 +36,7 @@ export default {
     if (white) console.log('white overlayloadinglogo')
 
     this.lottieInstance = lottie.loadAnimation({
-      container: document.getElementById("lottie-overlay-loading-logo"),
+      container: document.getElementById(this.id),
       renderer: "svg",
       loop: this.animation === "loop",
       autoplay: this.animateWhen === "page-loads",
@@ -38,7 +44,7 @@ export default {
     })
 
     if (this.animateWhen !== "page-loads") {
-      let self = document.getElementById("lottie-overlay-loading-logo")
+      let self = document.getElementById(this.id)
       let app = this
 
       if (this.animateWhen === "scrolled-into-view") {
