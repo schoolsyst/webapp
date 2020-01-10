@@ -474,6 +474,26 @@ body
             background transparent
         &::-webkit-scrollbar-thumb
             background-color var(--grey-light)
+        // page looks
+        font-family var(--fonts-regular)
+        p
+            margin-bottom 0.2em
+        h1,h2,h3,h4,h5,h6
+            &:not(:first-child)
+                margin-top: 1.2em
+            &:not(:last-child)
+                margin-bottom: 0.5em
+        h1
+            text-align center
+        ul, ol
+            padding-left: 2.5em
+        ul li
+            list-style-type disc
+        hr
+            margin 1em auto
+            width 75%
+        code
+            font-family var(--fonts-monospace-light)
     .admonition
         &::before
             content 'more_vert'
