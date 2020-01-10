@@ -23,7 +23,7 @@ export default {
     props: {
         type: {
             type: String,
-            default: ""
+            default: "button"
         },
         variant: {
             type: String,
