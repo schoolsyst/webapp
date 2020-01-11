@@ -3,6 +3,17 @@
         PickerSubject(
             @pick="subject = $event"
         )
+        TheBottomBar
+            ul.time
+                li {{ format(now, 'HH:mm') }}
+            ul.stats
+                li(v-if="textDurations" v-tooltip="textDurationsTooltip")
+                    span.value {{ textDurations.reading }}
+                    |  Lecture
+                li(v-if="counts" v-tooltip.top-start="allCountsTooltip")
+                    span.value {{ counts.words }}
+                    |  Mots
+                li: Icon(v-tooltip="'Masquer'") keyboard_arrow_down
         .toolbar
             .top
                 nuxt-link(to="/notes"): Icon.icon arrow_back
@@ -218,19 +229,22 @@ import {
 // import Underline from '~/plugins/tiptap-extensions/Underline'
 import Superscript from '~/plugins/tiptap-extensions/Superscript'
 import MathBlock from '~/plugins/tiptap-extensions/MathBlock'
-import Math from '~/plugins/tiptap-extensions/Math'
+import MathInline from '~/plugins/tiptap-extensions/MathInline'
 import Marker from '~/plugins/tiptap-extensions/Marker'
 import Subscript from '~/plugins/tiptap-extensions/Subscript'
 import Icon from '~/components/Icon.vue'
 import InputField from '~/components/InputField.vue'
 import BadgeSubject from '~/components/BadgeSubject.vue'
 import PickerSubject from '~/components/PickerSubject.vue'
-import { mapGetters, mapActions } from 'vuex'
+import { mapGetters, mapActions, mapState } from 'vuex'
 import debounce from 'lodash.debounce'
 import InputSelect from '~/components/InputSelect.vue'
+import TheBottomBar from '~/components/TheBottomBar.vue'
+import Countable from 'countable'
+import { format } from 'date-fns'
 
 export default {
-    components: { Editor, InputField,  EditorContent, EditorMenuBar, Icon, BadgeSubject, PickerSubject, InputSelect },
+    components: { Editor, InputField,  EditorContent, EditorMenuBar, Icon, BadgeSubject, PickerSubject, InputSelect, TheBottomBar },
     layout: 'bare',
     head: {
         title: name
@@ -263,12 +277,12 @@ export default {
                     new History(),
                     new BulletList(),
                     new MathBlock(),
+                    new MathInline(),
                     new Marker(),
                     new Subscript(),
                     new Superscript(),
-                    new Math()
                 ],
-                content: ``,
+                content: ``
             }),
             name: null,
             subject: {
@@ -276,10 +290,57 @@ export default {
                 color: '#000000'
             },
             uuid: null,
-            unsavedWork: false
+            unsavedWork: false,
+            countableJSloaded: false,
+            counts: null
+        }
+    },
+    computed: {
+        ...mapState(['now']),
+        allCountsTooltip() {
+            if (!this.counts) return false
+            let { words, characters, paragraphs, sentences, all } = this.counts
+            let wordsPerSentence = Math.round(words / sentences)
+            return this.getStatsTooltip([
+                { value: words, label: 'Mots' },
+                { value: characters, label: 'Caractères' },
+                { value: all, label: 'Caractères + espaces' },
+                { value: sentences, label: 'Phrases' },
+                { value: paragraphs, label: 'Paragraphes' },
+                { value: wordsPerSentence, label: 'Mots / phrase' },
+            ])
+        },
+        textDurations() {
+            if (!this.counts) return false
+            let { words } = this.counts
+            const speeds = {
+                speaking: 183,
+                reading: 300
+            }
+            const getTime = (mode) => {
+                let raw = words / speeds[mode]
+                let unit = "m"
+                if (raw < 1) {
+                    raw *= 60
+                    unit = "s"
+                }
+                return raw.toFixed(2) + unit
+            }
+            return {
+                speaking: getTime('speaking'),
+                reading: getTime('reading'),
+            }
+        },
+        textDurationsTooltip() {
+            let { reading, speaking } = this.textDurations
+            return this.getStatsTooltip([
+                { value: reading, label: 'Lecture' },
+                { value: speaking, label: 'Parlé' },
+            ])
         }
     },
     methods: {
+        format,
         ...mapGetters('settings', {setting: 'value'}),
         updateNote({getHTML, contentSize}) {
             this.$store.commit('notes/PATCH', {uuid: this.uuid, modifications: {
@@ -303,6 +364,16 @@ export default {
             if (!(e.keyCode === 83 && e.ctrlKey)) return
             e.preventDefault()
             await this.save({toast: true})
+        },
+        getStatsTooltip(stats) {
+            let maxCountLen = Math.max(stats.map(s => s.value.toString().length))
+            let listItem = stat => `<li><span style="font-family:var(--fonts-monospace-light)">${stat.value.toString().padStart(maxCountLen, '')}</span> ${stat.label}</li>`
+
+            return `
+                <ul style="text-align:left">
+                    ${ stats.map(listItem) }
+                </ul>
+            `.trim()
         }
     },
     watch: {
@@ -344,6 +415,23 @@ export default {
             this.$toast.info('Sauvegarde automatique effectuée', {icon: 'update'})
             this.save({toast: false})
         }, 5 * 60 * 1000)
+
+        let page = null
+        let countableJSloaded = false
+        let countableJSinitInterval = setInterval(() => {
+            // Init Countable.js
+            page = document.querySelector('.editor-page .ProseMirror')
+            if (page) {
+                // initial count + counts when edit
+                Countable.count(page, (counts) => { this.counts = counts })
+                Countable.on(page, (counts) => { this.counts = counts })
+                countableJSloaded = true
+            }
+            if (countableJSloaded) {
+                clearInterval(countableJSinitInterval)
+            }
+        }, 500)
+        
     },
     async beforeDestroy() {
         clearInterval(this.autosaveInterval)
@@ -436,6 +524,23 @@ body
     font-weight thin
     font-size 2em
     padding 0 0.25em
+
+#bottom-bar
+    padding .75em 1em
+    display flex
+    .time
+        font-family var(--fonts-monospace-light)
+        font-size: 1.2em
+    .stats
+        margin-left auto
+        display flex
+        align-items center
+    .stats li
+        display inline-block
+        &:not(:last-child)
+            margin-right: 0.5em
+        .value
+            font-family var(--fonts-monospace-light)
 
 .ProseMirror::-moz-focus-inner
     border none !important

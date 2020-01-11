@@ -8,6 +8,7 @@
   position fixed
   flex-wrap wrap
   background var(--white)
+  z-index: 100
   bottom: 0
   right: 0
   left: 0
