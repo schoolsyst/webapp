@@ -24,6 +24,7 @@
     "@nuxtjs/toast": "^3.2.1",
     "chart.js": "^2.9.3",
     "constant-case": "^2.0.0",
+    "countable": "^3.0.1",
     "date-fns": "^2.4.1",
     "fuse.js": "^3.4.5",
     "js-search": "^1.4.3",
