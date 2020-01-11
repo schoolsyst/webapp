@@ -2,6 +2,7 @@
 //TODO: Rewrite this
 //TODO: default styles for <ul>'s inside <slot>, not centered.
 //TODO?: no text-align:center on <slot>, let the consumer decide
+//TODO: center btns on mobile
 BaseModal.ModalDialogConfirm(:name="`confirm-${name}`", :title="heading || 'Confirmation'")
     p.message: slot
     ul.buttons(v-if="!challengeOpened")
@@ -16,24 +17,12 @@ BaseModal.ModalDialogConfirm(:name="`confirm-${name}`", :title="heading || 'Conf
 </template>
 
 <script>
-import ButtonRegPrimary from "~/components/ButtonRegPrimary.vue"
-import ButtonRegSecondary from "~/components/ButtonRegSecondary.vue"
-import ArrayButtonReg from "~/components/ArrayButtonReg.vue"
 import BaseModal from "~/components/BaseModal.vue"
-import LabelFlat from "~/components/LabelFlat.vue"
-import InputFlat from "~/components/InputFlat.vue"
-import ButtonIcon from "~/components/ButtonIcon.vue"
 import ButtonNormal from '~/components/ButtonNormal.vue'
 export default {
   name: "ModalDialogConfirm",
   components: {
-    ButtonRegPrimary,
-    ButtonRegSecondary,
     BaseModal,
-    ArrayButtonReg,
-    LabelFlat,
-    InputFlat,
-    ButtonIcon,
     ButtonNormal
   },
   props: {
