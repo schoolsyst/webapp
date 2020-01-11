@@ -18,6 +18,7 @@
         @click.prevent="action($event)"
         :class="{'always-show': actionIcon}"
         tabindex="-1"
+        type="button"
       )
         i.material-icons-outlined {{actionButtonIcon}}
       component.input(

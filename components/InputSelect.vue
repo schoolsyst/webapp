@@ -3,7 +3,7 @@ multiselect(
   v-bind="{\
     selectedLabel, selectLabel, deselectLabel,\
     placeholder, name: dName, label,\
-    allowEmpty, searchable, options\
+    allowEmpty, searchable, options, customLabel\
   }"
   :track-by="trackBy || 'uuid'"
   @input="$emit('input', (trackBy ? $event[trackBy] : $event))"
@@ -72,6 +72,7 @@ export default {
       type: Array,
       default: []
     },
+    customLabel: Function
   },
   computed: {
     dName() {

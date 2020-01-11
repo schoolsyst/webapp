@@ -372,26 +372,37 @@ export const getters = {
     currentCourse ? currentCourse.subject : null,
   validateEvent: getValidator({
     constraints: {
-      required: ["subject", "start", "end", "day", "week_type"],
+      required: ["subject", "start", "end", "day", "week_type", "room"],
       isAWeekType: ["week_type"],
     },
     customConstraints: [
       {
-        message: "Cet emplacement est déjà pris par un autre cours",
+        message: "Ce créneau horaire est déjà pris par un autre cours",
         field: null,
-        constraint: ({ events }, object) =>
-          !events.filter((o) => 
-            o.start === object.start &&
-            o.end === object.end &&
-            o.day === object.day && 
-            (o.week_type === object.week_type || o.week_type === 'BOTH')
-          ).length
+        constraint: ({ events }, object) => {
+          const parseTime = (time) => parse(time, 'HH:mm:ss', Date.now())
+          return !events.filter((o) => {
+            console.log(o)
+            let [objStart, objEnd, start, end] = [object.start, object.end, o.start, o.end].map(t => parseTime(t))
+            return (
+              ( isWithinInterval(objStart, { start, end }) 
+                || isWithinInterval(objEnd, { start, end })
+              )
+              && o.day === object.day
+              && (
+                o.week_type === object.week_type
+                || o.week_type === 'BOTH'
+              )
+            )
+          }).length
+        }
       },
       {
         message: "L'heure de début doit être avant l'heure de fin",
         field: 'start',
         constraint: ({}, object) => {
           let {start, end} = object
+          if (!(start && end)) return true
           start = parse(start, 'HH:mm:ss', Date.now())
           end = parse(end, 'HH:mm:ss', Date.now())
           return isBefore(start, end)
@@ -407,6 +418,7 @@ export const getters = {
       week_type: { gender: "M", name: "type de semaine" }
     },
     resourceName: { gender: "M", name: "cours" },
+    debug: true
   }),
   validateMutation: getValidator({
     constraints: {

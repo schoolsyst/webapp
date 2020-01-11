@@ -51,11 +51,11 @@
                     span.sep |
                     button(v-tooltip.bottom="'Enlever le formatage<br/><kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>:</kbd>'")
                         Icon format_clear
-                    multiselect(
-                        @select="\
+                    InputSelect.headings-dropdown(
+                        @input="\
                             $event === 0 \
                             ? commands.paragraph \
-                            : commands.heading({level: $event})\
+                            : commands.heading({level: headingLevelNames.indexOf(props.option)})\
                         "
                         :value="\
                             isActive.heading({level: 1}) ? 1 : (\
@@ -65,14 +65,14 @@
                             isActive.heading({level: 5}) ? 5 : (\
                             isActive.heading({level: 6}) ? 6 : 0\
                         )))))"
-                        :options="[1, 2, 3, 4]"
+                        :options="headingLevelNames"
                         :searchable="false"
                         :show-labels="false"
                         placeholder="Titre..."
                         :custom-label="(level) => headingLevelNames[level]"
                     )
                         template(slot="option", slot-scope="props")
-                            component(:is="props.option === 0 ? 'p' : 'h' + props.option") {{headingLevelNames[props.option]}}
+                            component.heading-item(:is="headingLevelNames.indexOf(props.option) <= 0 ? 'p' : 'h' + headingLevelNames.indexOf(props.option)") {{props.option}}
 
                     span.sep |
                     button(
@@ -227,18 +227,17 @@ import BadgeSubject from '~/components/BadgeSubject.vue'
 import PickerSubject from '~/components/PickerSubject.vue'
 import { mapGetters, mapActions } from 'vuex'
 import debounce from 'lodash.debounce'
-import Multiselect from 'vue-multiselect'
-import 'vue-multiselect/dist/vue-multiselect.min.css'
+import InputSelect from '~/components/InputSelect.vue'
 
 export default {
-    components: { Editor, InputField,  EditorContent, EditorMenuBar, Icon, BadgeSubject, PickerSubject, Multiselect },
+    components: { Editor, InputField,  EditorContent, EditorMenuBar, Icon, BadgeSubject, PickerSubject, InputSelect },
     layout: 'bare',
     head: {
         title: name
     },
     data() {
         return {
-            headingLevelNames: ['Normal', 'Titre', 'Partie', 'Sous-partie', 'Sous-partie', 'Titre 5', 'Titre 6'],
+            headingLevelNames: ['Corps', 'Titre', 'Partie', 'Sous-partie', 'Sous-sous-partie'],
             editor: new Editor({
                 extensions: [
                     new CodeBlock(),
@@ -282,10 +281,11 @@ export default {
     },
     methods: {
         ...mapGetters('settings', {setting: 'value'}),
-        updateNote({getHTML}) {
+        updateNote({getHTML, contentSize}) {
             this.$store.commit('notes/PATCH', {uuid: this.uuid, modifications: {
                 content: getHTML()
             }})
+            console.log(contentSize)
             this.unsavedWork = true
         },
         save: debounce(async function({toast}) {
@@ -378,6 +378,13 @@ body
     padding-bottom: 0
     border-bottom 2px solid rgba(0,0,0,0.25)
     max-width: 100vw
+    .headings-dropdown
+        width 200px
+        flex-shrink 0
+        .heading-item
+            font-family var(--fonts-regular)
+        p.heading-item
+            font-weight normal
 .top
     margin-left: 0.5em
     margin-bottom .75em
@@ -463,8 +470,6 @@ body
     padding 3em
     width 800px
     background var(--white)
-    p
-        margin-bottom 0.2em
     & /deep/ .ProseMirror
         height: 100%
         // overflow-y auto
@@ -474,6 +479,26 @@ body
             background transparent
         &::-webkit-scrollbar-thumb
             background-color var(--grey-light)
+        // page looks
+        font-family var(--fonts-regular)
+        p
+            margin-bottom 0.2em
+        h1,h2,h3,h4,h5,h6
+            &:not(:first-child)
+                margin-top: 1.2em
+            &:not(:last-child)
+                margin-bottom: 0.5em
+        h1
+            text-align center
+        ul, ol
+            padding-left: 2.5em
+        ul li
+            list-style-type disc
+        hr
+            margin 1em auto
+            width 75%
+        code
+            font-family var(--fonts-monospace-light)
     .admonition
         &::before
             content 'more_vert'

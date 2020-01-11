@@ -24,16 +24,14 @@
       .schedule
         ButtonNormal.add(variant="outline" @click="$modal.show('add-event')") Ajouter
         Schedule
-    .bottom-bar
-      ButtonNormal.go-back(variant="text-blue" href="/setup/settings")
-        Icon arrow_back
-        | Retour
-      .progress 3 #[span.slash /] 3
-      ButtonNormal.skip(variant="outline" @click="$modal.open('confirm-skip')" ) Passer
-      ButtonNormal.done(variant="primary" href="/") Terminer
+    TheBottomBar
+      ButtonNormal(variant="text-blue" href="/setup/settings") #[Icon arrow_back] Retour
+      ButtonNormal.to-right(variant="outline" @click="$modal.open('confirm-skip')" ) Passer
+      ButtonNormal(variant="primary" href="/") Terminer
 </template>
 
 <script>
+import TheBottomBar from '~/components/TheBottomBar.vue'
 import ButtonNormal from '~/components/ButtonNormal.vue'
 import ModalDialogConfirm from '~/components/ModalDialogConfirm.vue'
 import Schedule from '~/components/Schedule.vue'
@@ -43,7 +41,7 @@ import InputSetting from '~/components/InputSetting.vue'
 import { mapActions, mapGetters } from 'vuex'
 
 export default {
-  components: { ButtonNormal, Schedule, ModalAddEvent, Icon, InputSetting, ModalDialogConfirm },
+  components: { ButtonNormal, Schedule, ModalAddEvent, Icon, InputSetting, ModalDialogConfirm, TheBottomBar },
   layout: 'bare',
   computed: {
     settings() {
@@ -79,22 +77,4 @@ ul.settings
 .schedule .add
   display flex
   justify-content center
-.bottom-bar
-  padding 2em
-  position fixed
-  bottom: 0
-  right: 0
-  left: 0
-  display flex
-  align-items center
-  .progress
-    font-family var(--fonts-monospace)
-    font-size: 1.3em
-    margin-left 1em
-    .slash
-      color var(--grey-dark)
-  .go-back
-    font-size: 1.2em
-  .skip
-    margin-left auto
 </style>
