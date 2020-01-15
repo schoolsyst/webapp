@@ -1,8 +1,6 @@
 <template lang="pug">
     .container
-        PickerSubject(
-            @pick="subject = $event"
-        )
+        PickerSubject(@pick="subject = $event")
         TheBottomBar
             ul.time
                 li {{ format(now, 'HH:mm') }}
@@ -21,11 +19,13 @@
                     BadgeSubject.subject(
                         v-bind="subject" 
                         @click="$modal.show('subject-picker')"
-                        clickable, thin
+                        clickable, thin, no-tooltip
+                        v-tooltip="'Changer la matière'"
                     )
                     input.title-field(
                         placeholder="Document sans titre"
-                        v-model.lazy="name"
+                        v-model="name"
+                        @blur="updateName"
                         name="name"
                         type="text"
                     )
@@ -365,6 +365,14 @@ export default {
             e.preventDefault()
             await this.save({toast: true})
         },
+        updateName: debounce(async function() {
+            await this.$store.dispatch('notes/patch', { 
+                uuid: this.uuid, 
+                modifications: { 
+                    name: this.name
+                }
+            })
+        }, { trailing: false, leading: true }),
         getStatsTooltip(stats) {
             let maxCountLen = Math.max(stats.map(s => s.value.toString().length))
             let listItem = stat => `<li><span style="font-family:var(--fonts-monospace-light)">${stat.value.toString().padStart(maxCountLen, '')}</span> ${stat.label}</li>`
@@ -377,14 +385,6 @@ export default {
         }
     },
     watch: {
-        async name() {
-            await this.$store.dispatch('notes/patch', { 
-                uuid: this.uuid, 
-                modifications: { 
-                    name: this.name
-                }
-            })
-        },
         async subject() {
             await this.$store.dispatch('notes/patch', {
                 uuid: this.uuid,
