@@ -56,9 +56,9 @@ export const state = () => ({
     },
     {
         name: 'Signaler un bug',
-        href: '/bug-report',
+        href: '/reports',
         icon: 'bug_report',
-        id:   'bug-report'
+        id:   'reports'
     }
 ],
 })

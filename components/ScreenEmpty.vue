@@ -1,5 +1,5 @@
 <template lang="pug">
-  .empty-wrapper#empty-state
+  .empty-wrapper#empty-state(:class="{small}")
     .empty
       .smiley: slot(name="smiley")
       p: slot
@@ -13,6 +13,12 @@ import ButtonNormal from '~/components/ButtonNormal.vue'
 
 export default {
   components: { ButtonNormal },
+  props: {
+    small: {
+      type: Boolean,
+      default: false
+    }
+  }
 }
 </script>
 
@@ -35,4 +41,6 @@ export default {
     font-size 1.5rem
     margin-top 5vh
     margin-bottom .75em
+&.small p
+  font-size 1.2rem
 </style>
