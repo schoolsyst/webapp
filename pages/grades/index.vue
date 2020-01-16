@@ -3,11 +3,11 @@
     //TODO: For edition of resources, <ModalAdd[[resource]] intent="patch"> and not intent="post"
     ModalAddGrade.grade(@submit="postGrade($event)" :grade="editingGrade" modal-name="edit-grade")
     ModalAddGrade.grade(@submit="postGrade($event)")
-    InputSelectSubject(
-      v-model="meansSubject"
-      name="means-of" empty-choice="Toutes les matières"
-    )
-    .-side-by-side(v-if="grades" :class="{'show-all': showAllGrades}")
+    template(v-if="grades.length > 0" :class="{'show-all': showAllGrades}")
+      InputSelectSubject(
+        v-model="meansSubject"
+        name="means-of" empty-choice="Toutes les matières"
+      )
       .left
         HeadingSub
           | {{ showAllGrades ? "Toutes les notes" : "Dernières notes" }}
