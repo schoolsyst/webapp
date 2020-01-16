@@ -62,6 +62,10 @@ Vue.prototype.$modal = {
 		let openAt = opts.at || 'center'
 		let calledBy = opts.from || null
 		const modal = document.getElementById(`modal_${name}`) 
+		if (modal === null) {
+			console.warn('Not opening modal: is null')
+			return
+		}
 		setup(modal, () => {close(name)})
 		if (openAt === 'self' && !calledBy) {
 			console.warn("Summoning a modal at 'self' requires a `from` option")
