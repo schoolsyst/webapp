@@ -20,13 +20,13 @@
       InputField(
         name="start" 
         type="time" v-model="start"  v-bind="{validation}"
-        no-action-button
+        no-action-button no-error-messages
       ) Début
       Icon trending_flat
       InputField(
         name="end" 
         type="time" v-model="end"  v-bind="{validation}"
-        no-action-button
+        no-action-button no-error-messages
       ) Fin
     .duration
       | Durée: 
@@ -34,6 +34,8 @@
         name="duration" 
         type="time" v-model="duration"  v-bind="{validation}"
       )
+    ul.non-field-errors(v-if="!validation.validated")
+      li(v-for="error in validation.errors.nonFieldErrors") {{ error }}
     .submit
       ButtonNormal(variant="outline" @click="$modal.hide('add-event')") Annuler
       ButtonNormal(variant="primary" v-bind="{validation}" @click="$emit('post', eventObject); $modal.hide('add-event')") Ajouter
@@ -164,10 +166,15 @@ time-input-width = 7em
   //   min-width time-input-width
   & /deep/ i
     font-size 2rem
-    padding-bottom 1.1rem //FIXME: manual vertical centering...
+    padding-top 1.1rem //FIXME: manual vertical centering...
 .duration
+  margin-top 1em
   display flex
   justify-content center
+.non-field-errors
+  margin-bottom 2em
+  color var(--red)
+  text-align center
 .submit
   display flex
   justify-content flex-end
