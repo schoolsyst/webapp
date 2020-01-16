@@ -1,4 +1,5 @@
 <template lang="pug"> 
+//TODO: #beta-1.0.0 do not open in full screen modals w/o close btns @ mobile
 //https://www.w3.org/TR/wai-aria-practices/examples/dialog-modal/dialog.html 
 aside.BaseModal(:id="`modal_${name}`", 
     aria-hidden="true" 

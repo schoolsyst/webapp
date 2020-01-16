@@ -43,7 +43,7 @@
         :style="`background: ${active ? backgroundColor : 'transparent'};`"
       )
         slot
-    p.error(v-if="!noErrorMessages") 
+    p.error(v-if="!noErrorMessages")
       | {{errored ? validation.errors[camelCaseName][0] : ""}}
 </template>
 
@@ -134,8 +134,8 @@ export default {
     },
     dName() {
       /* Computed default name for some HTML input types */
-      if (this.name) 
-        return this.name 
+      if (this.name)
+        return this.name
       if (['password', 'email', 'date'].includes(this.type))
         return this.type
       else {
@@ -150,9 +150,9 @@ export default {
     },
     errored() {
       return (
-        !this.validation.validated 
+        !this.validation.validated
         && !this.initial
-        && this.camelCaseName in this.validation.errors 
+        && this.camelCaseName in this.validation.errors
         && this.validation.errors[this.camelCaseName].length > 0
       )
     },
@@ -166,6 +166,7 @@ export default {
     },
     HTMLValue() {
       const v = this.toHTMLValue(this.value)
+      console.log(v)
       this.$el.querySelector('input, textarea').value = v
       return v
     },
@@ -198,7 +199,7 @@ export default {
           console.log(['toJSValue', value])
           value = parseISO(value)
           break;
-      
+
         case 'number':
           value = Number(value)
           break;
@@ -212,7 +213,7 @@ export default {
         case 'date':
           value = formatISO(value, { representation: "date" })
           break;
-      
+
         case 'number':
           value = Number(value)
           break;
@@ -244,7 +245,7 @@ errors-space = 2em
   height 100%
 .input
   // Let the input take the whole .inner-field width
-  width 100% 
+  width 100%
 // === Typography
 label
   text-transform uppercase

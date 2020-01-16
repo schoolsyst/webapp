@@ -15,7 +15,7 @@
             Icon(v-show="showAllGrades") arrow_back
             Icon(v-show="!showAllGrades") arrow_forward
             | {{ showAllGrades ? "Dernières" : "Toutes" }}
-          
+
         ul.grades
           li.new
             .card-wrapper(@click="$modal.show('add-grade')"): Icon add
@@ -24,7 +24,7 @@
             @contextmenu.prevent="$refs.menu.open($event, { grade })"
           )
             CardGrade(
-              v-bind="grade" 
+              v-bind="grade"
               @edit="$refs.menu.open($event, { grade })"
               @click="editingGrade = grade; $modal.show('edit-grade')"
             )
@@ -42,8 +42,8 @@
       p Vous n'avez aucune note.
       template(#cta) Ajouter des notes
     vue-context(
-      ref="menu" 
-      :close-on-click="true" 
+      ref="menu"
+      :close-on-click="true"
       :close-on-scroll="true"
     )
       template(slot-scope="child" v-if="child.data")

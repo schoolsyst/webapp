@@ -1,5 +1,6 @@
 <template lang="pug">
     //TODO: merge w/ <InputSelect>, choose radio buttons based on choices.length, prop to force radio/select
+    //TODO: fix margins (between checkboxes, comply with error-messages on <InputField>)
     fieldset.RadioButtons(:class="{[`variant-${variant}`]: true, vertical}")
         legend: slot
         .RadioButton(v-for="choice in choices" :key="choice.key")
@@ -103,7 +104,7 @@ fieldset.vertical
         margin-bottom .7em
     .RadioButton:first-of-type
         margin-top: 0.5rem
-    
+
 legend
     padding 0 10px
     text-transform uppercase

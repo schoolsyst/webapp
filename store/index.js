@@ -11,39 +11,39 @@ export const state = () => ({
     longitude: null
   },
   links: [
-    { 
+    {
         name: 'Timeline',
-        href: '/timeline', 
+        href: '/timeline',
         icon: 'timeline' ,
         id:   'timeline'
     },
-    { 
+    {
         name: 'Cours',
-        href: '/notes', 
+        href: '/notes',
         icon: 'insert_drive_file' ,
         id:   'notes'
     },
-    { 
+    {
         name: 'Devoirs',
-        href: '/homework', 
+        href: '/homework',
         icon: 'book' ,
         id:   'homework'
     },
-    { 
+    {
         name: 'Emploi du temps',
-        href: '/schedule', 
+        href: '/schedule',
         icon: 'today' ,
         id:   'schedule'
     },
-    { 
+    {
         name: 'Notes',
-        href: '/grades', 
+        href: '/grades',
         icon: 'school' ,
         id:   'grades'
     },
-    { 
+    {
         name: 'Sac',
-        href: '/bag', 
+        href: '/bag',
         icon: 'work_outline',
         id:   'bag'
     },
@@ -131,7 +131,7 @@ export const actions = {
   }
 }
 
-export const getValidator = ({ 
+export const getValidator = ({
   constraints,
   resourceName,
   fieldNames,
@@ -173,16 +173,16 @@ export const getValidator = ({
 
   // Checkers
   const checkers = {
-    maximum: ({arg, fieldName}) => 
+    maximum: ({arg, fieldName}) =>
       object[fieldName] <= arg,
-    minimum: ({arg, fieldName}) => 
+    minimum: ({arg, fieldName}) =>
       object[fieldName] >= arg,
-    maxLength: ({arg, fieldName}) => 
+    maxLength: ({arg, fieldName}) =>
       typeof object[fieldName] === 'string' ? object[fieldName].length <= arg : true,
-    required: ({arg, fieldName}) => 
+    required: ({arg, fieldName}) =>
       object.hasOwnProperty(fieldName) && object[fieldName] !== null,
     notEmpty: ({arg, fieldName}) =>
-    object[fieldName] && object[fieldName].length > 0,
+      object[fieldName] && object[fieldName].trim().length > 0,
     isAWeekType: ({arg, fieldName}) =>
       ['Q1', 'Q2', 'BOTH'].includes(object[fieldName]),
     before: ({arg, fieldName}) =>
@@ -198,7 +198,7 @@ export const getValidator = ({
     /* Special case for required, which checks if the property exist
        and returnes *false* instead.
     */
-    if (errorName !== 'required' 
+    if (errorName !== 'required'
         && !object.hasOwnProperty(fieldName)) {
         return true
     }
@@ -226,7 +226,7 @@ export const getValidator = ({
       before: `${fieldNameWithArticle} doit être avant ${argNameWithArticle}`,
       isAColor: `${fieldNameWithArticle} doit être une couleur au format hexadécimal. Exemple: #09f ou #0479cf`,
       notEmpty: `${fieldNameWithArticle} est requis${fieldIsFeminine ? 'e' : ''}`,
-      isAnEmail: 
+      isAnEmail:
         name === 'adresse email'
           ? `${fieldNameWithArticle} doit être valide`
           : `${fieldNameWithArticle} doit être une adresse email valide`
@@ -254,7 +254,7 @@ export const getValidator = ({
             validated = false
           }
         });
-      } 
+      }
       // Error arguments, multiple cases. eg: maximum
       else {
         for (const errorArg in fieldsOrArgs) {
