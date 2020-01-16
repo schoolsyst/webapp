@@ -1,6 +1,6 @@
 <template lang="pug">
     //TODO: merge w/ <InputSelect>, choose radio buttons based on choices.length, prop to force radio/select
-    fieldset.RadioButtons(:class="`variant-${variant}`")
+    fieldset.RadioButtons(:class="{[`variant-${variant}`]: true, vertical}")
         legend: slot
         .RadioButton(v-for="choice in choices" :key="choice.key")
             input(
@@ -30,7 +30,11 @@ export default {
         value: {
             default: null
         },
-        variant: String
+        variant: String,
+        vertical: {
+            type: Boolean,
+            default: false
+        }
     },
     data() {
         return {
@@ -93,6 +97,12 @@ fieldset
     // padding 0.75em 0.625em
     border-radius var(--border-radius)
     flex-wrap wrap
+fieldset.vertical
+    flex-direction column
+    .RadioButton
+        margin-bottom .7em
+    .RadioButton:first-of-type
+        margin-top: 0.5rem
     
 legend
     padding 0 10px
