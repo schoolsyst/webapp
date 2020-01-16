@@ -5,7 +5,7 @@
       InputSetting(v-bind="setting")
   TheBottomBar
       ButtonNormal(variant="text-blue" href="/setup/subjects") #[Icon arrow_back] Retour
-      ButtonNormal.to-right(variant="primary" href="/setup/schedule") Continuer
+      ButtonNormal.to-right(variant="primary" href="/setup/schedule/settings") Continuer
 </template>
 
 <script>
