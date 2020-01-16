@@ -20,28 +20,34 @@ It offers the following features:
 
 I built schoolsyst alone, and the app is, as of now, targeted at french people. I *will* translate it at some point but I need to learn about school system differences between France, USA, UK and other countries before opening it up.
 
-## How do I ruun this locally ?
+## How do I run this locally ?
 
 For now, schoolsyst runs on a tiny VPS, and the API is therefore limited to requests from `*.schoolsyst.com`. If you want to run this app locally, you may want to also run the API, explained on [the repo's README](https://github.com/schoolsyst/backend/tree/master/README.md).
 
 Here's how to install the frontend:
 
 1. Clone the repo and `cd` into it
-`$ git clone https://github.com/schoolsyst/frontend.git`
-`$ cd frontend`
+
+```bash
+git clone https://github.com/schoolsyst/frontend.git
+cd frontend
+```
 
 2. Install NodeJS
 _The installation procedure changes depending on your platform, head over to [NodeJS's website](https://nodejs.org/)_
 
 3. Install the project's dependencies
-`$ yarn` (using yarn)
-or
-`$ npm install` (using npm)
+
+```bash
+yarn # Using yarn, or
+npm install # Using npm
+```
 
 4. Start the app
-`$ yarn dev` (using yarn)
-or
-`$ npm run dev` (using npm)
+```bash
+yarn dev # Using yarn, or
+npm run dev # Using npm
+```
 
 This will serve the app on http://localhost:3000
 
