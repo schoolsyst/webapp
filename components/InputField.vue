@@ -37,7 +37,7 @@
         @click="active = true; (preventDefaultClick ? $event.preventDefault() : ''); $emit('click', $event)"
         @blur="active = false; passwordShown = false; $emit('blur', $event)"
         @focus="active = false; $emit('active', $event)"
-      )
+      ) {{ type === 'block' ? value : null }}
       label(
         :for="`input-field--${dName}`"
         :style="`background: ${active ? backgroundColor : 'transparent'};`"
@@ -166,7 +166,7 @@ export default {
     },
     HTMLValue() {
       const v = this.toHTMLValue(this.value)
-      this.$el.querySelector('input').value = v
+      this.$el.querySelector('input, textarea').value = v
       return v
     },
     JSValue() {
