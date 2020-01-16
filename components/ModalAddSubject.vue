@@ -4,23 +4,27 @@
     title="Ajouter une matière..."
   )
     .content
-      InputField(
-        v-model="value.name"
-        variant="filled"
-        name="name"
-        v-bind="{validation}"
-      ) Nom
-      .color-and-weight
-        PickerColor(v-model="value.color") Couleur
+      .color-and-name
+        PickerColor(v-model="value.color" :namespace="modalName") Couleur
         InputField(
-          v-model="value.weight"
+          v-model="value.name"
           variant="filled"
-          name="weight"
-          type="number"
+          name="name"
           v-bind="{validation}"
-          no-error-messages
-        ) Coefficient
-      ButtonNormal.submit(variant="primary" @click="$emit('post', value)") Ajouter
+        ) Nom
+      InputField(
+        v-model="value.weight"
+        variant="filled"
+        name="weight"
+        type="number"
+        v-bind="{validation}"
+        no-error-messages
+      ) Coefficient
+      .submit: ButtonNormal(
+        variant="primary"
+        @click="$emit('post', value); $emit('input', defaults); $modal.close(modalName)"
+        v-bind="{validation}"
+      ) Ajouter
 </template>
 
 <script>
@@ -35,11 +39,11 @@ export default {
   props: {
     value: {
       type: Object,
-      default: () => ({
-        color: null,
+      default: {
+        color: '#000000',
         name: null,
         weight: null
-      })
+      }
     },
     modalName: {
       type: String,
@@ -58,11 +62,16 @@ export default {
 </script>
 
 <style lang="stylus" scoped>
-.color-and-weight
+.color-and-name
   display flex
   align-items center
+  .color-picker
+    font-size 1.25em
+    & /deep/ .opener
+      margin-top -.5em
+      margin-right 1em
 .submit
   margin-top 1.5em
   display flex
-  align-self flex-end
+  justify-content flex-end
 </style>
