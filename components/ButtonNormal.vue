@@ -82,6 +82,8 @@ export default {
 .button
     display inline-block
 .btn
+    -webkit-appearance none
+    appearance none
     transition all 0.125s ease
     margin 0 5px
     padding 15px 20px

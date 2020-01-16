@@ -208,7 +208,7 @@ export default {
   async mounted() {
     this.$withLoadingScreen(async () => {
       await this.$store.dispatch('schedule/load')
-      await this.$store.dispatch('notes/load')
+      await this.$store.dispatch('notes/load', true)
     }, { title: "Triage des classeurs" })
     // Init fuse
     this.fuse = new Fuse(this.all, {

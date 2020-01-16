@@ -1,8 +1,7 @@
 <template lang="pug">
     .container
-        PickerSubject(
-            @pick="subject = $event"
-        )
+        ModalNoteDownload(:note="{uuid, format, name}")
+        PickerSubject(@pick="subject = $event")
         TheBottomBar
             ul.time
                 li {{ format(now, 'HH:mm') }}
@@ -21,11 +20,13 @@
                     BadgeSubject.subject(
                         v-bind="subject" 
                         @click="$modal.show('subject-picker')"
-                        clickable, thin
+                        clickable, thin, no-tooltip
+                        v-tooltip="'Changer la matière'"
                     )
                     input.title-field(
                         placeholder="Document sans titre"
-                        v-model.lazy="name"
+                        v-model="name"
+                        @blur="updateName"
                         name="name"
                         type="text"
                     )
@@ -51,7 +52,7 @@
                         v-tooltip.bottom="'Sauvegarder<br/><kbd>Ctrl</kbd> + <kbd>S</kbd>'"
                     )
                         Icon(filled) save
-                    button(v-tooltip.bottom="'Télécharger en...<br/><kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>S</kbd>'" @click="$modal.show('download-as')")
+                    button(v-tooltip.bottom="'Télécharger en...<br/><kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>S</kbd>'" @click="$modal.show('download-note')")
                         Icon(filled) save_alt
                     //- button
                     //-     Icon share
@@ -227,6 +228,7 @@ import {
 // import Link from '~/plugins/tiptap-extensions/Link'
 // import Strike from '~/plugins/tiptap-extensions/Strike'
 // import Underline from '~/plugins/tiptap-extensions/Underline'
+import ModalNoteDownload from '~/components/ModalNoteDownload.vue'
 import Superscript from '~/plugins/tiptap-extensions/Superscript'
 import MathBlock from '~/plugins/tiptap-extensions/MathBlock'
 import MathInline from '~/plugins/tiptap-extensions/MathInline'
@@ -244,7 +246,7 @@ import Countable from 'countable'
 import { format } from 'date-fns'
 
 export default {
-    components: { Editor, InputField,  EditorContent, EditorMenuBar, Icon, BadgeSubject, PickerSubject, InputSelect, TheBottomBar },
+    components: { Editor, InputField,  EditorContent, EditorMenuBar, Icon, BadgeSubject, PickerSubject, InputSelect, TheBottomBar, ModalNoteDownload },
     layout: 'bare',
     head: {
         title: name
@@ -365,6 +367,14 @@ export default {
             e.preventDefault()
             await this.save({toast: true})
         },
+        updateName: debounce(async function() {
+            await this.$store.dispatch('notes/patch', { 
+                uuid: this.uuid, 
+                modifications: { 
+                    name: this.name
+                }
+            })
+        }, { trailing: false, leading: true }),
         getStatsTooltip(stats) {
             let maxCountLen = Math.max(stats.map(s => s.value.toString().length))
             let listItem = stat => `<li><span style="font-family:var(--fonts-monospace-light)">${stat.value.toString().padStart(maxCountLen, '')}</span> ${stat.label}</li>`
@@ -377,14 +387,6 @@ export default {
         }
     },
     watch: {
-        async name() {
-            await this.$store.dispatch('notes/patch', { 
-                uuid: this.uuid, 
-                modifications: { 
-                    name: this.name
-                }
-            })
-        },
         async subject() {
             await this.$store.dispatch('notes/patch', {
                 uuid: this.uuid,
