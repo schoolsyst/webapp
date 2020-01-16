@@ -20,13 +20,14 @@ export const getters = {
     const setting = getters.one(propval, prop)
     if (setting === null)
       if (fallback !== null) return fallback
-      else
-      // throw new Error(
-      //   `No setting with ${prop}=${propval}. Available ${prop}s: ${getters.all.map(
-      //     (o) => o[prop]
-      //   )}`
-      // )
-      return []
+      else {
+        console.error(
+          `No setting with ${prop}=${propval}. Available ${prop}s: ${getters.all.map(
+            (o) => o[prop]
+          )}`
+        )
+        return 
+      }
     return setting.value
   },
   group: () => (settings, { removeHidden }) => {

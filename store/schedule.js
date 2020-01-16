@@ -87,7 +87,8 @@ export const getters = {
      * `offdays` setting.
      */
     // Loop through each date/dateinterval in the `offdays` settings
-    rootGetters["settings/value"]("offdays").forEach((dateOrInterval) => {
+    const offdays = rootGetters["settings/value"]("offdays") || []
+    offdays.forEach((dateOrInterval) => {
       if (isDate(dateOrInterval)) {
         // If it's a regular date, check if they're the same day
         if (isSameDay(date, dateOrInterval)) return true
