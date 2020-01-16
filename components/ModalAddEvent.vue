@@ -4,7 +4,7 @@
     title="Ajouter un cours..."
   )
     .subject
-      PickerSubject(v-bind="subject" @pick="subject = $event" namespace="add-event")
+      PickerSubject(@pick="subject = $event" namespace="add-event")
       BadgeSubject.badge(
         v-bind="subject"
         @click="$modal.show('add-event-subject-picker')" 
