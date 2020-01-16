@@ -78,6 +78,9 @@ export default {
         height: this.heightFromDates(event.start, event.end),
       }
     }
+  },
+  async mounted() {
+    await this.$store.dispatch('schedule/load')
   }
 }
 </script>
