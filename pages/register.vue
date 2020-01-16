@@ -36,7 +36,7 @@
             tabindex="4"
           ) Confirmer le mot de passe
         .group-both
-          ButtonNormal.submit(variant="primary" v-bind="{validation}") Créez votre compte
+          ButtonNormal.submit(variant="primary" v-bind="{validation}" type="submit") Créez votre compte
     template(v-else)
       .registered
         img(src="/misc/registered-checkmark.svg")
