@@ -46,7 +46,7 @@ export default {
     },
     trackBy: {
       type: String,
-      default: null
+      default: 'key'
     },
     placeholder: {
       type: String,
@@ -58,7 +58,7 @@ export default {
     },
     label: {
       type: String,
-      default: null
+      default: 'label'
     },
     allowEmpty: {
       type: Boolean,
