@@ -248,9 +248,6 @@ import { format } from 'date-fns'
 export default {
     components: { Editor, InputField,  EditorContent, EditorMenuBar, Icon, BadgeSubject, PickerSubject, InputSelect, TheBottomBar, ModalNoteDownload },
     layout: 'bare',
-    head: {
-        title: name
-    },
     data() {
         return {
             headingLevelNames: ['Corps', 'Titre', 'Partie', 'Sous-partie', 'Sous-sous-partie'],
@@ -374,7 +371,11 @@ export default {
                     name: this.name
                 }
             })
+            this.updateDocumentTitle()
         }, { trailing: false, leading: true }),
+        updateDocumentTitle() {
+            document.title = `${this.name || 'Note sans titre'} · schoolsyst`
+        },
         getStatsTooltip(stats) {
             let maxCountLen = Math.max(stats.map(s => s.value.toString().length))
             let listItem = stat => `<li><span style="font-family:var(--fonts-monospace-light)">${stat.value.toString().padStart(maxCountLen, '')}</span> ${stat.label}</li>`
@@ -407,6 +408,8 @@ export default {
             this.name = data.name
             this.subject = data.subject
             this.uuid = data.uuid
+            // Set title
+            this.updateDocumentTitle()
         }, { title: "Recherche du cahier au fond du sac" })
         // Attach event listener for Ctrl + S (see: https://stackoverflow.com/a/55323073)
         document.addEventListener('keydown', this.kbShortcutSave)
@@ -439,6 +442,7 @@ export default {
         clearInterval(this.autosaveInterval)
         await this.save({toast: false})
         // When the note is empty
+        // TODO: #beta-1.0.0 move this to /notes/
         let html = this.editor.getHTML()
         if (html === '' || html === '<p></p>') {
             console.log('deleting empty note:' + this.editor.getHTML())
