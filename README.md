@@ -1,4 +1,5 @@
 # Schoolsyst — frontend
+[![HitCount](http://hits.dwyl.io/schoolsyst/schoolsyst/frontend.svg)](http://hits.dwyl.io/schoolsyst/schoolsyst/frontend)
 > The code for the nuxt.js-powered available at https://app.schoolsyst.com
 
 ## What is schoolsyst?
