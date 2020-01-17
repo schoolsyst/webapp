@@ -3,7 +3,7 @@
 ![GitHub repo size](https://img.shields.io/github/repo-size/schoolsyst/frontend?style=flat-square)
 ![GitHub issues by-label](https://img.shields.io/github/issues/schoolsyst/frontend/enhancement?style=flat-square)
 ![GitHub issues by-label](https://img.shields.io/github/issues/schoolsyst/frontend/bug?style=flat-square)
-![GitHub issues by-label](https://img.shields.io/github/issues/schoolsyst/frontend/from:schoolsyst.com?style=flat-square)
+![GitHub issues by-label](https://img.shields.io/github/issues-raw/schoolsyst/frontend/from:schoolsyst.com?label=reports%20from%20schoolsyst.com&style=flat-square)
 > The code for the nuxt.js-powered available at https://app.schoolsyst.com
 
 ## What is schoolsyst?
