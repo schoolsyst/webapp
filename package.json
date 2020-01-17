@@ -5,7 +5,7 @@
   "engines": {
     "node": "13.4.0"
   },
-  "description": "Schoolsyst&#39;s frontend: a single-page web application built to be used offline and online.",
+  "description": "schoolsyst&#39;s frontend: a single-page web application built to be used offline and online.",
   "author": "Ewen Le Bihan",
   "private": true,
   "scripts": {
