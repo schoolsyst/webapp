@@ -4,9 +4,9 @@ export default {
    ** Headers of the page
    */
   head: {
-    title: "Schoolsyst" || process.env.npm_package_name || "",
+    title: "schoolsyst" || process.env.npm_package_name || "",
     titleTemplate: (titleChunk) => {
-      return (!titleChunk || titleChunk === 'Schoolsyst') ? 'Schoolsyst' : titleChunk + " · Schoolsyst"
+      return (!titleChunk || titleChunk === 'schoolsyst') ? 'schoolsyst' : titleChunk + " · schoolsyst"
     },
     meta: [
       { charset: "utf-8" },
@@ -175,7 +175,7 @@ export default {
   axios: {
     baseURL:
       process.env.NODE_ENV === 'dev'
-        ? 'http://localhost:9999'
+        ? 'http://localhost:9999/api'
         : 'https://api.schoolsyst.com/api'
   },
   /*
