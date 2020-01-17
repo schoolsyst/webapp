@@ -4,6 +4,7 @@ InputSelect(
 	@input="$emit('input', ($event && ($event.uuid === null ? null : $event)))"
 	:value="value === null ? emptyChoiceObj : value"
 	label="name"
+	:track-by="null"
 	v-bind="{placeholder, name}"
 	:allow-empty="!!emptyChoice"
 	searchable
