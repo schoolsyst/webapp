@@ -1,6 +1,6 @@
 # Schoolsyst — frontend
 [![HitCount](http://hits.dwyl.io/schoolsyst/schoolsyst/frontend.svg)](http://hits.dwyl.io/schoolsyst/schoolsyst/frontend)
-![GitHub repo size](https://img.shields.io/github/repo-size/schoolsyst/frontend)
+![GitHub repo size](https://img.shields.io/github/repo-size/schoolsyst/frontend?style=flat-square)
 > The code for the nuxt.js-powered available at https://app.schoolsyst.com
 
 ## What is schoolsyst?
