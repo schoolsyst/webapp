@@ -18,7 +18,7 @@
     li(v-for="setting in settings" :key="setting.uuid")
       InputSetting(v-bind="{...setting, _key: setting.key}")
   TheBottomBar
-      ButtonNormal(variant="text-blue" href="/setup/settings") #[Icon arrow_back] Retour
+      ButtonNormal(variant="text-blue" href="/setup/subjects") #[Icon arrow_back] Retour
       ButtonNormal.to-right(variant="outline" @click="$modal.open('confirm-skip')" ) Passer
       ButtonNormal(variant="primary" href="/setup/schedule/events") Continuer
 </template>
@@ -45,7 +45,7 @@ export default {
       setSetting: 'settings/setValue'
     }),
     async skip() {
-      await this.setSetting({key: 'use_schedule', value: 'false'}); 
+      await this.setSetting({key: 'use_schedule', value: 'false'});
       this.$router.push('/')
     }
   },
