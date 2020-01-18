@@ -3,7 +3,7 @@
     :name="modalName"
     title="Ajouter une matière..."
   )
-    .content
+    form.content(@submit.prevent="$emit('post', value); resetInputs(); $modal.close(modalName)")
       .color-and-name
         PickerColor(v-model="value.color" :namespace="modalName") Couleur
         InputField(
@@ -18,12 +18,13 @@
         name="weight"
         type="number"
         v-bind="{validation}"
+        tabindex="3"
         no-error-messages
       ) Coefficient
       .submit: ButtonNormal(
         variant="primary"
-        @click="$emit('post', value); $emit('input', defaults); $modal.close(modalName)"
         v-bind="{validation}"
+        type="submit"
       ) Ajouter
 </template>
 
@@ -39,11 +40,11 @@ export default {
   props: {
     value: {
       type: Object,
-      default: {
+      default: () => ({
         color: '#000000',
         name: null,
         weight: null
-      }
+      })
     },
     modalName: {
       type: String,
@@ -52,11 +53,15 @@ export default {
   },
   computed: {
     validation() {
+      if (Object.keys(this.value).length === 0) return { validated: true, errors: {} }
       return this.validate()(this.value)
-    }
+    },
   },
   methods: {
-    ...mapGetters('subjects', ['validate'])
+    ...mapGetters('subjects', ['validate']),
+    resetInputs() {
+      this.$emit('input', {})
+    }
   }
 }
 </script>
