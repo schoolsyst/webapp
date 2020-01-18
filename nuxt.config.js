@@ -174,7 +174,7 @@ export default {
    */
   axios: {
     baseURL:
-      process.env.NODE_ENV === 'dev'
+      process.env.NODE_ENV === 'development'
         ? 'http://localhost:9999/api'
         : 'https://api.schoolsyst.com/api'
   },
@@ -185,7 +185,9 @@ export default {
     /*
      ** You can extend webpack config here
      */
-    extend(config, ctx) {}
+    extend(config, ctx) {
+      console.log(`Running with NODE_ENV=${process.env.NODE_ENV}`)
+    }
   },
 
   pwa: {
