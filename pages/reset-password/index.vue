@@ -30,6 +30,7 @@
         ButtonNormal(
           :validation="validateEmailAdress({email})"
           variant="outline"
+          type="submit"
         ) Envoyer
     p.go-back(v-if="!sent"): nuxt-link(to="/") Retour
 </template>
