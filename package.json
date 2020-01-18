@@ -9,10 +9,10 @@
   "author": "Ewen Le Bihan",
   "private": true,
   "scripts": {
-    "dev": "set -u NODE_ENV 'dev'; nuxt --port 3000",
-    "build": "set -u NODE_ENV 'prod'; nuxt build",
-    "start": "set -u NODE_ENV 'prod'; nuxt start",
-    "generate": "set -u NODE_ENV 'prod'; nuxt generate",
+    "dev": "nuxt --port 3000",
+    "build": "nuxt build",
+    "start": "nuxt start",
+    "generate": "nuxt generate"
   },
   "dependencies": {
     "@nuxtjs/auth": "^4.8.1",
