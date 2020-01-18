@@ -1,23 +1,16 @@
-<center> <h1> <img style="width:80%;min-width:200px;" src="https://www.schoolsyst.com/assets/logotype-horizontal.png"><br>Frontend </h1> </center>
+<h1 align="center"> <img width="80%" src="https://www.schoolsyst.com/assets/logotype-horizontal.png"><br>Frontend </h1> </center>
 
-*Stats*
 [![HitCount](http://hits.dwyl.io/schoolsyst/schoolsyst/frontend.svg)](http://hits.dwyl.io/schoolsyst/schoolsyst/frontend)
 ![GitHub repo size](https://img.shields.io/github/repo-size/schoolsyst/frontend?style=flat-square)
 [![time tracker](https://wakatime.com/badge/github/schoolsyst/frontend.svg)](https://wakatime.com/badge/github/schoolsyst/frontend)
-
-*Availability*
-[![app.schoolsyst.com status](https://img.shields.io/website?down_message=unavailable&label=app.schoolsyst.com&style=flat-square&up_message=online&url=https%3A%2F%2Fapp.schoolsyst.com%2F)](https://app.schoolsyst.com)
-[![api.schoolsyst.com status](https://img.shields.io/website?down_message=unavailable&label=api.schoolsyst.com&style=flat-square&up_message=online&url=https%3A%2F%2Fapi.schoolsyst.com%2F)](https://api.schoolsyst.com)
-
-*Community*
 ![GitHub issues enhancement](https://img.shields.io/github/issues/schoolsyst/frontend/enhancement?style=flat-square)
 ![GitHub issues bugs](https://img.shields.io/github/issues/schoolsyst/frontend/bug?style=flat-square)
 ![GitHub issues from website](https://img.shields.io/github/issues-raw/schoolsyst/frontend/from:schoolsyst.com?label=reports%20from%20schoolsyst.com&style=flat-square)
-
-*Versions*
-![GitHub tag (latest SemVer pre-release)](https://img.shields.io/github/v/tag/schoolsyst/frontend?include_prereleases&label=unstable&sort=semver&style=flat-square)
-![GitHub tag (latest SemVer)](https://img.shields.io/github/v/tag/schoolsyst/frontend?label=stable&sort=semver&style=flat-square)
+![GitHub tag (latest SemVer pre-release)](https://img.shields.io/github/v/tag/schoolsyst/frontend?include_prereleases&label=latest%20pre-release&sort=semver&style=flat-square)
+![GitHub tag (latest SemVer)](https://img.shields.io/github/v/tag/schoolsyst/frontend?label=latest%20release&sort=semver&style=flat-square)
 > The code for the nuxt.js-powered available at https://app.schoolsyst.com
+
+</style>
 
 ## What is schoolsyst?
 
