@@ -8,7 +8,7 @@
 ![GitHub issues from website](https://img.shields.io/github/issues-raw/schoolsyst/frontend/from:schoolsyst.com?label=reports%20from%20schoolsyst.com&style=flat-square)
 ![GitHub tag (latest SemVer pre-release)](https://img.shields.io/github/v/tag/schoolsyst/frontend?include_prereleases&label=latest%20pre-release&sort=semver&style=flat-square)
 ![GitHub tag (latest SemVer)](https://img.shields.io/github/v/tag/schoolsyst/frontend?label=latest%20release&sort=semver&style=flat-square)
-> The code for the nuxt.js-powered available at https://app.schoolsyst.com
+> The code for the nuxt.js-powered available at [![app.schoolsyst.com](https://img.shields.io/website?down_message=unavailable&label=app.schoolsyst.com&style=flat-square&up_message=online&url=https%3A%2F%2Fapp.schoolsyst.com%2F)](https://app.schoolsyst.com)
 
 </style>
 
