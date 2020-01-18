@@ -16,7 +16,7 @@
   h1 Votre emploi du temps
   ul.settings
     li(v-for="setting in settings" :key="setting.uuid")
-      InputSetting(v-bind="setting")
+      InputSetting(v-bind="{...setting, _key: setting.key}")
   TheBottomBar
       ButtonNormal(variant="text-blue" href="/setup/settings") #[Icon arrow_back] Retour
       ButtonNormal.to-right(variant="outline" @click="$modal.open('confirm-skip')" ) Passer
