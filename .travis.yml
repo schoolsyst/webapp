@@ -20,9 +20,4 @@ install:
   - yarn install
   
 script:
-  - yarn lint
-  - yarn test
   - yarn build
-
-after_success:
-  - yarn coverage
