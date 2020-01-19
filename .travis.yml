@@ -1,0 +1,26 @@
+language: node_js
+
+git:
+  depth: 3
+  quiet: yes
+
+branches:
+  except:
+    - legacy
+    - experimental
+
+cache:
+  yarn: true
+  directories:
+    - node_modules
+
+install:
+  - yarn install
+  
+script:
+  - yarn lint
+  - yarn test
+  - yarn build
+
+after_success:
+  - yarn coverage
