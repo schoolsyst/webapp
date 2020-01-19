@@ -52,6 +52,7 @@ BaseModal(
 </template>
 
 <script>
+import { mapGetters, mapState } from 'vuex'
 import BaseModal from '~/components/BaseModal.vue'
 import PickerSubject from '~/components/PickerSubject.vue'
 import HeadingSub from '~/components/HeadingSub.vue'
@@ -60,10 +61,18 @@ import InputField from '~/components/InputField.vue'
 import ButtonNormal from '~/components/ButtonNormal.vue'
 import BadgeSubject from '~/components/BadgeSubject.vue'
 import PickerDateDue from '~/components/PickerDateDue.vue'
-import { mapGetters, mapState } from 'vuex'
 
 export default {
-  components: { BaseModal, PickerSubject, HeadingSub, RadioButtons, InputField, ButtonNormal, BadgeSubject, PickerDateDue },
+  components: {
+    BaseModal,
+    PickerSubject,
+    HeadingSub,
+    RadioButtons,
+    InputField,
+    ButtonNormal,
+    BadgeSubject,
+    PickerDateDue
+  },
   data() {
     return {
       details: null,
@@ -77,18 +86,24 @@ export default {
     ...mapState('homework', ['types']),
     ...mapGetters('schedule', ['currentSubject', 'nextCourseOf']),
     subject: {
-      get: function() { return this.mSubject || this.currentSubject },
-      set: function(newSubject) { this.mSubject = newSubject }
+      get() {
+        return this.mSubject || this.currentSubject
+      },
+      set(newSubject) {
+        this.mSubject = newSubject
+      }
     },
     due: {
-      get: function() { 
-        console.log(['due:get', !!this.mDue]); 
+      get() {
+        console.log(['due:get', !!this.mDue])
         if (this.mDue) return this.mDue
-        const nextCourse = this.nextCourseOf(this.subject) 
+        const nextCourse = this.nextCourseOf(this.subject)
         if (nextCourse) return nextCourse.start
         return null
       },
-      set: function(newDueDate) { this.mDue = newDueDate }
+      set(newDueDate) {
+        this.mDue = newDueDate
+      }
     },
     validation() {
       return this.validate()(this.homeworkObject)
@@ -112,53 +127,59 @@ export default {
     }
   },
   methods: {
-    ...mapGetters('homework', ['validate']),
-    cl(msg) { console.log(msg) }
-  },
-  watch: {
-    due() { this.cl(this.due) }
+    ...mapGetters('homework', ['validate'])
   }
 }
 </script>
 
 <style lang="stylus" scoped>
 .content
-  height 100%
-  display grid
-  grid-template-rows 1fr 3fr 1fr
+  height: 100%
+  display: grid
+  grid-template-rows: 1fr 3fr 1fr
 
 .header
-  display flex
-  align-items center
-  @media (max-width 650px)
-    flex-direction column
-    justify-content center
+  display: flex
+  align-items: center
+
+  @media (max-width: 650px)
+    flex-direction: column
+    justify-content: center
+
   .subject
-    margin-right 0.5em
-    @media (min-width 651px)
-      max-width 33%
-      font-size 1.75rem
-    @media (max-width 650px)
+    margin-right: 0.5em
+
+    @media (min-width: 651px)
+      max-width: 33%
+      font-size: 1.75rem
+
+    @media (max-width: 650px)
       margin-bottom: 1.5rem
-      font-size 1.25rem
-      width 100%
+      font-size: 1.25rem
+      width: 100%
+
   .name
-    width 100%
+    width: 100%
 
 .details
-    height 100%
+  height: 100%
+
 .type
-  flex-direction column
+  flex-direction: column
+
   & /deep/ .RadioButton:not(:last-child)
-    margin-bottom 0.5em
-  margin-bottom 1em
-  margin-top: 0.75em //FIXME: Pixel perfect. (to vertically line it up w/ the .details field)
+    margin-bottom: 0.5em
+
+  margin-bottom: 1em
+  margin-top: 0.75em // FIXME: Pixel perfect. (to vertically line it up w/ the .details field)
+
 .due.active
   & /deep/ label
-    top 0
+    top: 0
+
 .submit-area
-  margin-top 2rem
-  display flex
-  justify-content flex-end
-  align-items flex-end
+  margin-top: 2rem
+  display: flex
+  justify-content: flex-end
+  align-items: flex-end
 </style>

@@ -1,7 +1,7 @@
 <template lang="pug">
 //TODO: Rewrite this
-//TODO: default styles for <ul>'s inside <slot>, not centered.
-//TODO?: no text-align:center on <slot>, let the consumer decide
+//TODO: default styles for ul's inside slot, not centered.
+//TODO?: no text-align:center on slot, let the consumer decide
 //TODO: center btns on mobile
 BaseModal.ModalDialogConfirm(:name="`confirm-${name}`", :title="heading || 'Confirmation'")
     p.message: slot
@@ -17,10 +17,10 @@ BaseModal.ModalDialogConfirm(:name="`confirm-${name}`", :title="heading || 'Conf
 </template>
 
 <script>
-import BaseModal from "~/components/BaseModal.vue"
+import BaseModal from '~/components/BaseModal.vue'
 import ButtonNormal from '~/components/ButtonNormal.vue'
 export default {
-  name: "ModalDialogConfirm",
+  name: 'ModalDialogConfirm',
   components: {
     BaseModal,
     ButtonNormal
@@ -28,41 +28,41 @@ export default {
   props: {
     heading: {
       type: String,
-      default: "Êtes-vous sûr ?",
+      default: 'Êtes-vous sûr ?'
     },
     confirmText: {
       type: String,
-      default: "Confirmer",
+      default: 'Confirmer'
     },
     cancelText: {
       type: String,
-      default: "Annuler",
+      default: 'Annuler'
     },
     confirmRole: {
       type: String,
-      default: "normal",
+      default: 'normal'
     },
     name: String,
     challenge: {
       type: [Boolean, Function],
-      default: false,
+      default: false
     },
     challengeMessage: {
       type: String,
-      default: "",
-    },
+      default: ''
+    }
   },
   data() {
     return {
-      challengeInput: "",
+      challengeInput: '',
       challengeOpened: false,
-      challengeError: false,
+      challengeError: false
     }
   },
   methods: {
     confirmAndClose() {
       this.endChallenge()
-      this.$emit("confirm")
+      this.$emit('confirm')
       this.$modal.hide(`confirm-${this.name}`)
     },
     startChallenge() {
@@ -73,7 +73,7 @@ export default {
     endChallenge() {
       this.challengeOpened = false
       this.challengeError = false
-    },
+    }
   },
 
   watch: {
@@ -81,69 +81,57 @@ export default {
       if (!this.challengeInput) {
         this.challengeError = false
       }
-    },
-  },
+    }
+  }
 }
 </script>
 
 <style lang="stylus" scoped>
-.ModalDialogConfirm /deep/ .modal-wrapper {
-  max-width: 500px;
-}
+.ModalDialogConfirm /deep/ .modal-wrapper
+  max-width: 500px
 
-.buttons {
-  margin-top: 2.5em;
-  display flex
-  justify-content flex-end
-}
+.buttons
+  margin-top: 2.5em
+  display: flex
+  justify-content: flex-end
 
-.heading, .message {
-  color: var(--black);
-  text-align: center;
-}
+.heading, .message
+  color: var(--black)
+  text-align: center
 
-.heading {
-  font-size: 30px;
-  font-weight: bold;
-  margin-bottom: 20px;
-}
+.heading
+  font-size: 30px
+  font-weight: bold
+  margin-bottom: 20px
 
-.message {
-  line-height: 1.2;
-}
+.message
+  line-height: 1.2
 
-.challenge.errored .InputFlat /deep/ input {
-  background: var(--red);
-  color: white;
-}
+.challenge.errored .InputFlat /deep/ input
+  background: var(--red)
+  color: white
 
-.challenge {
-  overflow: hidden;
+.challenge
+  overflow: hidden
 
-  .inputs {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
+  .inputs
+    display: flex
+    align-items: center
+    justify-content: center
 
-  label {
-    margin-bottom: 15px;
-    margin-top: 25px;
-    color: black;
-  }
+  label
+    margin-bottom: 15px
+    margin-top: 25px
+    color: black
 
-  .InputFlat {
+  .InputFlat
     // padding: 0
-    max-width: calc(3 / 4 * 500px);
-  }
+    max-width: calc(3 / 4 * 500px)
 
-  .InputFlat /deep/ input {
-    background: rgba(0, 0, 0, 0.05);
-    border-radius: 7.5px;
-  }
+  .InputFlat /deep/ input
+    background: rgba(0, 0, 0, 0.05)
+    border-radius: 7.5px
 
-  .ButtonIcon, .ButtonIcon /deep/ button {
-    width: 30px;
-  }
-}
+  .ButtonIcon, .ButtonIcon /deep/ button
+    width: 30px
 </style>

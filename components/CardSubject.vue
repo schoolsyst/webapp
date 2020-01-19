@@ -13,16 +13,21 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
 import Icon from '~/components/Icon.vue'
 import BadgeSubject from '~/components/BadgeSubject.vue'
-import tinycolor from 'tinycolor2'
-import { mapGetters } from 'vuex'
 
 export default {
-  components: {Icon, BadgeSubject},
+  components: { Icon, BadgeSubject },
   props: {
-    name: String,
-    color: String,
+    name: {
+      type: String,
+      required: true
+    },
+    color: {
+      type: String,
+      required: true
+    },
     weight: {
       type: Number,
       default: 1,
@@ -30,6 +35,7 @@ export default {
     },
     goal: {
       type: Number,
+      required: true,
       validate: (val) => val >= 0 && val <= 1
     },
     // Options
@@ -44,34 +50,40 @@ export default {
     },
     borderColor() {
       if (this.fullColor) return this.color
+      return false
     },
     textColor() {
       if (this.fullColor) return this._textColor()(this.color)
+      return false
     }
   },
   methods: {
-    ...mapGetters({ _textColor: 'textColor'})
+    ...mapGetters({ _textColor: 'textColor' })
   }
 }
 </script>
 
 <style lang="stylus" scoped>
 .card-wrapper
-  display flex
-  align-items center
-  max-width 450px
-  padding 1em 1.2em
-  border solid 2px var(--grey-light)
-  border-radius var(--border-radius)
-  cursor pointer
+  display: flex
+  align-items: center
+  max-width: 450px
+  padding: 1em 1.2em
+  border: solid 2px var(--grey-light)
+  border-radius: var(--border-radius)
+  cursor: pointer
+
   .color-dot
     font-size: 1.3em
     margin-right: 0.5em
+
   .action
-    margin-left auto
+    margin-left: auto
+
   .action /deep/ i
-    color inherit
+    color: inherit
     font-size: 1.5em
+
   .name
     font-size: 1.1em
 </style>

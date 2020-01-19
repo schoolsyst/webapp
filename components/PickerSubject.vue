@@ -11,25 +11,27 @@ BaseModal.PickerSubject(:name="name" title="Choisissez une matière..." edge-to-
 </template>
 
 <script>
-import BaseModal from "~/components/BaseModal.vue"
-import BadgeSubject from "~/components/BadgeSubject.vue"
-import { mapGetters } from "vuex"
+import { mapGetters } from 'vuex'
+import BaseModal from '~/components/BaseModal.vue'
+import BadgeSubject from '~/components/BadgeSubject.vue'
 
 export default {
-  name: "PickerSubject",
+  name: 'PickerSubject',
   components: { BaseModal, BadgeSubject },
   props: {
     namespace: {
       type: String,
       default: null
-    },
+    }
   },
   computed: {
     ...mapGetters({
-      subjects: "subjects/all",
+      subjects: 'subjects/all'
     }),
     name() {
-      return this.namespace ? `${this.namespace}-subject-picker` : 'subject-picker'
+      return this.namespace
+        ? `${this.namespace}-subject-picker`
+        : 'subject-picker'
     }
   },
   async mounted() {
@@ -38,16 +40,16 @@ export default {
 }
 </script>
 
-<style lang="sass" scoped>
-@import '~/assets/defaults'
-//!importants are needed to override the BaseModal's styling
+<style lang="stylus" scoped>
+// !importants are needed to override the BaseModal's styling
 .PickerSubject
   z-index: 2000 !important
-  
+
 ul.subjects
   width: 100%
   list-style: none
-  //TODO: ↓ Not sure about this
+
+  // TODO: ↓ Not sure about this
   @media (max-width: 650px)
     display: grid
     grid-template-columns: repeat(2, 1fr)
@@ -55,9 +57,10 @@ ul.subjects
 li > .subject
   border-radius: 0 !important // !important needed to overwrite it
   height: 3.25rem
+
   @media (max-width: 650px)
     height: 5rem
+
   font-size: 1.1rem
   width: 100%
-  
 </style>

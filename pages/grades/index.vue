@@ -1,6 +1,6 @@
 <template lang="pug">
   .container
-    //TODO: For edition of resources, <ModalAdd[[resource]] intent="patch"> and not intent="post"
+    //TODO: For edition of resources, ModalAdd[[resource]] intent="patch" and not intent="post"
     ModalAddGrade.grade(@submit="postGrade($event)" :grade="editingGrade" modal-name="edit-grade")
     ModalAddGrade.grade(@submit="postGrade($event)")
     template(v-if="grades.length > 0" :class="{'show-all': showAllGrades}")
@@ -52,6 +52,9 @@
 </template>
 
 <script>
+import { mapGetters, mapActions } from 'vuex'
+import VueContext from 'vue-context'
+import 'vue-context/src/sass/vue-context.scss'
 import ModalAddGrade from '~/components/ModalAddGrade.vue'
 import ButtonNormal from '~/components/ButtonNormal.vue'
 import ScreenEmpty from '~/components/ScreenEmpty.vue'
@@ -60,11 +63,18 @@ import InputSelectSubject from '~/components/InputSelectSubject.vue'
 import HeadingSub from '~/components/HeadingSub.vue'
 import CardGrade from '~/components/CardGrade.vue'
 import Icon from '~/components/Icon.vue'
-import { mapGetters, mapActions } from 'vuex';
-import VueContext from 'vue-context'
-import 'vue-context/src/sass/vue-context.scss'
 export default {
-  components: { ModalAddGrade, ButtonNormal, ScreenEmpty, HeadingSub, CardGrade, VueContext, Icon, InputSelectSubject },
+  components: {
+    ModalAddGrade,
+    ButtonNormal,
+    ScreenEmpty,
+    HeadingSub,
+    CardGrade,
+    VueContext,
+    Icon,
+    InputSelectSubject,
+    BadgeSubject
+  },
   data() {
     return {
       chart: {
@@ -87,80 +97,90 @@ export default {
     grades() {
       let grades = [...this.all]
       if (this.meansSubject)
-        grades = grades.filter(o => o.subject.uuid === this.meansSubject.uuid)
-      if (!this.showAllGrades)
-        grades = grades.slice(0, this.gradesListLimit)
+        grades = grades.filter((o) => o.subject.uuid === this.meansSubject.uuid)
+      if (!this.showAllGrades) grades = grades.slice(0, this.gradesListLimit)
       return grades
     }
+  },
+  mounted() {
+    this.$withLoadingScreen(
+      async () => {
+        await this.$store.dispatch('grades/load')
+      },
+      { title: "Coup d'œil à la pile de contrôles" }
+    )
   },
   methods: {
     ...mapActions('grades', ['post', 'delete']),
     async postGrade(grade) {
-      const posted = await this.post({grade})
+      const posted = await this.post({ grade })
       if (posted) {
         this.$modal.hide('add-grade')
-        this.$toast.success('Note ajoutée',
-          { icon: 'check' }
-        )
+        this.$toast.success('Note ajoutée', { icon: 'check' })
       } else {
-        this.$toast.error("Erreur lors de l'ajout de la note",
-          { icon: 'error_outline' }
-        )
+        this.$toast.error("Erreur lors de l'ajout de la note", {
+          icon: 'error_outline'
+        })
       }
     },
     async del(grade) {
-      await this.delete({uuid: grade.uuid})
+      await this.delete({ uuid: grade.uuid })
     }
-  },
-  async mounted() {
-    this.$withLoadingScreen(async () => {
-      await this.$store.dispatch('grades/load')
-    }, { title: "Coup d'œil à la pile de contrôles" })
-  },
+  }
 }
 </script>
 
 <style lang="stylus" scoped>
 h2
-  margin-bottom 2rem
+  margin-bottom: 2rem
+
 .grades, .all-grades
   &
-    display flex
-    flex-wrap wrap
+    display: flex
+    flex-wrap: wrap
+
   .card-wrapper:not(.more)
-    height 10rem
-    width 25rem
-    margin-top 1em
-    margin-right 1em
+    height: 10rem
+    width: 25rem
+    margin-top: 1em
+    margin-right: 1em
+
 .-side-by-side:not(.show-all)
   ul
-    display flex
+    display: flex
     width: 100%
-    max-width 90vw
-    flex-wrap wrap
-    justify-content center
+    max-width: 90vw
+    flex-wrap: wrap
+    justify-content: center
+
 .-side-by-side
-  height 100%
-  grid-template-columns 1fr
+  height: 100%
+  grid-template-columns: 1fr
+
   &.show-all
-    @media (min-width 651px)
-      grid-template-columns 2fr 1fr
+    @media (min-width: 651px)
+      grid-template-columns: 2fr 1fr
+
   .left, .right
-    overflow auto
+    overflow: auto
+
 .new .card-wrapper
-  cursor pointer
-  border-radius var(--border-radius)
-  display flex
-  justify-content center
-  align-items center
-  background var(--blue-offset)
+  cursor: pointer
+  border-radius: var(--border-radius)
+  display: flex
+  justify-content: center
+  align-items: center
+  background: var(--blue-offset)
+
   i
-    font-size 3rem
-    color var(--blue)
+    font-size: 3rem
+    color: var(--blue)
+
   &:hover
-    background var(--blue-offset-dark)
-    color var(--blue-dark)
+    background: var(--blue-offset-dark)
+    color: var(--blue-dark)
+
 .grades .more
-  display flex
-  justify-content center
+  display: flex
+  justify-content: center
 </style>

@@ -2,7 +2,6 @@ import { Mark } from 'tiptap'
 import { toggleMark, markInputRule, markPasteRule } from 'tiptap-commands'
 
 export default class Subscript extends Mark {
-
   get name() {
     return 'subscript'
   }
@@ -11,16 +10,16 @@ export default class Subscript extends Mark {
     return {
       parseDOM: [
         {
-          tag: 'sub',
-        },
+          tag: 'sub'
+        }
       ],
-      toDOM: () => ['sub', 0],
+      toDOM: () => ['sub', 0]
     }
   }
 
   keys({ type }) {
     return {
-      'Mod-,': toggleMark(type),
+      'Mod-,': toggleMark(type)
     }
   }
 
@@ -29,17 +28,10 @@ export default class Subscript extends Mark {
   }
 
   inputRules({ type }) {
-    return [
-      markInputRule(/(?:^|[^~])(~([^~]+)~)$/, type),
-    ]
+    return [markInputRule(/(?:^|[^~])(~([^~]+)~)$/, type)]
   }
 
   pasteRules({ type }) {
-    return [
-      markPasteRule(/~([^~]+)~/g, type),
-    ]
+    return [markPasteRule(/~([^~]+)~/g, type)]
   }
-
 }
-
-

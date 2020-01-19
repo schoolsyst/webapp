@@ -12,11 +12,11 @@
 </template>
 
 <script>
+import { mapGetters, mapState } from 'vuex'
 import Schedule from '~/components/Schedule.vue'
 import HeadingSub from '~/components/HeadingSub.vue'
 import ButtonNormal from '~/components/ButtonNormal.vue'
 import CardMutation from '~/components/CardMutation.vue'
-import { mapGetters, mapState } from 'vuex'
 export default {
   components: { Schedule, HeadingSub, ButtonNormal, CardMutation },
   head: {
@@ -37,10 +37,11 @@ export default {
 
 <style lang="stylus" scoped>
 .schedule
-  overflow-x auto
+  overflow-x: auto
   // Cheap hack, if overflow-x is auto, overflow-y becomes either auto or scroll.
   // See: https://stackoverflow.com/a/39554003
-  padding-bottom 500px 
+  padding-bottom: 500px
+
 h2
-  margin-bottom 1em
+  margin-bottom: 1em
 </style>

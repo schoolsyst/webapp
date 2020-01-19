@@ -13,19 +13,21 @@ import ButtonNormal from '~/components/ButtonNormal.vue'
 
 export default {
   components: { ButtonNormal },
-  layout: 'bare',
+  layout: 'bare'
 }
 </script>
 
 <style lang="stylus" scoped>
 .container
-  display flex
-  flex-direction column
-  justify-content center
-  align-items center
-  text-align center
+  display: flex
+  flex-direction: column
+  justify-content: center
+  align-items: center
+  text-align: center
+
   p
-    max-width 1000px
+    max-width: 1000px
+
   .start
-    margin-top 2em
+    margin-top: 2em
 </style>

@@ -1,4 +1,5 @@
 <template lang="html">
+  <!-- eslint-disable -->
   <svg width="1855" height="279" viewBox="0 0 1855 279" fill="none" xmlns="http://www.w3.org/2000/svg">
     <g clip-path="url(#clip0)">
       <path d="M3.7998 275.3L270 9.10001" stroke="var(--black)" stroke-width="9"/>

@@ -19,6 +19,8 @@
 </template>
 
 <script>
+import debounce from 'lodash.debounce'
+import slugify from 'slugify'
 import BaseModal from '~/components/BaseModal.vue'
 import ButtonNormal from '~/components/ButtonNormal.vue'
 import RadioButtons from '~/components/RadioButtons.vue'
@@ -26,11 +28,17 @@ import InputSelect from '~/components/InputSelect.vue'
 import Checkbox from '~/components/Checkbox.vue'
 import InputField from '~/components/InputField.vue'
 import Icon from '~/components/Icon.vue'
-import debounce from 'lodash.debounce'
-import slugify from 'slugify'
 
 export default {
-  components: { BaseModal, Icon, ButtonNormal, RadioButtons, InputSelect, Checkbox, InputField },
+  components: {
+    BaseModal,
+    Icon,
+    ButtonNormal,
+    RadioButtons,
+    InputSelect,
+    Checkbox,
+    InputField
+  },
   props: {
     namespace: String,
     note: Object
@@ -48,67 +56,82 @@ export default {
         { key: 'txt', label: 'Texte brut' },
         // { key: 'png', label: 'Image' },
         { key: 'asciidoc', label: 'AsciiDoc' },
-        { key: 'mediawiki', label: 'MediaWiki' },
+        { key: 'mediawiki', label: 'MediaWiki' }
       ],
       advancedFormats: ['mediawiki', 'asciidoc', 'png', 'txt'],
       advanced: false,
       format: 'pdf',
-      _filename: null,
+      mFilename: null,
       pdfRenderStyles: ['Normal', 'LaTeX'],
       pdfRenderStyle: 'Normal'
     }
   },
   computed: {
     modalName() {
-      let modalName = 'download-note'
+      const modalName = 'download-note'
       if (this.namespace) return this.namespace + '-' + modalName
       else return modalName
     },
     filename: {
-      get() { return (this._filename || slugify(this.note.name || '').toLowerCase()) },
-      set(filename) { this._filename = filename }
+      get() {
+        return this.mFilename || slugify(this.note.name || '').toLowerCase()
+      },
+      set(filename) {
+        this.mFilename = filename
+      }
     },
     notAdvancedFormats() {
-      return this.formats.filter(f => !this.advancedFormats.includes(f.key))
+      return this.formats.filter((f) => !this.advancedFormats.includes(f.key))
     },
     extension() {
-      return this.formats.find(f => f.key === this.format).key
+      return this.formats.find((f) => f.key === this.format).key
     }
   },
   methods: {
     dlPDF: debounce(async function() {
-      //FIXME: h1 is written 2 times for pdf
+      // FIXME: h1 is written 2 times for pdf
       //       → remove h1 if first node and h1.text === note.name when converting to pdf
-      let responseType = this.blobFormats.includes(this.format) ? 'blob' : 'text'
-      let { data } = await this.$axios.get(`notes/convert/${this.note.uuid}/${this.format}/`, { responseType })
-      if (responseType == 'text')
-        data = data.content
-      const url = window.URL.createObjectURL(new Blob([data]));
+      const responseType = this.blobFormats.includes(this.format)
+        ? 'blob'
+        : 'text'
+      let {
+        data
+      } = await this.$axios.get(
+        `notes/convert/${this.note.uuid}/${this.format}/`,
+        { responseType }
+      )
+      if (responseType === 'text') data = data.content
+      const url = window.URL.createObjectURL(new Blob([data]))
       const link = document.createElement('a')
       link.href = url
       link.setAttribute('download', `${this.filename}.${this.extension}`)
       document.body.appendChild(link)
       link.click()
-    }),
+    })
   }
 }
 </script>
 
 <style lang="stylus" scoped>
 .formats
-  margin-bottom 1em
+  margin-bottom: 1em
+
 .advanced-formats
   margin-bottom: 2em
-  display flex
-  justify-content center
+  display: flex
+  justify-content: center
+
 .filename
-  margin-top auto
+  margin-top: auto
+
 .styles
-  margin-bottom 1em
+  margin-bottom: 1em
+
 .submit-area
-  display flex
-  justify-content flex-end
-  align-items flex-end
+  display: flex
+  justify-content: flex-end
+  align-items: flex-end
+
 .right
-  height 100%
+  height: 100%
 </style>

@@ -30,16 +30,17 @@
       ButtonNormal(
         variant="primary"
         v-bind="{validation}"
+        type="submit"
       ) Changer
   p.go-back(v-if="!changed"): nuxt-link(to="/") Retour
   p.token Token:&nbsp; #[code {{$route.query.token}}] #[Icon(v-tooltip="`Utilisez-le quand vous souhaitez obtenir de l'aide`") help_outline]
 </template>
 
 <script>
+import { mapGetters, mapActions } from 'vuex'
 import Icon from '~/components/Icon.vue'
 import ButtonNormal from '~/components/ButtonNormal.vue'
 import InputField from '~/components/InputField.vue'
-import { mapGetters, mapState, mapActions } from 'vuex'
 
 export default {
   components: { ButtonNormal, InputField, Icon },
@@ -56,8 +57,12 @@ export default {
   },
   computed: {
     email: {
-      get() { return this.mEmail || this.$route.query.email || null },
-      set(email) { this.mEmail = email }
+      get() {
+        return this.mEmail || this.$route.query.email || null
+      },
+      set(email) {
+        this.mEmail = email
+      }
     },
     validation() {
       return this.validatePasswordReset()({
@@ -69,7 +74,7 @@ export default {
   },
   methods: {
     ...mapGetters('auth', ['validatePasswordReset']),
-    ...mapActions('auth', { _changePassword: 'changePassword'}),
+    ...mapActions('auth', { _changePassword: 'changePassword' }),
     async changePassword() {
       this.changed = await this._changePassword({
         password: this.password,
@@ -82,29 +87,35 @@ export default {
 
 <style lang="stylus" scoped>
 .container
-  display flex
-  flex-direction column
-  justify-content center
-  align-items center
-  text-align center
+  display: flex
+  flex-direction: column
+  justify-content: center
+  align-items: center
+  text-align: center
+
   form
-    margin-top 3em
+    margin-top: 3em
+
   .field
-    width 80vw
-    max-width 400px
+    width: 80vw
+    max-width: 400px
+
   .button
     margin-top: 2em
+
   .go-back
     margin-top: 1em
+
   .token
     margin-top: 5em
     font-size: 1em
-    display flex
-    align-items center
-    color var(--grey-dark)
+    display: flex
+    align-items: center
+    color: var(--grey-dark)
+
     i
-      cursor pointer
-      margin-left 0.25em
+      cursor: pointer
+      margin-left: 0.25em
       font-size: 1.3em
-      color var(--grey)
+      color: var(--grey)
 </style>

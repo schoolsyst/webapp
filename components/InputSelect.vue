@@ -31,18 +31,21 @@ import 'vue-multiselect/dist/vue-multiselect.min.css'
 export default {
   components: { Multiselect },
   props: {
-    value: [String, Number, Object],
+    value: {
+      type: [String, Number, Object],
+      required: true
+    },
     selectedLabel: {
       type: String,
-      default: ""
+      default: ''
     },
     selectLabel: {
       type: String,
-      default: ""
+      default: ''
     },
     deselectLabel: {
       type: String,
-      default: ""
+      default: ''
     },
     trackBy: {
       type: String,
@@ -50,7 +53,7 @@ export default {
     },
     placeholder: {
       type: String,
-      default: ""
+      default: ''
     },
     name: {
       type: String,
@@ -70,9 +73,12 @@ export default {
     },
     options: {
       type: Array,
-      default: []
+      default: () => []
     },
-    customLabel: Function
+    customLabel: {
+      type: Function,
+      required: true
+    }
   },
   computed: {
     dName() {
@@ -94,52 +100,56 @@ export default {
 
 <style lang="stylus" scoped>
 body .multiselect
-	sel-width = 20rem
-	// width: sel-width
-	cursor: pointer
-	// display flex
-	align-items center
-	& /deep/ .multiselect__content-wrapper
-		// width: sel-width
-		border-radius: var(--border-radius)
-		border-top-left-radius: 0
-		border-top-right-radius: 0
-		background-color: var(--white)
-		color: var(--black)
-		overflow-x: hidden
-		border-color: var(--grey-dark)
-		border-width: 2px
-	& /deep/ .multiselect__option
-	& /deep/ .multiselect__single
-		display: flex
-		align-items center
-		.subject
-			margin-right: 0.5em
-	& /deep/ .multiselect__option
-		&--highlight
-		&--selected
-			background var(--blue-offset)
-			color var(--black)
-	& /deep/ .multiselect__tags
-	& /deep/ .multiselect__input
-		height: 100%
-		width: 100%
-		background-color: var(--white)
-		color: var(--black)
-		font-size: 1rem
-		border-color: var(--grey-dark)
-		border-width: 2px
-		display flex
-		align-items center
-	& /deep/ .multiselect__single
-		background-color: var(--white)
-		white-space: nowrap
-		text-overflow: ellipsis
-		overflow: hidden
-	& /deep/ .multiselect__select::before
-		border-top-color: var(--black)
-	& /deep/ .multiselect__input::placeholder
-	& /deep/ .multiselect__placeholder
-		color var(--grey-light)
-		opacity: 1
+  sel-width = 20rem
+  // width: sel-width
+  cursor: pointer
+  // display flex
+  align-items: center
+
+  & /deep/ .multiselect__content-wrapper
+    // width: sel-width
+    border-radius: var(--border-radius)
+    border-top-left-radius: 0
+    border-top-right-radius: 0
+    background-color: var(--white)
+    color: var(--black)
+    overflow-x: hidden
+    border-color: var(--grey-dark)
+    border-width: 2px
+
+  & /deep/ .multiselect__option, & /deep/ .multiselect__single
+    display: flex
+    align-items: center
+
+    .subject
+      margin-right: 0.5em
+
+  & /deep/ .multiselect__option
+    &--highlight, &--selected
+      background: var(--blue-offset)
+      color: var(--black)
+
+  & /deep/ .multiselect__tags, & /deep/ .multiselect__input
+    height: 100%
+    width: 100%
+    background-color: var(--white)
+    color: var(--black)
+    font-size: 1rem
+    border-color: var(--grey-dark)
+    border-width: 2px
+    display: flex
+    align-items: center
+
+  & /deep/ .multiselect__single
+    background-color: var(--white)
+    white-space: nowrap
+    text-overflow: ellipsis
+    overflow: hidden
+
+  & /deep/ .multiselect__select::before
+    border-top-color: var(--black)
+
+  & /deep/ .multiselect__input::placeholder, & /deep/ .multiselect__placeholder
+    color: var(--grey-light)
+    opacity: 1
 </style>

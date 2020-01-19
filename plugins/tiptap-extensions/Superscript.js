@@ -2,7 +2,6 @@ import { Mark } from 'tiptap'
 import { toggleMark, markInputRule, markPasteRule } from 'tiptap-commands'
 
 export default class Superscript extends Mark {
-
   get name() {
     return 'superscript'
   }
@@ -11,16 +10,16 @@ export default class Superscript extends Mark {
     return {
       parseDOM: [
         {
-          tag: 'sup',
-        },
+          tag: 'sup'
+        }
       ],
-      toDOM: () => ['sup', 0],
+      toDOM: () => ['sup', 0]
     }
   }
 
   keys({ type }) {
     return {
-      'Mod-;': toggleMark(type),
+      'Mod-;': toggleMark(type)
     }
   }
 
@@ -29,17 +28,10 @@ export default class Superscript extends Mark {
   }
 
   inputRules({ type }) {
-    return [
-      markInputRule(/(?:^|[^\^])(\^([^\^]+)\^)$/, type),
-    ]
+    return [markInputRule(/(?:^|[^^])(\^([^^]+)\^)$/, type)]
   }
 
   pasteRules({ type }) {
-    return [
-      markPasteRule(/\^([^\^]+)\^/g, type),
-    ]
+    return [markPasteRule(/\^([^^]+)\^/g, type)]
   }
-
 }
-
-

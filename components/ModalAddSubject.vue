@@ -29,11 +29,11 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
 import BaseModal from '~/components/BaseModal.vue'
 import InputField from '~/components/InputField.vue'
 import PickerColor from '~/components/PickerColor.vue'
 import ButtonNormal from '~/components/ButtonNormal.vue'
-import { mapGetters } from 'vuex'
 
 export default {
   components: { InputField, BaseModal, PickerColor, ButtonNormal },
@@ -53,9 +53,10 @@ export default {
   },
   computed: {
     validation() {
-      if (Object.keys(this.value).length === 0) return { validated: true, errors: {} }
+      if (Object.keys(this.value).length === 0)
+        return { validated: true, errors: {} }
       return this.validate()(this.value)
-    },
+    }
   },
   methods: {
     ...mapGetters('subjects', ['validate']),
@@ -68,15 +69,18 @@ export default {
 
 <style lang="stylus" scoped>
 .color-and-name
-  display flex
-  align-items center
+  display: flex
+  align-items: center
+
   .color-picker
-    font-size 1.25em
+    font-size: 1.25em
+
     & /deep/ .opener
-      margin-top -.5em
-      margin-right 1em
+      margin-top: -0.5em
+      margin-right: 1em
+
 .submit
-  margin-top 1.5em
-  display flex
-  justify-content flex-end
+  margin-top: 1.5em
+  display: flex
+  justify-content: flex-end
 </style>

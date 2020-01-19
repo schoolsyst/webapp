@@ -43,6 +43,8 @@
 </template>
 
 <script>
+import { differenceInSeconds, parse } from 'date-fns'
+import { mapGetters } from 'vuex'
 import BaseModal from '~/components/BaseModal.vue'
 import ButtonNormal from '~/components/ButtonNormal.vue'
 import InputField from '~/components/InputField.vue'
@@ -50,12 +52,17 @@ import PickerSubject from '~/components/PickerSubject.vue'
 import BadgeSubject from '~/components/BadgeSubject.vue'
 import RadioButtons from '~/components/RadioButtons.vue'
 import Icon from '~/components/Icon.vue'
-import { parse } from 'date-fns/esm'
-import { differenceInSeconds, format } from 'date-fns'
-import { mapGetters } from 'vuex'
 
 export default {
-  components: { BaseModal, ButtonNormal, InputField, PickerSubject, BadgeSubject, RadioButtons, Icon },
+  components: {
+    BaseModal,
+    ButtonNormal,
+    InputField,
+    PickerSubject,
+    BadgeSubject,
+    RadioButtons,
+    Icon
+  },
   data() {
     return {
       subject: null,
@@ -63,17 +70,17 @@ export default {
       week_types: [
         { key: 'BOTH', label: 'Les deux' },
         { key: 'Q1', label: 'Q1' },
-        { key: 'Q2', label: 'Q2' },
+        { key: 'Q2', label: 'Q2' }
       ],
       day: null,
-      days: [ 
+      days: [
         { key: 1, label: 'Lu' },
         { key: 2, label: 'Ma' },
         { key: 3, label: 'Me' },
         { key: 4, label: 'Je' },
         { key: 5, label: 'Ve' },
         { key: 6, label: 'Sa' },
-        { key: 7, label: 'Di' },
+        { key: 7, label: 'Di' }
       ],
       start: null,
       end: null,
@@ -83,43 +90,43 @@ export default {
   computed: {
     duration: {
       get() {
-        let { start, end } = this.eventObject
+        const { start, end } = this.eventObject
         if (!(start && end)) return null
         const seconds = differenceInSeconds(
           parse(end, 'HH:mm:ss', Date.now()),
           parse(start, 'HH:mm:ss', Date.now())
         )
         let hours = ~~(seconds / 3600)
-        let minutes = ~~(seconds / 60) - (hours * 60)
-        hours = hours.toString().padStart(2, "0")
-        minutes = minutes.toString().padStart(2, "0")
+        let minutes = ~~(seconds / 60) - hours * 60
+        hours = hours.toString().padStart(2, '0')
+        minutes = minutes.toString().padStart(2, '0')
         return `${hours}:${minutes}`
       },
       set(duration) {
-        let { start, end } = this.eventObject
+        const { start, end } = this.eventObject
         if (!start && !end) return null
-        const toSeconds = timeStr => {
-          let [hours, minutes] = timeStr.split(':').map(n => Number(n))
-          let ret = hours * 3600 + minutes * 60
+        const toSeconds = (timeStr) => {
+          const [hours, minutes] = timeStr.split(':').map((n) => Number(n))
+          const ret = hours * 3600 + minutes * 60
           return ret
         }
-        const toSplitted = seconds => {
-          let hours = ~~(seconds / 3600)
-          let minutes = ~~(seconds / 60) - (hours * 60) 
-          let ret = [hours, minutes].map(n => n.toString().padStart(2, '0'))
+        const toSplitted = (seconds) => {
+          const hours = ~~(seconds / 3600)
+          const minutes = ~~(seconds / 60) - hours * 60
+          const ret = [hours, minutes].map((n) => n.toString().padStart(2, '0'))
           return ret
         }
-        let sDuration = toSeconds(duration)
+        const sDuration = toSeconds(duration)
         if (!start && end) {
-          let sEnd = toSeconds(this.end)
-          let [h, m] = toSplitted(sEnd - sDuration)
+          const sEnd = toSeconds(this.end)
+          const [h, m] = toSplitted(sEnd - sDuration)
           this.start = h + ':' + m
         } else if (start) {
-          let sStart = toSeconds(this.start)
-          let [h, m] = toSplitted(sStart + sDuration)
+          const sStart = toSeconds(this.start)
+          const [h, m] = toSplitted(sStart + sDuration)
           this.end = h + ':' + m
         }
-      },
+      }
     },
     eventObject() {
       return {
@@ -139,43 +146,52 @@ export default {
     ...mapGetters('schedule', ['validateEvent']),
     addSeconds(timeStr) {
       return timeStr ? timeStr + ':00' : null
-    },
+    }
   }
 }
 </script>
 
 <style lang="stylus" scoped>
 time-input-width = 7em
+
 .subject, .day, .duration, .weektype, .room
-  margin-bottom 2em
+  margin-bottom: 2em
+
 .subject
   .badge
     width: 100%
+
 .timeframe
-  display flex
-  align-items center
-  justify-content center
+  display: flex
+  align-items: center
+  justify-content: center
+
   // @media (max-width 600px)
-  //   flex-direction column
+  // flex-direction column
   .field
-    width time-input-width
+    width: time-input-width
+
   & > *:not(:last-child)
-    margin-right 1rem
+    margin-right: 1rem
+
   // .field /deep/ input
-  //   max-width time-input-width
-  //   min-width time-input-width
+  // max-width time-input-width
+  // min-width time-input-width
   & /deep/ i
-    font-size 2rem
-    padding-top 1.1rem //FIXME: manual vertical centering...
+    font-size: 2rem
+    padding-top: 1.1rem // FIXME: manual vertical centering...
+
 .duration
-  margin-top 1em
-  display flex
-  justify-content center
+  margin-top: 1em
+  display: flex
+  justify-content: center
+
 .non-field-errors
-  margin-bottom 2em
-  color var(--red)
-  text-align center
+  margin-bottom: 2em
+  color: var(--red)
+  text-align: center
+
 .submit
-  display flex
-  justify-content flex-end
+  display: flex
+  justify-content: flex-end
 </style>

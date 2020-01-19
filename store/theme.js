@@ -1,5 +1,5 @@
 import SunCalc from 'suncalc'
-import { isBefore, isAfter, format } from 'date-fns'
+import { isBefore, isAfter } from 'date-fns'
 
 export const state = () => ({
   current: 'LIGHT'
@@ -8,9 +8,9 @@ export const state = () => ({
 export const getters = {
   current: (state) => state.current,
   resolveAuto: (state, getters, rootState) => {
-    const {latitude, longitude} = rootState.location
+    const { latitude, longitude } = rootState.location
     const now = rootState.now
-    const {sunrise, sunset} = SunCalc.getTimes(now, latitude, longitude)
+    const { sunrise, sunset } = SunCalc.getTimes(now, latitude, longitude)
 
     if (isBefore(now, sunset) && isAfter(now, sunrise)) {
       return 'LIGHT'
@@ -27,7 +27,7 @@ export const mutations = {
 }
 
 export const actions = {
-  async set({commit, dispatch, rootState, rootGetters, getters}) {
+  async set({ commit, dispatch, rootState, rootGetters, getters }) {
     // Load settings
     await dispatch('settings/load', null, { root: true })
     // Get theme setting

@@ -9,15 +9,15 @@
 </template>
 
 <script>
-import { toDate } from "date-fns"
+import { toDate } from 'date-fns'
 import OverlayLoadingLogo from '~/components/OverlayLoadingLogo.vue'
 export default {
   components: { OverlayLoadingLogo },
   head() {
     return {
       bodyAttrs: {
-        class: "layoutBare",
-      },
+        class: 'layoutBare'
+      }
     }
   },
   async mounted() {
@@ -26,7 +26,7 @@ export default {
     setInterval(() => {
       this.$store.commit('UPDATE_TIME', toDate(Date.now()))
     }, 1 * 1000)
-  },
+  }
 }
 </script>
 

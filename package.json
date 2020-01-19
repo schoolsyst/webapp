@@ -2,23 +2,31 @@
   "name": "schoolsyst-frontend",
   "version": "1.0.0",
   "license": "MIT",
-  "engines": {
-    "node": "13.4.0"
-  },
-  "description": "schoolsyst&#39;s frontend: a single-page web application built to be used offline and online.",
+  "description": "schoolsyst&#39;s frontend, powered by Nuxt.js",
   "author": "Ewen Le Bihan",
   "private": true,
   "scripts": {
-    "dev": "nuxt --port 3000",
+    "dev": "nuxt",
     "build": "nuxt build",
     "start": "nuxt start",
-    "generate": "nuxt generate"
+    "generate": "nuxt generate",
+    "lint": "eslint --ext .js,.vue --ignore-path .gitignore .",
+    "test": "ava",
+    "test:unit": "cross-env TEST=unit ava --config unit.config.js",
+    "test:e2e": "cross-env TEST=e2e ava --config e2e.config.js"
+  },
+  "lint-staged": {
+    "*.{js,vue}": "eslint"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
   },
   "dependencies": {
     "@nuxtjs/auth": "^4.8.1",
     "@nuxtjs/axios": "^5.3.6",
-    "@nuxtjs/markdownit": "^1.2.6",
-    "@nuxtjs/moment": "^1.2.0",
+    "@nuxtjs/dotenv": "^1.4.0",
     "@nuxtjs/pwa": "^3.0.0-0",
     "@nuxtjs/toast": "^3.2.1",
     "chart.js": "^2.9.3",
@@ -32,20 +40,7 @@
     "lodash.flatten": "^4.4.0",
     "lodash.groupby": "^4.6.0",
     "lodash.uniqby": "^4.7.0",
-    "markdown-it-abbr": "^1.0.4",
-    "markdown-it-admonition": "^1.0.4",
-    "markdown-it-apexcharts": "^0.2.5",
-    "markdown-it-chat-formatter": "^0.1.1",
-    "markdown-it-checkbox": "^1.1.0",
-    "markdown-it-deflist": "^2.0.3",
-    "markdown-it-footnote": "^3.0.2",
-    "markdown-it-math": "^4.1.1",
-    "markdown-it-plot": "^1.0.3",
-    "markdown-it-slack": "^1.2.0",
-    "markdown-it-sup": "^1.0.0",
     "markvis": "^0.0.12",
-    "moment": "^2.24.0",
-    "moment-range": "^4.0.2",
     "node-sass": "^4.12.0",
     "nuxt": "^2.0.0",
     "nuxt-vue-select": "^0.1.4",
@@ -66,8 +61,27 @@
     "vue-chartkick": "^0.6.0",
     "vue-context": "^5.0.0",
     "vue-context-menu": "^2.0.6",
-    "vue-js-modal": "^1.3.31",
     "vue-multiselect": "^2.1.6"
   },
-  "devDependencies": {}
+  "devDependencies": {
+    "@nuxtjs/eslint-config": "^1.0.1",
+    "@nuxtjs/eslint-module": "^1.0.0",
+    "@nuxtjs/stylelint-module": "^3.1.0",
+    "@vue/test-utils": "^1.0.0-beta.27",
+    "ava": "^2.2.0",
+    "babel-eslint": "^10.0.1",
+    "babel-plugin-module-resolver": "^3.2.0",
+    "browser-env": "^3.2.5",
+    "eslint": "^6.1.0",
+    "eslint-config-prettier": "^4.1.0",
+    "eslint-plugin-nuxt": ">=0.4.2",
+    "eslint-plugin-prettier": "^3.0.1",
+    "husky": "^2.6.0",
+    "lint-staged": "^8.2.1",
+    "prettier": "^1.16.4",
+    "require-extension-hooks": "^0.3.3",
+    "require-extension-hooks-babel": "^1.0.0",
+    "require-extension-hooks-vue": "^2.0.0",
+    "stylelint": "^10.1.0"
+  }
 }

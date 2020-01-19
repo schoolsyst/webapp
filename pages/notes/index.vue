@@ -81,6 +81,10 @@
 </template>
 
 <script>
+import VueContext from 'vue-context'
+import 'vue-context/src/sass/vue-context.scss'
+import { mapGetters, mapActions } from 'vuex'
+import Fuse from 'fuse.js'
 import ScreenEmpty from '~/components/ScreenEmpty.vue'
 import HeadingSub from '~/components/HeadingSub.vue'
 import BaseModal from '~/components/BaseModal.vue'
@@ -92,19 +96,28 @@ import InputSelectSubject from '~/components/InputSelectSubject.vue'
 import CardNote from '~/components/CardNote.vue'
 import PickerSubject from '~/components/PickerSubject.vue'
 import Icon from '~/components/Icon.vue'
-import VueContext from 'vue-context'
-import 'vue-context/src/sass/vue-context.scss'
-import { mapGetters, mapActions, mapState } from 'vuex';
-import Fuse from 'fuse.js'
 export default {
-  components: { HeadingSub, CardNote, InputField, Icon, BaseModal, VueContext, ButtonNormal, ScreenEmpty, PickerSubject, VueContext, InputSelect, BadgeSubject, InputSelectSubject },
+  components: {
+    HeadingSub,
+    CardNote,
+    InputField,
+    Icon,
+    BaseModal,
+    VueContext,
+    ButtonNormal,
+    ScreenEmpty,
+    PickerSubject,
+    InputSelect,
+    BadgeSubject,
+    InputSelectSubject
+  },
   head: {
     title: 'Cours'
   },
   data() {
     return {
       // User-editable data
-      searchQuery: "",
+      searchQuery: '',
       sortBy: 'opened',
       filterSubject: null,
       newNote: {
@@ -124,9 +137,9 @@ export default {
       },
       // UI data
       sortOptions: [
-        { value: 'opened',    name: 'Dernière ouverture' },
-        { value: 'added',     name: "Création" },
-        { value: 'modified',  name: "Dernière modification" },
+        { value: 'opened', name: 'Dernière ouverture' },
+        { value: 'added', name: 'Création' },
+        { value: 'modified', name: 'Dernière modification' }
       ],
       openedContextMenuNote: null,
       // API Data
@@ -142,29 +155,48 @@ export default {
       subjects: 'subjects/all'
     }),
     noResultsCtaText() {
-      if (!this.filterSubject) return "Nouvelle note"
+      if (!this.filterSubject) return 'Nouvelle note'
       const name = this.filterSubject.name
       const vowels = 'aeuioy'.split('')
       let significantLetter = name.split('')[0]
       if (significantLetter === 'h') significantLetter = name.split('')[1]
       const startsWithVowel = vowels.includes(significantLetter.toLowerCase())
       return (
-        "Nouvelle note " 
-        + (startsWithVowel ? "d'" : "de ") 
-        + this.lowercaseSubject()(this.filterSubject.uuid)
+        'Nouvelle note ' +
+        (startsWithVowel ? "d'" : 'de ') +
+        this.lowercaseSubject()(this.filterSubject.uuid)
       )
-    },
+    }
+  },
+  mounted() {
+    this.$withLoadingScreen(
+      async () => {
+        await this.$store.dispatch('schedule/load')
+        await this.$store.dispatch('notes/load', true)
+      },
+      { title: 'Triage des classeurs' }
+    )
+    // Init fuse
+    this.fuse = new Fuse(this.all, {
+      keys: ['name', 'subject.name'],
+      id: 'uuid',
+      shouldSort: false,
+      threshold: 0.2,
+      maxPatternLength: 64
+    })
+    // Default value for separateGroupSubject
+    this.filterSubject = this.currentCourse ? this.currentCourse.subject : null
   },
   methods: {
     ...mapGetters('notes', ['orderBy']),
-    ...mapActions('notes', {del: 'delete'}),
+    ...mapActions('notes', { del: 'delete' }),
     ...mapActions('notes', ['post']),
     ...mapGetters({
       lowercaseSubject: 'subjects/lowercaseName'
     }),
     searched(notes) {
       if (this.searchQuery) {
-        let uuids = this.fuse.search(this.searchQuery)
+        const uuids = this.fuse.search(this.searchQuery)
         notes = notes.filter((o) => uuids.includes(o.uuid))
       }
       if (this.filterSubject) {
@@ -179,157 +211,170 @@ export default {
        */
       if (this.filterSubject !== null && !forceSelectSubject) {
         this.newNote.subject = this.filterSubject
-      /* Else, if the newNote's subject isn't set, ask the user 
-       * and stop the function (since we can't create a note w/o a subject)
-       */
+        /* Else, if the newNote's subject isn't set, ask the user
+         * and stop the function (since we can't create a note w/o a subject)
+         */
       } else if (this.newNote.subject === null) {
         this.$modal.show('subject-picker')
         return
       }
-      const createdNote = await this.$store.dispatch('notes/post', { note: this.newNote })
+      const createdNote = await this.$store.dispatch('notes/post', {
+        note: this.newNote
+      })
       this.$router.push(`/notes/${createdNote.uuid}`)
     },
     async changeSubject() {
+      // eslint-disable-next-line
       const { uuid, suject } = this.editingNote
-      await this.$store.dispatch('notes/patch', { uuid, modifications: { subject }})
-      this.$toast.success("Matière modifiée", { icon: 'check' })
+      await this.$store.dispatch('notes/patch', {
+        uuid,
+        // eslint-disable-next-line
+        modifications: { subject }
+      })
+      this.$toast.success('Matière modifiée', { icon: 'check' })
     },
     async rename() {
       const { uuid, mName } = this.editingNote
-      await this.$store.dispatch('notes/patch', { uuid, modifications: { name: mName }})
+      await this.$store.dispatch('notes/patch', {
+        uuid,
+        modifications: { name: mName }
+      })
 
-      this.$toast.success("Note renommée", { icon: 'check' })
+      this.$toast.success('Note renommée', { icon: 'check' })
     },
-    openRenameModal({note}) {
-      this.editingNote = {...this.editingNote, ...note, mName: null }
+    openRenameModal({ note }) {
+      this.editingNote = { ...this.editingNote, ...note, mName: null }
       this.$modal.show('rename-note')
     }
-  },
-  async mounted() {
-    this.$withLoadingScreen(async () => {
-      await this.$store.dispatch('schedule/load')
-      await this.$store.dispatch('notes/load', true)
-    }, { title: "Triage des classeurs" })
-    // Init fuse
-    this.fuse = new Fuse(this.all, {
-      keys: ["name", "subject.name"],
-      id: "uuid",
-      shouldSort: false,
-      threshold: 0.2,
-      maxPatternLength: 64,
-    })
-    // Default value for separateGroupSubject
-    this.filterSubject = this.currentCourse ? this.currentCourse.subject : null
   }
 }
 </script>
 
 <style lang="stylus" scoped>
-//-----------------------
-//       TOOLBAR
-//-----------------------
+// -----------------------
+// TOOLBAR
+// -----------------------
 .toolbar
-  margin-bottom 2rem
-  margin-left 2rem
-  display flex
-  align-items center
+  margin-bottom: 2rem
+  margin-left: 2rem
+  display: flex
+  align-items: center
+
   i
     margin-right: 0.5rem
-    font-size 1.75rem
+    font-size: 1.75rem
+
     &:not(:first-child)
-      margin-left 1.5rem
+      margin-left: 1.5rem
+
     &.search-icon
-      transform rotate(90deg)
+      transform: rotate(90deg)
+
   /deep/ input, .multiselect
-    height 2.75rem
+    height: 2.75rem
+
   .multiselect
-    width 15rem
+    width: 15rem
+
   /deep/ input
-    width 30rem
-  
+    width: 30rem
+
 // .search
-//   display flex
-//   align-items center
-//   justify-content center
-//   margin-bottom 3rem
-//   width 100%
-//   i
-//     font-size 2.5em
-//     margin-right 0.5rem
-//     transform rotate(90deg)
-//   & /deep/ input
-//     width 500px
-//     @media (max-width 600px)
-//       width 80vw
-//   @media (max-width 375px)
-//     i
-//       display none
+// display flex
+// align-items center
+// justify-content center
+// margin-bottom 3rem
+// width 100%
+// i
+// font-size 2.5em
+// margin-right 0.5rem
+// transform rotate(90deg)
+// & /deep/ input
+// width 500px
+// @media (max-width 600px)
+// width 80vw
+// @media (max-width 375px)
+// i
+// display none
 
 // .v-context li:hover
-//     &, a
-//       background var(--blue-offset)
-//     a, i
-//       color var(--blue)
-//-----------------------
-//       CARD LIST
-//-----------------------
+// &, a
+// background var(--blue-offset)
+// a, i
+// color var(--blue)
+// -----------------------
+// CARD LIST
+// -----------------------
 .HeadingSub
-  margin-bottom 1rem
-  margin-top 3rem
+  margin-bottom: 1rem
+  margin-top: 3rem
+
 .all, .current-subject
-  flex-direction column
-ul.notes
-.all, .current-subject
-  margin-left 2rem
-  display flex
-  width 85vw
-  @media (max-width 600px)
-    width 100vw
-    ul.notes li 
+  flex-direction: column
+
+ul.notes, .all, .current-subject
+  margin-left: 2rem
+  display: flex
+  width: 85vw
+
+  @media (max-width: 600px)
+    width: 100vw
+
+    ul.notes li
       margin: 0
+
 ul.notes
-  list-style none
-  flex-wrap wrap
+  list-style: none
+  flex-wrap: wrap
+
   li
-    margin-right 1.5rem
-    margin-bottom 1.5rem
-//-----------------------
-//         CARD
-//-----------------------
-.card
-.card-new
+    margin-right: 1.5rem
+    margin-bottom: 1.5rem
+
+// -----------------------
+// CARD
+// -----------------------
+.card, .card-new
   height: 310px
   width: 225px
-  display flex
-  flex-direction column
-  transition all 0.25s ease
+  display: flex
+  flex-direction: column
+  transition: all 0.25s ease
+
 .card-new
-  cursor pointer
-  background var(--blue-offset)
-  color var(--blue)
+  cursor: pointer
+  background: var(--blue-offset)
+  color: var(--blue)
+
   i
-    font-size 5rem
-  justify-content center
-  align-items center
-  border-radius var(--border-radius)
+    font-size: 5rem
+
+  justify-content: center
+  align-items: center
+  border-radius: var(--border-radius)
+
   &:hover
-    color var(--blue-dark)
-    background var(--blue-offset-dark)
-  @media (max-width 600px)
-    width 50vw
+    color: var(--blue-dark)
+    background: var(--blue-offset-dark)
+
+  @media (max-width: 600px)
+    width: 50vw
     // border solid 1px var(--grey)
-    border-radius 0
+    border-radius: 0
+
   @media (max-width: 350px)
-    width 100vw
-//-----------------------
+    width: 100vw
+
+// -----------------------
 // SCREEN EMPTY: NO SEARCH RESULTS
-//-----------------------
+// -----------------------
 .no-search-results /deep/
-  min-height calc(100vh - 200px) !important
-//-----------------------
-//      RENAME MODAL
-//-----------------------
+  min-height: calc(100vh - 200px) !important
+
+// -----------------------
+// RENAME MODAL
+// -----------------------
 #modal_rename-note /deep/ .modal-wrapper .content
-  display flex
-  align-items center
+  display: flex
+  align-items: center
 </style>

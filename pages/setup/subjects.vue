@@ -13,15 +13,21 @@
 </template>
 
 <script>
+import { mapActions, mapGetters } from 'vuex'
 import ModalAddSubject from '~/components/ModalAddSubject.vue'
 import TheBottomBar from '~/components/TheBottomBar.vue'
 import CardSubject from '~/components/CardSubject.vue'
 import ButtonNormal from '~/components/ButtonNormal.vue'
 import Icon from '~/components/Icon.vue'
-import { mapActions, mapGetters } from 'vuex'
 
 export default {
-  components: { ModalAddSubject, CardSubject, ButtonNormal, Icon, TheBottomBar },
+  components: {
+    ModalAddSubject,
+    CardSubject,
+    ButtonNormal,
+    Icon,
+    TheBottomBar
+  },
   layout: 'bare',
   data() {
     return {
@@ -35,41 +41,47 @@ export default {
   computed: {
     ...mapGetters('subjects', ['all'])
   },
-  methods: {
-    ...mapActions('subjects', ['post', 'patch'])
-  },
   mounted() {
     this.$withLoadingScreen(async () => {
       await this.$store.dispatch('subjects/load')
     })
+  },
+  methods: {
+    ...mapActions('subjects', ['post', 'patch'])
   }
 }
 </script>
 
 <style lang="stylus" scoped>
 .container
-  display flex
-  justify-content center
-  align-items center
-  flex-direction column
+  display: flex
+  justify-content: center
+  align-items: center
+  flex-direction: column
   padding-bottom: 100px
+
 p.help
-  text-align center
+  text-align: center
+
 h1
   margin-top: 25vh
+
 .add /deep/ i
-  font-size 5em
-  padding 1em
+  font-size: 5em
+  padding: 1em
+
 ul.subjects
-  display flex
-  flex-direction column
-  justify-content center
-  align-items center
-  width 1000px
-  @media (max-width 1000px)
-    max-width 100vw
+  display: flex
+  flex-direction: column
+  justify-content: center
+  align-items: center
+  width: 1000px
+
+  @media (max-width: 1000px)
+    max-width: 100vw
+
   li
-    margin 0 auto
-    width 450px //ref: <CardSubject> max-with
-    margin-bottom 1.5em
+    margin: 0 auto
+    width: 450px // ref: <CardSubject> max-with
+    margin-bottom: 1.5em
 </style>

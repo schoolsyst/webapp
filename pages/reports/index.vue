@@ -6,8 +6,8 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
 import ButtonNormal from '~/components/ButtonNormal.vue'
-import { mapState, mapGetters } from 'vuex'
 
 export default {
   components: { ButtonNormal },

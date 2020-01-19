@@ -9,42 +9,42 @@ nuxt-link.NavbarButton(
 
 <script>
 export default {
-  name: "NavbarButton",
+  name: 'NavbarButton',
   props: {
     to: String,
     icon: String,
-    title: String,
+    title: String
   },
 
   methods: {
     isCurrentPage() {
       let currentPage
 
-      if (this.to === "/") {
-        currentPage = this.to == this.$route.path
+      if (this.to === '/') {
+        currentPage = this.to === this.$route.path
       } else {
         currentPage = this.$route.path.startsWith(this.to)
       }
 
       return currentPage
-    },
+    }
   },
 
   updated() {
-    if (this.$route.path.startsWith("/bag")) {
-      document.querySelector(".NavbarButton.bad-icon i").innerHTML = "work"
+    if (this.$route.path.startsWith('/bag')) {
+      document.querySelector('.NavbarButton.bad-icon i').innerHTML = 'work'
     } else {
-      document.querySelector(".NavbarButton.bad-icon i").innerHTML =
-        "work_outline"
+      document.querySelector('.NavbarButton.bad-icon i').innerHTML =
+        'work_outline'
     }
-  },
+  }
 }
 </script>
 
 <style lang="sass" scoped>
 @import '~/assets/defaults'
 
-.NavbarButton 
+.NavbarButton
   &:focus
     outline: none
   background-color: transparent
@@ -57,7 +57,7 @@ export default {
   justify-content: center
   align-items: center
 
-.NavbarButton i 
+.NavbarButton i
     font-size: calc((100vw - 30px) / 6 / 1.5 - 10px)
     // The automatic font-size becomes ridiculously high for vw >= 500
     @media (min-width: 450px)
@@ -65,7 +65,7 @@ export default {
     user-select: none
 
 @media (min-width: $bk-sidebar)
-    .NavbarButton.current-page 
+    .NavbarButton.current-page
         background-color: var(--blue-offset)
 
 .NavbarButton:hover i,
@@ -73,5 +73,4 @@ export default {
 .NavbarButton:focus i
     color: var(--blue)
     font-family: 'Material Icons'
-
 </style>

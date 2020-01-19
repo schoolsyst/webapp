@@ -33,13 +33,13 @@
 </template>
 
 <script>
+import { mapActions, mapGetters } from 'vuex'
 import ButtonNormal from '~/components/ButtonNormal.vue'
 import InputField from '~/components/InputField.vue'
 import ScreenEmpty from '~/components/ScreenEmpty.vue'
 import RadioButtons from '~/components/RadioButtons.vue'
-import { mapActions, mapGetters } from 'vuex';
 export default {
-  components: {InputField, RadioButtons, ButtonNormal, ScreenEmpty},
+  components: { InputField, RadioButtons, ButtonNormal, ScreenEmpty },
   data() {
     return {
       type: 'BUG',
@@ -48,29 +48,54 @@ export default {
         { key: 'FEATURE', label: 'Proposition de fonctionnalité' }
       ],
       typesNouns: {
-        'BUG': 'bug',
-        'FEATURE': 'fonctionnalité',
+        BUG: 'bug',
+        FEATURE: 'fonctionnalité'
       },
-      device: "OTHER",
+      device: 'OTHER',
       devices: [
         { key: 'DESKTOP', label: 'Ordinateur fixe' },
         { key: 'LAPTOP', label: 'Ordinateur portable' },
         { key: 'PHONE', label: 'Smartphone' },
         { key: 'SMARTWATCH', label: 'Montre connectée' },
-        { key: 'OTHER', label: 'Autre' },
+        { key: 'OTHER', label: 'Autre' }
       ],
       happened: Date.now(),
       url: window.location.href,
       title: '',
       contentSections: {
         BUG: [
-          { label: "Que s'est-il passé ?", placeholder: "Décrivez le comportement du bug.\nN'hésitez pas à rajouter des captures d'écrans et autres ressources que vous pensez utiles.", content: '' },
-          { label: "Comment avez-vous rencontré ce bug ?", placeholder: "Décrivez le contexte et les actions effectuées pour le rencontrer.\nCeci nous permettra de le reproduire", content: "" },
-          { label: "À quoi vous attendiez-vous ?", placeholder: "Décrivez le comportement correct qui aurait dû avoir lieu si le bug n'existait pas", content: "" },
+          {
+            label: "Que s'est-il passé ?",
+            placeholder:
+              "Décrivez le comportement du bug.\nN'hésitez pas à rajouter des captures d'écrans et autres ressources que vous pensez utiles.",
+            content: ''
+          },
+          {
+            label: 'Comment avez-vous rencontré ce bug ?',
+            placeholder:
+              'Décrivez le contexte et les actions effectuées pour le rencontrer.\nCeci nous permettra de le reproduire',
+            content: ''
+          },
+          {
+            label: 'À quoi vous attendiez-vous ?',
+            placeholder:
+              "Décrivez le comportement correct qui aurait dû avoir lieu si le bug n'existait pas",
+            content: ''
+          }
         ],
         FEATURE: [
-          { label: "À quel problème répond votre solution ?", placeholder: "Si votre solution ne répond pas à un problème en particulier, expliquez pourquoi elle est utile", content: '' },
-          { label: "Décrivez votre solution", placeholder: "N'hésitez pas à rajouter des captures d'écrans et autres ressources que vous pensez utiles.", content: '' },
+          {
+            label: 'À quel problème répond votre solution ?',
+            placeholder:
+              'Si votre solution ne répond pas à un problème en particulier, expliquez pourquoi elle est utile',
+            content: ''
+          },
+          {
+            label: 'Décrivez votre solution',
+            placeholder:
+              "N'hésitez pas à rajouter des captures d'écrans et autres ressources que vous pensez utiles.",
+            content: ''
+          }
         ]
       }
     }
@@ -82,7 +107,9 @@ export default {
         happened: this.happened,
         title: this.title,
         device: this.device,
-        content: this.contentSections[this.type].map(o => o.content ? `<h2>${o.label}</h2>${o.content}` : '').join(''),
+        content: this.contentSections[this.type]
+          .map((o) => (o.content ? `<h2>${o.label}</h2>${o.content}` : ''))
+          .join(''),
         url: window.location.href
       }
     },
@@ -90,41 +117,46 @@ export default {
       return this.validate()(this.report)
     }
   },
+  mounted() {
+    if (this.device === 'OTHER') this.device = this.detectDeviceType()
+  },
   methods: {
     ...mapActions('reports', ['post']),
     ...mapGetters('reports', ['validate']),
     detectDeviceType() {
-      let { height, width } = window.screen
-      if (height > width)   return 'PHONE'
+      const { height, width } = window.screen
+      if (height > width) return 'PHONE'
       if (height === width) return 'SMARTWATCH'
-      if (width < 1300)     return 'LAPTOP'
-      if (width > 1300)     return 'DESKTOP'
-      else                  return 'OTHER'
+      if (width < 1300) return 'LAPTOP'
+      if (width > 1300) return 'DESKTOP'
+      else return 'OTHER'
     },
     goToGithub() {
-      window.location.href = 'https://github.com/schoolsyst/frontend/issues/new/choose'
+      window.location.href =
+        'https://github.com/schoolsyst/frontend/issues/new/choose'
     }
-  },
-  mounted() {
-    if (this.device === 'OTHER') this.device = this.detectDeviceType()
   }
 }
 </script>
 
 <style lang="stylus" scoped>
 .container
-  max-width 700px
-  margin 0 auto
-  padding-bottom: 2em //TODO: #beta-1.0.0 put this padding on every container (will be a footer soon)
+  max-width: 700px
+  margin: 0 auto
+  padding-bottom: 2em // TODO: #beta-1.0.0 put this padding on every container (will be a footer soon)
+
 .containter > h1
-  text-align center
-  margin-bottom 2em
+  text-align: center
+  margin-bottom: 2em
+
 /deep/ textarea
-  min-height 7.5rem
+  min-height: 7.5rem
+
 form
   .button
-    display flex
-    justify-content center
+    display: flex
+    justify-content: center
+
   .RadioButtons
-    margin-bottom 1.5em
+    margin-bottom: 1.5em
 </style>

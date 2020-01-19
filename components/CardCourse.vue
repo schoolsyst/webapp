@@ -29,11 +29,10 @@
 </template>
 
 <script>
+import { mapState, mapGetters } from 'vuex'
 import BadgeSubject from '~/components/BadgeSubject.vue'
 import HeadingSub from '~/components/HeadingSub.vue'
 import Icon from '~/components/Icon.vue'
-import { mapState, mapGetters } from 'vuex'
-import { format } from 'date-fns'
 export default {
   components: { Icon, BadgeSubject, HeadingSub },
   props: {
@@ -57,7 +56,7 @@ export default {
     end: Date
   },
   computed: {
-    ...mapState('subject',  ['placeholder']),
+    ...mapState('subject', ['placeholder']),
     ...mapGetters('homework', ['currentWeek']),
     backgroundColor() {
       if (this.empty) {
@@ -75,81 +74,71 @@ export default {
 
 <style lang="stylus" scoped>
 .card-wrapper
-  cursor pointer
+  cursor: pointer
+
 .card
-  padding 0 1.5em
+  padding: 0 1.5em
   z-index: 10
   height: 65px
   width: 500px
-  border-radius var(--border-radius)
-  display flex
-  align-items center
-  transition all .25s ease
-  border 2px solid var(--grey-light)
-  border-color transparent
+  border-radius: var(--border-radius)
+  display: flex
+  align-items: center
+  transition: all 0.25s ease
+  border: 2px solid var(--grey-light)
+  border-color: transparent
+
   &.current
-    justify-content center
+    justify-content: center
+
   &.empty
-    color var(--black)
-    background var(--white)
-    border-color var(--grey-light)
+    color: var(--black)
+    background: var(--white)
+    border-color: var(--grey-light)
+
 .infos
-  display flex
-  align-items center
-  width 100%
+  display: flex
+  align-items: center
+  width: 100%
+
   .subject
-    font-size 1.2rem
-    display flex
-    align-items center
+    font-size: 1.2rem
+    display: flex
+    align-items: center
+
     .subject-name
       margin-left: -1.2em
-      transition margin 0.25s ease
+      transition: margin 0.25s ease
+
     .subject-color
-      width 0px
-      height 0px
+      width: 0px
+      height: 0px
+
   .room-and-time
-    font-size 1rem
-    margin-left auto
-.room
+    font-size: 1rem
+    margin-left: auto
+
+.room, .room-and-time
+  margin-left: auto
+  font-family: var(--fonts-monospace)
+
 .room-and-time
-  margin-left auto
-  font-family var(--fonts-monospace)
-.room-and-time
-  display flex
-  align-items center
-  text-align right
-  flex-direction column
+  display: flex
+  align-items: center
+  text-align: right
+  flex-direction: column
+
 .time
-  display flex
-  align-items center
-@media (max-width 888px)
+  display: flex
+  align-items: center
+
+@media (max-width: 888px)
   .card-wrapper
     width: 100%
-    display flex
-    justify-content flex-start
+    display: flex
+    justify-content: flex-start
+
   .card
     width: 100%
-    max-width 500px
-
-// .card-wrapper.expanded
-//   .card
-//     background var(--white) !important
-//     border 2px solid var(--grey-light)
-//   .infos
-//     height: 65px
-//     color var(--black) !important
-//     display flex
-//     align-items center
-//     width 100%
-//     .subject
-//       display flex
-//       align-items center
-//       .subject-color
-//         height 1.2em
-//         width: 1.2em
-//       .subject-name
-//         margin-left 0.3em
-//   .homework
-//     display flex
-//     flex-direction column
+    max-width: 500px
 </style>

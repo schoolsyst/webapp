@@ -2,7 +2,6 @@ import { Mark } from 'tiptap'
 import { toggleMark, markInputRule, markPasteRule } from 'tiptap-commands'
 
 export default class Math extends Mark {
-
   get name() {
     return 'math'
   }
@@ -12,19 +11,19 @@ export default class Math extends Mark {
       excludes: '_',
       parseDOM: [
         {
-          tag: 'math[display=inline]',
+          tag: 'math[display=inline]'
         },
         {
           tag: 'span.inline-math'
         }
       ],
-      toDOM: () => ['span', {class: 'inline-math asciimath'}, 0],
+      toDOM: () => ['span', { class: 'inline-math asciimath' }, 0]
     }
   }
 
   keys({ type }) {
     return {
-      'Mod-e': toggleMark(type),
+      'Mod-e': toggleMark(type)
     }
   }
 
@@ -33,17 +32,10 @@ export default class Math extends Mark {
   }
 
   inputRules({ type }) {
-    return [
-      markInputRule(/(?:^|[^\[\]])(\[\[([^\[\]]+)\]\])$/, type),
-    ]
+    return [markInputRule(/(?:^|[^[\]])(\[\[([^[\]]+)\]\])$/, type)]
   }
 
   pasteRules({ type }) {
-    return [
-      markPasteRule(/\[\[([^\[\]]+)\]\]/g, type),
-    ]
+    return [markPasteRule(/\[\[([^[\]]+)\]\]/g, type)]
   }
-
 }
-
-

@@ -14,8 +14,8 @@
 </template>
 
 <script>
-import Icon from '~/components/Icon.vue'
 import { mapGetters } from 'vuex'
+import Icon from '~/components/Icon.vue'
 
 export default {
   components: { Icon },
@@ -36,33 +36,40 @@ export default {
 
 <style lang="stylus" scoped>
 nav
-  position fixed
+  position: fixed
+
 .item
-  display flex
-  flex-direction column
-  justify-content center
-  width 4em
-  overflow hidden
+  display: flex
+  flex-direction: column
+  justify-content: center
+  width: 4em
+  overflow: hidden
   margin-bottom: 2.5em
-  padding .25em 0
+  padding: 0.25em 0
+
 .link
-  text-align center
-  color var(--black)
+  text-align: center
+  color: var(--black)
+
   &:hover, &.current
-    color var(--blue)
+    color: var(--blue)
+
   &:hover .name
-      opacity: 1
-  position relative
+    opacity: 1
+
+  position: relative
+
 .link .notifications-badge
-  position absolute
-  display block
-  background var(--red)
-  height 0.80em
-  width 0.80em
-  border-radius 50%
+  position: absolute
+  display: block
+  background: var(--red)
+  height: 0.8em
+  width: 0.8em
+  border-radius: 50%
   top: 0
   right: 25%
+
 .icon
-  font-size 1.85em
-  display block
+  font-size: 1.85em
+  display: block
 </style>

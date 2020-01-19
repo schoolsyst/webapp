@@ -14,10 +14,14 @@
 </template>
 
 <script>
-import { mapGetters, mapState } from 'vuex';
+import { mapGetters, mapState } from 'vuex'
 import groupBy from 'lodash.groupby'
-import { startOfDay, getUnixTime, startOfWeek, endOfDay, endOfWeek, differenceInMinutes } from 'date-fns';
-import { duration } from 'moment';
+import {
+  startOfDay,
+  startOfWeek,
+  endOfWeek,
+  differenceInMinutes
+} from 'date-fns'
 export default {
   props: {
     showDeleted: {
@@ -35,7 +39,7 @@ export default {
     ...mapState(['now']),
     ...mapGetters('schedule', ['coursesIn']),
     days() {
-      let courses = this.coursesIn(
+      const courses = this.coursesIn(
         startOfWeek(this.now),
         endOfWeek(this.now),
         this.showDeleted
@@ -44,65 +48,69 @@ export default {
     },
     durationLongestDay() {
       // Get total durations for each day
-      const durations = 
-          // Get the array of events for each day
-          Object.values(this.days)
+      const durations =
+        // Get the array of events for each day
+        Object.values(this.days)
           // Get an array of total duration in minutes for each day
-          .map((events) => 
-              // Map each event to its duration in minutes
-              events.map((event) => differenceInMinutes(event.end, event.start)) 
-                    // Sum the durations of each event of each day
-                    .reduce((acc, cur) => acc + cur)
+          .map((events) =>
+            // Map each event to its duration in minutes
+            events
+              .map((event) => differenceInMinutes(event.end, event.start))
+              // Sum the durations of each event of each day
+              .reduce((acc, cur) => acc + cur)
           )
       // Get the longest duration sum
       return Math.max(...durations)
     }
   },
+  async mounted() {
+    await this.$store.dispatch('schedule/load')
+  },
   methods: {
     ...mapGetters('schedule', ['startOfDay']),
     ...mapGetters(['textColor']),
     heightFromDates(left, right) {
-      return Math.abs(differenceInMinutes(left, right))
-          * this.eventHeight 
-          + 'rem'
+      return (
+        Math.abs(differenceInMinutes(left, right)) * this.eventHeight + 'rem'
+      )
     },
     styles(event) {
-      let firstCourseStart = this.startOfDay()(startOfDay(event.start))
-      let thisCourseStart = event.start
+      const firstCourseStart = this.startOfDay()(startOfDay(event.start))
+      const thisCourseStart = event.start
       return {
         backgroundColor: event.subject.color,
         color: this.textColor()(event.subject.color),
         top: this.heightFromDates(firstCourseStart, thisCourseStart),
         left: (event.day - 1) * this.eventWidth + 'rem',
         width: this.eventWidth + 'rem',
-        height: this.heightFromDates(event.start, event.end),
+        height: this.heightFromDates(event.start, event.end)
       }
     }
-  },
-  async mounted() {
-    await this.$store.dispatch('schedule/load')
   }
 }
 </script>
 
 <style lang="stylus" scoped>
 .schedule
-  position relative
-  height 100vh //TODO: use computed Schedule height
+  position: relative
+  height: 100vh // TODO: use computed Schedule height
+
 .event
-  position absolute
-  display flex
-  justify-content center
-  align-items center
+  position: absolute
+  display: flex
+  justify-content: center
+  align-items: center
   text-align: center
-  padding .75em
-  flex-direction column
+  padding: 0.75em
+  flex-direction: column
+
   .room
-    position absolute
-    bottom: .75em
-    right: .75em
+    position: absolute
+    bottom: 0.75em
+    right: 0.75em
     opacity: 0.75
-    font-family var(--fonts-monospace)
+    font-family: var(--fonts-monospace)
+
 ul
-  list-style none
+  list-style: none
 </style>

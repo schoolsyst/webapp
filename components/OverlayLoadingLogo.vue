@@ -1,69 +1,54 @@
 <template>
-  <div class="OverlayLoadingLogo" :class="animation" v-bind="{id}"></div>
+  <div v-bind="{ id }" :class="animation" class="OverlayLoadingLogo"></div>
 </template>
 
 <script>
-import { mapGetters } from "vuex"
 export default {
-  name: "OverlayLoadingLogo",
-
+  name: 'OverlayLoadingLogo',
   props: {
     animateWhen: {
       type: String,
-      default: "page-loads",
+      default: 'page-loads'
     },
     animation: {
       type: String,
-      default: "animate-in",
-    },
+      default: 'animate-in'
+    }
   },
-
   computed: {
     id() {
       return 'lottie-overlay-loading-logo-' + this._uid
     }
   },
-
   mounted() {
     if (window.innerWidth < 500 && this.animation === 'animate-in-compound') {
       this.animation = 'animate-in'
     }
 
-    let white =
-      document.body.getAttribute('theme') === 'DARK'
-      && this.animation === 'loop'
-    
-    if (white) console.log('white overlayloadinglogo')
+    const white =
+      document.body.getAttribute('theme') === 'DARK' &&
+      this.animation === 'loop'
 
-    this.lottieInstance = lottie.loadAnimation({
+    this.lottieInstance = window.lottie.loadAnimation({
       container: document.getElementById(this.id),
-      renderer: "svg",
-      loop: this.animation === "loop",
-      autoplay: this.animateWhen === "page-loads",
-      path: `/animations/data-${this.animation}${white ? '-white' : ''}.json`,
+      renderer: 'svg',
+      loop: this.animation === 'loop',
+      autoplay: this.animateWhen === 'page-loads',
+      path: `/animations/data-${this.animation}${white ? '-white' : ''}.json`
     })
 
-    if (this.animateWhen !== "page-loads") {
-      let self = document.getElementById(this.id)
-      let app = this
+    if (this.animateWhen !== 'page-loads') {
+      const self = document.getElementById(this.id)
+      const app = this
 
-      if (this.animateWhen === "scrolled-into-view") {
+      if (this.animateWhen === 'scrolled-into-view') {
         // configure the intersection observer instance
-        var intersectionObserverOptions = {
+        const intersectionObserverOptions = {
           root: null,
-          rootMargin: "150px",
-          threshold: 1.0,
+          rootMargin: '150px',
+          threshold: 1.0
         }
-
-        var observer = new IntersectionObserver(
-          onIntersection,
-          intersectionObserverOptions
-        )
-
-        // provide the observer with a target
-        observer.observe(self)
-
-        function onIntersection(entries) {
+        const onIntersection = function(entries) {
           entries.forEach((entry) => {
             // Are we in viewport?
             if (entry.intersectionRatio > 0) {
@@ -74,9 +59,16 @@ export default {
             }
           })
         }
+        const observer = new IntersectionObserver(
+          onIntersection,
+          intersectionObserverOptions
+        )
+
+        // provide the observer with a target
+        observer.observe(self)
       }
     }
-  },
+  }
 }
 </script>
 

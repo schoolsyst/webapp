@@ -36,22 +36,22 @@
 </template>
 
 <script>
+import { mapGetters, mapActions } from 'vuex'
 import InputField from '~/components/InputField.vue'
 import ButtonNormal from '~/components/ButtonNormal.vue'
-import { mapGetters, mapActions } from 'vuex'
 
 export default {
   components: { InputField, ButtonNormal },
   auth: 'guest',
   layout: 'bare',
   data() {
-    return { email: null, sent: null}
+    return { email: null, sent: null }
   },
   computed: mapGetters('auth', ['validateEmailAdress']),
   methods: {
-    ...mapActions('auth', {_requestPasswordReset: 'requestPasswordReset'}),
+    ...mapActions('auth', { _requestPasswordReset: 'requestPasswordReset' }),
     async requestPasswordReset() {
-      this.sent = await this._requestPasswordReset({email: this.email})
+      this.sent = await this._requestPasswordReset({ email: this.email })
     }
   }
 }
@@ -59,34 +59,42 @@ export default {
 
 <style lang="stylus" scoped>
 .container
-  display flex
-  justify-content center
-  align-items center
-  flex-direction column
-  text-align center
+  display: flex
+  justify-content: center
+  align-items: center
+  flex-direction: column
+  text-align: center
+
   form
-    margin-top 3em
-    display flex
-    align-items center
-    justify-content center
-    flex-wrap wrap
+    margin-top: 3em
+    display: flex
+    align-items: center
+    justify-content: center
+    flex-wrap: wrap
+
     .field
-      width 80vw
-      max-width 400px
+      width: 80vw
+      max-width: 400px
+
     .button /deep/ .btn
-      margin-top 1em
-    @media (min-width 651px)
+      margin-top: 1em
+
+    @media (min-width: 651px)
       .button /deep/ .btn
         margin: 0
+
       .button /deep/ .btn
-        border-top-left-radius 0
-        border-bottom-left-radius 0
-        border-left none
+        border-top-left-radius: 0
+        border-bottom-left-radius: 0
+        border-left: none
+
       .field /deep/ input
-        border-top-right-radius 0
-        border-bottom-right-radius 0
+        border-top-right-radius: 0
+        border-bottom-right-radius: 0
+
   .go-back
     margin-top: 3em
+
   .login
     margin-top: 1.5em
 </style>

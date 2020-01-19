@@ -1,16 +1,16 @@
-import { getValidator } from "./index";
+import { getValidator } from './index'
 
 export const store = () => ({
-  username: "",
+  username: '',
   loggedIn: false
 })
 
 const passwordConfirmationConstraint = {
   field: 'passwordConfirmation',
-  message: "Les deux mot de passe ne correspondent pas",
-  constraint({}, object) {
-    const pwd1 = object['password']
-    const pwd2 = object['passwordConfirmation']
+  message: 'Les deux mot de passe ne correspondent pas',
+  constraint(_, object) {
+    const pwd1 = object.password
+    const pwd2 = object.passwordConfirmation
     return pwd1 === pwd2
   }
 }
@@ -33,9 +33,12 @@ export const getters = {
     resourceName: { gender: 'M', name: 'compte' },
     fieldNames: {
       username: { gender: 'M', name: "nom d'utilisateur" },
-      email:    { gender: 'F', name: 'adresse email'     },
-      password: { gender: 'M', name: 'mot de passe'      },
-      passwordConfirmation: { gender: 'F', name: 'confirmation du mot de passe'},
+      email: { gender: 'F', name: 'adresse email' },
+      password: { gender: 'M', name: 'mot de passe' },
+      passwordConfirmation: {
+        gender: 'F',
+        name: 'confirmation du mot de passe'
+      }
     },
     constraints: {
       notEmpty: ['username', 'password', 'email'],
@@ -49,9 +52,12 @@ export const getters = {
   validatePasswordReset: getValidator({
     resourceName: { gender: 'M', name: 'mot de passe' },
     fieldNames: {
-      password: { gender: 'M', name: 'mot de passe'      },
-      passwordConfirmation: { gender: 'F', name: 'confirmation du mot de passe'},
-      email:    { gender: 'F', name: 'adresse email'     },
+      password: { gender: 'M', name: 'mot de passe' },
+      passwordConfirmation: {
+        gender: 'F',
+        name: 'confirmation du mot de passe'
+      },
+      email: { gender: 'F', name: 'adresse email' }
     },
     constraints: {
       required: ['password'],
@@ -66,7 +72,7 @@ export const getters = {
   validateEmailAdress: getValidator({
     resourceName: { gender: 'M', name: 'addresse email' },
     fieldNames: {
-      email:    { gender: 'F', name: 'adresse email'     },
+      email: { gender: 'F', name: 'adresse email' }
     },
     constraints: {
       required: ['email'],
@@ -76,30 +82,28 @@ export const getters = {
 }
 
 export const actions = {
-  async login({commit}, data) {
+  async login({ commit }, data) {
     try {
-      await this.$auth.loginWith('local', {data})
+      await this.$auth.loginWith('local', { data })
       this.$router.push('/')
     } catch (e) {
-      this.$toast.error(
-        "Mot de passe ou nom d'utilisateur incorrect",
-        {icon: 'error_outline'}
-      )
+      this.$toast.error("Mot de passe ou nom d'utilisateur incorrect", {
+        icon: 'error_outline'
+      })
     }
   },
-  async register({dispatch, getters}, data) {
+  async register({ dispatch, getters }, data) {
     try {
       await this.$axios.post('/users/', data)
       return true
     } catch (error) {
-      this.$toast.error(
-        "Erreur lors de la création du compte",
-        {icon: 'error_outline'}
-      )
+      this.$toast.error('Erreur lors de la création du compte', {
+        icon: 'error_outline'
+      })
       return false
     }
   },
-  async requestPasswordReset({}, data) {
+  async requestPasswordReset(_, data) {
     try {
       const res = await this.$axios.post('/password-reset/', data)
       return res.data.status === 'OK'
@@ -107,12 +111,12 @@ export const actions = {
       return false
     }
   },
-  async changePassword({}, data) {
+  async changePassword(_, data) {
     try {
       const res = await this.$axios.post('/password-reset/confirm/', data)
       return res.data.status === 'OK'
     } catch (error) {
       return false
     }
-  },
+  }
 }

@@ -196,38 +196,35 @@
 </template>
 
 <script>
+import { mapGetters, mapState } from 'vuex'
+import Countable from 'countable'
+import { format } from 'date-fns'
 import { Editor, EditorContent, EditorMenuBar } from 'tiptap'
 import {
-    CodeBlock,
-    CodeBlockHighlight,
-    HardBreak,
-    Heading,
-    HorizontalRule,
-    Image,
-    ListItem,
-    Mention,
-    OrderedList,
-    Table,
-    TableHeader,
-    TableCell,
-    Code,
-    TableRow,
-    Bold,
-    TodoItem,
-    Italic,
-    TodoList,
-    Link,
-    History,
-    Strike,
-    BulletList,
-    Underline,
+  CodeBlock,
+  HardBreak,
+  Heading,
+  HorizontalRule,
+  Image,
+  ListItem,
+  Mention,
+  OrderedList,
+  Table,
+  TableHeader,
+  TableCell,
+  Code,
+  TableRow,
+  Bold,
+  TodoItem,
+  Italic,
+  TodoList,
+  Link,
+  History,
+  Strike,
+  BulletList,
+  Underline
 } from 'tiptap-extensions'
-// import Code from '~/plugins/tiptap-extensions/Code'
-// import Bold from '~/plugins/tiptap-extensions/Bold'
-// import Italic from '~/plugins/tiptap-extensions/Italic'
-// import Link from '~/plugins/tiptap-extensions/Link'
-// import Strike from '~/plugins/tiptap-extensions/Strike'
-// import Underline from '~/plugins/tiptap-extensions/Underline'
+import debounce from 'lodash.debounce'
 import ModalNoteDownload from '~/components/ModalNoteDownload.vue'
 import Superscript from '~/plugins/tiptap-extensions/Superscript'
 import MathBlock from '~/plugins/tiptap-extensions/MathBlock'
@@ -238,385 +235,459 @@ import Icon from '~/components/Icon.vue'
 import InputField from '~/components/InputField.vue'
 import BadgeSubject from '~/components/BadgeSubject.vue'
 import PickerSubject from '~/components/PickerSubject.vue'
-import { mapGetters, mapActions, mapState } from 'vuex'
-import debounce from 'lodash.debounce'
 import InputSelect from '~/components/InputSelect.vue'
 import TheBottomBar from '~/components/TheBottomBar.vue'
-import Countable from 'countable'
-import { format } from 'date-fns'
 
 export default {
-    components: { Editor, InputField,  EditorContent, EditorMenuBar, Icon, BadgeSubject, PickerSubject, InputSelect, TheBottomBar, ModalNoteDownload },
-    layout: 'bare',
-    data() {
-        return {
-            headingLevelNames: ['Corps', 'Titre', 'Partie', 'Sous-partie', 'Sous-sous-partie'],
-            editor: new Editor({
-                extensions: [
-                    new CodeBlock(),
-                    new HardBreak(),
-                    new Heading({ levels: [1, 2, 3, 4, 5, 6]}),
-                    new HorizontalRule(),
-                    new Image(),
-                    new ListItem(),
-                    new Mention(),
-                    new OrderedList(),
-                    new Table(),
-                    new TableHeader(),
-                    new TableCell(),
-                    new TableRow(),
-                    new TodoItem(),
-                    new TodoList(),
-                    new Bold(),
-                    new Code(),
-                    new Italic(),
-                    new Link(),
-                    new Strike(),
-                    new Underline(),
-                    new History(),
-                    new BulletList(),
-                    new MathBlock(),
-                    new MathInline(),
-                    new Marker(),
-                    new Subscript(),
-                    new Superscript(),
-                ],
-                content: ``
-            }),
-            name: null,
-            subject: {
-                name: 'Chargement...',
-                color: '#000000'
-            },
-            uuid: null,
-            unsavedWork: false,
-            countableJSloaded: false,
-            counts: null
-        }
+  components: {
+    Editor,
+    InputField,
+    EditorContent,
+    EditorMenuBar,
+    Icon,
+    BadgeSubject,
+    PickerSubject,
+    InputSelect,
+    TheBottomBar,
+    ModalNoteDownload
+  },
+  layout: 'bare',
+  data() {
+    return {
+      headingLevelNames: [
+        'Corps',
+        'Titre',
+        'Partie',
+        'Sous-partie',
+        'Sous-sous-partie'
+      ],
+      editor: new Editor({
+        extensions: [
+          new CodeBlock(),
+          new HardBreak(),
+          new Heading({ levels: [1, 2, 3, 4, 5, 6] }),
+          new HorizontalRule(),
+          new Image(),
+          new ListItem(),
+          new Mention(),
+          new OrderedList(),
+          new Table(),
+          new TableHeader(),
+          new TableCell(),
+          new TableRow(),
+          new TodoItem(),
+          new TodoList(),
+          new Bold(),
+          new Code(),
+          new Italic(),
+          new Link(),
+          new Strike(),
+          new Underline(),
+          new History(),
+          new BulletList(),
+          new MathBlock(),
+          new MathInline(),
+          new Marker(),
+          new Subscript(),
+          new Superscript()
+        ],
+        content: ``
+      }),
+      name: null,
+      subject: {
+        name: 'Chargement...',
+        color: '#000000'
+      },
+      uuid: null,
+      unsavedWork: false,
+      countableJSloaded: false,
+      counts: null
+    }
+  },
+  computed: {
+    ...mapState(['now']),
+    allCountsTooltip() {
+      if (!this.counts) return false
+      const { words, characters, paragraphs, sentences, all } = this.counts
+      const wordsPerSentence = Math.round(words / sentences)
+      return this.getStatsTooltip([
+        { value: words, label: 'Mots' },
+        { value: characters, label: 'Caractères' },
+        { value: all, label: 'Caractères + espaces' },
+        { value: sentences, label: 'Phrases' },
+        { value: paragraphs, label: 'Paragraphes' },
+        { value: wordsPerSentence, label: 'Mots / phrase' }
+      ])
     },
-    computed: {
-        ...mapState(['now']),
-        allCountsTooltip() {
-            if (!this.counts) return false
-            let { words, characters, paragraphs, sentences, all } = this.counts
-            let wordsPerSentence = Math.round(words / sentences)
-            return this.getStatsTooltip([
-                { value: words, label: 'Mots' },
-                { value: characters, label: 'Caractères' },
-                { value: all, label: 'Caractères + espaces' },
-                { value: sentences, label: 'Phrases' },
-                { value: paragraphs, label: 'Paragraphes' },
-                { value: wordsPerSentence, label: 'Mots / phrase' },
-            ])
-        },
-        textDurations() {
-            if (!this.counts) return false
-            let { words } = this.counts
-            const speeds = {
-                speaking: 183,
-                reading: 300
-            }
-            const getTime = (mode) => {
-                let raw = words / speeds[mode]
-                let unit = "m"
-                if (raw < 1) {
-                    raw *= 60
-                    unit = "s"
-                }
-                return raw.toFixed(2) + unit
-            }
-            return {
-                speaking: getTime('speaking'),
-                reading: getTime('reading'),
-            }
-        },
-        textDurationsTooltip() {
-            let { reading, speaking } = this.textDurations
-            return this.getStatsTooltip([
-                { value: reading, label: 'Lecture' },
-                { value: speaking, label: 'Parlé' },
-            ])
+    textDurations() {
+      if (!this.counts) return false
+      const { words } = this.counts
+      const speeds = {
+        speaking: 183,
+        reading: 300
+      }
+      const getTime = (mode) => {
+        let raw = words / speeds[mode]
+        let unit = 'm'
+        if (raw < 1) {
+          raw *= 60
+          unit = 's'
         }
+        return raw.toFixed(2) + unit
+      }
+      return {
+        speaking: getTime('speaking'),
+        reading: getTime('reading')
+      }
     },
-    methods: {
-        format,
-        ...mapGetters('settings', {setting: 'value'}),
-        updateNote({getHTML, contentSize}) {
-            this.$store.commit('notes/PATCH', {uuid: this.uuid, modifications: {
-                content: getHTML()
-            }})
-            console.log(contentSize)
-            this.unsavedWork = true
-        },
-        save: debounce(async function({toast}) {
-            toast = toast === null ? true : toast
-            let saved = await this.$store.dispatch('notes/save', { 
-                uuid: this.uuid, 
-                content: this.editor.getHTML()
-            })
-            if(toast && saved) {
-                this.$toast.success('Note sauvegardée', {icon: 'check'})
-                this.unsavedWork = false
-            }
-        }, 1000, { leading: true, trailing: false }),
-        async kbShortcutSave(e) {
-            if (!(e.keyCode === 83 && e.ctrlKey)) return
-            e.preventDefault()
-            await this.save({toast: true})
-        },
-        updateName: debounce(async function() {
-            await this.$store.dispatch('notes/patch', { 
-                uuid: this.uuid, 
-                modifications: { 
-                    name: this.name
-                }
-            })
-            this.updateDocumentTitle()
-        }, { trailing: false, leading: true }),
-        updateDocumentTitle() {
-            document.title = `${this.name || 'Note sans titre'} · schoolsyst`
-        },
-        getStatsTooltip(stats) {
-            let maxCountLen = Math.max(stats.map(s => s.value.toString().length))
-            let listItem = stat => `<li><span style="font-family:var(--fonts-monospace-light)">${stat.value.toString().padStart(maxCountLen, '')}</span> ${stat.label}</li>`
+    textDurationsTooltip() {
+      const { reading, speaking } = this.textDurations
+      return this.getStatsTooltip([
+        { value: reading, label: 'Lecture' },
+        { value: speaking, label: 'Parlé' }
+      ])
+    }
+  },
+  watch: {
+    async subject() {
+      await this.$store.dispatch('notes/patch', {
+        uuid: this.uuid,
+        modifications: {
+          subject: this.subject
+        }
+      })
+    }
+  },
+  mounted() {
+    this.$withLoadingScreen(
+      async () => {
+        // Load some data
+        await this.$store.dispatch('settings/load')
+        await this.$store.dispatch('notes/load')
+        // Get note
+        const { data } = await this.$axios.get(
+          `/notes/${this.$route.params.uuid}`
+        )
+        this.editor.setContent(data.content.replace(/\n/g, '<br/>'))
+        this.name = data.name
+        this.subject = data.subject
+        this.uuid = data.uuid
+        // Set title
+        this.updateDocumentTitle()
+      },
+      { title: 'Recherche du cahier au fond du sac' }
+    )
+    // Attach event listener for Ctrl + S (see: https://stackoverflow.com/a/55323073)
+    document.addEventListener('keydown', this.kbShortcutSave)
+    // Auto save every n minutes
+    console.log(this.setting()('autosave'))
+    const autosave = this.setting()('autosave') || 5
+    this.autosaveInterval = setInterval(() => {
+      this.$toast.info('Sauvegarde automatique effectuée', { icon: 'update' })
+      this.save({ toast: false })
+    }, autosave * 60 * 1000)
 
-            return `
+    let page = null
+    let countableJSloaded = false
+    const countableJSinitInterval = setInterval(() => {
+      // Init Countable.js
+      page = document.querySelector('.editor-page .ProseMirror')
+      if (page) {
+        // initial count + counts when edit
+        Countable.count(page, (counts) => {
+          this.counts = counts
+        })
+        Countable.on(page, (counts) => {
+          this.counts = counts
+        })
+        countableJSloaded = true
+      }
+      if (countableJSloaded) {
+        clearInterval(countableJSinitInterval)
+      }
+    }, 500)
+  },
+  async beforeDestroy() {
+    clearInterval(this.autosaveInterval)
+    await this.save({ toast: false })
+    // When the note is empty
+    // TODO: #beta-1.0.0 move this to /notes/
+    const html = this.editor.getHTML()
+    if (html === '' || html === '<p></p>') {
+      console.log('deleting empty note:' + this.editor.getHTML())
+      await this.$store.dispatch('notes/delete', {
+        uuid: this.uuid,
+        toastMessage: 'Note vide supprimée'
+      })
+    }
+    this.editor.destroy()
+    document.removeEventListener('keydown', this.kbShortcutSave)
+  },
+  methods: {
+    format,
+    ...mapGetters('settings', { setting: 'value' }),
+    updateNote({ getHTML, contentSize }) {
+      this.$store.commit('notes/PATCH', {
+        uuid: this.uuid,
+        modifications: {
+          content: getHTML()
+        }
+      })
+      console.log(contentSize)
+      this.unsavedWork = true
+    },
+    save: debounce(
+      async function({ toast }) {
+        toast = toast === null ? true : toast
+        const saved = await this.$store.dispatch('notes/save', {
+          uuid: this.uuid,
+          content: this.editor.getHTML()
+        })
+        if (toast && saved) {
+          this.$toast.success('Note sauvegardée', { icon: 'check' })
+          this.unsavedWork = false
+        }
+      },
+      1000,
+      { leading: true, trailing: false }
+    ),
+    async kbShortcutSave(e) {
+      if (!(e.keyCode === 83 && e.ctrlKey)) return
+      e.preventDefault()
+      await this.save({ toast: true })
+    },
+    updateName: debounce(
+      async function() {
+        await this.$store.dispatch('notes/patch', {
+          uuid: this.uuid,
+          modifications: {
+            name: this.name
+          }
+        })
+        this.updateDocumentTitle()
+      },
+      { trailing: false, leading: true }
+    ),
+    updateDocumentTitle() {
+      document.title = `${this.name || 'Note sans titre'} · schoolsyst`
+    },
+    getStatsTooltip(stats) {
+      const maxCountLen = Math.max(stats.map((s) => s.value.toString().length))
+      const listItem = (stat) =>
+        `<li><span style="font-family:var(--fonts-monospace-light)">${stat.value
+          .toString()
+          .padStart(maxCountLen, '')}</span> ${stat.label}</li>`
+
+      return `
                 <ul style="text-align:left">
-                    ${ stats.map(listItem) }
+                    ${stats.map(listItem)}
                 </ul>
             `.trim()
-        }
-    },
-    watch: {
-        async subject() {
-            await this.$store.dispatch('notes/patch', {
-                uuid: this.uuid,
-                modifications: {
-                    subject: this.subject
-                }
-            })
-        }
-    }, 
-    async mounted() {
-        this.$withLoadingScreen(async () => {
-            // Load some data
-            await this.$store.dispatch('settings/load')
-            await this.$store.dispatch('notes/load')
-            // Get note
-            const { data } = await this.$axios.get(`/notes/${this.$route.params.uuid}`)
-            this.editor.setContent(data.content.replace(/\n/g, '<br/>'))
-            this.name = data.name
-            this.subject = data.subject
-            this.uuid = data.uuid
-            // Set title
-            this.updateDocumentTitle()
-        }, { title: "Recherche du cahier au fond du sac" })
-        // Attach event listener for Ctrl + S (see: https://stackoverflow.com/a/55323073)
-        document.addEventListener('keydown', this.kbShortcutSave)
-        // Auto save every n minutes
-        console.log(this.setting()('autosave'))
-        let autosave = this.setting()('autosave') || 5
-        this.autosaveInterval = setInterval(() => {
-            this.$toast.info('Sauvegarde automatique effectuée', {icon: 'update'})
-            this.save({toast: false})
-        }, 5 * 60 * 1000)
-
-        let page = null
-        let countableJSloaded = false
-        let countableJSinitInterval = setInterval(() => {
-            // Init Countable.js
-            page = document.querySelector('.editor-page .ProseMirror')
-            if (page) {
-                // initial count + counts when edit
-                Countable.count(page, (counts) => { this.counts = counts })
-                Countable.on(page, (counts) => { this.counts = counts })
-                countableJSloaded = true
-            }
-            if (countableJSloaded) {
-                clearInterval(countableJSinitInterval)
-            }
-        }, 500)
-        
-    },
-    async beforeDestroy() {
-        clearInterval(this.autosaveInterval)
-        await this.save({toast: false})
-        // When the note is empty
-        // TODO: #beta-1.0.0 move this to /notes/
-        let html = this.editor.getHTML()
-        if (html === '' || html === '<p></p>') {
-            console.log('deleting empty note:' + this.editor.getHTML())
-            await this.$store.dispatch('notes/delete', { 
-                uuid: this.uuid, 
-                toastMessage: 'Note vide supprimée' 
-            })
-        }
-        this.editor.destroy()
-        document.removeEventListener('keydown', this.kbShortcutSave)
     }
+  }
 }
 </script>
 
 <style lang="stylus" scoped>
 body
-    padding 1em
-    background var(--grey-offset)
+  padding: 1em
+  background: var(--grey-offset)
+
 .toolbar
-    position fixed
-    top: 0
-    left: 0
-    right: 0
-    background var(--white)
-    z-index: 10
-    padding 1em
-    padding-bottom: 0
-    border-bottom 2px solid rgba(0,0,0,0.25)
-    max-width: 100vw
-    .headings-dropdown
-        width 200px
-        flex-shrink 0
-        .heading-item
-            font-family var(--fonts-regular)
-        p.heading-item
-            font-weight normal
+  position: fixed
+  top: 0
+  left: 0
+  right: 0
+  background: var(--white)
+  z-index: 10
+  padding: 1em
+  padding-bottom: 0
+  border-bottom: 2px solid rgba(0, 0, 0, 0.25)
+  max-width: 100vw
+
+  .headings-dropdown
+    width: 200px
+    flex-shrink: 0
+
+    .heading-item
+      font-family: var(--fonts-regular)
+
+    p.heading-item
+      font-weight: normal
+
 .top
-    margin-left: 0.5em
-    margin-bottom .75em
-    display flex
-    align-items center
-    color var(--black)
-    .title
-        width: 100%
-        display: flex
-        align-items center
-        font-size: 1.5rem
-        .title-field
-            margin-left .5em
-            width: 100%
-            height 2.5rem
-            color var(--black)
-        .subject
-            margin-left .75em
-            // font-size: 1rem
-    .icon
-        color var(--black)
-        font-size: 2em
-    .title.untitled
-        opacity: 0.25
-    .unsaved-work
-        font-size: 0.85em
-        margin-left: 0.5em
-.menubar
-    padding-bottom .5em
-    display flex
-    align-items center
-    // justify-content center
-    transition opacity 0.5s ease
-.menubar button
-    display inline-flex
-    justify-content center
-    align-items center
-    padding: .5em
-    height 2em
-    color var(--black)
-    &.active
-        color var(--blue)
-        background var(--blue-offset)
-    &:hover
-        color var(--blue)
-.low-opacity, .sep
+  margin-left: 0.5em
+  margin-bottom: 0.75em
+  display: flex
+  align-items: center
+  color: var(--black)
+
+  .title
+    width: 100%
+    display: flex
+    align-items: center
+    font-size: 1.5rem
+
+    .title-field
+      margin-left: 0.5em
+      width: 100%
+      height: 2.5rem
+      color: var(--black)
+
+    .subject
+      margin-left: 0.75em
+      // font-size: 1rem
+
+  .icon
+    color: var(--black)
+    font-size: 2em
+
+  .title.untitled
     opacity: 0.25
+
+  .unsaved-work
+    font-size: 0.85em
+    margin-left: 0.5em
+
+.menubar
+  padding-bottom: 0.5em
+  display: flex
+  align-items: center
+  // justify-content center
+  transition: opacity 0.5s ease
+
+.menubar button
+  display: inline-flex
+  justify-content: center
+  align-items: center
+  padding: 0.5em
+  height: 2em
+  color: var(--black)
+
+  &.active
+    color: var(--blue)
+    background: var(--blue-offset)
+
+  &:hover
+    color: var(--blue)
+
+.low-opacity, .sep
+  opacity: 0.25
+
 .sep
-    font-weight thin
-    font-size 2em
-    padding 0 0.25em
+  font-weight: thin
+  font-size: 2em
+  padding: 0 0.25em
 
 #bottom-bar
-    padding .75em 1em
-    display flex
-    .time
-        font-family var(--fonts-monospace-light)
-        font-size: 1.2em
-    .stats
-        margin-left auto
-        display flex
-        align-items center
-    .stats li
-        display inline-block
-        &:not(:last-child)
-            margin-right: 0.5em
-        .value
-            font-family var(--fonts-monospace-light)
+  padding: 0.75em 1em
+  display: flex
+
+  .time
+    font-family: var(--fonts-monospace-light)
+    font-size: 1.2em
+
+  .stats
+    margin-left: auto
+    display: flex
+    align-items: center
+
+  .stats li
+    display: inline-block
+
+    &:not(:last-child)
+      margin-right: 0.5em
+
+    .value
+      font-family: var(--fonts-monospace-light)
 
 .ProseMirror::-moz-focus-inner
-    border none !important
-    padding 0
+  border: none !important
+  padding: 0
 
 .editor-page-wrapper
-    padding-top 8rem
-    padding-bottom 2rem
-    display flex
-    justify-content center
-    width 100%
-    min-height 100vh
-    background var(--grey-offset)
-    overflow auto
+  padding-top: 8rem
+  padding-bottom: 2rem
+  display: flex
+  justify-content: center
+  width: 100%
+  min-height: 100vh
+  background: var(--grey-offset)
+  overflow: auto
 
-.editor-page /deep/ 
-    .inline-math
-        font-family Cambria Math
-        color var(--blue)
-    td, tr
-        border 2px solid black
-    img
-        max-width: 100%
-        max-height: 50vh
-        text-align center
-        &.ProseMirror-selectednode
-            border 2px solid var(--blue)
+.editor-page /deep/
+  .inline-math
+    font-family: Cambria Math
+    color: var(--blue)
+
+  td, tr
+    border: 2px solid black
+
+  img
+    max-width: 100%
+    max-height: 50vh
+    text-align: center
+
+    &.ProseMirror-selectednode
+      border: 2px solid var(--blue)
+
 .editor-page
-    font-family Arial, sans-serif
-    line-height 1.2em
-    margin-top 20px
-    padding 3em
-    width 800px
-    background var(--white)
-    & /deep/ .ProseMirror
-        height: 100%
-        // overflow-y auto
-        scrollbar-width thin
-        scrollbar-color var(--grey-light) transparent
-        &::-webkit-scrollbar-track
-            background transparent
-        &::-webkit-scrollbar-thumb
-            background-color var(--grey-light)
-        // page looks
-        font-family var(--fonts-regular)
-        p
-            margin-bottom 0.2em
-        h1,h2,h3,h4,h5,h6
-            &:not(:first-child)
-                margin-top: 1.2em
-            &:not(:last-child)
-                margin-bottom: 0.5em
-        h1
-            text-align center
-        ul, ol
-            padding-left: 2.5em
-        ul li
-            list-style-type disc
-        hr
-            margin 1em auto
-            width 75%
-        code
-            font-family var(--fonts-monospace-light)
-    .admonition
-        &::before
-            content 'more_vert'
-            font-family 'Material Icons'
-            
-        &-danger
-            background var(--red-offset)
-        &-note
-            background var(--blue-offset)
+  font-family: Arial, sans-serif
+  line-height: 1.2em
+  margin-top: 20px
+  padding: 3em
+  width: 800px
+  background: var(--white)
+
+  & /deep/ .ProseMirror
+    height: 100%
+    // overflow-y auto
+    scrollbar-width: thin
+    scrollbar-color: var(--grey-light) transparent
+
+    &::-webkit-scrollbar-track
+      background: transparent
+
+    &::-webkit-scrollbar-thumb
+      background-color: var(--grey-light)
+
+    // page looks
+    font-family: var(--fonts-regular)
+
+    p
+      margin-bottom: 0.2em
+
+    h1, h2, h3, h4, h5, h6
+      &:not(:first-child)
+        margin-top: 1.2em
+
+      &:not(:last-child)
+        margin-bottom: 0.5em
+
+    h1
+      text-align: center
+
+    ul, ol
+      padding-left: 2.5em
+
+    ul li
+      list-style-type: disc
+
+    hr
+      margin: 1em auto
+      width: 75%
+
+    code
+      font-family: var(--fonts-monospace-light)
+
+  .admonition
+    &::before
+      content: 'more_vert'
+      font-family: 'Material Icons'
+
+    &-danger
+      background: var(--red-offset)
+
+    &-note
+      background: var(--blue-offset)
 </style>

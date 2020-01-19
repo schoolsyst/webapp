@@ -1,21 +1,19 @@
 import { Node } from 'tiptap'
-import { wrappingInputRule, setBlockType, toggleWrap } from 'tiptap-commands'
+import { wrappingInputRule, toggleWrap } from 'tiptap-commands'
 
 export default class MathBlock extends Node {
   get name() {
     return 'mathblock'
   }
-  
+
   get schema() {
     return {
       content: 'block',
       group: 'block',
       defining: true,
       draggable: false,
-      parseDOM: [
-        { tag: 'math[display=block]' }
-      ],
-      toDOM: () => ['math', {display: 'block'}, 0],
+      parseDOM: [{ tag: 'math[display=block]' }],
+      toDOM: () => ['math', { display: 'block' }, 0]
     }
   }
 
@@ -30,8 +28,6 @@ export default class MathBlock extends Node {
   }
 
   inputRules({ type }) {
-    return [
-      wrappingInputRule(/^\s*%%%\s$/, type)
-    ]
+    return [wrappingInputRule(/^\s*%%%\s$/, type)]
   }
 }

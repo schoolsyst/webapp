@@ -62,10 +62,10 @@ export default {
     },
     validation: {
       type: Object,
-      default: () => ({validated: true, errors: {}})
+      default: () => ({ validated: true, errors: {} })
     },
     value: {
-      default: ""
+      default: ''
     },
     noActionButton: {
       type: Boolean,
@@ -129,15 +129,12 @@ export default {
       if (this.actionIcon !== null) return this.actionIcon
       if (this.type === 'password')
         return this.passwordShown ? 'visibility_off' : 'visibility'
-      else
-        return 'clear'
+      else return 'clear'
     },
     dName() {
       /* Computed default name for some HTML input types */
-      if (this.name)
-        return this.name
-      if (['password', 'email', 'date'].includes(this.type))
-        return this.type
+      if (this.name) return this.name
+      if (['password', 'email', 'date'].includes(this.type)) return this.type
       else {
         const ret = 'unknown-' + this._uid
         console.group(`${this._name} PROPS WARNING`)
@@ -150,18 +147,18 @@ export default {
     },
     errored() {
       return (
-        !this.validation.validated
-        && !this.initial
-        && this.camelCaseName in this.validation.errors
-        && this.validation.errors[this.camelCaseName].length > 0
+        !this.validation.validated &&
+        !this.initial &&
+        this.camelCaseName in this.validation.errors &&
+        this.validation.errors[this.camelCaseName].length > 0
       )
     },
     camelCaseName() {
-      return this.dName.replace(
-        /([-_][a-z])/g,
-        (group) => group.toUpperCase()
-                        .replace('-', '')
-                        .replace('_', '')
+      return this.dName.replace(/([-_][a-z])/g, (group) =>
+        group
+          .toUpperCase()
+          .replace('-', '')
+          .replace('_', '')
       )
     },
     HTMLValue() {
@@ -183,12 +180,9 @@ export default {
       this.passwordShown = !this.passwordShown
     },
     action($event) {
-      if (this.actionIcon)
-        this.$emit('action', $event);
-      else if (this.type === 'password')
-        this.togglePasswordVisibility()
-      else
-        this.clearField()
+      if (this.actionIcon) this.$emit('action', $event)
+      else if (this.type === 'password') this.togglePasswordVisibility()
+      else this.clearField()
     },
     toJSValue(value) {
       if (value === null) {
@@ -198,11 +192,11 @@ export default {
         case 'date':
           console.log(['toJSValue', value])
           value = parseISO(value)
-          break;
+          break
 
         case 'number':
           value = Number(value)
-          break;
+          break
       }
       return value
     },
@@ -211,12 +205,12 @@ export default {
       if (typeof value === 'string') return value
       switch (this.type) {
         case 'date':
-          value = formatISO(value, { representation: "date" })
-          break;
+          value = formatISO(value, { representation: 'date' })
+          break
 
         case 'number':
           value = Number(value)
-          break;
+          break
       }
       return value
     }
@@ -229,108 +223,128 @@ export default {
 side-padding = 15px
 stroke-thickness = 2px
 errors-space = 2em
+
 // === Setup
 .field
   // Used for the label's absolute positionning
-  position relative
+  position: relative
+
   // The label goes outside the bounding box and will potentially overlap with stuff around the field if we don't do this
   &.has-label
-    padding-top calc(1em + 3px)
-  // Leave some space for errors
+    padding-top: calc(1em + 3px)
+
 .field-inner
   // Vertically center the action button
-  display flex
-  align-items center
+  display: flex
+  align-items: center
   // Make it take the height of the parent element
-  height 100%
+  height: 100%
+
 .input
   // Let the input take the whole .inner-field width
-  width 100%
+  width: 100%
+
 // === Typography
 label
-  text-transform uppercase
-  letter-spacing 1px
-  font-size 0.75em
-  font-weight 500
+  text-transform: uppercase
+  letter-spacing: 1px
+  font-size: 0.75em
+  font-weight: 500
+
 // === Passive state
 .input
   // LAYOUT
-  min-width 250px
-  padding 15px (side-padding)
-.input[type=number]
-.input[type=time]
-.narrow .input
-    min-width 50px
+  min-width: 250px
+  padding: 15px side-padding
+
+.input[type=number], .input[type=time], .narrow .input
+  min-width: 50px
+
 .has-action-button .input
-  padding-right (side-padding * 2 + 10px)
+  padding-right: (side-padding * 2 + 10px)
+
 .input
   // LOOKS
-  background transparent
-  border (stroke-thickness) solid var(--grey-dark)
-  border-radius var(--border-radius)
-  color var(--black)
+  background: transparent
+  border: stroke-thickness solid var(--grey-dark)
+  border-radius: var(--border-radius)
+  color: var(--black)
+
 textarea
-  height 100%
+  height: 100%
+
 label
-  position absolute
-  left 5px
-  padding 0 5px
-  top 0px
-  background transparent
+  position: absolute
+  left: 5px
+  padding: 0 5px
+  top: 0px
+  background: transparent
+
 // === Hover state
 .input:hover, .input:focus
   &
-    border-color var(--black)
-    outline none
+    border-color: var(--black)
+    outline: none
+
   & + label
-    left 10px
+    left: 10px
+
 // === Active state
 .active
   label
-    top 15px
-    left 10px
-    color var(--blue)
+    top: 15px
+    left: 10px
+    color: var(--blue)
+
   .input
-    border-color var(--blue)
+    border-color: var(--blue)
+
 // === Errored state
 .field.errored:not(.active)
   label
-    color var(--red)
+    color: var(--red)
+
   .input
-    border-color var(--red)
+    border-color: var(--red)
+
 // === Filled state
 :not(.active).field.filled label
-  color var(--grey-dark)
+  color: var(--grey-dark)
+
 // === Disabled state
 .field.disabled
   .input
-    background var(--grey)
-    pointer-events none
+    background: var(--grey)
+    pointer-events: none
+
   label
     opacity: 0.25
+
 // === Interactions
 .input
-  transition all .25s ease
+  transition: all 0.25s ease
+
 label
-  transition left .125s ease,
-             top .125s ease,
-             color .25s ease,
-             background .01s ease
+  transition: left 0.125s ease, top 0.125s ease, color 0.25s ease, background 0.01s ease
+
 .action:not(.always-show)
-  display none
+  display: none
+
 .field:hover, .field.active
   .action
-    display block
+    display: block
+
 // === Other elements
 .action
-  position absolute
-  right: (side-padding)
+  position: absolute
+  right: side-padding
   z-index: 2
-  color var(--black)
+  color: var(--black)
+
 // Align action button to top-left for type=block
 .type-block .action
-  top: 32px //FIXME: Pixel-perfect value
-// Remove type=date or type=time native clear button
+  top: 32px // FIXME: Pixel-perfect value
+
 /* WARN: Does *not* work on Firefox.
  * Another solution would be to set the date to required, but
  * that would render our custom clear btn pointless...
@@ -339,18 +353,17 @@ label
  * I know this is bad for semantics, but the date/time input types
  * do not offer enough customisability. (especially on FF)
  */
-input[type="time"]::-webkit-clear-button
-input[type="date"]::-webkit-clear-button
-  display none
+input[type='time']::-webkit-clear-button, input[type='date']::-webkit-clear-button
+  display: none
 
 .error
   text-align: center
-  color var(--red)
+  color: var(--red)
   font-size: 0.85em
   margin-top: 0.45em
   flex-grow: 0
-  height (errors-space)
-  overflow-y hidden
+  height: errors-space
+  overflow-y: hidden
 
 /* Background variant
  *
@@ -358,14 +371,16 @@ input[type="date"]::-webkit-clear-button
 .variant-filled
   // === Passive state
   .input
-    background var(--grey-offset)
-    border 2px solid transparent
+    background: var(--grey-offset)
+    border: 2px solid transparent
+
   // === Hover state
   .input:hover, .input:active
-    background transparent
-    border 2px solid var(--grey-dark)
+    background: transparent
+    border: 2px solid var(--grey-dark)
+
   // === Active state
   &.active .input
-    background transparent
-    border 2px solid var(--blue)
+    background: transparent
+    border: 2px solid var(--blue)
 </style>

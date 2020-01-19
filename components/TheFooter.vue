@@ -10,85 +10,88 @@
 </template>
 
 <script>
-import HeadingSub from "~/components/HeadingSub.vue"
-import OverlayLoadingLogo from "~/components/OverlayLoadingLogo.vue"
+import HeadingSub from '~/components/HeadingSub.vue'
+import OverlayLoadingLogo from '~/components/OverlayLoadingLogo.vue'
 export default {
-  name: "TheFooter",
+  name: 'TheFooter',
 
   components: {
     HeadingSub,
-    OverlayLoadingLogo,
-  },
+    OverlayLoadingLogo
+  }
 }
 </script>
 
-<style lang="sass" scoped>
-@import '~/assets/defaults'
-
+<style lang="stylus" scoped>
 .TheFooter
-    margin-top: 100vh //debugging
-    // margin-top: 210px
-    width: 100%
-    height: 50vh
-    +mobile
-        height: 75vh
-    background: var(--blue)
-    position: relative
-    z-index: 999
-    display: flex
-    align-items: center
-    justify-content: center
-    flex-direction: column
+  margin-top: 100vh // debugging
+  // margin-top: 210px
+  width: 100%
+  height: 50vh
+
+  +mobile
+    height: 75vh
+
+  background: var(--blue)
+  position: relative
+  z-index: 999
+  display: flex
+  align-items: center
+  justify-content: center
+  flex-direction: column
 
 .OverlayLoadingLogo
-    height: 25vh
-    width: 25vw
-    // transform: scale(2)
+  height: 25vh
+  width: 25vw
+  // transform: scale(2)
+
 .OverlayLoadingLogo /deep/ svg *
-    stroke: white
+  stroke: white
 
 .logo-title
-    //--- positioning ---
-    position: relative
-    //--- dimensions  ---
-    font-size: 50px
-    //---   margins   ---
-    margin-top: 20px
-    //---  appearance ---
-    font-family: 'Fantasque Sans Mono', 'Roboto Mono', monospace
-    font-weight: 100
-    color: #ffffff
-    //---  animation  ---
-    .badge
-        //--- positioning ---
-        position: absolute
-        // bottom: 5px
-        //--- dimensions  ---
-        font-size: 15px
-        //---   margins   ---
+  // --- positioning ---
+  position: relative
+  // --- dimensions  ---
+  font-size: 50px
+  // ---   margins   ---
+  margin-top: 20px
+  // ---  appearance ---
+  font-family: 'Fantasque Sans Mono', 'Roboto Mono', monospace
+  font-weight: 100
+  color: #ffffff
 
-        //---  appearance ---
-        text-transform: uppercase
-        //---  animation  ---
+  // ---  animation  ---
+  .badge
+    // --- positioning ---
+    position: absolute
+    // bottom: 5px
+    // --- dimensions  ---
+    font-size: 15px
+    // ---   margins   ---
+
+    // ---  appearance ---
+    text-transform: uppercase
+    // ---  animation  ---
 
 .logo-subtitle
-    //--- positioning ---
-    
-    //--- dimensions  ---
-    font-size: 24px
-    //---   margins   ---
-    
-    //---  appearance ---
-    color: #ffffff
+  // --- positioning ---
+
+  // --- dimensions  ---
+  font-size: 24px
+  // ---   margins   ---
+
+  // ---  appearance ---
+  color: #ffffff
+
 .version
-    //--- positioning ---
-    position: absolute
-    bottom: 20px
-    //--- dimensions  ---
-    font-size: 15px
-    //---   margins   ---
-    
-    //---  appearance ---
-    color: #ffffff
-    //---  animation  ---
+  // --- positioning ---
+  position: absolute
+  bottom: 20px
+  // --- dimensions  ---
+  font-size: 15px
+  // ---   margins   ---
+
+  // ---  appearance ---
+  color: #ffffff
+  // ---  animation  ---
 </style>

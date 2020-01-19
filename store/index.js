@@ -1,10 +1,10 @@
-import { toDate, addDays, isBefore, format } from "date-fns"
-import tinycolor from "tinycolor2"
+import { toDate, addDays, isBefore, format } from 'date-fns'
+import tinycolor from 'tinycolor2'
 import constantCase from 'constant-case'
 import Vue from 'vue'
 
 export const state = () => ({
-	now: toDate(Date.now()), // For time-dependent getters.
+  now: toDate(Date.now()), // For time-dependent getters.
   tomorrow: addDays(toDate(Date.now()), 1),
   location: {
     latitude: null,
@@ -12,64 +12,64 @@ export const state = () => ({
   },
   links: [
     {
-        name: 'Timeline',
-        href: '/timeline',
-        icon: 'timeline' ,
-        id:   'timeline'
+      name: 'Timeline',
+      href: '/timeline',
+      icon: 'timeline',
+      id: 'timeline'
     },
     {
-        name: 'Cours',
-        href: '/notes',
-        icon: 'insert_drive_file' ,
-        id:   'notes'
+      name: 'Cours',
+      href: '/notes',
+      icon: 'insert_drive_file',
+      id: 'notes'
     },
     {
-        name: 'Devoirs',
-        href: '/homework',
-        icon: 'book' ,
-        id:   'homework'
+      name: 'Devoirs',
+      href: '/homework',
+      icon: 'book',
+      id: 'homework'
     },
     {
-        name: 'Emploi du temps',
-        href: '/schedule',
-        icon: 'today' ,
-        id:   'schedule'
+      name: 'Emploi du temps',
+      href: '/schedule',
+      icon: 'today',
+      id: 'schedule'
     },
     {
-        name: 'Notes',
-        href: '/grades',
-        icon: 'school' ,
-        id:   'grades'
+      name: 'Notes',
+      href: '/grades',
+      icon: 'school',
+      id: 'grades'
     },
     {
-        name: 'Sac',
-        href: '/bag',
-        icon: 'work_outline',
-        id:   'bag'
+      name: 'Sac',
+      href: '/bag',
+      icon: 'work_outline',
+      id: 'bag'
     },
     'separator',
     {
-        name: 'Paramètres',
-        href: '/settings',
-        icon: 'settings',
-        id:   'settings'
+      name: 'Paramètres',
+      href: '/settings',
+      icon: 'settings',
+      id: 'settings'
     },
     {
-        name: 'Signaler un bug',
-        href: '/reports',
-        icon: 'bug_report',
-        id:   'reports'
+      name: 'Signaler un bug',
+      href: '/reports',
+      icon: 'bug_report',
+      id: 'reports'
     }
-],
+  ]
 })
 
 export const getters = {
-	/* Why `=> () =>` ? To turn the getter into a function
-		* and therefore prevent caching.
-		*/
-	requireInitialSetup: (state, getters, rootState, rootGetters) => () => {
-		const settings = rootGetters["settings/all"]
-		// Non-optional settings that haven't been set by the user are considered "bad".
+  /* Why `=> () =>` ? To turn the getter into a function
+   * and therefore prevent caching.
+   */
+  requireInitialSetup: (state, getters, rootState, rootGetters) => () => {
+    const settings = rootGetters['settings/all']
+    // Non-optional settings that haven't been set by the user are considered "bad".
     const badSettings = settings.filter(
       (o) => o.isDefaultSetting && !o.optional
     )
@@ -79,17 +79,17 @@ export const getters = {
     /* returns the corresponding text color most visible
      * on backgroundColor: either 'black' or 'white'.
      */
-    tinycolor(backgroundColor).isLight() ? "black" : "white",
+    tinycolor(backgroundColor).isLight() ? 'black' : 'white',
   formatTime: (state, getters) => (time) => {
     if (time === null) return null
     return format(time, 'HH:mm')
   },
-  drawerLinks: (state) => (state.links),
+  drawerLinks: (state) => state.links,
   sideRailLinks: (state) =>
     state.links.filter((link) => {
       if (link === 'separator') return false
       return ['timeline', 'notes', 'homework', 'grades'].includes(link.id)
-    }),
+    })
 }
 
 export const mutations = {
@@ -104,28 +104,30 @@ export const mutations = {
 
 export const actions = {
   async loadAll({ dispatch }) {
-    await dispatch("settings/load")
-    await dispatch("subjects/load")
-    await dispatch("homework/load")
-    await dispatch("grades/load")
-    await dispatch("schedule/load")
-    await dispatch("notes/load")
-    await dispatch("learndata/load")
+    await dispatch('settings/load')
+    await dispatch('subjects/load')
+    await dispatch('homework/load')
+    await dispatch('grades/load')
+    await dispatch('schedule/load')
+    await dispatch('notes/load')
+    await dispatch('learndata/load')
   },
 
   async nuxtServerInit({ dispatch }) {
-    await dispatch("settings/load")
-    await dispatch("subjects/load")
+    await dispatch('settings/load')
+    await dispatch('subjects/load')
   },
 
-  async acquireLocation({commit, state}) {
+  acquireLocation({ commit, state }) {
     if (state.longitude === null || state.latitude === null)
       navigator.geolocation.getCurrentPosition(
         (pos) => {
           commit('UPDATE_LOCATION', pos.coords)
         },
+        // eslint-disable-next-line
         (err) => {
-          console.error(`[store] acquireLocation: error while requesting for location: ${err}`)
+          // eslint-disable-next-line
+          this.$toast.error("Impossible d'obtenir la localisation")
         }
       )
   }
@@ -143,127 +145,145 @@ export const getValidator = ({
   Describe constraints on fields, error messages are generated automatically.
   */
 
-  if(debug) {
-    console.group(`[validator] validating resource "${resourceName.name}"`)
-    console.log(`Constraints:`)
-    console.log({...constraints, ...customConstraints})
-    console.log(`Fields:`)
-    console.log(Object.fromEntries(
-    Object.keys(fieldNames).map((field) => [field, object[field]])
-  ))
+  if (debug) {
+    console.group(`[validator] validating resource "${resourceName.name}"`) // eslint-disable-line
+    console.log(`Constraints:`) // eslint-disable-line
+    console.log({ ...constraints, ...customConstraints }) // eslint-disable-line
+    console.log(`Fields:`) // eslint-disable-line
+    console.log( // eslint-disable-line
+      Object.fromEntries(
+        Object.keys(fieldNames).map((field) => [field, object[field]])
+      )
+    )
   }
 
   // Article in french
   const article = (noun, feminine, indeterminate = false) => {
-    const vowels = ["a", "e", "i", "o", "u", "y"]
-    if (vowels.includes(noun[0]) && !indeterminate)
-      return "l'"
-    else if (feminine)
-      return indeterminate ? "une " : "la "
-    else
-      return indeterminate ? "un " : "le "
+    const vowels = ['a', 'e', 'i', 'o', 'u', 'y']
+    if (vowels.includes(noun[0]) && !indeterminate) return "l'"
+    else if (feminine) return indeterminate ? 'une ' : 'la '
+    else return indeterminate ? 'un ' : 'le '
   }
 
   // Resource name article & indeterminate article
-  resourceName.article = article(resourceName.name, resourceName.gender === 'F', false)
-  resourceName.indeterminateArticle = article(resourceName.name, resourceName.gender === 'F', true)
+  resourceName.article = article(
+    resourceName.name,
+    resourceName.gender === 'F',
+    false
+  )
+  resourceName.indeterminateArticle = article(
+    resourceName.name,
+    resourceName.gender === 'F',
+    true
+  )
 
   // Uppercase first char
   const upperFirst = (string) => string[0].toUpperCase() + string.slice(1)
 
   // Checkers
   const checkers = {
-    maximum: ({arg, fieldName}) =>
-      object[fieldName] <= arg,
-    minimum: ({arg, fieldName}) =>
-      object[fieldName] >= arg,
-    maxLength: ({arg, fieldName}) =>
-      typeof object[fieldName] === 'string' ? object[fieldName].length <= arg : true,
-    required: ({arg, fieldName}) =>
+    maximum: ({ arg, fieldName }) => object[fieldName] <= arg,
+    minimum: ({ arg, fieldName }) => object[fieldName] >= arg,
+    maxLength: ({ arg, fieldName }) =>
+      typeof object[fieldName] === 'string'
+        ? object[fieldName].length <= arg
+        : true,
+    required: ({ arg, fieldName }) =>
       object.hasOwnProperty(fieldName) && object[fieldName] !== null,
-    notEmpty: ({arg, fieldName}) =>
+    notEmpty: ({ arg, fieldName }) =>
       object[fieldName] && object[fieldName].trim().length > 0,
-    isAWeekType: ({arg, fieldName}) =>
+    isAWeekType: ({ arg, fieldName }) =>
       ['Q1', 'Q2', 'BOTH'].includes(object[fieldName]),
-    before: ({arg, fieldName}) =>
-      isBefore(object[fieldName], object[arg]),
-    isAColor: ({arg, fieldName}) =>
+    before: ({ arg, fieldName }) => isBefore(object[fieldName], object[arg]),
+    isAColor: ({ arg, fieldName }) =>
       object[fieldName].match(/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/) !== null,
-    isAnEmail: ({arg, fieldName}) =>
+    isAnEmail: ({ arg, fieldName }) =>
       // regex source: https://emailregex.com/
-      typeof object[fieldName] === 'string' && object[fieldName].match(/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/) !== null
+      typeof object[fieldName] === 'string' &&
+      object[fieldName].match(
+        /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+      ) !== null
   }
-  const check = ({errorName, fieldName, errorArg}) => {
+  const check = ({ errorName, fieldName, errorArg }) => {
     // Wrap checkers with object property existential check
     /* Special case for required, which checks if the property exist
        and returnes *false* instead.
     */
-    if (errorName !== 'required'
-        && !object.hasOwnProperty(fieldName)) {
-        return true
+    if (errorName !== 'required' && !object.hasOwnProperty(fieldName)) {
+      return true
     }
-    return checkers[errorName]({arg: errorArg, fieldName})
+    return checkers[errorName]({ arg: errorArg, fieldName })
   }
 
   // Error messages
-  const message = ({errorName, errorArg, fieldName}) => {
-    const {gender, name} = fieldNames[fieldName]
+  const message = ({ errorName, errorArg, fieldName }) => {
+    const { gender, name } = fieldNames[fieldName]
     const fieldIsFeminine = gender === 'F'
     const determinateArticle = article(name, fieldIsFeminine, false)
     const indeterminateArticle = article(name, fieldIsFeminine, true)
-    const argNameWithArticle = article(
-      fieldNames[fieldName].name,
-      fieldNames[fieldName].gender === 'F',
-      false
-    ) + fieldNames[fieldName].name
+    const argNameWithArticle =
+      article(
+        fieldNames[fieldName].name,
+        fieldNames[fieldName].gender === 'F',
+        false
+      ) + fieldNames[fieldName].name
     const fieldNameWithArticle = determinateArticle + name
-    return upperFirst({
-      maximum: `${fieldNameWithArticle} ne doit pas dépasser ${errorArg}`,
-      minimum: `${fieldNameWithArticle} doit être d'au moins ${errorArg}`,
-      maxLength: `${fieldNameWithArticle} ne doit pas dépasser ${errorArg} caractère${errorArg === 1 ? '' : 's'}`,
-      required: `Veuillez renseigner ${indeterminateArticle}${name}`,
-      isAWeekType: `${fieldNameWithArticle} doit être Q1, Q2 ou les deux.`,
-      before: `${fieldNameWithArticle} doit être avant ${argNameWithArticle}`,
-      isAColor: `${fieldNameWithArticle} doit être une couleur au format hexadécimal. Exemple: #09f ou #0479cf`,
-      notEmpty: `${fieldNameWithArticle} est requis${fieldIsFeminine ? 'e' : ''}`,
-      isAnEmail:
-        name === 'adresse email'
-          ? `${fieldNameWithArticle} doit être valide`
-          : `${fieldNameWithArticle} doit être une adresse email valide`
-    }[errorName])
+    return upperFirst(
+      {
+        maximum: `${fieldNameWithArticle} ne doit pas dépasser ${errorArg}`,
+        minimum: `${fieldNameWithArticle} doit être d'au moins ${errorArg}`,
+        maxLength: `${fieldNameWithArticle} ne doit pas dépasser ${errorArg} caractère${
+          errorArg === 1 ? '' : 's'
+        }`,
+        required: `Veuillez renseigner ${indeterminateArticle}${name}`,
+        isAWeekType: `${fieldNameWithArticle} doit être Q1, Q2 ou les deux.`,
+        before: `${fieldNameWithArticle} doit être avant ${argNameWithArticle}`,
+        isAColor: `${fieldNameWithArticle} doit être une couleur au format hexadécimal. Exemple: #09f ou #0479cf`,
+        notEmpty: `${fieldNameWithArticle} est requis${
+          fieldIsFeminine ? 'e' : ''
+        }`,
+        isAnEmail:
+          name === 'adresse email'
+            ? `${fieldNameWithArticle} doit être valide`
+            : `${fieldNameWithArticle} doit être une adresse email valide`
+      }[errorName]
+    )
   }
 
   // Stores the errors
-  let errorMessages = {}
+  const errorMessages = {}
   // Fill each field with an empty array
-  Object.keys(fieldNames).forEach((field) => {errorMessages[field] = []})
+  Object.keys(fieldNames).forEach((field) => {
+    errorMessages[field] = []
+  })
   let validated = true
 
   // Go through the constraints
   for (const errorName in constraints) {
     if (constraints.hasOwnProperty(errorName)) {
-      const fieldsOrArgs = constraints[errorName];
+      const fieldsOrArgs = constraints[errorName]
       // No arguments, field names are passed directly
+      // eslint-disable-next-line
       if (fieldsOrArgs instanceof Array) {
-        fieldsOrArgs.forEach(fieldName => {
-          if (!check({errorName, fieldName, errorArg: null})) {
+        fieldsOrArgs.forEach((fieldName) => {
+          if (!check({ errorName, fieldName, errorArg: null })) {
             // Some error occured, add the error message
             errorMessages[fieldName].push(
-              message({errorName, fieldName, errorArg: null})
+              message({ errorName, fieldName, errorArg: null })
             )
             validated = false
           }
-        });
+        })
       }
       // Error arguments, multiple cases. eg: maximum
       else {
         for (const errorArg in fieldsOrArgs) {
           if (fieldsOrArgs.hasOwnProperty(errorArg)) {
-            const fields = fieldsOrArgs[errorArg];
+            const fields = fieldsOrArgs[errorArg]
             fields.forEach((fieldName) => {
-              if (!check({errorName, fieldName, errorArg})) {
+              if (!check({ errorName, fieldName, errorArg })) {
                 errorMessages[fieldName].push(
-                  message({errorName, fieldName, errorArg})
+                  message({ errorName, fieldName, errorArg })
                 )
                 validated = false
               }
@@ -275,7 +295,7 @@ export const getValidator = ({
   }
 
   // Go through custom constraints
-  customConstraints.forEach(({message, constraint, field}) => {
+  customConstraints.forEach(({ message, constraint, field }) => {
     if (!constraint(getters, object)) {
       field = field === null ? 'nonFieldErrors' : field
       if (errorMessages.hasOwnProperty(field)) {
@@ -302,7 +322,7 @@ export const getValidator = ({
           console.log(`    ${name}:`)
           console.log(errors)
         }
-      });
+      })
     }
     console.groupEnd()
   }
@@ -314,7 +334,7 @@ export const getMutations = (
   what,
   mapWith = (o) => o,
   pure = true,
-  verbs = ["add", "set", "del", "patch"],
+  verbs = ['add', 'set', 'del', 'patch'],
   primaryKey = 'uuid',
   debug = false
 ) => {
@@ -335,12 +355,12 @@ export const getMutations = (
    */
 
   const mutations = {}
-  const WHAT = pure ? "" : "_" + constantCase(what)
+  const WHAT = pure ? '' : '_' + constantCase(what)
   const whats = what + 's'
 
-  if (verbs.includes("set"))
-    mutations[`SET${WHAT}${pure ? "" : "S"}`] = (state, items) => {
-      if(debug) {
+  if (verbs.includes('set'))
+    mutations[`SET${WHAT}${pure ? '' : 'S'}`] = (state, items) => {
+      if (debug) {
         console.group(`${whats}/SET`)
         console.log('before:')
         console.log(state[whats])
@@ -352,9 +372,9 @@ export const getMutations = (
         console.groupEnd()
       }
     }
-  if (verbs.includes("add"))
+  if (verbs.includes('add'))
     mutations[`ADD${WHAT}`] = (state, item) => {
-      if(debug) {
+      if (debug) {
         console.group(`${whats}/ADD`)
         console.log('before:')
         console.log(state[whats])
@@ -366,31 +386,35 @@ export const getMutations = (
         console.groupEnd()
       }
     }
-  if (verbs.includes("del"))
+  if (verbs.includes('del'))
     mutations[`DEL${WHAT}`] = (state, pk) => {
-      if(debug) {
+      if (debug) {
         console.group(`${whats}/DEL`)
         console.log('before:')
         console.log(state[whats])
       }
-      Vue.set(state, whats, state[whats].filter((o) => o[primaryKey] !== pk))
+      Vue.set(
+        state,
+        whats,
+        state[whats].filter((o) => o[primaryKey] !== pk)
+      )
       if (debug) {
         console.log('after:')
         console.log(state[whats])
         console.groupEnd()
       }
     }
-  if (verbs.includes("patch"))
-    mutations[`PATCH${WHAT}`] = (state, {pk, modifications}) => {
-      if(debug) {
+  if (verbs.includes('patch'))
+    mutations[`PATCH${WHAT}`] = (state, { pk, modifications }) => {
+      if (debug) {
         console.group(`${whats}/PATCH`)
         console.log('before:')
         console.log(state[whats])
       }
       // Get the requested item's index in the state array
-			let idx = state[whats].map((o) => o[primaryKey]).indexOf(pk)
+      const idx = state[whats].map((o) => o[primaryKey]).indexOf(pk)
       // Apply modifications
-      let item = {...state[whats][idx], ...modifications}
+      let item = { ...state[whats][idx], ...modifications }
       // Re-run mapWith
       item = mapWith(item)
       // Set in store
@@ -400,12 +424,15 @@ export const getMutations = (
         console.log(state[whats])
         console.groupEnd()
       }
-		}
+    }
 
-		return mutations
+  return mutations
 }
 
 export const removeByProp = (arrayOfObjects, propName, propValue) => {
-  arr = [...arrayOfObjects]
-  return arr.splice(arr.findIndex(obj => obj[propName] === propValue), 1)
+  const arr = [...arrayOfObjects]
+  return arr.splice(
+    arr.findIndex((obj) => obj[propName] === propValue),
+    1
+  )
 }

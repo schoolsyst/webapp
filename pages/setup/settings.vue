@@ -9,11 +9,11 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
 import TheBottomBar from '~/components/TheBottomBar.vue'
 import Icon from '~/components/Icon.vue'
 import ButtonNormal from '~/components/ButtonNormal.vue'
 import InputSetting from '~/components/InputSetting.vue'
-import { mapGetters } from 'vuex';
 
 export default {
   components: { Icon, ButtonNormal, InputSetting, TheBottomBar },
@@ -21,7 +21,9 @@ export default {
   computed: {
     ...mapGetters('settings', ['all']),
     settings() {
-      return this.all.filter(s => !s.optional && !s.hidden && s.category != 'Emploi du temps')
+      return this.all.filter(
+        (s) => !s.optional && !s.hidden && s.category !== 'Emploi du temps'
+      )
     }
   },
   mounted() {
@@ -34,5 +36,5 @@ export default {
 
 <style lang="stylus" scoped>
 ul.settings li
-  margin-bottom 1em
+  margin-bottom: 1em
 </style>

@@ -6,19 +6,19 @@
 
 <script>
 export default {
-  name: "TheHeading",
+  name: 'TheHeading'
 }
 </script>
 
-<style lang="sass" scoped>
-@import '~/assets/defaults'
+<style lang="stylus" scoped>
 .TheHeading
-    font-weight: 100
-    +mobile
-        font-size: 48px
-        margin-bottom: 5px
-    +desktop 
-        font-size: 3rem
-        line-height: 3rem
+  font-weight: 100
 
+  @media (max-width 650px)
+    font-size: 48px
+    margin-bottom: 5px
+
+  @media (min-width 650px)
+    font-size: 3rem
+    line-height: 3rem
 </style>

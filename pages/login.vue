@@ -1,5 +1,4 @@
 <template lang="pug">
-
 .container
   OverlayLoadingLogo(animation="animate-in-compound")
   .register-link
@@ -35,42 +34,40 @@
 </template>
 
 <script>
-import axios from "axios"
-import { mapState, mapGetters, mapMutations, mapActions } from "vuex"
-import TheHeading from "~/components/TheHeading.vue"
-import OverlayLoadingLogo from "~/components/OverlayLoadingLogo.vue"
+import { mapGetters, mapActions } from 'vuex'
+import TheHeading from '~/components/TheHeading.vue'
+import OverlayLoadingLogo from '~/components/OverlayLoadingLogo.vue'
 import ButtonNormal from '~/components/ButtonNormal.vue'
 import InputField from '~/components/InputField.vue'
 
 export default {
   middleware: false,
-  layout: "bare",
+  layout: 'bare',
   components: {
     TheHeading,
     OverlayLoadingLogo,
     ButtonNormal,
-    InputField,
+    InputField
   },
 
   data() {
     return {
-      username: "",
-      password: "",
-      email: "",
+      username: '',
+      password: '',
+      email: '',
       error: null,
       submitted: false
     }
   },
-
-  methods: {
-    ...mapGetters('auth', ['validateLogin']),
-    ...mapActions('auth', ['login']),
-  },
   computed: {
     validation() {
       return this.validateLogin()(this)
-    },
+    }
   },
+  methods: {
+    ...mapGetters('auth', ['validateLogin']),
+    ...mapActions('auth', ['login'])
+  }
 }
 </script>
 

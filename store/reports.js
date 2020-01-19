@@ -1,5 +1,5 @@
-import { getValidator, getMutations } from './index'
 import { formatISO } from 'date-fns'
+import { getValidator, getMutations } from './index'
 const UAParser = require('ua-parser-js')
 
 export const state = () => ({
@@ -7,17 +7,17 @@ export const state = () => ({
 })
 
 export const getters = {
-  all: ({reports}) => reports,
+  all: ({ reports }) => reports,
   validate: getValidator({
     fieldNames: {
-      type:     { gender: 'M', name: 'type de demande' },
-      title:    { gender: 'M', name: 'titre'           },
-      content:  { gender: 'M', name: 'message'         },
+      type: { gender: 'M', name: 'type de demande' },
+      title: { gender: 'M', name: 'titre' },
+      content: { gender: 'M', name: 'message' },
       happened: { gender: 'M', name: 'date' }
     },
-    resourceName:{ gender: 'M', name: 'Rapport' },
+    resourceName: { gender: 'M', name: 'Rapport' },
     constraints: {
-      notEmpty: ['title', 'type', 'content'],
+      notEmpty: ['title', 'type', 'content']
     },
     debug: true
   })
@@ -30,7 +30,7 @@ export const mutations = {
 export const actions = {
   post({ getters, commit }, { data, force }) {
     force = force || false
-    let { browser, cpu, os  } = UAParser(window.userAgent)
+    const { browser, cpu, os } = UAParser(window.userAgent)
     if ('happened' in data) data.happened = formatISO(data.happened)
     data = {
       user: this.$auth.user.id,
@@ -39,13 +39,14 @@ export const actions = {
       language: 'fr',
       ...data
     }
-    if(!force) {
+    if (!force) {
       const validation = getters.validate(data)
       if (!validation.validated) return false
     }
     try {
-      const res = this.$axios.post('reports/', data)
+      this.$axios.post('reports/', data)
     } catch (error) {
+      // eslint-disable-next-line
       console.error(error)
     }
   }

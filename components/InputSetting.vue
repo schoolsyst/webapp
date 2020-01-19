@@ -34,7 +34,7 @@
 </template>
 
 <script>
-import { mapActions } from 'vuex';
+import { mapActions } from 'vuex'
 import InputField from '~/components/InputField.vue'
 import InputSelect from '~/components/InputSelect.vue'
 import RadioButtons from '~/components/RadioButtons.vue'
@@ -45,7 +45,7 @@ export default {
   props: {
     choices: {
       type: [Array, Object, String],
-      default: []
+      default: () => []
     },
     name: String,
     _key: String,
@@ -64,5 +64,5 @@ export default {
 
 <style lang="stylus" scoped>
 .input
-  max-width 500px
+  max-width: 500px
 </style>

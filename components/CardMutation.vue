@@ -21,37 +21,37 @@ import { fr } from 'date-fns/locale'
 import BadgeSubject from '~/components/BadgeSubject.vue'
 
 export default {
-    components: { BadgeSubject },
-    props: {
-        uuid: String
+  components: { BadgeSubject },
+  props: {
+    uuid: String
+  },
+  computed: {
+    m() {
+      const m = this.mutation()(this.uuid)
+      console.log(m)
+      return m
     },
-    computed: {
-        m() {
-            let m = this.mutation()(this.uuid)
-            console.log(m)
-            return m
-        },
-        type() {
-            return this.m.type
-        },
-        subject() {
-            return this.m.subject
-        },
-        date() {
-            return this.formatDate(this.$store.state.now)
-        },
-     },
-    methods: {
-        ...mapGetters('schedule', ['mutation']),
-        formatDate(date) {
-            return format(date, 'ccc dd MMM', { locale: fr })
-        },
-        formatTime(date) {
-            return format(date, 'HH:mm', { locale: fr })
-        }
+    type() {
+      return this.m.type
     },
-    async mounted() {
-        await this.$store.dispatch('schedule/load')
+    subject() {
+      return this.m.subject
+    },
+    date() {
+      return this.formatDate(this.$store.state.now)
     }
+  },
+  methods: {
+    ...mapGetters('schedule', ['mutation']),
+    formatDate(date) {
+      return format(date, 'ccc dd MMM', { locale: fr })
+    },
+    formatTime(date) {
+      return format(date, 'HH:mm', { locale: fr })
+    }
+  },
+  async mounted() {
+    await this.$store.dispatch('schedule/load')
+  }
 }
 </script>

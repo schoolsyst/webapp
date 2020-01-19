@@ -1,12 +1,15 @@
-<template>
-  <component :is="small ? 'h3' : 'h2'" class="HeadingSub" :class="{buttons, small}">
-    <slot></slot>
-  </component>
+<template lang="pug">
+  component(
+    :is="small ? 'h3' : 'h2'"
+    :class="{ buttons, small }"
+    class="HeadingSub"
+  )
+    slot
 </template>
 
 <script>
 export default {
-  name: "HeadingSub",
+  name: 'HeadingSub',
 
   props: {
     buttons: {
@@ -17,13 +20,13 @@ export default {
       type: Boolean,
       default: false
     }
-  },
-};
+  }
+}
 </script>
 
 <style lang="sass" scoped>
 @import '~/assets/defaults'
-.HeadingSub 
+.HeadingSub
   text-transform: uppercase
   font-weight: bold
   letter-spacing: 0.09em
