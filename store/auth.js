@@ -87,7 +87,17 @@ export const actions = {
       await this.$auth.loginWith('local', { data })
       this.$router.push('/')
     } catch (e) {
-      this.$toast.error("Mot de passe ou nom d'utilisateur incorrect", {
+      if (
+        e.response.data.non_field_errors &&
+        e.response.data.non_field_errors[0] ===
+          'Unable to log in with provided credentials.'
+      ) {
+        this.$toast.error("Mot de passe ou nom d'utilisateur incorrect", {
+          icon: 'error_outline'
+        })
+        return false
+      }
+      this.$toast.error('Erreur interne, veuillez réessayer plus tard.', {
         icon: 'error_outline'
       })
     }
