@@ -2,7 +2,7 @@
     //TODO: move ul.categories > li to InputSetting, to reuse in setup
     //TODO: center-align, less width, index=portal to one page per category + subjects page + schedule page
     .container
-        ModalAddSubject(v-model="newSubject")
+        ModalAddSubject(v-model="newSubject" @post="postSubject({ subject: $event })")
         .-side-by-side
             ul.categories
                 li(v-for="g in grouped")
@@ -21,7 +21,7 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
+import { mapGetters, mapActions } from 'vuex'
 import HeadingSub from '~/components/HeadingSub.vue'
 import CardSubject from '~/components/CardSubject.vue'
 import InputSetting from '~/components/InputSetting.vue'
@@ -45,6 +45,9 @@ export default {
         weight: 1
       }
     }
+  },
+  methods: {
+    ...mapActions('subjects', { postSubject: 'post' })
   },
   computed: {
     ...mapGetters('settings', ['grouped', 'all']),
