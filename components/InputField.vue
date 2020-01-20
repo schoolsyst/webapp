@@ -65,7 +65,7 @@ export default {
       default: () => ({ validated: true, errors: {} })
     },
     value: {
-      default: ''
+      default: null
     },
     noActionButton: {
       type: Boolean,
