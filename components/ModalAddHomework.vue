@@ -5,7 +5,7 @@ BaseModal(
   resizable="both"
 )
   .content
-    PickerSubject(namespace="add-homework" @pick="cl($event); subject = $event")
+    PickerSubject(namespace="add-homework" @pick="subject = $event")
     .header
       BadgeSubject(
         clickable
