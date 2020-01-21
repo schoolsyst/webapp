@@ -38,7 +38,7 @@
 
             EditorMenuBar(:editor="editor" v-slot="{commands, isActive}")
                 .menubar
-                    button(@click="$modal.show('edit-properties')" v-tooltip.bottom="'Propriétés de la note...'")
+                    button.mobile(@click="$modal.show('edit-properties')" v-tooltip.bottom="'Propriétés de la note...'")
                         Icon settings
                     button(@click="commands.undo" v-tooltip.bottom="'Annuler<br/><kbd>Ctrl</kbd> + <kbd>Z</kbd>'")
                         Icon undo
@@ -52,12 +52,12 @@
                         v-tooltip.bottom="'Sauvegarder<br/><kbd>Ctrl</kbd> + <kbd>S</kbd>'"
                     )
                         Icon(filled) save
-                    button(v-tooltip.bottom="'Télécharger en...<br/><kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>S</kbd>'" @click="$modal.show('download-note')")
+                    button.mobile(v-tooltip.bottom="'Télécharger en...<br/><kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>S</kbd>'" @click="$modal.show('download-note')")
                         Icon(filled) save_alt
                     //- button
                     //-     Icon share
                     //-     | Partager
-                    button(v-tooltip.bottom="'Imprimmer<br/><kbd>Ctrl</kbd> + <kbd>P</kbd>'")
+                    button.mobile(v-tooltip.bottom="'Imprimmer<br/><kbd>Ctrl</kbd> + <kbd>P</kbd>'")
                         Icon(filled) print
                     button Réviser...
                     span.sep |
@@ -526,6 +526,7 @@ body
     width: 100%
     display: flex
     align-items: center
+    flex-wrap wrap
     font-size: 1.5rem
 
     .title-field
@@ -553,8 +554,19 @@ body
   padding-bottom: 0.5em
   display: flex
   align-items: center
+  flex-wrap wrap
   // justify-content center
   transition: opacity 0.5s ease
+
+  @media (max-width 650px)
+    justify-content center
+    & > :not(.mobile)
+      display none
+    .mobile
+      i
+        font-size: 1.7em
+      &:not(:last-child) i
+        margin-left: .5em
 
 .menubar button
   display: inline-flex
