@@ -76,9 +76,6 @@ Vue.prototype.$modal = {
     // - self: from the calling element
     // - NUMBERxNUMBER: from a given position
     modal.classList.remove('centered') // clear previous open position state
-    if (window.innerWidth <= 1000) {
-      openAt = 'center'
-    }
     const wrapper = modal.querySelector('.modal-wrapper')
     const setPos = (coords) => {
       wrapper.style.left = wrapper.style.right = wrapper.style.top = wrapper.style.bottom = // clean everything
@@ -215,6 +212,8 @@ Vue.prototype.$modal = {
       case 'self.below.left': {
         // get bottom/right coordinates of element
         // for absolute positionning
+        // eslint-disable-next-line
+        console.log('cehck')
         const { top, left, width, height } = calledBy.getBoundingClientRect()
         modal.classList.add('opened')
         const modalHeight = modal
