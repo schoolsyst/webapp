@@ -160,9 +160,6 @@ export default {
     background: var(--grey-offset)
 
 @media (max-width: 600px)
-  .card-wrapper
-    width: 50vw
-
   .card
     border: solid 1px var(--grey)
     width: 100%

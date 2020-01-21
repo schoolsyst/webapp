@@ -14,23 +14,26 @@
       )
       ButtonNormal(variant="primary" @click="rename(); $modal.hide('rename-note')") OK
     .toolbar(v-if="all.length")
-      Icon.search-icon search
-      InputField(
-        v-model.lazy="searchQuery"
-        no-label, no-error-messages
-        placeholder="Recherche par titre ou nom de la matière"
-      )
-      Icon filter_list
-      InputSelectSubject(
-        v-model="filterSubject"
-        name="filter"
-      )
-      Icon sort
-      InputSelect(
-        :options="sortOptions" v-model="sortBy" 
-        track-by="value" label="name" 
-        placeholder="Trier par..."
-      )
+      .field-wrapper
+        Icon.search-icon search
+        InputField(
+          v-model.lazy="searchQuery"
+          no-label, no-error-messages
+          placeholder="Recherche par titre ou nom de la matière"
+        )
+      .field-wrapper
+        Icon filter_list
+        InputSelectSubject(
+          v-model="filterSubject"
+          name="filter"
+        )
+      .field-wrapper
+        Icon sort
+        InputSelect(
+          :options="sortOptions" v-model="sortBy" 
+          track-by="value" label="name" 
+          placeholder="Trier par..."
+        )
     ul.notes(v-if="searched(all).length")
         li.card-new(@click="create" @click.ctrl="create(true)")
           Icon add
@@ -137,9 +140,9 @@ export default {
       },
       // UI data
       sortOptions: [
-        { value: 'opened', name: 'Dernière ouverture' },
+        { value: 'opened', name: 'Ouverture' },
         { value: 'added', name: 'Création' },
-        { value: 'modified', name: 'Dernière modification' }
+        { value: 'modified', name: 'Modification' }
       ],
       openedContextMenuNote: null,
       // API Data
@@ -259,13 +262,23 @@ export default {
   margin-left: 2rem
   display: flex
   align-items: center
+  @media (max-width: 1100px)
+    flex-wrap wrap
+    justify-content flex-start
+    align-items flex-start
+    .field-wrapper:not(:last-child)
+      margin-bottom 1rem
+  @media (max-width: 650px)
+    align-items center
+    flex-direction column
+
 
   i
     margin-right: 0.5rem
-    font-size: 1.75rem
+    font-size: 1.5rem
 
     &:not(:first-child)
-      margin-left: 1.5rem
+      margin-left: 1.2rem
 
     &.search-icon
       transform: rotate(90deg)
@@ -274,10 +287,18 @@ export default {
     height: 2.75rem
 
   .multiselect
-    width: 15rem
+    width: 13rem
+    max-width: 80vw
 
   /deep/ input
-    width: 30rem
+    width: 22rem
+    max-width: 80vw
+
+  .field-wrapper
+    display flex
+    align-items center
+    &:not(:last-child)
+      margin-right 1.5rem
 
 // .search
 // display flex
@@ -318,7 +339,8 @@ ul.notes, .all, .current-subject
   width: 85vw
 
   @media (max-width: 600px)
-    width: 100vw
+    margin-left: 0
+    width: 100%
 
     ul.notes li
       margin: 0
@@ -327,9 +349,16 @@ ul.notes
   list-style: none
   flex-wrap: wrap
 
-  li
-    margin-right: 1.5rem
-    margin-bottom: 1.5rem
+  @media (min-width: 600px)
+    li
+      margin-right: 1.5rem
+      margin-bottom: 1.5rem
+  @media (max-width 600px)
+    li
+      width 50%
+  @media (max-width 350px)
+    li
+      width 100%
 
 // -----------------------
 // CARD
@@ -358,7 +387,7 @@ ul.notes
     background: var(--blue-offset-dark)
 
   @media (max-width: 600px)
-    width: 50vw
+    width: 50%
     // border solid 1px var(--grey)
     border-radius: 0
 
