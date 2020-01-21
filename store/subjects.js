@@ -47,21 +47,25 @@ export const getters = {
       },
       isAColor: ['color'],
       required: ['name', 'color', 'weight'],
-      maximum: {
-        1: ['goal']
-      },
       minimum: {
         0: ['goal', 'weight']
       }
     },
     customConstraints: [
-      // {
-      //   message: "Il y a déjà une matière avec ce nom",
-      //   field: 'name',
-      //   constraint: (getters, object) => {
-      //     return !getters.all.map(s => s.name).includes(object.name)
-      //   }
-      // }
+      {
+        message: 'Il y a déjà une matière avec ce nom',
+        field: 'name',
+        constraint: (getters, object) => {
+          return !getters.subjects.map((s) => s.name).includes(object.name)
+        }
+      },
+      {
+        message: "L'objectif de moyenne est trop grand",
+        field: 'goal',
+        constraint: (getters, object) => {
+          return object.goal <= 1
+        }
+      }
     ],
     fieldNames: {
       color: { gender: 'F', name: 'couleur' },

@@ -6,6 +6,7 @@
       :style="{backgroundColor: value}"
       @click="$modal.open(modalName)"
       :title="colorName"
+      v-tooltip="tooltip"
     )
     BaseModal(:name="modalName" title="Choisir une couleur...")
       form
@@ -58,7 +59,11 @@ export default {
       type: String,
       default: '#000000'
     },
-    namespace: String
+    namespace: String,
+    tooltip: {
+      type: [Boolean, String],
+      default: false
+    }
   },
   data() {
     return {

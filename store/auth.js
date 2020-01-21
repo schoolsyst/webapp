@@ -5,6 +5,8 @@ export const store = () => ({
   loggedIn: false
 })
 
+// TODO: passwordStrengthConstraint using https://www.npmjs.com/package/password-validator
+
 const passwordConfirmationConstraint = {
   field: 'passwordConfirmation',
   message: 'Les deux mot de passe ne correspondent pas',
@@ -87,7 +89,17 @@ export const actions = {
       await this.$auth.loginWith('local', { data })
       this.$router.push('/')
     } catch (e) {
-      this.$toast.error("Mot de passe ou nom d'utilisateur incorrect", {
+      if (
+        e.response.data.non_field_errors &&
+        e.response.data.non_field_errors[0] ===
+          'Unable to log in with provided credentials.'
+      ) {
+        this.$toast.error("Mot de passe ou nom d'utilisateur incorrect", {
+          icon: 'error_outline'
+        })
+        return false
+      }
+      this.$toast.error('Erreur interne, veuillez réessayer plus tard.', {
         icon: 'error_outline'
       })
     }
@@ -97,9 +109,26 @@ export const actions = {
       await this.$axios.post('/users/', data)
       return true
     } catch (error) {
-      this.$toast.error('Erreur lors de la création du compte', {
-        icon: 'error_outline'
-      })
+      const data = error.response.data
+      if (
+        data.email &&
+        data.email[0] === 'user with this email already exists.'
+      ) {
+        this.$toast.error('Cette adresse e-mail est déjà prise', {
+          icon: 'error_outline'
+        })
+      } else if (
+        data.username &&
+        data.username[0] === 'A user with that username already exists.'
+      ) {
+        this.$toast.error("Ce nom d'utilisateur est déjà pris", {
+          icon: 'error_outline'
+        })
+      } else {
+        this.$toast.error('Erreur lors de la création du compte', {
+          icon: 'error_outline'
+        })
+      }
       return false
     }
   },
