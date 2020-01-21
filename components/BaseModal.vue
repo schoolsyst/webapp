@@ -6,7 +6,7 @@ aside.BaseModal(:id="`modal_${name}`",
     aria-modal="false" 
     role="dialog" 
     @click.self="$emit('close'); $modal.hide(name)" 
-    :class="{'edge-to-edge': edgeToEdge, 'no-backdrop': noBackdrop, shadow, 'has-header': hasHeader}"
+    :class="{'edge-to-edge': edgeToEdge, 'no-backdrop': noBackdrop, shadow, 'has-header': hasHeader, 'close-button': closeButton, 'no-close-button': !closeButton}"
 ) 
     .modal-wrapper(
       :style="{\
@@ -54,8 +54,8 @@ export default {
       default: false
     },
     title: {
-      required: true,
-      type: String
+      type: String,
+      default: ''
     },
     resizable: {
       type: [Boolean, String],
@@ -108,9 +108,13 @@ export default {
   max-height: 100vh
   max-width: 100vw
 
-  @media (max-width: 650px)
+@media (max-width: 650px)
+  aside.close-button > .modal-wrapper
     width: 100vw
     height: 100vh
+    border-radius: 0
+  aside.no-close-button > .modal-wrapper
+    width: 100vw
     border-radius: 0
 
 .has-header
