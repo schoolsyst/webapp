@@ -5,8 +5,7 @@ import {
   differenceInWeeks,
   isBefore,
   parseISO,
-  getUnixTime,
-  fromUnixTime
+  getUnixTime
 } from 'date-fns'
 import { getValidator, getMutations } from './index'
 
@@ -81,17 +80,26 @@ export const getters = {
         }
       })
     }
-    console.log("GROUPPING HW's")
+    // Remove done homework from LATE group
+    homeworks = homeworks.filter((hw) => {
+      if (hw.due === 'LATE') {
+        return hw.progress < 1
+      }
+      return true
+    })
     const map = groupBy(homeworks, 'due')
     let flat = []
     for (const [due, homeworks] of Object.entries(map)) {
       flat.push({ due, homeworks })
     }
 
+    // To put the LATE group at the top, we change its value to a negtive number.
+    const LATE_DUE_NUMBER = -666 // No reason to use this number, huh. R-really, I-I-I mean... It's 1 AM
+    flat[flat.findIndex((g) => g.due === 'LATE')].due = LATE_DUE_NUMBER
     flat = flat.sort(firstBy('due'))
     flat = flat.map((g) => ({
       ...g,
-      due: typeof g.due === 'number' ? fromUnixTime(g.due) : g.due
+      due: g.due === LATE_DUE_NUMBER ? 'LATE' : g.due
     }))
     return flat
   },
