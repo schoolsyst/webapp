@@ -29,6 +29,15 @@ const parseHomeworkDates = (homework) => {
   return homework
 }
 
+// For comparisons to determinate if homework is late or not.
+const getTodayDate = () => {
+  const today = new Date()
+  today.setHours(0)
+  today.setMinutes(0)
+  today.setSeconds(0)
+  return today
+}
+
 export const getters = {
   types: ({ types }) => types,
   all: ({ homeworks }, { order }) => order(homeworks),
@@ -62,7 +71,10 @@ export const getters = {
     if (homeworks.length < 1) return []
     if (specialGroups.length) {
       homeworks = homeworks.map((hw) => {
-        if (specialGroups.includes('late') && isBefore(hw.due, Date.now())) {
+        if (
+          specialGroups.includes('late') &&
+          isBefore(hw.due, getTodayDate())
+        ) {
           return { ...hw, due: 'LATE' }
         } else {
           return { ...hw, due: getUnixTime(hw.due) }
