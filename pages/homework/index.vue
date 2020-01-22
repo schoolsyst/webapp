@@ -193,6 +193,9 @@ ul.homework li
 li.group, ul.homework-groups
   flex-direction: column
 
+li.group .mark-all-as-done i
+  color var(--black)
+
 // .container required to override the margin-left from layout:default.
 .container h2
   display: flex
