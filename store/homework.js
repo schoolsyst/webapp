@@ -92,10 +92,12 @@ export const getters = {
     for (const [due, homeworks] of Object.entries(map)) {
       flat.push({ due, homeworks })
     }
-
     // To put the LATE group at the top, we change its value to a negtive number.
     const LATE_DUE_NUMBER = -666 // No reason to use this number, huh. R-really, I-I-I mean... It's 1 AM
-    flat[flat.findIndex((g) => g.due === 'LATE')].due = LATE_DUE_NUMBER
+    const index = flat.findIndex((g) => g.due === 'LATE')
+    if (index !== -1) {
+      flat[index].due = LATE_DUE_NUMBER
+    }
     flat = flat.sort(firstBy('due'))
     flat = flat.map((g) => ({
       ...g,
