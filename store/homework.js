@@ -59,6 +59,7 @@ export const getters = {
      * [ { due: <date>, homeworks: [ ... ], shown: <bool> }, ... ]
      * the shown bool is computed by getters._needToShowGroup
      */
+    if (homeworks.length < 1) return []
     if (specialGroups.length) {
       homeworks = homeworks.map((hw) => {
         if (specialGroups.includes('late') && isBefore(hw.due, Date.now())) {
