@@ -42,6 +42,10 @@ export default {
       type: String,
       default: 'normal'
     },
+    closeOnConfirm: {
+      type: Boolean,
+      default: true
+    },
     name: String,
     challenge: {
       type: [Boolean, Function],
@@ -63,7 +67,9 @@ export default {
     confirmAndClose() {
       this.endChallenge()
       this.$emit('confirm')
-      this.$modal.hide(`confirm-${this.name}`)
+      if (this.closeOnConfirm) {
+        this.$modal.hide(`confirm-${this.name}`)
+      }
     },
     startChallenge() {
       // console.log(`[MODAL confirm-${name}] starting challenge`)
