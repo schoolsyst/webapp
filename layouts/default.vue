@@ -85,6 +85,9 @@ main, .container
 #page, /deep/ #empty-state, /deep/ #loading-screen
   min-height: calc(100vh - 100px) // top bar height
 
+/deep/ #loading-screen
+  text-align center
+
 @media (max-width: 600px)
   main
     margin-left: 0
