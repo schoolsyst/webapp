@@ -76,6 +76,7 @@ export const getters = {
     return badSettings.length > 0
   },
   textColor: (state, getters) => (backgroundColor) =>
+    // TODO: handle var(--) ?
     /* returns the corresponding text color most visible
      * on backgroundColor: either 'black' or 'white'.
      */
@@ -376,6 +377,8 @@ export const getMutations = (
     mutations[`ADD${WHAT}`] = (state, item) => {
       if (debug) {
         console.group(`${whats}/ADD`)
+        console.log('item:')
+        console.log(item)
         console.log('before:')
         console.log(state[whats])
       }
@@ -390,6 +393,8 @@ export const getMutations = (
     mutations[`DEL${WHAT}`] = (state, pk) => {
       if (debug) {
         console.group(`${whats}/DEL`)
+        console.log('item:')
+        console.log(state[whats][pk])
         console.log('before:')
         console.log(state[whats])
       }
@@ -420,6 +425,8 @@ export const getMutations = (
       // Set in store
       Vue.set(state[whats], idx, item)
       if (debug) {
+        console.log('item:')
+        console.log(item)
         console.log('after:')
         console.log(state[whats])
         console.groupEnd()
