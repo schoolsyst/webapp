@@ -2,6 +2,34 @@
   #bottom-bar: slot
 </template>
 
+<script>
+export default {
+  props: {
+    shown: {
+      type: Boolean,
+      default: true
+    }
+  },
+  mounted() {
+    this.reactOnShownProp()
+  },
+  watch: {
+    shown() {
+      this.reactOnShownProp()
+    }
+  },
+  // We can't use a computed prop because the element
+  // needs to be mounted to access the DOM
+  methods: {
+    reactOnShownProp() {
+      const { height } = this.$el.getBoundingClientRect()
+      const bottom = this.shown ? 0 : -height + 'px'
+      this.$el.style.bottom = bottom
+    }
+  }
+}
+</script>
+
 <style lang="stylus" scoped>
 #bottom-bar
   padding: 1.5em 2em
@@ -15,6 +43,7 @@
   display: flex
   align-items: center
   border-top: 1px solid var(--grey)
+  transition bottom 0.5s ease
 
   .to-right
     margin-left: auto

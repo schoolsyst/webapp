@@ -2,7 +2,8 @@
     .container
         ModalNoteDownload(:note="{uuid, format, name}")
         PickerSubject(@pick="subject = $event")
-        TheBottomBar
+        button.show-bottom-bar(@click="bottomBarHidden = false"): Icon(v-tooltip="'Montrer'") keyboard_arrow_up
+        TheBottomBar(:shown="!bottomBarHidden")
             ul.time
                 li {{ format(now, 'HH:mm') }}
             ul.stats
@@ -12,7 +13,7 @@
                 li(v-if="counts" v-tooltip.top-start="allCountsTooltip")
                     span.value {{ counts.words }}
                     |  Mots
-                li: Icon(v-tooltip="'Masquer'") keyboard_arrow_down
+                li: button(@click="bottomBarHidden = true"): Icon(v-tooltip="'Masquer'") keyboard_arrow_down
         .toolbar
             .top
                 nuxt-link(to="/notes"): Icon.icon arrow_back
@@ -254,6 +255,7 @@ export default {
   layout: 'bare',
   data() {
     return {
+      bottomBarHidden: false,
       headingLevelNames: [
         'Corps',
         'Titre',
@@ -526,7 +528,7 @@ body
     width: 100%
     display: flex
     align-items: center
-    flex-wrap wrap
+    flex-wrap: wrap
     font-size: 1.5rem
 
     .title-field
@@ -554,19 +556,22 @@ body
   padding-bottom: 0.5em
   display: flex
   align-items: center
-  flex-wrap wrap
+  flex-wrap: wrap
   // justify-content center
   transition: opacity 0.5s ease
 
-  @media (max-width 650px)
-    justify-content center
+  @media (max-width: 650px)
+    justify-content: center
+
     & > :not(.mobile)
-      display none
+      display: none
+
     .mobile
       i
         font-size: 1.7em
+
       &:not(:last-child) i
-        margin-left: .5em
+        margin-left: 0.5em
 
 .menubar button
   display: inline-flex
@@ -591,6 +596,10 @@ body
   font-size: 2em
   padding: 0 0.25em
 
+.show-bottom-bar
+  position fixed
+  bottom: 1em
+  right: 1em
 #bottom-bar
   padding: 0.75em 1em
   display: flex
@@ -670,6 +679,8 @@ body
       margin-bottom: 0.2em
 
     h1, h2, h3, h4, h5, h6
+      line-height: 1.2
+
       &:not(:first-child)
         margin-top: 1.2em
 
