@@ -10,7 +10,7 @@
         nav#drawer(:style="{left: !opened ? '-500px' : '0px'}")
             ul
                 li.image 
-                    LogoCompound
+                    nuxt-link(to="/"): LogoCompound
                 li.user
                     button.logout(@click="$modal.show('confirm-logout')"): Icon power_settings_new
                     span.email {{ $auth.user.email || $auth.user.username }}
