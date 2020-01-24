@@ -7,7 +7,12 @@ import Vue from 'vue'
 import { getMutations } from './index'
 
 export const state = () => ({
-  settings: []
+  settings: [],
+  verboseChoices: {
+    LIGHT: 'Clair',
+    DARK: 'Sombre',
+    AUTO: 'Automatique'
+  }
 })
 
 export const getters = {

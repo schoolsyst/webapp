@@ -10,7 +10,7 @@
       ) {{ name }}
       InputSelect(
         v-else
-        :options="choices.map(c => ({key: c, label: c}))"
+        :options="verboseChoices"
         :value="value"
         @input="setValue({key: _key, value: $event})"
         :name="_key"
@@ -34,7 +34,7 @@
 </template>
 
 <script>
-import { mapActions } from 'vuex'
+import { mapActions, mapState } from 'vuex'
 import InputField from '~/components/InputField.vue'
 import InputSelect from '~/components/InputSelect.vue'
 import RadioButtons from '~/components/RadioButtons.vue'
@@ -52,9 +52,28 @@ export default {
     value: {
       default: null
     },
-    multiple: Boolean,
+    multiple: {
+      type: Boolean,
+      default: false
+    },
     type: String,
-    description: String
+    description: {
+      type: String,
+      default: ''
+    }
+  },
+  computed: {
+    ...mapState('settings', ['verboseChoices']),
+    verboseChoices() {
+      const choices = []
+      this.choices.forEach((choice) => {
+        const verboseChoice = this.verboseChoices.hasOwnProperty(choice)
+          ? this.verboseChoices[choice]
+          : choice
+        choices.push({ key: choice, label: verboseChoice })
+      })
+      return choices
+    }
   },
   methods: {
     ...mapActions('settings', ['setValue'])
