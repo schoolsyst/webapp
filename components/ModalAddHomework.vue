@@ -1,20 +1,20 @@
 <template lang="pug">
-BaseModal(
-  name="add-homework" 
-  title="Ajouter des devoirs" 
-  resizable="both"
-)
-  .content
-    PickerSubject(namespace="add-homework" @pick="subject = $event")
+  ModalObject(
+    v-bind="{...description, action, validation}"
+    @submit="$emit('submit')"
+    @delete="$emit('delete')"
+  )
+    PickerSubject(v-bind="{namespace}" @pick="$emit('input', {...value, subject: $event})")
     .header
       BadgeSubject(
         clickable
-        @click="$modal.show('add-homework-subject-picker')"
-        v-bind="subject"
+        @click="$modal.show(`${namespace}-subject-picker`)"
+        v-bind="value.subject"
         variant="responsive"
       )
       InputField.name(
-        v-model="name"
+        :value="value.name"
+        @input="$emit('input', {...value, name: $event})"
         name="name"
         v-bind="{validation}"
         placeholder="Titre"
@@ -24,7 +24,8 @@ BaseModal(
     .-side-by-side
       .left
         InputField.details(
-          v-model="details"
+          :value="value.details"
+          @input="$emit('input', {...value, details: $event})"
           v-bind="{validation}"
           name="details" 
           type="block"  
@@ -32,28 +33,27 @@ BaseModal(
         ) Détails
       .right
         RadioButtons.type(
-          v-model="type"
+          :value="value.type"
+          @input="$emit('input', {...value, type: $event})"
           v-bind="{validation}"
           name="type"
           variant="filled"
           :values="types" 
         ) Type de devoir
         PickerDateDue(
-          namespace="add-homework"
           variant="filled"
-          v-model="due"
-          v-bind="{subject}"
+          :value="due"
+          @input="$emit('input', {...value, due: $event})"
+          :subject="value.subject"
+          v-bind="{namespace}"
         ) À {{dueLabelVerb}} pour le
-    .submit-area
-      ButtonNormal(
-        v-bind="{validation}"
-        @click="$emit('click', homeworkObject)"
-      ) Ajouter
+
 </template>
 
 <script>
 import { mapGetters, mapState } from 'vuex'
-import BaseModal from '~/components/BaseModal.vue'
+import { fromUnixTime } from 'date-fns'
+import ModalObject from '~/components/ModalObject.vue'
 import PickerSubject from '~/components/PickerSubject.vue'
 import HeadingSub from '~/components/HeadingSub.vue'
 import RadioButtons from '~/components/RadioButtons.vue'
@@ -64,7 +64,7 @@ import PickerDateDue from '~/components/PickerDateDue.vue'
 
 export default {
   components: {
-    BaseModal,
+    ModalObject,
     PickerSubject,
     HeadingSub,
     RadioButtons,
@@ -73,40 +73,31 @@ export default {
     BadgeSubject,
     PickerDateDue
   },
+  props: {
+    value: {
+      type: Object,
+      default: null
+    },
+    action: {
+      type: String,
+      required: true
+    }
+  },
   data() {
     return {
-      details: null,
-      mDue: null,
-      name: null,
-      mSubject: null,
-      type: 'EXERCISE'
+      description: {
+        name: 'homework',
+        verboseName: 'devoir',
+        gender: 'M'
+      }
     }
   },
   computed: {
     ...mapState('homework', ['types']),
     ...mapGetters('schedule', ['currentSubject', 'nextCourseOf']),
-    subject: {
-      get() {
-        return this.mSubject || this.currentSubject
-      },
-      set(newSubject) {
-        this.mSubject = newSubject
-      }
-    },
-    due: {
-      get() {
-        console.log(['due:get', !!this.mDue])
-        if (this.mDue) return this.mDue
-        const nextCourse = this.nextCourseOf(this.subject)
-        if (nextCourse) return nextCourse.start
-        return null
-      },
-      set(newDueDate) {
-        this.mDue = newDueDate
-      }
-    },
     validation() {
-      return this.validate()(this.homeworkObject)
+      const object = { ...this.value, due: this.due }
+      return this.validate()(object)
     },
     dueLabelVerb() {
       return {
@@ -114,16 +105,22 @@ export default {
         TOBRING: 'apporter',
         COURSEWORK: 'faire',
         TEST: 'réviser'
-      }[this.type]
+      }[this.value.type]
     },
-    homeworkObject() {
-      return {
-        subject: this.subject,
-        type: this.type,
-        due: this.due,
-        name: this.name,
-        details: this.details
+    namespace() {
+      return this.action + '-' + this.name
+    },
+    due() {
+      let date = null
+      if (this.value.due) date = this.value.due
+      const nextCourse = this.nextCourseOf(this.value.subject)
+      if (nextCourse && !date) {
+        date = nextCourse.start
       }
+      if (typeof date === 'number') {
+        date = fromUnixTime(date)
+      }
+      return date
     }
   },
   methods: {

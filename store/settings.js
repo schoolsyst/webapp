@@ -1,6 +1,6 @@
 // Use the moment-range addon
 import groupBy from 'lodash.groupby'
-import { parseISO, parse } from 'date-fns'
+import { parseISO, parse, isValid, formatISO } from 'date-fns'
 import uniqBy from 'lodash.uniqby'
 import debounce from 'lodash.debounce'
 import Vue from 'vue'
@@ -100,7 +100,14 @@ export const mutations = {
     Vue.set(state, 'settings', hydratedSettings)
   },
   // eslint-disable-next-line
-  ...getMutations('setting', parsedValue, true, ['del', 'add', 'patch'], 'key')
+  ...getMutations(
+    'setting',
+    (o) => ({ ...o, value: parsedValue(o.value, o) }),
+    true,
+    ['del', 'add', 'patch'],
+    'key',
+    true
+  )
   // TODO validator: customConstraints from definitions
   // eg: if (definition.required) /* check if setting is not empty */ else return true
   // eg2: try { parseValue(definition.type, setting.value) } catch (e) { return false }
@@ -139,19 +146,28 @@ export const actions = {
     commit('SET', { definitions, settings })
   },
   async post({ commit }, setting) {
-    setting = { ...setting, user: this.$auth.user.id }
+    setting = {
+      ...setting,
+      value: stringifiedValue(setting.value),
+      user: this.$auth.user.id
+    }
     const res = await this.$axios.post('/settings/', setting)
     const { data } = await this.$axios.get(`/settings/${res.data.setting}/`)
-    if (data) commit('PATCH', data)
+    if (data) commit('PATCH', { modifications: data })
     // console.log(`[from API] POST /settings/: OK`)
   },
-  async patch({ commit }, { key, modifications }) {
+  async patch({ commit, getters }, { key, modifications }) {
+    const type = getters.one(key).type
     if (modifications.hasOwnProperty('value')) {
-      modifications.value = modifications.value ? 'true' : 'false'
+      modifications.value = stringifiedValue({
+        value: modifications.value,
+        type
+      })
     }
+    console.log(modifications)
     const res = await this.$axios.patch(`/settings/${key}/`, modifications)
     const { data } = await this.$axios.get(`/settings/${res.data.setting}/`)
-    if (data) commit('PATCH', key, data)
+    if (data) commit('PATCH', { pk: key, modifications: data })
   },
   async delete({ commit }, key) {
     try {
@@ -162,28 +178,69 @@ export const actions = {
       console.error(error)
     }
   },
-  setValue: debounce(async function(
-    { getters, commit, dispatch },
-    { key, value }
-  ) {
-    // console.log(`Setting ${key} = ${value}`)
+  async userHasSetting(_, { key }) {
     try {
-      // User already has that setting
-      if (getters.userHasSetting(key, 'key')) {
-        await dispatch('patch', { key, modifications: { value } })
-        // The setting exist but that user has never set a value
-      } else if (getters.one(key)) {
-        await dispatch('post', { setting: key, value })
-        // The setting does not exist
-      } else {
-        this.$toast.error("Ce réglage n'exsite pas", { icon: 'error_outline' })
-      }
+      await this.$axios.get(`/settings/${key}/`)
+      return true
     } catch (error) {
-      // eslint-disable-next-line
-      console.error(error)
+      return false
     }
   },
-  1000)
+  setValue: debounce(
+    async function({ getters, dispatch }, { key, value, force }) {
+      force = force || false
+      // console.log(`Setting ${key} = ${value}`)
+      try {
+        // Check if the value is coherent with the setting's type
+        // TODO: put this into a checkValueType function
+        if (!force) {
+          const type = getters.one(key).type
+          let typeIsCorrect = true
+          switch (type) {
+            case 'DATE':
+              typeIsCorrect = isValid(value)
+              break
+
+            default:
+              break
+          }
+          if (!typeIsCorrect) {
+            console.error(
+              `settings#setValue: ${JSON.stringify(value)} should be a ${type}`
+            )
+          }
+        }
+        // User already has that setting
+        if (await dispatch('userHasSetting', { key })) {
+          await dispatch('patch', { key, modifications: { value } })
+          // The setting exist but that user has never set a value
+        } else if (getters.one(key)) {
+          await dispatch('post', { setting: key, value })
+          // The setting does not exist
+        } else {
+          this.$toast.error("Ce réglage n'exsite pas", {
+            icon: 'error_outline'
+          })
+        }
+      } catch (error) {
+        // eslint-disable-next-line
+        console.error(error)
+      }
+    },
+    500,
+    { trailing: false, leading: true }
+  ),
+  async toggle({ dispatch, getters }, { key, force }) {
+    const setting = getters.one(key)
+    if (setting.type !== 'BOOLEAN') {
+      console.error(
+        `Can't toggle ${key}: ${key} is not a BOOLEAN but a ${setting.type}`
+      )
+      return
+    }
+    const value = !setting.value
+    await dispatch('setValue', { key, force, value })
+  }
 }
 
 const parsedValue = (
@@ -285,4 +342,26 @@ const parsedValue = (
   }
   if (typeof parsed === 'number' && positive) parsed = Math.abs(parsed)
   return parsed
+}
+
+const stringifiedValue = ({ value, type }) => {
+  // TODO: Handle multiple values
+  switch (type) {
+    case 'DATE':
+    case 'TIME':
+    case 'DATETIME':
+      return formatISO(value, {
+        representation: {
+          DATE: 'complete',
+          TIME: 'time',
+          DATETIME: 'complete'
+        }[type]
+      })
+
+    case 'BOOLEAN':
+      return value ? 'true' : 'false'
+
+    default:
+      return value
+  }
 }

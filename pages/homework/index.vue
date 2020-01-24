@@ -1,15 +1,30 @@
 <template lang="pug">
     //TODO@ROADMAP: drag homework cards to change due date
     .container
-        ModalAddHomework(@click="post({homework: $event})")
+        ModalAddHomework(
+          v-model="homework.adding"
+          @submit="post({homework: homework.adding}); homework.adding = homework.defaults"
+          action="add"
+        )
+        ModalAddHomework(
+          v-model="homework.editing"
+          @submit="patch({modifications: homework.editing, uuid: homework.editing.uuid})"
+          @delete="del({ uuid: homework.editing.uuid })"
+          action="edit"
+        )
         .grades-wrapper(v-if="grouped.filter(g => _needToShowGroup()({...g, showCompleted})).length")
-            Checkbox(v-model="showCompleted") Voir les devoirs terminés
+            InputSetting.show-completed-exercises(
+              _key="show_completed_exercises"
+              type="BOOLEAN"
+              name="Voir les exercices complétés"
+              :value="showCompleted"
+            )
             ul.homework-groups
                 li.group.add-new
                     ul.homework
                         li
                             .card.new(@click="$modal.show('add-homework')")
-                                Icon.icon add
+                              Icon.icon add
                 li.group(
                     v-for="group in grouped.filter(g => _needToShowGroup()({...g, showCompleted}))" :key="group.due"
                     :class="{ 'all-done': group.homeworks.filter(o => o.progress < 1).length == 0 }"
@@ -17,13 +32,17 @@
                     HeadingSub 
                         span.due.late(v-if="group.due === 'LATE'") En retard
                         span.due(v-else) {{ compoundDate(group.due) }}
-                        button(
+                        button.mark-all-as-done(
                             v-tooltip="'Tout marquer comme terminé'"
                             @click="markAllAsDone(group.homeworks)"
                         ): Icon done_all
                     ul.homework
                         li(v-for="hw in group.homeworks", :key="hw.uuid")
-                            CardHomework(v-bind="hw")
+                            CardHomework(
+                              v-bind="hw"
+                              @click="homework.editing = hw; $modal.open('edit-homework')"
+                              @contextmenu.prevent="$refs.menu.open($event, { hw })"
+                            )
         ScreenEmpty.empty(v-else @cta="$modal.show('add-homework')" @cta-secondary="showCompleted = true")
             template(#smiley) \o/
             p Bravo. Vous n'avez plus rien à travailler, pour le moment.
@@ -42,7 +61,7 @@
 <script>
 import VueContext from 'vue-context'
 import 'vue-context/src/sass/vue-context.scss'
-import { mapGetters, mapActions, mapState, mapMutations } from 'vuex'
+import { mapGetters, mapActions, mapState } from 'vuex'
 import {
   formatDistance,
   format,
@@ -56,13 +75,12 @@ import {
   isToday
 } from 'date-fns'
 import { fr } from 'date-fns/locale'
-import debounce from 'lodash.debounce'
 import CardHomework from '~/components/CardHomework.vue'
 import ScreenEmpty from '~/components/ScreenEmpty.vue'
 import ModalAddHomework from '~/components/ModalAddHomework.vue'
 import ButtonNormal from '~/components/ButtonNormal.vue'
 import HeadingSub from '~/components/HeadingSub.vue'
-import Checkbox from '~/components/Checkbox.vue'
+import InputSetting from '~/components/InputSetting.vue'
 import Icon from '~/components/Icon.vue'
 
 export default {
@@ -74,32 +92,46 @@ export default {
     VueContext,
     HeadingSub,
     Icon,
-    Checkbox
+    InputSetting
   },
   head: {
     title: 'Devoirs'
   },
+  data() {
+    const defaults = {
+      details: null,
+      due: null,
+      name: null,
+      subject: null,
+      type: 'EXERCISE'
+    }
+    return {
+      homework: {
+        defaults,
+        adding: defaults,
+        editing: {
+          uuid: null
+        }
+      }
+    }
+  },
   computed: {
     ...mapGetters('homework', ['grouped']),
     ...mapState(['now']),
-    showCompleted: {
-      set(value) {
-        this.setSetting({
-          pk: 'show_completed_exercises',
-          modifications: { value }
-        })
-      },
-      get() {
-        return this.getSetting()('show_completed_exercises')
-      }
+    showCompleted() {
+      return this.getSettingValue()('show_completed_exercises')
     }
   },
   methods: {
     getUnixTime,
     ...mapGetters('homework', ['group', '_needToShowGroup']),
-    ...mapActions('homework', ['post', 'switchCompletion']),
-    ...mapMutations({ setSetting: 'settings/PATCH' }),
-    ...mapGetters({ getSetting: 'settings/value' }),
+    ...mapActions('homework', ['post', 'switchCompletion', 'patch']),
+    ...mapActions('homework', { del: 'delete' }),
+    ...mapGetters({
+      getSettingValue: 'settings/value',
+      getSetting: 'settings/one'
+    }),
+    ...mapActions({ toggleSetting: 'settings/toggle' }),
     compoundDate(date) {
       if (date === 'LATE') return 'En retard'
       date = fromUnixTime(date)
@@ -139,12 +171,10 @@ export default {
     )
   },
   watch: {
-    showCompleted: debounce(async function(oldVal, value) {
-      await this.$store.dispatch('settings/patch', {
-        key: 'show_completed_exercises',
-        modifications: { value }
-      })
-    }, 1000)
+    homework() {
+      console.log(this.homework.editing)
+      console.log(this.homework.adding)
+    }
   }
 }
 </script>
@@ -165,7 +195,7 @@ export default {
     width: 500px
     max-width: 100%
 
-.Checkbox, .new
+.show-completed-exercises, .new
   display: flex
   justify-content: center
   margin-bottom: 2rem
@@ -194,7 +224,7 @@ li.group, ul.homework-groups
   flex-direction: column
 
 li.group .mark-all-as-done i
-  color var(--black)
+  color: var(--black)
 
 // .container required to override the margin-left from layout:default.
 .container h2

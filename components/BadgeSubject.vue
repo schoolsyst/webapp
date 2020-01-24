@@ -1,10 +1,11 @@
 <template lang="pug">
 component.subject(
-  :style="{backgroundColor: color || 'var(--black)', color: textColor()(color)}"
+  :style="{backgroundColor: color || 'var(--black)', color: color ? textColor()(color) : 'var(--white)'}"
   @click="$emit('click')"
   :class="{clickable, multiline, thin, inline, [`variant-${variant}`]: true}"
   :is="clickable ? 'button' : 'span'"
   v-tooltip="!noTooltip ? name : null"
+  type="button"
 )
   Icon.unknown-icon(v-if="!color") more_horiz
   span.name

@@ -5,17 +5,18 @@ import {
   differenceInWeeks,
   isBefore,
   parseISO,
-  getUnixTime
+  getUnixTime,
+  fromUnixTime
 } from 'date-fns'
 import { getValidator, getMutations } from './index'
 
 export const state = () => ({
   homeworks: [],
   types: [
-    { key: 'EXERCISE', label: 'Exercice' },
-    { key: 'TEST', label: 'Contrôle' },
-    { key: 'COURSEWORK', label: 'Travail noté' },
-    { key: 'TOBRING', label: 'À apporter' }
+    { importance: 1, key: 'TOBRING', label: 'À apporter' },
+    { importance: 1, key: 'EXERCISE', label: 'Exercice' },
+    { importance: 2, key: 'COURSEWORK', label: 'Travail noté' },
+    { importance: 3, key: 'TEST', label: 'Contrôle' }
   ],
   loaded: false
 })
@@ -50,11 +51,18 @@ export const getters = {
     ...currentWeek,
     ...nextWeek
   ],
+  importanceOf: ({ types }) => (homework) => {
+    if (types.map((t) => t.key).includes(homework.type)) {
+      return types.find((t) => t.key === homework.type).importance
+    }
+    return 0
+  },
   pending: (_, { currentOrNextWeek }) =>
     currentOrNextWeek.filter((o) => o.progress === 1),
-  order: () => (homeworks) =>
+  order: (_, { importanceOf }) => (homeworks) =>
     [...homeworks].sort(
       firstBy((o1, o2) => isBefore(o1.due, o2.due))
+        .thenBy((o) => importanceOf(o))
         .thenBy((o) => o.subject.weight)
         .thenBy('uuid')
     ),
@@ -223,19 +231,26 @@ export const actions = {
     }
   },
 
-  async delete({ commit }, uuid) {
+  async delete({ commit, dispatch, getters }, { uuid, force, toastMessage }) {
     try {
-      const { data } = await this.$axios.delete(`/homeworks/${uuid}`)
-      if (data) commit('DEL', uuid)
-      console.log(`[from API] DELETE /homeworks/${uuid}: OK`)
+      console.log(uuid)
+      // Stores the note object because we want to be able to cancel the deletion
+      const homework = getters.one(uuid)
+      //
+      await this.$axios.delete(`/homework/${uuid}`)
+      commit('DEL', uuid)
+      this.$toast.show(toastMessage || 'Devoir supprimé', {
+        action: {
+          text: 'Annuler',
+          onClick: async (e, toast) => {
+            await dispatch(`post`, { homework })
+            toast.goAway(0)
+          }
+        },
+        duration: 8000
+      })
     } catch (error) {
-      console.error(`[from API] DELETE /homeworks/${uuid}: Error`)
-      try {
-        console.error(error.response.data)
-      } catch (_) {
-        // eslint-disable-next-line
-        console.error(error)
-      }
+      console.error(error)
     }
   },
 
@@ -247,8 +262,12 @@ export const actions = {
     force = force || false
     if (!force) {
       let homework = getters.one(uuid)
+      if ('due' in modifications && typeof modifications.due === 'number') {
+        modifications.due = fromUnixTime(modifications.due)
+      }
       homework = { ...homework, ...modifications }
-      const validation = getters.validate()(homework)
+      console.log(homework)
+      const validation = getters.validate(homework)
       if (!validation.validated) return validation
     }
     try {

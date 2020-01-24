@@ -48,7 +48,7 @@
 </template>
 
 <script>
-import { parseISO, formatISO } from 'date-fns'
+import { parseISO, formatISO, isValid, fromUnixTime } from 'date-fns'
 
 export default {
   props: {
@@ -190,7 +190,6 @@ export default {
       }
       switch (this.type) {
         case 'date':
-          console.log(['toJSValue', value])
           value = parseISO(value)
           break
 
@@ -205,6 +204,8 @@ export default {
       if (typeof value === 'string') return value
       switch (this.type) {
         case 'date':
+          if (typeof value === 'number') value = fromUnixTime(value)
+          if (!isValid(value)) return null
           value = formatISO(value, { representation: 'date' })
           break
 

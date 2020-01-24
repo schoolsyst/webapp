@@ -17,12 +17,12 @@
       template(v-if="subject")
         HeadingSub(small) Prochains cours
         .next-courses
-          button.before(@click="$emit('input', courseBefore)" :disabled="!courseBefore")
+          button.before(@click="$emit('input', courseBefore)" :disabled="!courseBefore" type="button")
             Icon arrow_back
           .viewer
             span.relative {{ dueRelative || '?!?' }}
             span.absolute {{ value ? format(value, 'cccc dd MMM à HH:mm') : 'Aucune date sélectionnée' }}
-          button.after(@click="$emit('input', courseAfter)" :disabled="!courseAfter")
+          button.after(@click="$emit('input', courseAfter)" :disabled="!courseAfter" type="button")
             Icon arrow_forward
         .buttons
           ButtonNormal(
@@ -67,7 +67,6 @@ export default {
   components: { BaseModal, ButtonNormal, Icon, InputField, HeadingSub },
   props: {
     subject: Object,
-    due: Date,
     namespace: {
       type: String,
       default: null
@@ -81,7 +80,8 @@ export default {
       default: false
     },
     value: {
-      default: ''
+      type: [Date, Number],
+      default: null
     }
   },
   data() {
@@ -91,7 +91,12 @@ export default {
   },
   computed: {
     ...mapState(['now']),
-    ...mapGetters('schedule', ['nextCoursesIn', 'coursesIn', 'nextCourseOf']),
+    ...mapGetters('schedule', [
+      'nextCoursesIn',
+      'coursesIn',
+      'nextCourseOf',
+      'coursesOf'
+    ]),
     name() {
       return this.namespace
         ? `${this.namespace}-due-date-picker`
