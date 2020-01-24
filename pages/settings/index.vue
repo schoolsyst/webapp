@@ -63,6 +63,9 @@ export default {
 </script>
 
 <style lang="stylus" scoped>
+.container
+  padding 0 1.2em
+
 ul.categories li
   display: flex
   flex-direction: column
