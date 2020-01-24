@@ -4,7 +4,8 @@
     confirm-text="Plus tard"
     cancel-text="Configurer l'emploi du temps"
     name="skip"
-    @confirm="skip"
+    :close-on-confirm="false"
+    @confirm="skip()"
   )
     p
       | Si vous passez cette étape, de nombreuses fonctionnalités ne seront pas disponibles:
@@ -16,7 +17,7 @@
   h1 Votre emploi du temps
   ul.settings
     li(v-for="setting in settings" :key="setting.uuid")
-      InputSetting(v-bind="{...setting, _key: setting.key}")
+      InputSetting(v-bind="{...setting, _key: setting.key, value: null}")
   TheBottomBar
     ButtonNormal(variant="text-blue" href="/setup/subjects") #[Icon arrow_back] Retour
     ButtonNormal.to-right(variant="outline" @click="$modal.open('confirm-skip')" ) Passer
@@ -58,8 +59,15 @@ export default {
       setSetting: 'settings/setValue'
     }),
     async skip() {
-      await this.setSetting({ key: 'use_schedule', value: 'false' })
-      this.$router.push('/')
+      await this.setSetting({
+        key: 'use_schedule',
+        value: false
+      })
+      // setValue is debounced to 500ms
+      setTimeout(() => {
+        this.$router.push('/')
+        this.$modal.close('confirm-skip')
+      }, 500)
     }
   }
 }
