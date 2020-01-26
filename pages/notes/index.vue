@@ -41,7 +41,10 @@
           v-for="note in orderBy()(searched(all), sortBy.value)" :key="note.uuid" 
           @contextmenu.prevent="$refs.menu.open($event, { note })"
         )
-          CardNote(v-bind="note" @more.prevent="$refs.menu.open($event, { note })")
+          CardNote(
+            v-bind="note"
+            @more.stop="$refs.menu.open($event, { note })"
+          )
     ScreenEmpty(v-else-if="searchQuery || filterSubject" @cta="create").no-search-results
       template(#smiley) :/
       p(v-if="searchQuery") Votre recherche n'a pas donné de résultat.
@@ -66,7 +69,7 @@
       template(slot-scope="child" v-if="child.data")
         li: component(
             :is="child.data.note.format === 'LINK' ? 'a' : 'nuxt-link'" 
-            :to="`/notes/${uuid}`" 
+            :to="`/notes/${child.data.note.uuid}`" 
             :href="child.data.note.format === 'LINK' ? child.data.note.content : `/notes/${child.data.note.uuid}`"
             target="_blank"
           )
@@ -262,16 +265,6 @@ export default {
   margin-left: 2rem
   display: flex
   align-items: center
-  @media (max-width: 1100px)
-    flex-wrap wrap
-    justify-content flex-start
-    align-items flex-start
-    .field-wrapper:not(:last-child)
-      margin-bottom 1rem
-  @media (max-width: 650px)
-    align-items center
-    flex-direction column
-
 
   i
     margin-right: 0.5rem
@@ -299,6 +292,17 @@ export default {
     align-items center
     &:not(:last-child)
       margin-right 1.5rem
+
+  @media (max-width: 1100px)
+    flex-wrap wrap
+    justify-content flex-start
+    align-items flex-start
+    .field-wrapper:not(:last-child)
+      margin-bottom 1rem
+      margin-right: 0
+  @media (max-width: 650px)
+    align-items center
+    flex-direction column
 
 // .search
 // display flex
