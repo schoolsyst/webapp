@@ -63,6 +63,9 @@ export default {
 </script>
 
 <style lang="stylus" scoped>
+.subject
+  appearance: none
+
 badge-aspect()
   padding: 0.7em 0.7em
   border-radius: var(--border-radius)
