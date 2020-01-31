@@ -6,7 +6,8 @@ import {
   isBefore,
   parseISO,
   getUnixTime,
-  fromUnixTime
+  fromUnixTime,
+  isSameDay
 } from 'date-fns'
 import { getValidator, getMutations } from './index'
 
@@ -80,7 +81,8 @@ export const getters = {
       homeworks = homeworks.map((hw) => {
         if (
           specialGroups.includes('late') &&
-          isBefore(hw.due, getTodayDate())
+          isBefore(hw.due, getTodayDate()) &&
+          !isSameDay(hw.due, getTodayDate())
         ) {
           return { ...hw, due: 'LATE' }
         } else {

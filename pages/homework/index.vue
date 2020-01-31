@@ -3,7 +3,7 @@
     .container
         ModalAddHomework(
           v-model="homework.adding"
-          @submit="post({homework: homework.adding}); homework.adding = homework.defaults"
+          @submit="post({homework: homework.adding, force: true}); homework.adding = homework.defaults"
           action="add"
         )
         ModalAddHomework(
@@ -31,7 +31,7 @@
                 )
                     HeadingSub 
                         span.due.late(v-if="group.due === 'LATE'") En retard
-                        span.due(v-else) {{ compoundDate(group.due) }}
+                        span.due(v-else :class="{today: isToday(group.due)}") {{ compoundDate(group.due) }}
                         button.mark-all-as-done(
                             v-tooltip="'Tout marquer comme terminé'"
                             @click="markAllAsDone(group.homeworks)"
@@ -72,7 +72,8 @@ import {
   isTomorrow,
   fromUnixTime,
   differenceInDays,
-  isToday
+  isToday,
+  isValid
 } from 'date-fns'
 import { fr } from 'date-fns/locale'
 import CardHomework from '~/components/CardHomework.vue'
@@ -124,6 +125,7 @@ export default {
   },
   methods: {
     getUnixTime,
+    isToday,
     ...mapGetters('homework', ['group', '_needToShowGroup']),
     ...mapActions('homework', ['post', 'switchCompletion', 'patch']),
     ...mapActions('homework', { del: 'delete' }),
@@ -137,6 +139,7 @@ export default {
       date = fromUnixTime(date)
       if (isToday(date)) return "aujourd'hui"
       if (isTomorrow(date)) return 'demain'
+      if (!isValid(date)) return '???'
 
       let str = ''
       str += format(date, this.smartDateFormat(date), { locale: fr })

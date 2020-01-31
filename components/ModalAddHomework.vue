@@ -4,7 +4,7 @@
     @submit="$emit('submit')"
     @delete="$emit('delete')"
   )
-    PickerSubject(v-bind="{namespace}" @pick="$emit('input', {...value, subject: $event})")
+    PickerSubject(v-bind="{namespace}" @pick="$emit('input', {...valueWithDue, subject: $event})")
     .header
       BadgeSubject(
         clickable
@@ -14,7 +14,7 @@
       )
       InputField.name(
         :value="value.name"
-        @input="$emit('input', {...value, name: $event})"
+        @input="$emit('input', {...valueWithDue, name: $event})"
         name="name"
         v-bind="{validation}"
         placeholder="Titre"
@@ -25,7 +25,7 @@
       .left
         InputField.details(
           :value="value.details"
-          @input="$emit('input', {...value, details: $event})"
+          @input="$emit('input', {...valueWithDue, details: $event})"
           v-bind="{validation}"
           name="details" 
           type="block"  
@@ -34,7 +34,7 @@
       .right
         RadioButtons.type(
           :value="value.type"
-          @input="$emit('input', {...value, type: $event})"
+          @input="$emit('input', {...valueWithDue, type: $event})"
           v-bind="{validation}"
           name="type"
           variant="filled"
@@ -43,7 +43,7 @@
         PickerDateDue(
           variant="filled"
           :value="due"
-          @input="$emit('input', {...value, due: $event})"
+          @input="$emit('input', {...valueWithDue, due: $event})"
           :subject="value.subject"
           v-bind="{namespace}"
         ) À {{dueLabelVerb}} pour le
@@ -96,8 +96,7 @@ export default {
     ...mapState('homework', ['types']),
     ...mapGetters('schedule', ['currentSubject', 'nextCourseOf']),
     validation() {
-      const object = { ...this.value, due: this.due }
-      return this.validate()(object)
+      return this.validate()(this.valueWithDue)
     },
     dueLabelVerb() {
       return {
@@ -112,6 +111,9 @@ export default {
     },
     due() {
       let date = null
+      if (typeof date === 'number') {
+        date = fromUnixTime(date)
+      }
       if (this.value.due) date = this.value.due
       const nextCourse = this.nextCourseOf(this.value.subject)
       if (nextCourse && !date) {
@@ -121,6 +123,9 @@ export default {
         date = fromUnixTime(date)
       }
       return date
+    },
+    valueWithDue() {
+      return { ...this.value, due: this.due }
     }
   },
   methods: {

@@ -1,9 +1,9 @@
 <template lang="pug">
     .card(
         @click="$emit('click')"
-        :class="{completed, opened}"
+        :class="{completed, opened, [`is-a-${type.toLowerCase()}`]: true}"
     )
-        .complete-slider(@click="toggleComplete" :title="sliderTooltip")
+        .complete-slider(@click.stop="toggleComplete" :title="sliderTooltip")
             Icon(v-show="completed") close
             Icon(v-show="!completed") check
         .infos
@@ -11,7 +11,9 @@
                 .strikethrough-line
                 BadgeSubject.subject-color(v-bind="subject" variant="dot")
                 span.name {{ name }}
-                Icon.graded-indicator(v-if="['DM', 'TEST'].includes(type)" v-tooltip="'Noté'").
+                Icon.graded-indicator(
+                  v-if="['COURSEWORK', 'TEST'].includes(type)"
+                  v-tooltip="type === 'TEST' ? 'Contrôle' : 'Noté'").
                     error_outline
             .details(v-if="details" v-html="details")
 </template>
@@ -149,6 +151,9 @@ export default {
   .graded-indicator
     font-size: 1.3em
     margin-left: auto
+
+.is-a-test .graded-indicator
+  color var(--red)
 
 .card.completed
   .infos
