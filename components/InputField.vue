@@ -164,11 +164,15 @@ export default {
     HTMLValue() {
       const v = this.toHTMLValue(this.value)
       console.log(v)
-      this.$el.querySelector('input, textarea').value = v
       return v
     },
     JSValue() {
       return this.toJSValue(this.value)
+    }
+  },
+  watch: {
+    HTMLValue() {
+      this.$el.querySelector('input, textarea').value = this.HTMLValue
     }
   },
   methods: {
