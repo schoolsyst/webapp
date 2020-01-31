@@ -4,9 +4,9 @@
         .logotype-wrapper: Logotype.logotype
         code.version
           span.channel {{ version.channel }}
-          span.feat {{ version.feature }}.
-          span.ui {{ version.ui }}.
-          span.bug {{ version.bug }}
+          span(title="Incrémentée par l'ajout de fonctionnalités").feat {{ version.feature }}.
+          span(title="Incrémentée lors de changements dans l'interface").ui {{ version.ui }}.
+          span(title="Incrémentée quand des bugs sont réglés").bug {{ version.bug }}
         p.open-source
           | Projet open source, code disponible chez 
           a(href="//github.com/schoolsyst") GitHub
