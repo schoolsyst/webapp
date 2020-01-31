@@ -47,6 +47,7 @@ export default {
   methods: {
     isCurrent(link) {
       if (link === 'separator') return false
+      if (link.href === '/coming-soon') return false
       const topPathFragment = this.$route.path.split('/')[1]
       return '/' + topPathFragment === link.href
     },

@@ -31,19 +31,19 @@ export const state = () => ({
     },
     {
       name: 'Emploi du temps',
-      href: '/schedule',
+      href: '/coming-soon',
       icon: 'today',
       id: 'schedule'
     },
     {
       name: 'Notes',
-      href: '/grades',
+      href: '/coming-soon',
       icon: 'school',
       id: 'grades'
     },
     {
       name: 'Sac',
-      href: '/bag',
+      href: '/coming-soon',
       icon: 'work_outline',
       id: 'bag'
     },
@@ -151,7 +151,8 @@ export const getValidator = ({
     console.log(`Constraints:`) // eslint-disable-line
     console.log({ ...constraints, ...customConstraints }) // eslint-disable-line
     console.log(`Fields:`) // eslint-disable-line
-    console.log( // eslint-disable-line
+    console.log(
+      // eslint-disable-line
       Object.fromEntries(
         Object.keys(fieldNames).map((field) => [field, object[field]])
       )

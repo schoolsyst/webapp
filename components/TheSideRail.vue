@@ -22,6 +22,7 @@ export default {
   computed: mapGetters(['sideRailLinks']),
   methods: {
     isCurrent(link) {
+      if (link.href === '/coming-soon') return false
       const topPathFragment = this.$route.path.split('/')[1]
       return '/' + topPathFragment === link.href
     },
