@@ -28,7 +28,8 @@ import {
   endOfDay,
   startOfDay,
   addWeeks,
-  parse
+  parse,
+  isEqual
 } from 'date-fns'
 import { getMutations, getValidator } from './index'
 
@@ -381,6 +382,8 @@ export const getters = {
       {
         message: 'Ce créneau horaire est déjà pris par un autre cours',
         field: null,
+        // TODO: Move this to a getter
+        // TODO: tell the conflicting course to the user
         constraint: ({ events }, object) => {
           const parseTime = (time) => parse(time, 'HH:mm:ss', Date.now())
           return !events.filter((o) => {
@@ -391,6 +394,7 @@ export const getters = {
               o.end
             ].map((t) => parseTime(t))
             return (
+              !isEqual(objStart, end) &&
               (isWithinInterval(objStart, { start, end }) ||
                 isWithinInterval(objEnd, { start, end })) &&
               o.day === object.day &&

@@ -528,8 +528,15 @@ body
     width: 100%
     display: flex
     align-items: center
-    flex-wrap: wrap
+    flex-wrap: nowrap
     font-size: 1.5rem
+    @media (max-width: 650px)
+      flex-wrap wrap
+      justify-content center
+      .title-field
+        text-align center
+      .title-field::placeholder
+        text-align center
 
     .title-field
       margin-left: 0.5em

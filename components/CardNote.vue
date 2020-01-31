@@ -21,7 +21,7 @@
         span.info(:title="subject.name")
           BadgeSubject(v-bind="subject" variant="dot").subject-color
           span.subject-name {{ subject.name }}
-          span.more(@click.prevent="$emit('more')"): Icon more_vert
+          span.more(@click.prevent="$emit('more', $event)"): Icon more_vert
 </template>
 
 <script>
@@ -31,7 +31,10 @@ import BadgeSubject from '~/components/BadgeSubject.vue'
 export default {
   components: { Icon, BadgeSubject },
   props: {
-    uuid: String
+    uuid: {
+      type: String,
+      required: true
+    }
   },
   data() {
     return {
@@ -44,25 +47,14 @@ export default {
       format: ''
     }
   },
-  computed: {
-    openContextMenu() {
-      if (this.$refs.hasOwnProperty('menu')) {
-        return this.$refs.menu.open
-      } else {
-        console.log('oops')
-        return null
-      }
-    }
-  },
-  methods: mapGetters('notes', ['one']),
   mounted() {
     const note = this.one()(this.uuid)
-    console.log(note)
     this.content = note.content
     this.subject = note.subject
     this.name = note.name
     this.format = note.format
-  }
+  },
+  methods: mapGetters('notes', ['one'])
 }
 </script>
 
