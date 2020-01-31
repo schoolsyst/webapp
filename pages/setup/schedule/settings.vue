@@ -65,6 +65,7 @@ export default {
       })
       // setValue is debounced to 500ms
       setTimeout(() => {
+        this.$auth.fetchUser()
         this.$router.push('/')
         this.$modal.close('confirm-skip')
       }, 500)
