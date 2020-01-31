@@ -31,6 +31,7 @@
       type="submit"
       v-bind="{validation}"
     ).submit Connexion
+  TheFooter
 </template>
 
 <script>

@@ -1,23 +1,35 @@
 <template lang="pug">
     <footer class="TheFooter">
         OverlayLoadingLogo(animate-when="scrolled-into-view")
-        h6.logo-title schoolsyst
-        p.logo-subtitle 
-            |by 
-            a(href="https://mx3creations.com" no-default) Mx3
-        p.version #[code alpha v0.0.666]
+        .logotype-wrapper: Logotype.logotype
+        code.version
+          span.channel {{ version.channel }}
+          span.feat {{ version.feature }}.
+          span.ui {{ version.ui }}.
+          span.bug {{ version.bug }}
+        p.open-source
+          | Projet open source, code disponible chez 
+          a(href="//github.com/schoolsyst") GitHub
+        p.wakatime
+          img(title="API" src="https://wakatime.com/badge/github/schoolsyst/backend.svg")
+          span.plus-sign +
+          img(title="Application web" src="https://wakatime.com/badge/github/schoolsyst/frontend.svg")
     </footer>
 </template>
 
 <script>
+import { mapState } from 'vuex'
 import HeadingSub from '~/components/HeadingSub.vue'
 import OverlayLoadingLogo from '~/components/OverlayLoadingLogo.vue'
+import Logotype from '~/components/Logotype.vue'
 export default {
-  name: 'TheFooter',
-
   components: {
     HeadingSub,
-    OverlayLoadingLogo
+    OverlayLoadingLogo,
+    Logotype
+  },
+  computed: {
+    ...mapState(['version'])
   }
 }
 </script>
@@ -27,6 +39,7 @@ export default {
   margin-top: 100vh // debugging
   // margin-top: 210px
   width: 100%
+  min-height: 500px
   height: 50vh
 
   +mobile
@@ -48,45 +61,25 @@ export default {
 .OverlayLoadingLogo /deep/ svg *
   stroke: white
 
-.logo-title
-  // --- positioning ---
-  position: relative
-  // --- dimensions  ---
-  font-size: 50px
-  // ---   margins   ---
-  margin-top: 20px
-  // ---  appearance ---
-  font-family: 'Fantasque Sans Mono', 'Roboto Mono', monospace
-  font-weight: 100
-  color: #ffffff
-
-  // ---  animation  ---
-  .badge
-    // --- positioning ---
-    position: absolute
-    // bottom: 5px
-    // --- dimensions  ---
-    font-size: 15px
-    // ---   margins   ---
-
-    // ---  appearance ---
-    text-transform: uppercase
-    // ---  animation  ---
-
-.logo-subtitle
+.logotype
   // --- positioning ---
 
   // --- dimensions  ---
-  font-size: 24px
+  width: 80%
+  max-width: 500px
   // ---   margins   ---
-
+  margin-bottom: 30px
   // ---  appearance ---
-  color: #ffffff
+  stroke: #ffffff
+.logotype-wrapper
+  height: 100px
+  display flex
+  justify-content center
+  align-items center
+  margin-top: -30px
 
 .version
   // --- positioning ---
-  position: absolute
-  bottom: 20px
   // --- dimensions  ---
   font-size: 15px
   // ---   margins   ---
@@ -94,4 +87,26 @@ export default {
   // ---  appearance ---
   color: #ffffff
   // ---  animation  ---
+.version .channel
+  margin-right 1em
+  padding 0.5em
+  text-transform uppercase
+  border 2px solid white
+  border-radius var(--border-radius)
+
+.open-source
+  margin-top 2em
+  text-align center
+  color white
+  a
+    color white
+    border-color white
+.wakatime
+  margin-top: 0.5em
+  display flex
+  align-items center
+  .plus-sign
+    color white
+    padding 0 .2em
+    font-size: 2em
 </style>

@@ -4,6 +4,12 @@ import constantCase from 'constant-case'
 import Vue from 'vue'
 
 export const state = () => ({
+  version: {
+    feature: 1,
+    ui: 0,
+    bug: 0,
+    channel: 'beta'
+  },
   now: toDate(Date.now()), // For time-dependent getters.
   tomorrow: addDays(toDate(Date.now()), 1),
   location: {

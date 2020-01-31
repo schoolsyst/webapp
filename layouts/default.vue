@@ -11,6 +11,7 @@
           OverlayLoadingLogo(animation="loop")
           h1.title Chargement...
           p.subtitle 
+    TheFooter
 </template>
 
 <script>
