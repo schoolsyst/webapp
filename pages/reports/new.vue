@@ -59,7 +59,7 @@ export default {
         { key: 'SMARTWATCH', label: 'Montre connectée' },
         { key: 'OTHER', label: 'Autre' }
       ],
-      happened: Date.now(),
+      happened: new Date(),
       url: window.location.href,
       title: '',
       contentSections: {
