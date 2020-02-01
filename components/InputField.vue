@@ -163,7 +163,6 @@ export default {
     },
     HTMLValue() {
       const v = this.toHTMLValue(this.value)
-      console.log(v)
       return v
     },
     JSValue() {
