@@ -87,7 +87,8 @@ export default {
     '~plugins/vue-js-modal',
     '~plugins/loading-screen',
     '~plugins/vue-chartkick',
-    '~plugins/v-tooltip.js'
+    '~plugins/v-tooltip.js',
+    '~plugins/vue2-touch-events'
   ],
   /*
    ** Nuxt.js dev-modules
