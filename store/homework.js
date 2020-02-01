@@ -84,7 +84,7 @@ export const getters = {
           isBefore(hw.due, getTodayDate()) &&
           !isSameDay(hw.due, getTodayDate())
         ) {
-          return { ...hw, due: 'LATE' }
+          return { ...hw, due: 'LATE', realDue: getUnixTime(hw.due) }
         } else {
           return { ...hw, due: getUnixTime(hw.due) }
         }
@@ -111,6 +111,7 @@ export const getters = {
     flat = flat.sort(firstBy('due'))
     flat = flat.map((g) => ({
       ...g,
+      homeworks: g.homeworks.map((h) => ({ ...h, due: h.realDue })),
       due: g.due === LATE_DUE_NUMBER ? 'LATE' : g.due
     }))
     return flat
