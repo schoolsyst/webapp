@@ -8,7 +8,7 @@
                 li(v-for="g in grouped")
                     HeadingSub {{ g[0] }}
                     ul.settings
-                        li(v-for="setting in g[1]" :key="setting.uuid")
+                        li(v-for="setting in g[1].filter(s => s.key !== 'offdays')" :key="setting.uuid")
                             InputSetting.input(v-bind="{...setting, _key: setting.key}")
             .subjects-wrapper
                 HeadingSub Matières
