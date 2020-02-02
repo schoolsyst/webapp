@@ -24,21 +24,23 @@
       tbody
         tr(
           v-for="minute in minutes"
-          :class="{ 'new-hour': minute.time.endsWith(':00') }"
+          :class="{ 'new-hour': minute.time.endsWith(':00'), 'has-events': minute.hasEvents }"
+          :data-time="minute.time"
         )
           td.time(
             v-if="minute.time.endsWith(':00')"
             rowspan="60"
           ) {{ minute.time }}
-          template(v-for="(dayName, day) in dayNames")
-            td.event(
-              v-for="event in minute.events[day+1]"
-              v-bind="cellAttrs(event)"
-              @click="cellOnClick(event)"
-            )
-              template(v-if="!event.empty")
-                .subject {{ event.subject.name }}
-                .room {{ event.room }}
+          template(v-if="minute.hasEvents")
+            template(v-for="(dayName, day) in dayNames")
+              td.event(
+                v-for="event in minute.events[day+1]"
+                v-bind="cellAttrs(event)"
+                @click="cellOnClick(event)"
+              )
+                template(v-if="!event.empty")
+                  .subject {{ event.subject.name }}
+                  .room {{ event.room }}
 
 </template>
 
@@ -52,8 +54,11 @@ import {
   startOfWeek,
   endOfWeek,
   addMinutes,
-  differenceInMinutes
+  differenceInMinutes,
+  isWithinInterval,
+  parse
 } from 'date-fns'
+// eslint-disable-next-line no-unused-vars
 import groupBy from 'lodash.groupby'
 import ModalAddEvent from '~/components/ModalAddEvent.vue'
 
@@ -134,6 +139,12 @@ export default {
       })
       return minutes
     },
+    courses() {
+      return this.coursesIn(startOfWeek(new Date()), endOfWeek(new Date()), {
+        includeBothWeekTypes: true,
+        includeDeleted: true
+      })
+    },
     minutes() {
       // Structure:
       /*
@@ -151,36 +162,44 @@ export default {
         @each events
           <td :data-weektype="week_type"> (<Event> markup...) </td>
      */
-      let courses = this.coursesIn(
-        startOfWeek(new Date()),
-        endOfWeek(new Date())
-      )
+      let courses = this.courses
+      const flatGroups = []
       // Add a `time` prop to each course in order to group them.
       courses = courses.map((course) => {
         let time = course.start
         time = format(time, 'HH:mm', new Date())
-        return { ...course, time }
+        return { ...course, time, empty: false }
       })
-      const grouped = { ...this.emptyMinutes, ...groupBy(courses, 'time') }
-      const flatGroups = Object.keys(grouped).map((time) => {
-        let events = grouped[time]
-        // Group events by day
-        events = groupBy(events, 'day')
-        // Add empty events (if there are any 'real' events for this time group)
-        if (grouped[time].length > 0) {
-          const emptyEvent = { empty: true, week_type: 'BOTH' }
-          events = {
-            // KISS!
-            1: [emptyEvent],
-            2: [emptyEvent],
-            3: [emptyEvent],
-            4: [emptyEvent],
-            5: [emptyEvent],
-            6: [emptyEvent],
-            ...events
+      const emptyEvent = { empty: true }
+      const dayIndexes = [1, 2, 3, 4, 5, 6]
+      Object.keys(this.emptyMinutes).forEach((time) => {
+        let events = {}
+        dayIndexes.forEach((day) => {
+          const matchingEvents = courses.filter(
+            (c) =>
+              isWithinInterval(parse(time, 'HH:mm', c.start), {
+                start: c.start,
+                end: c.end
+              }) && c.day === day
+          )
+          if (matchingEvents.length > 0) {
+            events[day] = matchingEvents.filter((c) => c.time === time)
+          } else {
+            events[day] = [emptyEvent]
           }
-        }
-        return { time, events }
+        })
+        if (time === '08:01')
+          console.log(
+            Object.values(events).filter(
+              (e) => e.filter((y) => !y.empty).length > 0
+            )
+          )
+        const emptyMinute =
+          Object.values(events).filter(
+            (e) => e.filter((y) => !y.empty).length > 0
+          ).length === 0
+        if (emptyMinute) events = {}
+        flatGroups.push({ time, events, hasEvents: !emptyMinute })
       })
       return flatGroups
     }
@@ -279,10 +298,11 @@ td.time
   padding 1em
   vertical-align top
 tr.new-hour
-  min-height 1rem
+  // min-height 1rem
   border-top 2px solid var(--grey)
 
 .event:not(.empty)
+  height 2rem
   text-align center
   padding 0.5em
   cursor pointer
@@ -295,7 +315,7 @@ tr.new-hour
     text-overflow ellipsis
     white-space normal
 .event.empty
-  height: 0
+  height: 0 !important
 
 .schedule.mnml
   thead
