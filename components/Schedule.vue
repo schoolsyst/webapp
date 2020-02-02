@@ -1,5 +1,5 @@
 <template lang="pug">
-  .schedule
+  .schedule(:class="{ mnml: false }")
     ModalAddEvent(
       v-model="editingEvent"
       action="edit"
@@ -19,8 +19,8 @@
           template(
             v-for="dayName in dayNames"
           )
-            td Q1
-            td Q2
+            td.week-type Q1
+            td.week-type Q2
       tbody
         tr(
           v-for="minute in minutes"
@@ -30,16 +30,15 @@
             v-if="minute.time.endsWith(':00')"
             rowspan="60"
           ) {{ minute.time }}
-          template(v-for="event in minute.events")
+          template(v-for="(dayName, day) in dayNames")
             td.event(
-              :data-weektype="event.week_type"
-              :style="cellStyles(event)",
-              :rowspan="cellRowspan(event)"
-              :colspan="cellColspan(event)"
+              v-for="event in minute.events[day+1]"
+              v-bind="cellAttrs(event)"
               @click="cellOnClick(event)"
             )
-              .subject {{ event.subject.name }}
-              .room {{ event.room }}
+              template(v-if="!event.empty")
+                .subject {{ event.subject.name }}
+                .room {{ event.room }}
 
 </template>
 
@@ -164,21 +163,60 @@ export default {
       })
       const grouped = { ...this.emptyMinutes, ...groupBy(courses, 'time') }
       const flatGroups = Object.keys(grouped).map((time) => {
-        return {
-          time,
-          events: grouped[time]
+        let events = grouped[time]
+        // Group events by day
+        events = groupBy(events, 'day')
+        // Add empty events (if there are any 'real' events for this time group)
+        if (grouped[time].length > 0) {
+          const emptyEvent = { empty: true, week_type: 'BOTH' }
+          events = {
+            // KISS!
+            1: [emptyEvent],
+            2: [emptyEvent],
+            3: [emptyEvent],
+            4: [emptyEvent],
+            5: [emptyEvent],
+            6: [emptyEvent],
+            ...events
+          }
         }
+        return { time, events }
       })
       return flatGroups
+    }
+  },
+  mounted() {
+    this.$withLoadingScreen(async () => {
+      await this.$store.dispatch('settings/load')
+    })
+    window.iAmAMinimalist = () => {
+      console.log('<Ewen Le Bihan> Me too!')
+      console.log(
+        '<Ewen Le Bihan> btw, if you like mmnl music, please take a listen over at https://youtube.com/c/mx3_music'
+      )
+      console.log(
+        "<Ewen Le Bihan> (You also discovered schoolsyst's first easter egg, congrats!)"
+      )
+      console.log(
+        '%cTo turn the schedule back to normal, simply refresh the page',
+        'font-style: italic;'
+      )
+      document
+        .querySelectorAll('.schedule')
+        .forEach((el) => el.classList.add('mnml'))
+      return 'good choice!'
     }
   },
   methods: {
     ...mapActions('schedule', { patch: 'patchEvent', del: 'deleteEvent' }),
     ...mapGetters(['textColor']),
+    ...mapGetters('settings', { setting: 'value' }),
     cellStyles(event) {
       return {
         color: this.textColor()(event.subject.color),
-        backgroundColor: event.subject.color
+        backgroundColor: event.subject.color,
+        borderTopColor: event.subject.color,
+        borderBottomColor: event.subject.color
       }
     },
     cellRowspan(event) {
@@ -193,7 +231,21 @@ export default {
       }
       return colspan
     },
+    cellAttrs(event) {
+      if (event.empty)
+        return {
+          class: 'empty',
+          colspan: 2
+        }
+      else
+        return {
+          style: this.cellStyles(event),
+          colspan: this.cellColspan(event),
+          rowspan: this.cellRowspan(event)
+        }
+    },
     cellOnClick(event) {
+      if (event.empty) return
       this.editingEvent = event
       this.$modal.open('edit-event')
       this.$emit('event-click', event)
@@ -215,10 +267,8 @@ thead
   td
     height 1.5rem
     text-align center
-.week-types
-  border-bottom 2px solid var(--black)
-  td
-    color var(--grey)
+.week-type
+  color var(--grey)
 
 td.time
   border-right 2px solid var(--grey)
@@ -230,9 +280,9 @@ td.time
   vertical-align top
 tr.new-hour
   min-height 1rem
-  border-bottom 2px solid var(--grey)
+  border-top 2px solid var(--grey)
 
-.event
+.event:not(.empty)
   text-align center
   padding 0.5em
   cursor pointer
@@ -244,4 +294,14 @@ tr.new-hour
     width 100%
     text-overflow ellipsis
     white-space normal
+.event.empty
+  height: 0
+
+.schedule.mnml
+  thead
+    opacity: 0
+  .time
+    opacity: 0
+  td, tr
+    border: none
 </style>
