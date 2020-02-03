@@ -190,8 +190,12 @@ export const getValidator = ({
 
   // Checkers
   const checkers = {
-    maximum: ({ arg, fieldName }) => object[fieldName] <= arg,
-    minimum: ({ arg, fieldName }) => object[fieldName] >= arg,
+    maximum: ({ arg, fieldName }) =>
+      object[fieldName] === null ||
+      (typeof object[fieldName] === 'number' && object[fieldName] <= arg),
+    minimum: ({ arg, fieldName }) =>
+      object[fieldName] === null ||
+      (typeof object[fieldName] === 'number' && object[fieldName] >= arg),
     maxLength: ({ arg, fieldName }) =>
       typeof object[fieldName] === 'string'
         ? object[fieldName].length <= arg
@@ -210,7 +214,10 @@ export const getValidator = ({
       typeof object[fieldName] === 'string' &&
       object[fieldName].match(
         /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
-      ) !== null
+      ) !== null,
+    isOfType: ({ arg, fieldName }) =>
+      // eslint-disable-next-line valid-typeof
+      typeof object[fieldName] === arg
   }
   const check = ({ errorName, fieldName, errorArg }) => {
     // Wrap checkers with object property existential check
@@ -315,10 +322,26 @@ export const getValidator = ({
     }
   })
 
+  // Creates a single string that reports all of the errors.
+  // Get the total errors count
+  let flatErrorMessage = ''
+  let errorsCount = 0
+  for (const field in errorMessages) {
+    if (errorMessages.hasOwnProperty(field)) {
+      const errors = errorMessages[field]
+      if (errors.length) {
+        flatErrorMessage += errors.join(', ') + '\n'
+        errorsCount += errors.length
+      }
+    }
+  }
+
   // returns the object
   const ret = {
     validated,
-    errors: errorMessages
+    errors: errorMessages,
+    message: flatErrorMessage,
+    count: errorsCount
   }
   if (debug) {
     if (ret.validated) {

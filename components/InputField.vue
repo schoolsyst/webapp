@@ -1,10 +1,11 @@
 <template lang="pug">
   .field(
     :class="{\
-      active, errored, disabled, narrow, \
+      active, disabled, narrow, \
       filled: !!value, \
       'has-label': !noLabel, \
       'has-action-button': !noActionButton, \
+      errored: errored && !noErrorStyling,\
       [`variant-${variant}`]: true,\
       [`type-${type}`]: true,\
     }"
@@ -109,6 +110,10 @@ export default {
       default: false
     },
     narrow: {
+      type: Boolean,
+      default: false
+    },
+    noErrorStyling: {
       type: Boolean,
       default: false
     }

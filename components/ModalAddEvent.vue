@@ -1,51 +1,78 @@
 <template lang="pug">
-  BaseModal(
-    name="add-event"
-    title="Ajouter un cours..."
+  ModalObject(
+    v-bind="{...description, action, validation}"
+    @submit="$emit('submit')"
+    @delete="$emit('delete')"
   )
     .subject
-      PickerSubject(@pick="subject = $event" namespace="add-event")
+      PickerSubject(
+        @pick="$emit('input', {...value, action, subject: $event })"
+        :namespace="modalName"
+      )
       BadgeSubject.badge(
-        v-bind="subject"
-        @click="$modal.show('add-event-subject-picker')" 
+        v-bind="value.subject || {}"
+        @click="$modal.show(modalName + '-subject-picker')" 
         clickable no-tooltip
       )
     .weektype
-      RadioButtons(v-model="week_type" :values="week_types", name="week_type" v-bind="{validation}") Semaine
+      RadioButtons(
+        :value="value.week_type"
+        @input="$emit('input', {...value, action, week_type: $event })"
+        :values="week_types"
+        name="week_type"
+        v-bind="{validation}"
+      ) Semaine
     .day
-      RadioButtons(v-model="day" :values="days" name="day" v-bind="{validation}") Jour
+      RadioButtons(
+        :value="value.day"
+        @input="handleDayInput($event)"
+        :values="days"
+        name="day"
+        v-bind="{validation}"
+      ) Jour
     .room
-      InputField(v-model="room") Salle
+      InputField(
+        :value="value.room"
+        @input="$emit('input', {...value, action, room: $event })"
+        name="room"
+        v-bind="{validation}"
+      ) Salle
     .timeframe
       InputField(
         name="start" 
-        type="time" v-model="start"  v-bind="{validation}"
+        type="time"
+        :value="removeSeconds(value.start)"
+        @input="$emit('input', { ...value, action, start: addSeconds($event) })"
+        v-bind="{validation}"
         no-action-button no-error-messages
       ) Début
       Icon trending_flat
       InputField(
         name="end" 
-        type="time" v-model="end"  v-bind="{validation}"
+        type="time"
+        :value="removeSeconds(value.end)"
+        @input="$emit('input', { ...value, action, end: addSeconds($event) })"
+        v-bind="{validation}"
         no-action-button no-error-messages
       ) Fin
-    .duration
+    //-.duration
       | Durée: 
       input(
         name="duration" 
-        type="time" v-model="duration"  v-bind="{validation}"
+        type="time"
+        v-model="duration"
+        v-bind="{validation}"
       )
     ul.non-field-errors(v-if="!validation.validated")
       li(v-for="error in validation.errors.nonFieldErrors") {{ error }}
-    .submit
-      ButtonNormal(variant="outline" @click="$modal.hide('add-event')") Annuler
-      ButtonNormal(variant="primary" v-bind="{validation}" @click="$emit('post', eventObject); $modal.hide('add-event')") Ajouter
 
 </template>
 
 <script>
-import { differenceInSeconds, parse } from 'date-fns'
+// eslint-disable-next-line no-unused-vars
+import { differenceInSeconds, format, isValid, parse } from 'date-fns'
 import { mapGetters } from 'vuex'
-import BaseModal from '~/components/BaseModal.vue'
+import ModalObject from '~/components/ModalObject.vue'
 import ButtonNormal from '~/components/ButtonNormal.vue'
 import InputField from '~/components/InputField.vue'
 import PickerSubject from '~/components/PickerSubject.vue'
@@ -55,7 +82,7 @@ import Icon from '~/components/Icon.vue'
 
 export default {
   components: {
-    BaseModal,
+    ModalObject,
     ButtonNormal,
     InputField,
     PickerSubject,
@@ -63,16 +90,37 @@ export default {
     RadioButtons,
     Icon
   },
+  props: {
+    action: {
+      type: String,
+      required: true
+    },
+    value: {
+      type: Object,
+      default: () => ({
+        subject: null,
+        week_type: 'BOTH',
+        day: null,
+        start: null,
+        end: null,
+        room: null
+      })
+    }
+  },
   data() {
     return {
-      subject: null,
-      week_type: 'BOTH',
+      start: null,
+      end: null,
+      description: {
+        name: 'event',
+        verboseName: 'cours',
+        gender: 'M'
+      },
       week_types: [
         { key: 'BOTH', label: 'Les deux' },
         { key: 'Q1', label: 'Q1' },
         { key: 'Q2', label: 'Q2' }
       ],
-      day: null,
       days: [
         { key: 1, label: 'Lu' },
         { key: 2, label: 'Ma' },
@@ -81,71 +129,38 @@ export default {
         { key: 5, label: 'Ve' },
         { key: 6, label: 'Sa' },
         { key: 7, label: 'Di' }
-      ],
-      start: null,
-      end: null,
-      room: null
+      ]
     }
   },
   computed: {
-    duration: {
-      get() {
-        const { start, end } = this.eventObject
-        if (!(start && end)) return null
-        const seconds = differenceInSeconds(
-          parse(end, 'HH:mm:ss', Date.now()),
-          parse(start, 'HH:mm:ss', Date.now())
-        )
-        let hours = ~~(seconds / 3600)
-        let minutes = ~~(seconds / 60) - hours * 60
-        hours = hours.toString().padStart(2, '0')
-        minutes = minutes.toString().padStart(2, '0')
-        return `${hours}:${minutes}`
-      },
-      set(duration) {
-        const { start, end } = this.eventObject
-        if (!start && !end) return null
-        const toSeconds = (timeStr) => {
-          const [hours, minutes] = timeStr.split(':').map((n) => Number(n))
-          const ret = hours * 3600 + minutes * 60
-          return ret
-        }
-        const toSplitted = (seconds) => {
-          const hours = ~~(seconds / 3600)
-          const minutes = ~~(seconds / 60) - hours * 60
-          const ret = [hours, minutes].map((n) => n.toString().padStart(2, '0'))
-          return ret
-        }
-        const sDuration = toSeconds(duration)
-        if (!start && end) {
-          const sEnd = toSeconds(this.end)
-          const [h, m] = toSplitted(sEnd - sDuration)
-          this.start = h + ':' + m
-        } else if (start) {
-          const sStart = toSeconds(this.start)
-          const [h, m] = toSplitted(sStart + sDuration)
-          this.end = h + ':' + m
-        }
-      }
-    },
-    eventObject() {
-      return {
-        subject: this.subject,
-        start: this.addSeconds(this.start),
-        end: this.addSeconds(this.end),
-        day: this.day,
-        week_type: this.week_type,
-        room: this.room
-      }
-    },
     validation() {
-      return this.validateEvent()(this.eventObject)
+      return this.validateEvent()(this.value)
+    },
+    modalName() {
+      return this.action + '-event'
     }
   },
   methods: {
     ...mapGetters('schedule', ['validateEvent']),
     addSeconds(timeStr) {
-      return timeStr ? timeStr + ':00' : null
+      if (!timeStr) return null
+      timeStr += ':00'
+      return parse(timeStr, 'HH:mm:ss', Date.now())
+    },
+    removeSeconds(timeVal) {
+      if (!timeVal || !isValid(timeVal)) {
+        return null
+      }
+      const timeStr = format(timeVal, 'HH:mm:ss')
+      return timeStr.replace(/:\d{2}$/, '')
+    },
+    handleDayInput($event) {
+      console.log(`Updating day from ${this.action} modal`)
+      this.$emit('input', {
+        ...this.value,
+        action: this.action,
+        day: $event
+      })
     }
   }
 }

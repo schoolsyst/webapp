@@ -29,7 +29,11 @@ import {
   startOfDay,
   addWeeks,
   parse,
-  isEqual
+  isEqual,
+  formatISO,
+  setDate,
+  setMonth,
+  setYear
 } from 'date-fns'
 import { getMutations, getValidator } from './index'
 
@@ -193,8 +197,10 @@ export const getters = {
   coursesIn: (state, getters, rootState, rootGetters) => (
     start,
     end = null,
-    includeDeleted = false
+    opts = { includeDeleted: false, includeBothWeekTypes: false }
   ) => {
+    const includeDeleted = opts.includeDeleted || false
+    const includeBothWeekTypes = opts.includeBothWeekTypes || false
     if (end === null) {
       start = startOfDay(start)
       end = endOfDay(start)
@@ -207,7 +213,8 @@ export const getters = {
       const events = getters.events.filter(
         (o) =>
           o.day === getISODay(day) &&
-          [getters.weekType(day), 'BOTH'].includes(o.week_type)
+          (includeBothWeekTypes ||
+            [getters.weekType(day), 'BOTH'].includes(o.week_type))
       )
       courses = [
         ...courses,
@@ -380,6 +387,23 @@ export const getters = {
     },
     customConstraints: [
       {
+        message: "L'heure de début doit être avant l'heure de fin",
+        field: 'start',
+        constraint: (_, object) => {
+          let { start, end } = object
+          // Sometimes the start & end dates have different date parts. Fix this.
+          start = setDate(start, 1)
+          end = setDate(end, 1)
+          start = setMonth(start, 1)
+          end = setMonth(end, 1)
+          start = setYear(start, 2020)
+          end = setYear(end, 2020)
+          console.log([start, end])
+          if (!(start && end)) return true
+          return isBefore(start, end)
+        }
+      },
+      {
         message: 'Ce créneau horaire est déjà pris par un autre cours',
         field: null,
         // TODO: Move this to a getter
@@ -401,17 +425,6 @@ export const getters = {
               (o.week_type === object.week_type || o.week_type === 'BOTH')
             )
           }).length
-        }
-      },
-      {
-        message: "L'heure de début doit être avant l'heure de fin",
-        field: 'start',
-        constraint: (_, object) => {
-          let { start, end } = object
-          if (!(start && end)) return true
-          start = parse(start, 'HH:mm:ss', Date.now())
-          end = parse(end, 'HH:mm:ss', Date.now())
-          return isBefore(start, end)
         }
       }
     ],
@@ -574,6 +587,10 @@ export const actions = {
     }
     try {
       if (event.subject) event.subject = event.subject.uuid
+      if (event.start)
+        event.start = formatISO(event.start, { representation: 'time' })
+      if (event.end)
+        event.end = formatISO(event.end, { representation: 'time' })
       const res = await this.$axios.post(`/events/`, event)
       const { data } = await this.$axios.get(`/events/${res.data.uuid}`)
       if (data) commit('ADD_EVENT', data)
@@ -609,59 +626,38 @@ export const actions = {
     }
   },
 
-  validateMutation({ commit, getters, rootGetters }, mutation) {
-    const [start, end] = [mutation.added_start, mutation.added_end]
-    const isRescheduled = start && end
-    // Check if the start and end date are in the correct order
-    if (!(isRescheduled && isBefore(start, end)))
-      return 'Les dates doivent être dans le bon ordre'
-    // Check if the rescheduled date is free
-    if (
-      !(
-        isRescheduled &&
-        isBefore(start, end) &&
-        getters.coursesIn(start, end, false).length <= 0
-      )
-    )
-      return "La date choisie n'est pas libre"
-    // Check if the required fields are present
-    if (!(mutation.subject && mutation.subject.uuid))
-      return 'Veuillez choisir une matière'
-
-    if (
-      rootGetters['subjects/all']
-        .map((o) => o.uuid)
-        .includes(mutation.subject.uuid).length <= 0
-    )
-      return "La matière choisie n'existe pas"
-
-    return true
-  },
-
   async patchEvent(
     { commit, getters, dispatch },
-    uuid,
-    modifications,
-    force = false
+    { uuid, modifications, force }
   ) {
+    force = force || false
     if (!force) {
       let event = getters.event(uuid)
       event = { ...event, ...mutations }
-      const validation = await dispatch('validateEvent', event)
+      // Turn start / end dates into Date objects for validation
+      event.start = parse(event.start, 'HH:mm:ss', new Date())
+      event.end = parse(event.end, 'HH:mm:ss', new Date())
+      const validation = getters.validateEvent(event)
       if (!validation.validated) return validation
     }
     try {
-      const { data } = await this.$axios.patch(`/events/${uuid}`, modifications)
-      if (data) commit('PATCH_EVENT', uuid, data)
-      // console.log(`[from API] PATCH /events/${uuid}: OK`)
+      if (modifications.subject)
+        modifications.subject = modifications.subject.uuid
+      if (modifications.start)
+        modifications.start = formatISO(modifications.start, {
+          representation: 'time'
+        })
+      if (modifications.end)
+        modifications.end = formatISO(modifications.end, {
+          representation: 'time'
+        })
+      await this.$axios.patch(`/events/${uuid}/`, modifications)
+      const { data } = await this.$axios.get(`/events/${uuid}`)
+
+      if (data) commit('PATCH_EVENT', { pk: uuid, modifications: data })
     } catch (error) {
-      // console.error(`[from API] PATCH /events/${uuid}: Error`)
-      try {
-        // console.error(error.response.data)
-      } catch (_) {
-        // eslint-disable-next-line
-        console.error(error)
-      }
+      // eslint-disable-next-line
+      console.error(error)
     }
   },
 
@@ -691,19 +687,26 @@ export const actions = {
     }
   },
 
-  async deleteEvent({ commit }, uuid) {
+  async deleteEvent({ commit, dispatch, getters }, { uuid, toastMessage }) {
     try {
-      const { data } = await this.$axios.delete(`/events/${uuid}`)
-      if (data) commit('DEL_EVENT', uuid)
-      // console.log(`[from API] DELETE /events/${uuid}: OK`)
+      console.log(uuid)
+      // Stores the note object because we want to be able to cancel the deletion
+      const event = getters.event(uuid)
+      //
+      await this.$axios.delete(`/events/${uuid}`)
+      commit('DEL_EVENT', uuid)
+      this.$toast.show(toastMessage || 'Cours supprimé', {
+        action: {
+          text: 'Annuler',
+          onClick: async (e, toast) => {
+            await dispatch(`postEvent`, { event })
+            toast.goAway(0)
+          }
+        },
+        duration: 8000
+      })
     } catch (error) {
-      // console.error(`[from API] DELETE /events/${uuid}: Error`)
-      try {
-        // console.error(error.response.data)
-      } catch (_) {
-        // eslint-disable-next-line
-        console.error(error)
-      }
+      console.error(error)
     }
   },
 

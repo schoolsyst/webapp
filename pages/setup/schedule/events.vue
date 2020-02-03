@@ -1,10 +1,15 @@
 <template lang="pug">
   .container
-    ModalAddEvent(@post="postEvent({event: $event})")
+    // TODO: #beta-1.0.0 modify events
+    ModalAddEvent(
+      v-model="addingEvent"
+      @submit="postEvent({event: addingEvent})"
+      action="add"
+    )
     h1 Rentrez votre emploi du temps
     .schedule
       ButtonNormal.add(variant="outline" @click="$modal.show('add-event')") Ajouter
-      Schedule
+      Schedule(both-weeks)
     TheBottomBar
       ButtonNormal(variant="text-blue" href="/setup/schedule/settings") #[Icon arrow_back] Retour
       ButtonNormal.to-right(variant="primary" href="/") Terminer
@@ -31,6 +36,20 @@ export default {
     TheBottomBar
   },
   layout: 'bare',
+  data() {
+    const defaults = {
+      subject: null,
+      week_type: 'BOTH',
+      day: null,
+      start: null,
+      end: null,
+      room: null,
+      identifier$action: 'add'
+    }
+    return {
+      addingEvent: defaults
+    }
+  },
   computed: {
     settings() {
       return this.$store.getters['settings/fromCategory']('Emploi du temps')

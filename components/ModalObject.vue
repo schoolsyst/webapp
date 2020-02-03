@@ -39,7 +39,7 @@ export default {
     },
     action: {
       type: String,
-      default: 'add',
+      required: true,
       validator: (action) => ['add', 'edit'].includes(action)
     },
     validation: {
@@ -76,6 +76,7 @@ export default {
 
 <style lang="stylus" scoped>
 .submit-area
+  margin-top 2em
   display: flex
   justify-content: flex-end
 </style>
