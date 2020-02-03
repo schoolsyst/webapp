@@ -40,8 +40,14 @@ export default {
     InputField
   },
   props: {
-    namespace: String,
-    note: Object
+    namespace: {
+      type: String,
+      default: ''
+    },
+    note: {
+      type: Object,
+      required: true
+    }
   },
   data() {
     return {

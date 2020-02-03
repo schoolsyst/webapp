@@ -77,7 +77,7 @@ export default {
     },
     customLabel: {
       type: Function,
-      required: true
+      default: undefined
     }
   },
   computed: {
