@@ -8,7 +8,7 @@
             :to="href && !externalHref ? href : false"
             :href="externalHref ? href : false"
             :target="externalHref && !inPlace ? '_blank' : false"
-            :type="type"
+            v-bind="{ type, role }"
             :class="{[`btn--${variant}`]: true, small, smaller}"
             :disabled="disabled || !v.validated"
             v-tooltip="validationErrors"
@@ -47,6 +47,10 @@ export default {
       default: false
     },
     href: {
+      type: String,
+      default: null
+    },
+    role: {
       type: String,
       default: null
     },
@@ -118,15 +122,24 @@ export default {
 .btn--outline
   border: 2px solid var(--grey)
   color: var(--blue)
+  &[role=danger]
+    color var(--red)
 
   &:hover, &:focus
-    background-color: var(--blue-offset)
-    border-color: var(--blue-offset)
+    background-color: transparent
+    border-color: var(--blue)
+    &[role=danger]
+      background-color: transparent
+      border-color: var(--red)
 
   &:active
-    background-color: var(--blue-dark)
-    border-color: var(--blue-dark)
-    color: white
+    background-color: var(--blue-offset)
+    border-color: var(--blue-offset)
+    color: var(--blue-dark)
+    &[role=danger]
+      background-color: var(--red)
+      border-color: var(--red)
+      color: white
 
   &[disabled]
     color: var(--grey)
@@ -137,10 +150,17 @@ export default {
   background-color: var(--blue)
   border: 2px solid var(--blue)
   color: white
+  &[role=danger]
+    background-color: var(--red)
+    border: 2px solid var(--red)
+
 
   &:hover, &:focus
     background-color: var(--blue-dark)
     border: 2px solid var(--blue-dark)
+    &[role=danger]
+      background-color: var(--red-dark)
+      border: 2px solid var(--red-dark)
 
   &:active
     color: rgba(255, 255, 255, 0.25)
