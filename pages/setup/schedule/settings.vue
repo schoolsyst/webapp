@@ -1,10 +1,10 @@
 <template lang="pug">
 .container
   ModalDialogConfirm(
-    confirm-text="Plus tard"
-    cancel-text="Configurer l'emploi du temps"
+    cancel-text="Plus tard"
+    cancel-role="danger"
+    confirm-text="Configurer l'emploi du temps"
     name="skip"
-    :close-on-confirm="false"
     @confirm="skip()"
   )
     p
