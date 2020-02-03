@@ -11,7 +11,7 @@
       )
       BadgeSubject.badge(
         v-bind="value.subject || {}"
-        @click="$modal.show(modalName + '-subject-picker')" 
+        @click="$modal.show(modalName + '-subject-picker')"
         clickable no-tooltip
       )
     .weektype
@@ -39,7 +39,7 @@
       ) Salle
     .timeframe
       InputField(
-        name="start" 
+        name="start"
         type="time"
         :value="removeSeconds(value.start)"
         @input="$emit('input', { ...value, action, start: addSeconds($event) })"
@@ -48,7 +48,7 @@
       ) Début
       Icon trending_flat
       InputField(
-        name="end" 
+        name="end"
         type="time"
         :value="removeSeconds(value.end)"
         @input="$emit('input', { ...value, action, end: addSeconds($event) })"
@@ -56,9 +56,9 @@
         no-action-button no-error-messages
       ) Fin
     //-.duration
-      | Durée: 
+      | Durée:
       input(
-        name="duration" 
+        name="duration"
         type="time"
         v-model="duration"
         v-bind="{validation}"
@@ -118,8 +118,8 @@ export default {
       },
       week_types: [
         { key: 'BOTH', label: 'Les deux' },
-        { key: 'Q1', label: 'Q1' },
-        { key: 'Q2', label: 'Q2' }
+        { key: 'Q1', label: 'Semaine paire / Q1' },
+        { key: 'Q2', label: 'Semaine impaire / Q2' }
       ],
       days: [
         { key: 1, label: 'Lu' },

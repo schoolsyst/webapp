@@ -19,8 +19,8 @@
           template(
             v-for="dayName in dayNames"
           )
-            td.week-type Q1
-            td.week-type Q2
+            td.week-type Paire
+            td.week-type Impaire
       tbody
         tr(
           v-for="minute in minutes"
@@ -280,7 +280,6 @@ table
   table-layout fixed
   width 100%
   min-width 6 * 7rem
-  // This is essential, else the table looks like this: https://i.imgur.com/uQ74W44.png
   border-collapse collapse
 thead
   td
