@@ -148,6 +148,7 @@ export const getValidator = ({
   debug
 }) => (getters) => (object) => {
   debug = debug || false
+  if (process.env.NODE_ENV !== 'development') debug = false
   /* Factory to create a validator.
   Describe constraints on fields, error messages are generated automatically.
   */
