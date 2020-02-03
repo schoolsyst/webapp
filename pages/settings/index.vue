@@ -2,7 +2,17 @@
     //TODO: move ul.categories > li to InputSetting, to reuse in setup
     //TODO: center-align, less width, index=portal to one page per category + subjects page + schedule page
     .container
-        ModalAddSubject(v-model="newSubject" @post="postSubject({ subject: $event })")
+        ModalAddSubject(
+          v-model="newSubject"
+          action="add"
+          @submit="postSubject({ subject: newSubject })"
+        )
+        ModalAddSubject(
+          v-model="editingSubject"
+          action="edit"
+          @submit="patchSubject({ modifications: editingSubject, uuid: editingSubject.uuid })"
+          @delete="delSubject({ uuid: editingSubject.uuid })"
+        )
         .-side-by-side
             ul.categories
                 li(v-for="g in grouped")
@@ -10,7 +20,7 @@
                     HeadingSub {{ g[0] }}
                     ButtonNormal(
                       v-if="g[0] === 'Emploi du temps'"
-                      variant="outline" 
+                      variant="outline"
                       href="/setup/schedule/events"
                       small
                     ) Changer
@@ -23,7 +33,7 @@
                     li.new(@click="$modal.show('add-subject')")
                         Icon add
                     li(v-for="subject in subjects")
-                        CardSubject(v-bind="subject")
+                        CardSubject(v-bind="subject" @click="modifySubject(subject)")
 
 </template>
 
@@ -47,16 +57,31 @@ export default {
     ButtonNormal
   },
   data() {
+    const defaults = {
+      name: '',
+      color: '#000000',
+      weight: 1
+    }
     return {
       newSubject: {
-        name: '',
-        color: '#000000',
-        weight: 1
+        ...defaults
+      },
+      editingSubject: {
+        ...defaults,
+        uuid: null
       }
     }
   },
   methods: {
-    ...mapActions('subjects', { postSubject: 'post' })
+    ...mapActions('subjects', {
+      postSubject: 'post',
+      patchSubject: 'patch',
+      delSubject: 'delete'
+    }),
+    modifySubject(subject) {
+      this.editingSubject = subject
+      this.$modal.open('edit-subject')
+    }
   },
   computed: {
     ...mapGetters('settings', ['grouped', 'all']),
