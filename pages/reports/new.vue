@@ -1,9 +1,9 @@
 <template lang="pug">
   .container
-    template(v-if="$auth.user.remaining_daily_github_issues > 0")
-      h1(v-if="type === 'BUG'") Signalez un bug
-      h1(v-else) Proposez une fonctionnalité
-      form(@submit.prevent="post({data: report})")
+    template(v-if="$auth.user.remaining_daily_github_issues > 0 && !submitted")
+      h1.header(v-if="type === 'BUG'") Signalez un bug
+      h1.header(v-else) Proposez une fonctionnalité
+      form(@submit.prevent="submitted = post({ report })")
         //TODO: use groupped button switch instead, and put it as the h1
         RadioButtons(name="type" v-model="type" :values="typesActions") Type de demande
         RadioButtons(name="type" v-model="device" :values="devices") Type d'appareil
@@ -22,6 +22,16 @@
           v-if="type === 'BUG'"
         ) Quand le bug s'est-il produit ?
         ButtonNormal(type="submit" variant="primary" v-bind="{validation}") Envoyer le rapport
+        p.notice
+          | Votre rapport sera publié #[a(href="https://github.com/schoolsyst/frontend/issues" target="_blank") sur GitHub], où votre nom d'utilisateur
+          template(v-if="type === 'BUG'") , navigateur, OS et type d'appareil seront visibles, afin d'aider le réglage de votre problème.
+          template(v-else)  sera visible.
+    template(v-else-if="submitted")
+      ScreenSuccess(small @cta="$router.push('/')" image="thumbs-up")
+        h1 Merci pour votre contribution !
+        p(v-if="githubLink") Vous pouvez aller voir votre #[em issue] créée sur GitHub #[a(:href="githubLink") ici]
+        template(#cta) Retour à l'accueil
+        template(v-if="githubLink" #cta-secondary)
     template(v-else)
       ScreenEmpty(small @cta="$router.push('/')" @cta-secondary="goToGithub")
         template(#smiley) T_T
@@ -37,11 +47,19 @@ import { mapActions, mapGetters } from 'vuex'
 import ButtonNormal from '~/components/ButtonNormal.vue'
 import InputField from '~/components/InputField.vue'
 import ScreenEmpty from '~/components/ScreenEmpty.vue'
+import ScreenSuccess from '~/components/ScreenSuccess.vue'
 import RadioButtons from '~/components/RadioButtons.vue'
 export default {
-  components: { InputField, RadioButtons, ButtonNormal, ScreenEmpty },
+  components: {
+    InputField,
+    RadioButtons,
+    ButtonNormal,
+    ScreenEmpty,
+    ScreenSuccess
+  },
   data() {
     return {
+      submitted: false,
       type: 'BUG',
       typesActions: [
         { key: 'BUG', label: 'Signalement de bug' },
@@ -56,7 +74,7 @@ export default {
         { key: 'DESKTOP', label: 'Ordinateur fixe' },
         { key: 'LAPTOP', label: 'Ordinateur portable' },
         { key: 'PHONE', label: 'Smartphone' },
-        { key: 'SMARTWATCH', label: 'Montre connectée' },
+        // { key: 'SMARTWATCH', label: 'Montre connectée' },
         { key: 'OTHER', label: 'Autre' }
       ],
       happened: new Date(),
@@ -101,6 +119,7 @@ export default {
     }
   },
   computed: {
+    ...mapGetters('reports', ['latest']),
     report() {
       return {
         type: this.type,
@@ -115,9 +134,21 @@ export default {
     },
     validation() {
       return this.validate()(this.report)
+    },
+    githubLink() {
+      if (!this.submitted) return null
+      const report = this.latest
+      if (report && 'github_issue' in report) {
+        return `https://github.com/schoolsyst/frontend/issues/${report.github_issue}/`
+      } else {
+        return null
+      }
     }
   },
   mounted() {
+    this.$withLoadingScreen(async () => {
+      await this.$store.dispatch('reports/load')
+    })
     if (this.device === 'OTHER') this.device = this.detectDeviceType()
   },
   methods: {
@@ -145,7 +176,7 @@ export default {
   margin: 0 auto
   padding-bottom: 2em // TODO: #beta-1.0.0 put this padding on every container (will be a footer soon)
 
-.containter > h1
+.header
   text-align: center
   margin-bottom: 2em
 
@@ -159,4 +190,10 @@ form
 
   .RadioButtons
     margin-bottom: 1.5em
+
+.notice
+  text-align center
+  margin-top 1em
+  font-size: 0.85em
+  line-height: 1.5
 </style>

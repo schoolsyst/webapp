@@ -83,7 +83,7 @@ main, .container
 .side-by-side
   display: flex
 
-#page, /deep/ #empty-state, /deep/ #loading-screen
+#page, /deep/ [id$=-state], /deep/ #loading-screen
   min-height: calc(100vh - 100px) // top bar height
 
 /deep/ #loading-screen

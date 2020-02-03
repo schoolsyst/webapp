@@ -1,17 +1,17 @@
 <template lang="pug">
   .container
     template(v-if="sent === true")
-      img(src="/misc/registered-checkmark.svg")
+      img(src="/misc/checkmark.svg")
       h1 Email envoyé !
       p.
         Si vous ne trouvez pas votre mail,
         cherchez avec comme expéditeur "passwords@schoolsyst.com"
       p.
-        Comme ce site est tout neuf, 
+        Comme ce site est tout neuf,
         il se peut que le mail se retrouve dans vos spams.
       template(v-if="email.endsWith('@gmail.com')")
         ButtonNormal.login(href="https://mail.google.com/" in-place) Ouvrir Gmail
-      
+
     template(v-else-if="sent === false")
       h1 Impossible d'envoyer un mail.
       p Vérifiez votre adresse email
@@ -23,7 +23,7 @@
       form(@submit.prevent="requestPasswordReset")
         InputField(
           :validation="validateEmailAdress({email})"
-          name="email" v-model="email" 
+          name="email" v-model="email"
           no-error-messages no-label no-action-button
           placeholder="Addresse email"
         )

@@ -39,10 +39,10 @@
           ButtonNormal.submit(variant="primary" v-bind="{validation}" type="submit") Créez votre compte
     template(v-else)
       .registered
-        img(src="/misc/registered-checkmark.svg")
-        .text 
-          p 
-            | Vous voici fin prêt, 
+        img(src="/misc/checkmark.svg")
+        .text
+          p
+            | Vous voici fin prêt,
             wbr
             span.username {{ username }}
             |.

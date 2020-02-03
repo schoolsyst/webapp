@@ -1,7 +1,7 @@
 <template lang="pug">
 .container
   template(v-if="changed === true")
-    img(src="/misc/registered-checkmark.svg")
+    img(src="/misc/checkmark.svg")
     h1 Votre mot de passe a été changé
     p Vous n'avez plus qu'à vous re-connecter avec votre tout nouveau mot de passe!
     ButtonNormal(variant="outline" href="/login") Se connecter
