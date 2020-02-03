@@ -1,3 +1,33 @@
+const metaInfo = {
+  description:
+    'Gérez vos notes, prises de cours, devoirs et autres en un seul endroit. Une application web faite par un étudiant, pour les étudiants.',
+  title: "schoolsyst: une nouvelle façon d'étudier",
+  url: 'https://www.schoolsyst.com', // We link to the presentation website for SEO tags, better for discovery.
+  imagePath: '/assets/schoolsyst-social-preview-card.png' // Hosted on the presentation website
+}
+
+const getSocialCardPreviewTags = (data) => {
+  const tags = []
+  // Prepend the url to the image
+  data.image = data.url + data.imagePath
+  // Meta tags common to og & twitter
+  const namespaces = ['og', 'twitter']
+  const properties = ['title', 'url', 'image', 'description']
+
+  namespaces.forEach((namespace) => {
+    properties.forEach((prop) => {
+      tags.push({
+        name: `${namespace}:${prop}`,
+        content: data[prop]
+      })
+    })
+  })
+  // The type
+  tags.push({ name: 'og:type', content: 'website' })
+  tags.push({ name: 'twitter:card', content: 'summary_large_image' })
+  return tags
+}
+
 export default {
   mode: 'spa',
   /*
@@ -11,6 +41,7 @@ export default {
         : titleChunk + ' · schoolsyst'
     },
     meta: [
+      ...getSocialCardPreviewTags(metaInfo),
       { charset: 'utf-8' },
       { name: 'viewport', content: 'width=device-width, initial-scale=1' },
       {
@@ -109,7 +140,7 @@ export default {
     '@nuxtjs/pwa',
     '@nuxtjs/auth',
     '@nuxtjs/toast',
-    ['nuxt-vue-select', {}]
+    ['nuxt-vue-select', {}],
   ],
   /*
    ** Toasts
