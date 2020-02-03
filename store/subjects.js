@@ -124,7 +124,7 @@ export const actions = {
     }
   },
 
-  async patch({ commit }, { uuid, modifications, force }) {
+  async patch({ commit, getters }, { uuid, modifications, force }) {
     force = force || false
     if (!force) {
       let subject = getters.one(uuid)
@@ -141,13 +141,13 @@ export const actions = {
     try {
       await this.$axios.patch(`/subjects/${uuid}/`, modifications)
       const { data } = await this.$axios.get(`/subjects/${uuid}`)
-      if (data) commit('PATCH', uuid, data)
+      if (data) commit('PATCH', { pk: uuid, modifications: data })
     } catch (error) {
       console.error(error)
     }
   },
 
-  async delete({ commit, dispatch }, { uuid, force, toastMessage }) {
+  async delete({ commit, dispatch, getters }, { uuid, force, toastMessage }) {
     try {
       console.log(uuid)
       // Stores the note object because we want to be able to cancel the deletion
