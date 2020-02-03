@@ -15,7 +15,7 @@
     .-side-by-side
       .left
         h1 Ajoutez vos matières.
-        p.help Ajoutez toutes les matières qui sont dans votre emploi du temps,#[br]même celles dans lesquelles vous n'aurez pas de notes (ex. Culture religieuse)
+        p.help Ajoutez toutes les matières qui sont dans votre emploi du temps,#[br]même celles dans lesquelles vous n'aurez pas de notes
         button.add(@click="$modal.show('add-subject')"): Icon add
       .right
         ul.subjects
