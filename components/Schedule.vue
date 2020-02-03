@@ -16,7 +16,9 @@
             @click="onEventClick(event)"
             :class="{ deleted: event.deleted, [`weektype-${event.week_type.toLowerCase()}`]: bothWeeks }"
           )
-            span.subject {{ event.subject.name }}
+            span.subject(
+              :style="{ maxWidth: `calc(${styles(event).width} - (2 * 0.75rem))` } /*ref: 0.75rem: .event{padding}*/"
+            ) {{ event.subject.name }}
             span.room {{ event.room }}
 </template>
 
@@ -179,6 +181,12 @@ export default {
     right: 0.75em
     opacity: 0.75
     font-family: var(--fonts-monospace)
+
+  .subject
+    white-space normal
+    overflow hidden
+    display block
+    text-overflow ellipsis
 
 ul
   list-style: none
