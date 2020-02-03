@@ -42,6 +42,7 @@ const setup = (modal, closeFunc) => {
 }
 
 const close = (name) => {
+  console.log(`$modal: Closing ${name}`)
   const modal = document.getElementById(`modal_${name}`)
   // console.log(modal)
   if (modal === null) return
@@ -57,6 +58,7 @@ const close = (name) => {
 
 Vue.prototype.$modal = {
   show: (name, opts = { at: null, from: null, stretch: null }) => {
+    console.log(`$modal: Opening ${name}`)
     let openAt = opts.at || 'center'
     const calledBy = opts.from || null
     const modal = document.getElementById(`modal_${name}`)
