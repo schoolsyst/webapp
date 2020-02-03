@@ -691,18 +691,20 @@ export const actions = {
     try {
       console.log(uuid)
       // Stores the note object because we want to be able to cancel the deletion
+      // eslint-disable-next-line no-unused-vars
       const event = getters.event(uuid)
       //
       await this.$axios.delete(`/events/${uuid}`)
       commit('DEL_EVENT', uuid)
       this.$toast.show(toastMessage || 'Cours supprimé', {
-        action: {
-          text: 'Annuler',
-          onClick: async (e, toast) => {
-            await dispatch(`postEvent`, { event })
-            toast.goAway(0)
-          }
-        },
+        // TODO: ↓
+        // action: {
+        //   text: 'Annuler',
+        //   onClick: async (e, toast) => {
+        //     await dispatch(`postEvent`, { event })
+        //     toast.goAway(0)
+        //   }
+        // },
         duration: 8000
       })
     } catch (error) {
