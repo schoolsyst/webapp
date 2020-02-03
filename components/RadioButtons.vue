@@ -7,12 +7,12 @@
             input(
                 @change="$emit('input', choice.key)"
                 type="radio"
-                :id="`radio--${id}--${slugify(choice.key.toString())}`"
+                :id="`radio--${id}--${slugify(choice.key.toString())}-${_uid}`"
                 :name="id"
                 :value="choice.key"
                 :checked="choice.key === value"
             )
-            label(:for="`radio--${id}--${slugify(choice.key.toString())}`") {{choice.label}}
+            label(:for="`radio--${id}--${slugify(choice.key.toString())}-${_uid}`") {{choice.label}}
 </template>
 
 <script>
