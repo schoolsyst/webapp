@@ -6,7 +6,14 @@
         .-side-by-side
             ul.categories
                 li(v-for="g in grouped")
+                  .heading
                     HeadingSub {{ g[0] }}
+                    ButtonNormal(
+                      v-if="g[0] === 'Emploi du temps'"
+                      variant="outline" 
+                      href="/setup/schedule/events"
+                      small
+                    ) Changer
                     ul.settings
                         li(v-for="setting in g[1].filter(s => s.key !== 'offdays')" :key="setting.uuid")
                             InputSetting.input(v-bind="{...setting, _key: setting.key}")
@@ -28,6 +35,7 @@ import InputSetting from '~/components/InputSetting.vue'
 import Icon from '~/components/Icon.vue'
 import InputField from '~/components/InputField.vue'
 import ModalAddSubject from '~/components/ModalAddSubject.vue'
+import ButtonNormal from '~/components/ButtonNormal.vue'
 export default {
   components: {
     HeadingSub,
@@ -35,7 +43,8 @@ export default {
     CardSubject,
     InputSetting,
     Icon,
-    ModalAddSubject
+    ModalAddSubject,
+    ButtonNormal
   },
   data() {
     return {

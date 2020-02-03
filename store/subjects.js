@@ -52,13 +52,13 @@ export const getters = {
       }
     },
     customConstraints: [
-      {
-        message: 'Il y a déjà une matière avec ce nom',
-        field: 'name',
-        constraint: (getters, object) => {
-          return !getters.subjects.map((s) => s.name).includes(object.name)
-        }
-      },
+      // {
+      // message: 'Il y a déjà une matière avec ce nom',
+      // field: 'name',
+      // constraint: (getters, object) => {
+      // return !getters.subjects.map((s) => s.name).includes(object.name)
+      // }
+      // },
       {
         message: "L'objectif de moyenne est trop grand",
         field: 'goal',
@@ -74,7 +74,8 @@ export const getters = {
       weight: { gender: 'M', name: 'coefficient' },
       room: { gender: 'F', name: 'salle' }
     },
-    resourceName: { gender: 'F', name: 'matière' }
+    resourceName: { gender: 'F', name: 'matière' },
+    debug: true
   })
 }
 
@@ -105,7 +106,13 @@ export const actions = {
     force = force || false
     if (!force) {
       const validation = getters.validate(subject)
-      if (!validation.validated) return validation
+      if (!validation.validated) {
+        this.$toast.error(
+          `Impossible de rajouter cette matière: ${validation.message}`,
+          { icon: 'error_outline', duration: 1000 + 700 * validation.count }
+        )
+        return validation
+      }
     }
     try {
       const res = await this.$axios.post(`/subjects/`, subject)
@@ -117,38 +124,49 @@ export const actions = {
     }
   },
 
-  async patch({ commit }, uuid, modifications, force = false) {
-    try {
-      const { data } = await this.$axios.patch(
-        `/subjects/${uuid}/`,
-        modifications
-      )
-      if (data) commit('PATCH', uuid, data)
-      console.log(`[from API] PATCH /subjects/${uuid}/: OK`)
-    } catch (error) {
-      console.error(`[from API] PATCH /subjects/${uuid}/: Error`)
-      try {
-        console.error(error.response.data)
-      } catch (_) {
-        // eslint-disable-next-line
-        console.error(error)
+  async patch({ commit }, { uuid, modifications, force }) {
+    force = force || false
+    if (!force) {
+      let subject = getters.one(uuid)
+      subject = { ...subject, ...modifications }
+      const validation = getters.validate(subject)
+      if (!validation.validated) {
+        this.$toast.error(
+          `Impossible de modifier cette matière: ${validation.message}`,
+          { icon: 'error_outline', duration: 1000 + 700 * validation.count }
+        )
+        return validation
       }
+    }
+    try {
+      await this.$axios.patch(`/subjects/${uuid}/`, modifications)
+      const { data } = await this.$axios.get(`/subjects/${uuid}`)
+      if (data) commit('PATCH', uuid, data)
+    } catch (error) {
+      console.error(error)
     }
   },
 
-  async delete({ commit }, uuid) {
+  async delete({ commit, dispatch }, { uuid, force, toastMessage }) {
     try {
-      const { data } = await this.$axios.delete(`/subjects/${uuid}/`)
-      if (data) commit('DEL', uuid)
-      console.log(`[from API] DELETE /subjects/${uuid}/: OK`)
+      console.log(uuid)
+      // Stores the note object because we want to be able to cancel the deletion
+      const subject = getters.one(uuid)
+      //
+      await this.$axios.delete(`/subjects/${uuid}`)
+      commit('DEL', uuid)
+      this.$toast.show(toastMessage || 'Matière supprimée', {
+        action: {
+          text: 'Annuler',
+          onClick: async (e, toast) => {
+            await dispatch(`post`, { subject })
+            toast.goAway(0)
+          }
+        },
+        duration: 8000
+      })
     } catch (error) {
-      console.error(`[from API] DELETE /subjects/${uuid}/: Error`)
-      try {
-        console.error(error.response.data)
-      } catch (_) {
-        // eslint-disable-next-line
-        console.error(error)
-      }
+      console.error(error)
     }
   }
 }

@@ -1,6 +1,7 @@
 <template lang="pug">
   .card-wrapper(
       :style="{backgroundColor, borderColor}"
+      @click="$emit('click')"
     )
     BadgeSubject.color-dot(
       v-if="!fullColor"
@@ -35,8 +36,8 @@ export default {
     },
     goal: {
       type: Number,
-      required: true,
-      validate: (val) => val >= 0 && val <= 1
+      default: null,
+      validate: (val) => val === null || (val >= 0 && val <= 1)
     },
     // Options
     fullColor: {

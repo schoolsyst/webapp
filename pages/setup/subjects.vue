@@ -1,7 +1,17 @@
 <template lang="pug">
   .container
     // TODO: #beta-1.1.0 modal anchored in page, no need to click a btn
-    ModalAddSubject(v-model="newSubject" @post="post({subject: $event})")
+    ModalAddSubject(
+      v-model="newSubject"
+      @submit="post({subject: newSubject}); newSubject = defaults"
+      action="add"
+    )
+    ModalAddSubject(
+      v-model="editingSubject"
+      @submit="patch({modifications: editingSubject, uuid: editingSubject.uuid})"
+      @delete="del({uuid: editingSubject.uuid})"
+      action="edit"
+    )
     .-side-by-side
       .left
         h1 Ajoutez vos matières.
@@ -10,7 +20,7 @@
       .right
         ul.subjects
           li(v-for="subject in all" :key="subject.uuid")
-            CardSubject(@click="$modal.show('edit-subject')" v-bind="subject")
+            CardSubject(@click="editingSubject = subject; $modal.show('edit-subject')" v-bind="subject")
     TheBottomBar
       ButtonNormal(variant="text-blue" href="/logout") #[Icon cancel] Annuler
       ButtonNormal.to-right(variant="primary" href="/setup/schedule/settings") Continuer
@@ -34,11 +44,18 @@ export default {
   },
   layout: 'bare',
   data() {
+    const defaults = {
+      color: '#000000',
+      name: null,
+      weight: null,
+      goal: null
+    }
     return {
-      newSubject: {
-        color: '#000000',
-        name: null,
-        weight: null
+      defaults,
+      newSubject: defaults,
+      editingSubject: {
+        ...defaults,
+        uuid: null
       }
     }
   },
@@ -51,7 +68,8 @@ export default {
     })
   },
   methods: {
-    ...mapActions('subjects', ['post', 'patch'])
+    ...mapActions('subjects', ['post', 'patch']),
+    ...mapActions('subjects', { del: 'delete' })
   }
 }
 </script>

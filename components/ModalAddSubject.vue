@@ -1,85 +1,86 @@
 <template lang="pug">
-  BaseModal(
-    :name="modalName"
-    title="Ajouter une matière..."
+  ModalObject(
+    v-bind="{...description, action, validation}"
+    @submit="$emit('submit')"
+    @delete="$emit('delete')"
   )
-    form.content(@submit.prevent="$emit('post', subjectObject); resetInputs(); $modal.close(modalName)")
-      .color-and-name
-        PickerColor(
-          v-model="color"
-          :namespace="modalName"
-          tooltip="Choisir la couleur"
-        ) Couleur
-        InputField(
-          v-model="name"
-          variant="filled"
-          name="name"
-          v-bind="{validation}"
-        ) Nom
-      .grades-related
-        InputField(
-          v-model="weight"
-          variant="filled"
-          name="weight"
-          type="number"
-          v-bind="{validation}"
-          tabindex="3"
-          no-error-messages
-        ) Coefficient
-        InputField(
-          v-model="goal"
-          variant="filled"
-          name="goal"
-          type="number"
-          v-bind="{validation}"
-          tabindex="4"
-          :placeholder="`sur ${gradesUnit}`"
-          no-error-messages
-        ) Objectif de moyenne
-      .submit: ButtonNormal(
-        variant="primary"
+    .color-and-name
+      PickerColor(
+        :value="value.color"
+        @input="$emit('input', {...value, color: $event })"
+        :namespace="modalName"
+        tooltip="Choisir la couleur"
+      ) Couleur
+      InputField(
+        :value="value.name"
+        @input="$emit('input', {...value, name: $event })"
+        variant="filled"
+        name="name"
         v-bind="{validation}"
-        type="submit"
-      ) Ajouter
+        no-error-messages
+        no-error-styling
+      ) Nom
+    .grades-related
+      InputField(
+        :value="value.weight"
+        @input="$emit('input', {...value, weight: $event })"
+        variant="filled"
+        name="weight"
+        type="number"
+        v-bind="{validation}"
+        tabindex="3"
+        no-error-messages
+        no-error-styling
+      ) Coefficient
+      InputField(
+        :value="goal !== null ? goal * gradesUnit : ''"
+        @input="$emit('input', {...value, goal: $event / gradesUnit})"
+        variant="filled"
+        name="goal"
+        type="number"
+        v-bind="{validation}"
+        tabindex="4"
+        :placeholder="`sur ${gradesUnit}`"
+        no-error-messages
+        no-error-styling
+      ) Objectif de moyenne
 </template>
 
 <script>
 import { mapGetters } from 'vuex'
-import BaseModal from '~/components/BaseModal.vue'
+import ModalObject from '~/components/ModalObject.vue'
 import InputField from '~/components/InputField.vue'
 import PickerColor from '~/components/PickerColor.vue'
 import ButtonNormal from '~/components/ButtonNormal.vue'
 
 export default {
-  components: { InputField, BaseModal, PickerColor, ButtonNormal },
+  components: { InputField, ModalObject, PickerColor, ButtonNormal },
   props: {
     value: {
       type: Object,
-      default: () => ({
-        color: '#000000',
-        name: null,
-        weight: 1
-      })
+      required: true
     },
-    modalName: {
+    action: {
       type: String,
-      default: 'add-subject'
+      required: true
     }
   },
   data() {
     return {
-      name: null,
-      color: '#000000',
-      weight: 1,
+      description: {
+        name: 'subject',
+        verboseName: 'matière',
+        gender: 'F'
+      },
       goal: null
     }
   },
   computed: {
     subjectObject() {
       return {
-        name: this.name,
-        weight: this.weight,
-        color: this.color,
+        name: this.value.name,
+        weight: this.value.weight,
+        color: this.value.color,
         goal: this.goal / this.gradesUnit
       }
     },
@@ -88,16 +89,9 @@ export default {
     },
     gradesUnit() {
       return this.settingValue()('grade_max')
-    }
-  },
-  watch: {
-    value() {
-      if (this.value) {
-        const { name, weight, color } = this.value
-        this.name = name
-        this.weight = weight
-        this.color = color
-      }
+    },
+    modalName() {
+      return this.action + '-' + this.description.name
     }
   },
   mounted() {
@@ -107,13 +101,7 @@ export default {
   },
   methods: {
     ...mapGetters('subjects', ['validate']),
-    ...mapGetters('settings', { settingValue: 'value' }),
-    resetInputs() {
-      this.name = ''
-      this.color = '#000000'
-      this.weight = 1
-      this.goal = null
-    }
+    ...mapGetters('settings', { settingValue: 'value' })
   }
 }
 </script>
@@ -122,12 +110,13 @@ export default {
 .color-and-name
   display: flex
   align-items: center
+  margin-bottom: 2em
 
   .color-picker
     font-size: 1.25em
 
     & /deep/ .opener
-      margin-top: -0.5em
+      margin-top: 0.5em
       margin-right: 1em
 
 .grades-related
