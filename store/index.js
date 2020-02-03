@@ -251,7 +251,7 @@ export const getValidator = ({
           errorArg === 1 ? '' : 's'
         }`,
         required: `Veuillez renseigner ${indeterminateArticle}${name}`,
-        isAWeekType: `${fieldNameWithArticle} doit être Q1, Q2 ou les deux.`,
+        isAWeekType: `${fieldNameWithArticle} doit être paire, impaire ou les deux.`,
         before: `${fieldNameWithArticle} doit être avant ${argNameWithArticle}`,
         isAColor: `${fieldNameWithArticle} doit être une couleur au format hexadécimal. Exemple: #09f ou #0479cf`,
         notEmpty: `${fieldNameWithArticle} est requis${
