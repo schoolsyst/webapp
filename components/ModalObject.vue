@@ -5,7 +5,7 @@
       .submit-area
         ButtonNormal(
           v-if="action === 'edit'"
-          variant="secondary"
+          variant="outline"
           role="danger"
           type="button"
           @click="$emit('delete'); closeModal()"
