@@ -310,6 +310,7 @@ tr.new-hour
     font-family var(--fonts-monospace-light)
   .subject
     overflow-x hidden
+    overflow-y visible
     width 100%
     text-overflow ellipsis
     white-space normal
