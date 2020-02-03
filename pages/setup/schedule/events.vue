@@ -87,4 +87,8 @@ ul.settings
   display: flex
   justify-content: center
   margin-bottom: 3em
+
+.schedule
+  // Compensate for the bottom bar
+  margin-bottom: 96px
 </style>
