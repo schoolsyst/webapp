@@ -33,7 +33,7 @@
         no-error-styling
       ) Coefficient
       InputField(
-        :value="goal !== null ? goal * gradesUnit : ''"
+        :value="value.goal !== null ? value.goal * gradesUnit : null"
         @input="$emit('input', {...value, goal: $event / gradesUnit})"
         variant="filled"
         name="goal"
@@ -76,16 +76,8 @@ export default {
     }
   },
   computed: {
-    subjectObject() {
-      return {
-        name: this.value.name,
-        weight: this.value.weight,
-        color: this.value.color,
-        goal: this.goal / this.gradesUnit
-      }
-    },
     validation() {
-      return this.validate(this.$store.getters)(this.subjectObject)
+      return this.validate(this.$store.getters)(this.value)
     },
     gradesUnit() {
       return this.settingValue()('grade_max')
