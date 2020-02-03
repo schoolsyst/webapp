@@ -6,8 +6,15 @@
 BaseModal.ModalDialogConfirm(:name="`confirm-${name}`", :title="heading || 'Confirmation'")
     p.message: slot
     ul.buttons(v-if="!challengeOpened")
-        li: ButtonNormal(variant="outline" @click="$modal.close(`confirm-${name}`)") {{cancelText}}
-        li: ButtonNormal(variant="primary" @click="challenge ? startChallenge() : confirmAndClose()", :role="confirmRole") {{confirmText}}
+        li: ButtonNormal(
+          variant="outline"
+          :role="cancelRole"
+          @click="$modal.close(`confirm-${name}`)") {{cancelText}}
+        li: ButtonNormal(
+          variant="primary"
+          :role="confirmRole"
+          @click="challenge ? startChallenge() : confirmAndClose()"
+        ) {{confirmText}}
     .challenge(:class="{'errored': challengeError}" v-else)
         LabelFlat(:for="`confirm-${name}-challenge`") {{challengeMessage}}
         .inputs
@@ -39,6 +46,10 @@ export default {
       default: 'Annuler'
     },
     confirmRole: {
+      type: String,
+      default: 'normal'
+    },
+    cancelRole: {
       type: String,
       default: 'normal'
     },
