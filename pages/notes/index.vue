@@ -13,7 +13,7 @@
         no-label no-error-messages variant="filled"
       )
       ButtonNormal(variant="primary" @click="rename(); $modal.hide('rename-note')") OK
-    .toolbar(v-if="all.length")
+    .toolbar(v-if="all.length || filterSubject")
       .field-wrapper
         Icon.search-icon search
         InputField(
