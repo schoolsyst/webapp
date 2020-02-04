@@ -2,7 +2,8 @@
     .card(
         @click="$emit('click')"
         :class="{completed, opened, [`is-a-${type.toLowerCase()}`]: true}"
-        v-touch:swipe="toggleComplete"
+        v-touch:swipe.left="toggleComplete"
+        v-touch:swipe.right="toggleComplete"
     )
         .complete-slider(@click.stop="toggleComplete" :title="sliderTooltip")
             Icon(v-show="completed") close
