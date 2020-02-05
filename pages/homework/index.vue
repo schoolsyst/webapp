@@ -43,7 +43,7 @@
                               @click="homework.editing = hw; $modal.open('edit-homework')"
                               @contextmenu.prevent="$refs.menu.open($event, { hw })"
                             )
-        ScreenEmpty.empty(v-else @cta="$modal.show('add-homework')" @cta-secondary="showCompleted = true")
+        ScreenEmpty.empty(v-else @cta="$modal.show('add-homework')" @cta-secondary="setSetting({ key: 'show_completed_exercises', value: true })")
             template(#smiley) \o/
             p Bravo. Vous n'avez plus rien à travailler, pour le moment.
             template(#cta) Ajouter des devoirs
@@ -133,7 +133,10 @@ export default {
       getSettingValue: 'settings/value',
       getSetting: 'settings/one'
     }),
-    ...mapActions({ toggleSetting: 'settings/toggle' }),
+    ...mapActions({
+      toggleSetting: 'settings/toggle',
+      setSetting: 'settings/setValue'
+    }),
     compoundDate(date) {
       if (date === 'LATE') return 'En retard'
       date = fromUnixTime(date)
