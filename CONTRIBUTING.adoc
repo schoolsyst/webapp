@@ -1,0 +1,30 @@
+# Commit messages conventions
+
+This repository follows the https://github.com/carloscuesta/gitmoji[gitmoji] commit standard.
+Additonal conventions are added on top of the intent-indicating emoji. Here's how commit titles should be constructed:
+
+```
+EMOJI [SCOPE_PREFIX SCOPE: ] IMPERATIVE_SENTENCE
+```
+
+With:
+
+EMOJI :: The emoji used. Must follow the gitmoji stanard.
+SCOPE_PREFIX :: Indicates if the changes apply to one particular area of the codebase. Must be one of the <<Scope Prefix characters>>
+SCOPE :: Indicates the file/topic affected.
+IMPERATIVE_SENTENCE :: A sentence at the imperative tense, indicating the change applied to the codebase.
+
+
+## Scope Prefix characters
+The scope prefix indicates what area of the codebase changed.
+Less specific than the scope itself, but useful because file names overlaps. (eg. homework is a page & vuex module)
+
+[horizontal]
+$ :: Store (vuex)
+# :: Components
+/ :: Pages
+^ :: Plugins
+? :: Tests
+% :: Layouts
+~ :: Middlewares
+&nbsp; :: Other (no scope prefix)
