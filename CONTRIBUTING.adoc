@@ -20,10 +20,10 @@ The scope prefix indicates what area of the codebase changed.
 Less specific than the scope itself, but useful because file names overlaps. (eg. homework is a page & vuex module)
 
 [horizontal]
-$ :: Store (vuex)
+pass:[=] :: Store (vuex)
 # :: Components
 / :: Pages
-^ :: Plugins
+$ :: Plugins
 ? :: Tests
 % :: Layouts
 ~ :: Middlewares
