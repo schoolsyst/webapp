@@ -1,6 +1,6 @@
 <template lang="pug">
   .container
-    // TODO: #beta-1.1.0 modal anchored in page, no need to click a btn
+    // TODO(beta-1.1.0): modal anchored in page, no need to click a btn
     ModalAddSubject(
       v-model="newSubject"
       @submit="post({subject: newSubject}); newSubject = defaults"

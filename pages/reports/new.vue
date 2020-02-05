@@ -174,7 +174,7 @@ export default {
 .container
   max-width: 700px
   margin: 0 auto
-  padding-bottom: 2em // TODO: #beta-1.0.0 put this padding on every container (will be a footer soon)
+  padding-bottom: 2em // TODO(beta-1.0.0): put this padding on every container (will be a footer soon)
 
 .header
   text-align: center

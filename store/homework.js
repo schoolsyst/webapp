@@ -71,6 +71,7 @@ export const getters = {
     homeworks,
     specialGroups = ['late', 'today']
   ) => {
+    // TODO(beta-2.0.0): refactor this
     /* Groups the provided array of homework by due date
      * into an array of groups:
      * [ { due: <date>, homeworks: [ ... ], shown: <bool> }, ... ]
