@@ -23,7 +23,12 @@
             CardSubject(@click="editingSubject = subject; $modal.show('edit-subject')" v-bind="subject")
     TheBottomBar
       ButtonNormal(variant="text-blue" href="/logout") #[Icon cancel] Annuler
-      ButtonNormal.to-right(variant="primary" href="/setup/schedule/settings") Continuer
+      ButtonNormal.to-right(
+        variant="primary"
+        href="/setup/schedule/settings"
+        :disabled="all.length === 0"
+        v-tooltip="all.length === 0 ? 'Veuillez ajouter vos matières' : ''"
+      ) Continuer
 </template>
 
 <script>
