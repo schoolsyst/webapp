@@ -45,7 +45,10 @@ export default {
       type: String,
       required: true
     },
-    progress: Number,
+    progress: {
+      type: Number,
+      default: 0
+    },
     opened: {
       type: Boolean,
       default: false
