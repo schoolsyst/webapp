@@ -150,18 +150,21 @@ export const actions = {
     const settings = (await dispatch('fetchSettings')) || []
     commit('SET', { definitions, settings })
   },
-  async post({ commit }, setting) {
+  async post({ commit }, { setting, early }) {
+    early = early || false
     setting = {
       ...setting,
       value: stringifiedValue(setting.value),
       user: this.$auth.user.id
     }
+    if (early) commit('PATCH', { modifications: setting })
     const res = await this.$axios.post('/settings/', setting)
     const { data } = await this.$axios.get(`/settings/${res.data.setting}/`)
     if (data) commit('PATCH', { modifications: data })
     // console.log(`[from API] POST /settings/: OK`)
   },
-  async patch({ commit, getters }, { key, modifications }) {
+  async patch({ commit, getters }, { key, modifications, early }) {
+    early = early || false
     const type = getters.one(key).type
     if (modifications.hasOwnProperty('value')) {
       modifications.value = stringifiedValue({
@@ -169,7 +172,9 @@ export const actions = {
         type
       })
     }
-    console.log(modifications)
+    if (early) {
+      commit('PATCH', { pk: key, modifications })
+    }
     const res = await this.$axios.patch(`/settings/${key}/`, modifications)
     const { data } = await this.$axios.get(`/settings/${res.data.setting}/`)
     if (data) commit('PATCH', { pk: key, modifications: data })
@@ -192,9 +197,9 @@ export const actions = {
     }
   },
   setValue: debounce(
-    async function({ getters, dispatch }, { key, value, force }) {
+    async function({ getters, dispatch }, { key, value, force, early }) {
       force = force || false
-      // console.log(`Setting ${key} = ${value}`)
+      early = early === undefined ? true : early
       try {
         // Check if the value is coherent with the setting's type
         // TODO: put this into a checkValueType function
@@ -217,10 +222,20 @@ export const actions = {
         }
         // User already has that setting
         if (await dispatch('userHasSetting', { key })) {
-          await dispatch('patch', { key, modifications: { value } })
+          await dispatch('patch', {
+            key,
+            modifications: { value },
+            early
+          })
           // The setting exist but that user has never set a value
         } else if (getters.one(key)) {
-          await dispatch('post', { setting: key, value })
+          await dispatch('post', {
+            setting: {
+              setting: key,
+              value
+            },
+            early
+          })
           // The setting does not exist
         } else {
           this.$toast.error("Ce réglage n'exsite pas", {
@@ -244,7 +259,7 @@ export const actions = {
       return
     }
     const value = !setting.value
-    await dispatch('setValue', { key, force, value })
+    await dispatch('setValue', { key, force, value, early: true })
   }
 }
 
