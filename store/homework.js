@@ -111,7 +111,7 @@ export const getters = {
     flat = flat.sort(firstBy('due'))
     flat = flat.map((g) => ({
       ...g,
-      homeworks: g.homeworks.map((h) => ({ ...h, due: h.realDue })),
+      homeworks: g.homeworks.map((h) => ({ ...h, due: h.realDue || h.due })),
       due: g.due === LATE_DUE_NUMBER ? 'LATE' : g.due
     }))
     return flat
