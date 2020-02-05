@@ -4,13 +4,14 @@
       slot
       .submit-area
         ButtonNormal(
-          v-if="action === 'edit'"
+          v-if="action === 'edit' && deleteButtonText"
           variant="outline"
           role="danger"
           type="button"
           @click="$emit('delete'); closeModal()"
-        ) Supprimer
+        ) {{ deleteButtonText }}
         ButtonNormal(
+          v-if="verboseAction"
           v-bind="{ validation }"
           variant="primary"
           type="submit"
@@ -45,6 +46,18 @@ export default {
     validation: {
       type: Object,
       default: () => ({ validated: true, errors: {} })
+    },
+    addButtonText: {
+      type: String,
+      default: 'Ajouter'
+    },
+    editButtonText: {
+      type: String,
+      default: 'Modifier'
+    },
+    deleteButtonText: {
+      type: String,
+      default: 'Supprimer'
     }
   },
   computed: {
@@ -61,8 +74,8 @@ export default {
     },
     verboseAction() {
       return {
-        add: 'Ajouter',
-        edit: 'Modifier'
+        add: this.addButtonText,
+        edit: this.editButtonText
       }[this.action]
     }
   },
