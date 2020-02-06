@@ -2,12 +2,15 @@ import { toDate, addDays, isBefore, format } from 'date-fns'
 import tinycolor from 'tinycolor2'
 import constantCase from 'constant-case'
 import Vue from 'vue'
+const npm = require('~/package.json')
+
+const version = npm.version.split('.')
 
 export const state = () => ({
   version: {
-    feature: 1,
-    ui: 0,
-    bug: 0,
+    feature: version[0],
+    ui: version[1],
+    bug: version[2],
     channel: 'beta'
   },
   now: toDate(Date.now()), // For time-dependent getters.
