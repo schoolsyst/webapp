@@ -31,7 +31,9 @@
                 )
                     HeadingSub 
                         span.due.late(v-if="group.due === 'LATE'") En retard
-                        span.due(v-else :class="{today: isToday(group.due)}") {{ compoundDate(group.due) }}
+                        span.due(v-else :class="{today: isToday(group.due)}")
+                          span.absolute-date {{ absoluteDate(group.due) }}
+                          span.relative-date(v-if="relativeDate(group.due)") {{ relativeDate(group.due) }}
                         button.mark-all-as-done(
                             v-tooltip="'Tout marquer comme terminé'"
                             @click="markAllAsDone(group.homeworks)"
@@ -137,21 +139,22 @@ export default {
       toggleSetting: 'settings/toggle',
       setSetting: 'settings/setValue'
     }),
-    compoundDate(date) {
+    absoluteDate(date) {
       if (date === 'LATE') return 'En retard'
       date = fromUnixTime(date)
       if (isToday(date)) return "aujourd'hui"
       if (isTomorrow(date)) return 'demain'
       if (!isValid(date)) return '???'
 
-      let str = ''
-      str += format(date, this.smartDateFormat(date), { locale: fr })
-      if (differenceInDays(date, this.now) < 31) {
-        str +=
-          ' — ' +
-          formatDistance(date, this.now, { locale: fr, addSuffix: true })
+      return format(date, this.smartDateFormat(date), { locale: fr })
+    },
+    relativeDate(date) {
+      date = fromUnixTime(date)
+      const diff = differenceInDays(date, this.now)
+      if (diff < 31 && diff > 2) {
+        console.log(`relativeDate: date=${date}`)
+        return formatDistance(date, this.now, { locale: fr, addSuffix: false })
       }
-      return str
     },
     smartDateFormat(date) {
       if (isSameWeek(date, this.now)) return 'cccc'
@@ -244,6 +247,10 @@ li.group .mark-all-as-done i
 
   .due
     margin-right: 1em
+
+    .relative-date
+      color var(--grey-light)
+      margin-left: 1em
 
   button
     margin-left: auto
