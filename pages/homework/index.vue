@@ -152,7 +152,6 @@ export default {
       date = fromUnixTime(date)
       const diff = differenceInDays(date, this.now)
       if (diff < 31 && diff > 2) {
-        console.log(`relativeDate: date=${date}`)
         return formatDistance(date, this.now, { locale: fr, addSuffix: false })
       }
     },
