@@ -120,7 +120,7 @@ export default {
   },
   computed: {
     ...mapGetters('homework', ['grouped']),
-    ...mapState(['now']),
+    ...mapState(['now', 'today']),
     showCompleted() {
       return this.getSettingValue()('show_completed_exercises')
     }
@@ -151,15 +151,18 @@ export default {
     },
     relativeDate(date) {
       date = fromUnixTime(date)
-      const diff = differenceInDays(date, this.now)
-      if (diff < 31 && diff > 2) {
-        return formatDistance(date, this.now, { locale: fr, addSuffix: false })
+      const diff = differenceInDays(date, this.today)
+      if (diff < 31 && diff > 1) {
+        return formatDistance(date, this.today, {
+          locale: fr,
+          addSuffix: false
+        })
       }
     },
     smartDateFormat(date) {
-      if (isSameWeek(date, this.now)) return 'cccc'
-      if (isSameMonth(date, this.now)) return 'cccc dd'
-      if (isSameYear(date, this.now)) return 'cccc dd MMM'
+      if (isSameWeek(date, this.today)) return 'cccc'
+      if (isSameMonth(date, this.today)) return 'cccc dd'
+      if (isSameYear(date, this.today)) return 'cccc dd MMM'
       else return 'cccc dd MMM yyyy'
     },
     async markAllAsDone(homeworks) {
@@ -249,7 +252,7 @@ li.group .mark-all-as-done i
     margin-right: 1em
 
     .relative-date
-      color var(--grey-light)
+      color: var(--grey-light)
       margin-left: 1em
 
   button

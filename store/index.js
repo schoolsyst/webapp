@@ -15,6 +15,7 @@ export const state = () => ({
   },
   now: toDate(Date.now()), // For time-dependent getters.
   tomorrow: addDays(toDate(Date.now()), 1),
+  today: new Date(),
   location: {
     latitude: null,
     longitude: null
