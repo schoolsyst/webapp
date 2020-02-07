@@ -9,7 +9,8 @@ import {
   fromUnixTime,
   isSameDay
 } from 'date-fns'
-import { getValidator, getMutations } from './index'
+// (caused by removeTime) eslint-disable-next-line import/named
+import { getValidator, getMutations, removeTime } from './index'
 
 export const state = () => ({
   homeworks: [],
@@ -24,7 +25,7 @@ export const state = () => ({
 
 const parseHomeworkDates = (homework) => {
   if (homework.due && typeof homework.due === 'string')
-    homework.due = parseISO(homework.due)
+    homework.due = removeTime(parseISO(homework.due))
   if (homework.added && typeof homework.added === 'string')
     homework.added = parseISO(homework.added)
   return homework
