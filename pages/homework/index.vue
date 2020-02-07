@@ -31,7 +31,7 @@
                 )
                     HeadingSub 
                         span.due.late(v-if="group.due === 'LATE'") En retard
-                        span.due(v-else :class="{today: isToday(group.due)}")
+                        span.due(v-else :class="{today: isToday(fromUnixTime(group.due))}")
                           span.absolute-date {{ absoluteDate(group.due) }}
                           span.relative-date(v-if="relativeDate(group.due)") {{ relativeDate(group.due) }}
                         button.mark-all-as-done(
@@ -127,6 +127,7 @@ export default {
   },
   methods: {
     getUnixTime,
+    fromUnixTime,
     isToday,
     ...mapGetters('homework', ['group', '_needToShowGroup']),
     ...mapActions('homework', ['post', 'switchCompletion', 'patch']),
