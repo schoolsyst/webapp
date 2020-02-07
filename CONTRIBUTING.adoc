@@ -1,3 +1,73 @@
+## Code clarity guidelines
+### In vue files' <template>
+
+Language :: pug
+Indentation :: 2 spaces
+
+#### Directives
+
+Only the following should be written in directives
+
+* a unique scalar value
+** for template strings, interpolated values should be variables only.
+* a unique function call
+* a unique variable
+
+##### An exception for conditional directives (`v-if`, `v-else-if`)
+
+In conditonnal directives, the value can be one of the above, or a logical-operator-separated list of variables, but there must be at most two operators.
+
+.Example
+```pug
+template(v-if="loggedIn || passwordForgotten")
+```
+
+If the exact same condition is reused, make a computed property instead.
+
+### In vue _component_ files' <style>
+  
+Language :: stylus
+Indentation :: 2 spaces
+
+### Sections
+Separate your styles into sections using the following comment decorations (including the surrounding blank lines):
+
+```
+
+//
+// Section name
+//
+
+```
+
+Include the following sections (even if empty), in order:
+
+. Definitions +
+  _Includes stylus variables & functions as well as CSS variables_
+. Layout +
+  _Includes `position`, `display`, all positioning, sizing & spacing-related properties_
+. Decoration +
+  _Includes all `border-` properties, `outline` & `box-shadow`.
+. Colors +
+  _Includes `color`, `background-color`, `opacity`._
+. Typography +
+  _Includes all `font-` properties and `text-decoration`._
+. Reactions +
+  _Includes selectors that use `:hover`, `:focus` or other interaction-related pseudo selectors or classes, as well as `transition`, `animation` and `@keyframes`._
+. Hacks +
+  _CSS Hacks / bad practice styling rules_
+  
+### Selector nesting
+
+.Nest selectors when...
+* The class name is not unique to the component
+* Constructing multiple selectors with `&` becomes more readable than listing all selectors explicitly (should *not* exceed 3 indentation levels)
+
+### Selector separations
+
+- Put 2 empty lines between selectors that apply to a different part of the component
+- Put 1 empty lines between selectors that apply to the same part of the component
+
 ## Commit messages
 
 This repository follows the https://github.com/carloscuesta/gitmoji[gitmoji] commit standard.
