@@ -68,6 +68,26 @@ Include the following sections (even if empty), in order:
 - Put 2 empty lines between selectors that apply to a different part of the component
 - Put 1 empty lines between selectors that apply to the same part of the component
 
+### Value references
+
+Sometimes, we're forced to use constant values when refering to something else (eg. the padding on this component should be equal to the navbar's height).
+
+These kind of rules, if left undocumented, are huge sources of confusion when values referenced change.
+
+To work around this, add a comment above or after the rule:
+
+.Reference notice comment specification
+```
+//ref: <COMPONENT_NAME> [SELECTOR] REFERENCED_PROPERTY [(EXPLANATION)]
+```
+
+With:
+
+COMPONENT_NAME :: The referenced component
+SELECTOR :: The selector (if omitted, the selector is the component's root element)
+REFERENCED_PROPERTY :: The property the rule gets its value from
+EXPLANATION :: Explain why you must do a reference.
+
 ## Commit messages
 
 This repository follows the https://github.com/carloscuesta/gitmoji[gitmoji] commit standard.
