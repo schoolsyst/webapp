@@ -9,7 +9,9 @@ EMOJI [SCOPE_PREFIX SCOPE SCOPE_SUFFIX] IMPERATIVE_SENTENCE
 
 With:
 
-EMOJI :: The emoji used. Must follow the gitmoji stanard.
+EMOJI :: The emoji used. Must follow the gitmoji standard. A second emoji can be appended to the first if it is one of the following:
+- 💩 (Writing bad code that needs to be fixed)
+- 🚧 (Work in progress)
 SCOPE_PREFIX, SCOPE_SUFFIX :: Indicates if the changes apply to one particular area of the codebase. Must be one of the <<Scope Prefix/Suffix characters>>
 SCOPE :: Indicates the file/topic affected.
 IMPERATIVE_SENTENCE :: A sentence at the imperative tense, indicating the change applied to the codebase.
