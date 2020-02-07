@@ -260,6 +260,8 @@ li.group .mark-all-as-done i
 
   .late, .late button
     color: var(--red)
+	.today, .today button
+    color: var(--yellow)
 
 li.group.all-done button
   opacity: 0
