@@ -68,14 +68,14 @@ import {
   formatDistance,
   format,
   getUnixTime,
-  isSameWeek,
   isSameMonth,
   isSameYear,
   isTomorrow,
   fromUnixTime,
   differenceInDays,
   isToday,
-  isValid
+  isValid,
+  addDays
 } from 'date-fns'
 import { fr } from 'date-fns/locale'
 import CardHomework from '~/components/CardHomework.vue'
@@ -152,7 +152,8 @@ export default {
     relativeDate(date) {
       date = fromUnixTime(date)
       const diff = differenceInDays(date, this.today)
-      if (diff < 31 && diff > 1) {
+      if (diff < 31 && !isToday(date) && !isTomorrow(date) && isValid(date)) {
+        date = addDays(date, 1)
         return formatDistance(date, this.today, {
           locale: fr,
           addSuffix: false
@@ -160,7 +161,7 @@ export default {
       }
     },
     smartDateFormat(date) {
-      if (isSameWeek(date, this.today)) return 'cccc'
+      if (differenceInDays(date, this.today) <= 7) return 'cccc'
       if (isSameMonth(date, this.today)) return 'cccc dd'
       if (isSameYear(date, this.today)) return 'cccc dd MMM'
       else return 'cccc dd MMM yyyy'
@@ -260,8 +261,9 @@ li.group .mark-all-as-done i
 
   .late, .late button
     color: var(--red)
-	.today, .today button
-    color: var(--yellow)
+
+.today, .today button
+  color: var(--yellow)
 
 li.group.all-done button
   opacity: 0
