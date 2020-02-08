@@ -20,14 +20,6 @@ p, pre
 h1
     line-height: 1.2
 
-a[target=_blank]::after
-  font-family: 'Material Icons'
-  content: '\e89e'
-  font-size: 1.2em
-  margin-left: 0.1em
-  position: relative
-  bottom: -.1em
-
 
 //=====================
 //  VARIOUS CSS VARS
@@ -303,6 +295,15 @@ p, pre
         &:active
             color: var(--blue-dark)
             border-color: var(--blue-dark)
+
+
+p a[target=_blank]:not([no-external-link-indicator])::after
+  font-family: 'Material Icons'
+  content: '\e89e'
+  font-size: 1.2em
+  margin-left: 0.1em
+  position: relative
+  bottom: -.1em
 
 //=====================
 //    LOADING SCREEN
