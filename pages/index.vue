@@ -12,7 +12,14 @@ export default {
         const step = this.$auth.user.setup_step
         console.log(step)
         if (step) this.$router.push(`/setup/${step}`)
-        else this.$router.push('/timeline')
+        else {
+          await this.$store.dispatch('schedule/load')
+          if (this.$store.getters['schedule/upcomingCourse'] !== null) {
+            this.$router.push('/timeline')
+          } else {
+            this.$router.push('/homework')
+          }
+        }
       },
       {
         title: 'Veuillez patienter...',
