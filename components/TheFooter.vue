@@ -36,8 +36,7 @@ export default {
 
 <style lang="stylus" scoped>
 .TheFooter
-  margin-top: 100vh // debugging
-  // margin-top: 210px
+  margin-top: 10rem
   width: 100%
   min-height: 500px
   height: 50vh
