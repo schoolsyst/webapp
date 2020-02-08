@@ -65,10 +65,16 @@ export const state = () => ({
       id: 'settings'
     },
     {
-      name: 'Signaler un bug',
+      name: 'Vos contributions',
       href: '/reports',
       icon: 'bug_report',
       id: 'reports'
+    },
+    {
+      name: 'Signaler un bug',
+      href: '/reports/new',
+      icon: 'bug_report',
+      id: 'new-report'
     }
   ]
 })
@@ -95,11 +101,17 @@ export const getters = {
     if (time === null) return null
     return format(time, 'HH:mm')
   },
-  drawerLinks: (state) => state.links,
+  drawerLinks: (state) =>
+    state.links.filter((link) => {
+      if (link === 'separator') return true
+      return !['new-report'].includes(link.id)
+    }),
   sideRailLinks: (state) =>
     state.links.filter((link) => {
       if (link === 'separator') return false
-      return ['timeline', 'notes', 'homework', 'grades'].includes(link.id)
+      return ['timeline', 'notes', 'homework', 'grades', 'new-report'].includes(
+        link.id
+      )
     })
 }
 
