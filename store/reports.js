@@ -1,7 +1,13 @@
-import { formatISO } from 'date-fns'
+import { formatISO, isAfter, parseISO } from 'date-fns'
 import { firstBy } from 'thenby'
 import { getValidator, getMutations } from './index'
 const UAParser = require('ua-parser-js')
+
+export const parseReportDates = (report) => ({
+  ...report,
+  published: report.published ? parseISO(report.published) : null,
+  added: report.added ? parseISO(report.added) : null
+})
 
 export const state = () => ({
   reports: [],
@@ -9,11 +15,21 @@ export const state = () => ({
 })
 
 export const getters = {
-  all: ({ reports }) => reports,
+  order: () => (reports, by = 'date') => {
+    if (['published', 'added'].includes(by)) {
+      return reports.sort(firstBy((o1, o2) => isAfter(o1[by], o2[by])))
+    } else {
+      console.warn(`=reports: ordering by "${by}" is not supported`)
+      return reports
+    }
+  },
+  all: ({ reports }, { order }) => order(reports),
   one: ({ reports }) => (what = 'uuid', value) =>
     reports.find((o) => o[what] === value),
   latest: ({ reports }) =>
     reports.length > 0 ? [...reports].sort(firstBy('added'))[0] : null,
+  resolved: ({ reports }) => reports.filter((o) => o.resolved),
+  unresolved: ({ reports }) => reports.filter((o) => !o.resolved),
   validate: getValidator({
     fieldNames: {
       type: { gender: 'M', name: 'type de demande' },
@@ -30,7 +46,7 @@ export const getters = {
 }
 
 export const mutations = {
-  ...getMutations('report'),
+  ...getMutations('report', parseReportDates),
   POSTLOAD: (state) => (state.loaded = true)
 }
 
