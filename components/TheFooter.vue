@@ -1,7 +1,7 @@
 <template lang="pug">
     <footer class="TheFooter">
         OverlayLoadingLogo(animate-when="scrolled-into-view")
-        .logotype-wrapper: Logotype.logotype
+        a(href="https://www.schoolsyst.com/").logotype-wrapper: Logotype.logotype
         code.version
           span.channel {{ version.channel }}
           span(title="Incrémentée par l'ajout de fonctionnalités").feat {{ version.feature }}.
