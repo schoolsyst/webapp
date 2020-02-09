@@ -20,14 +20,6 @@ p, pre
 h1
     line-height: 1.2
 
-a[target=_blank]::after
-  font-family: 'Material Icons'
-  content: '\e89e'
-  font-size: 1.2em
-  margin-left: 0.1em
-  position: relative
-  bottom: -.1em
-
 
 //=====================
 //  VARIOUS CSS VARS
@@ -67,9 +59,9 @@ body
     --green-dark: #09AA5D
     --green-offset: #BFEFCC
     // Yellows
-    --yellow: #F2C94C
-    --yellow-dark: #EEAA44
-    --yellow-offset: #FAE192
+    --yellow: #f5af2f
+    --yellow-dark: #da9125
+    --yellow-offset: #f5d775
     // Special
     --modal-backdrop: rgba(0,0,0,0.2)
     &[theme="DARK"]
@@ -88,10 +80,10 @@ body
         --blue-offset: #0b123a
         --blue-offset-dark: #0d143a
         // Reds
-        --red: #D50000
-        --red-light: #ff3519
-        --red-dark: #940000
-        --red-offset: #FF9E9E
+        --red: #ee4949
+        --red-light: #ff604b
+        --red-dark: #b61f1f
+        --red-offset: #441010
         // Greens
         --green: #27CE5F
         --green-light: #09AA5D
@@ -303,6 +295,15 @@ p, pre
         &:active
             color: var(--blue-dark)
             border-color: var(--blue-dark)
+
+
+p a[target=_blank]:not([no-external-link-indicator])::after
+  font-family: 'Material Icons'
+  content: '\e89e'
+  font-size: 1.2em
+  margin-left: 0.1em
+  position: relative
+  bottom: -.1em
 
 //=====================
 //    LOADING SCREEN

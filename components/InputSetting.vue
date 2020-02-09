@@ -5,28 +5,28 @@
         v-if="choices.length < 5"
         :values="choices"
         :value="value"
-        @input="setValue({key: _key, value: $event})"
+        @input="set({key: _key, value: $event})"
         :name="_key"
       ) {{ name }}
       InputSelect(
         v-else
         :options="verboseChoices"
         :value="value"
-        @input="setValue({key: _key, value: $event})"
+        @input="set({key: _key, value: $event})"
         :name="_key"
         track-by="key" label="label"
       )
     template(v-else-if="type === 'BOOLEAN'")
       Checkbox(
         :value="value"
-        @input="setValue({key: _key, value: $event})"
+        @input="set({key: _key, value: $event})"
         :name="_key"
       ) {{ name }}
     template(v-else)
       //TODO: proper multiple field
       InputField(
         :value="value",
-        @input="setValue({key: _key, value: $event })",
+        @input="set({key: _key, value: $event })",
         :name="_key"
         :type="multiple ? 'block' : type.toLowerCase()"
         no-error-messages
@@ -76,7 +76,11 @@ export default {
     }
   },
   methods: {
-    ...mapActions('settings', ['setValue'])
+    ...mapActions('settings', ['setValue']),
+    async set({ key, value }) {
+      await this.setValue({ key, value })
+      this.$emit('value-set', { key, value })
+    }
   }
 }
 </script>

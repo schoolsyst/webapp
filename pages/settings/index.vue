@@ -26,7 +26,10 @@
                     ) Changer
                     ul.settings
                         li(v-for="setting in g[1].filter(s => s.key !== 'offdays')" :key="setting.uuid")
-                            InputSetting.input(v-bind="{...setting, _key: setting.key}")
+                            InputSetting.input(
+                              v-bind="{...setting, _key: setting.key}"
+                              @value-set="onValueSet(setting)"
+                            )
             .subjects-wrapper
                 HeadingSub Matières
                 ul.subjects
@@ -81,6 +84,12 @@ export default {
     modifySubject(subject) {
       this.editingSubject = subject
       this.$modal.open('edit-subject')
+    },
+    onValueSet(setting) {
+      if (setting.key === 'theme') {
+        // Reload the page to apply the theme
+        this.$router.go({ path: '/settings', force: true })
+      }
     }
   },
   computed: {

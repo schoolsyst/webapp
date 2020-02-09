@@ -1,6 +1,6 @@
 <template lang="pug">
   .container
-    // TODO: #beta-1.0.0 modify events
+    // TODO(beta-1.0.0): modify events
     ModalAddEvent(
       v-model="addingEvent"
       @submit="postEvent({event: addingEvent})"

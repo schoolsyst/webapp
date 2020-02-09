@@ -1,7 +1,7 @@
 <template lang="pug">
     <footer class="TheFooter">
         OverlayLoadingLogo(animate-when="scrolled-into-view")
-        .logotype-wrapper: Logotype.logotype
+        a(href="https://www.schoolsyst.com/").logotype-wrapper: Logotype.logotype
         code.version
           span.channel {{ version.channel }}
           span(title="Incrémentée par l'ajout de fonctionnalités").feat {{ version.feature }}.
@@ -36,8 +36,7 @@ export default {
 
 <style lang="stylus" scoped>
 .TheFooter
-  margin-top: 100vh // debugging
-  // margin-top: 210px
+  margin-top: 10rem
   width: 100%
   min-height: 500px
   height: 50vh

@@ -413,7 +413,7 @@ export default {
     clearInterval(this.autosaveInterval)
     await this.save({ toast: false })
     // When the note is empty
-    // TODO: #beta-1.0.0 move this to /notes/
+    // TODO(beta-1.0.0): move this to /notes/
     const html = this.editor.getHTML()
     if (html === '' || html === '<p></p>') {
       console.log('deleting empty note:' + this.editor.getHTML())

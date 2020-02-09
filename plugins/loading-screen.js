@@ -1,6 +1,7 @@
 import Vue from 'vue'
 
 const setup = ({ title, subtitle, screen }) => {
+  window.scrollTo({ top: 0 })
   screen.querySelector('.title').textContent = title
   screen.querySelector('.subtitle').textContent = subtitle
 }

@@ -6,7 +6,7 @@
         v-touch:swipe.right="toggleComplete"
     )
         .complete-slider(@click.stop="toggleComplete" :title="sliderTooltip")
-            Icon(v-show="completed") close
+            Icon(v-show="completed") refresh
             Icon(v-show="!completed") check
         .infos
             .first-line
@@ -102,7 +102,7 @@ export default {
   transition: width 0.25s ease
 
 .card.completed .complete-slider
-  background-color: var(--red)
+  background-color: var(--blue)
 
 .card:not(.completed) .complete-slider
   background-color: var(--green)
@@ -175,7 +175,7 @@ export default {
     width: 3em
 
   &.completed .complete-slider:hover
-    background-color: var(--red-light)
+    background-color: var(--blue-dark)
 
   &:not(.completed) .complete-slider:hover
     background-color: var(--green-light)

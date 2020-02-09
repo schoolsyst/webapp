@@ -27,11 +27,9 @@
           template(v-if="type === 'BUG'") , navigateur, OS et type d'appareil seront visibles, afin d'aider le réglage de votre problème.
           template(v-else)  sera visible.
     template(v-else-if="submitted")
-      ScreenSuccess(small @cta="$router.push('/')" image="thumbs-up")
+      ScreenSuccess(small @cta="$router.push('/reports')" image="thumbs-up")
         h1 Merci pour votre contribution !
-        p(v-if="githubLink") Vous pouvez aller voir votre #[em issue] créée sur GitHub #[a(:href="githubLink") ici]
-        template(#cta) Retour à l'accueil
-        template(v-if="githubLink" #cta-secondary)
+        template(#cta) Voir vos rapports
     template(v-else)
       ScreenEmpty(small @cta="$router.push('/')" @cta-secondary="goToGithub")
         template(#smiley) T_T
@@ -119,7 +117,6 @@ export default {
     }
   },
   computed: {
-    ...mapGetters('reports', ['latest']),
     report() {
       return {
         type: this.type,
@@ -134,21 +131,9 @@ export default {
     },
     validation() {
       return this.validate()(this.report)
-    },
-    githubLink() {
-      if (!this.submitted) return null
-      const report = this.latest
-      if (report && 'github_issue' in report) {
-        return `https://github.com/schoolsyst/frontend/issues/${report.github_issue}/`
-      } else {
-        return null
-      }
     }
   },
   mounted() {
-    this.$withLoadingScreen(async () => {
-      await this.$store.dispatch('reports/load')
-    })
     if (this.device === 'OTHER') this.device = this.detectDeviceType()
   },
   methods: {
@@ -174,7 +159,7 @@ export default {
 .container
   max-width: 700px
   margin: 0 auto
-  padding-bottom: 2em // TODO: #beta-1.0.0 put this padding on every container (will be a footer soon)
+  padding-bottom: 2em // TODO(beta-1.0.0): put this padding on every container (will be a footer soon)
 
 .header
   text-align: center
@@ -192,8 +177,8 @@ form
     margin-bottom: 1.5em
 
 .notice
-  text-align center
-  margin-top 1em
+  text-align: center
+  margin-top: 1em
   font-size: 0.85em
   line-height: 1.5
 </style>

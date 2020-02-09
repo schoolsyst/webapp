@@ -9,7 +9,8 @@ import {
   fromUnixTime,
   isSameDay
 } from 'date-fns'
-import { getValidator, getMutations } from './index'
+// (caused by removeTime) eslint-disable-next-line import/named
+import { getValidator, getMutations, removeTime } from './index'
 
 export const state = () => ({
   homeworks: [],
@@ -24,7 +25,7 @@ export const state = () => ({
 
 const parseHomeworkDates = (homework) => {
   if (homework.due && typeof homework.due === 'string')
-    homework.due = parseISO(homework.due)
+    homework.due = removeTime(parseISO(homework.due))
   if (homework.added && typeof homework.added === 'string')
     homework.added = parseISO(homework.added)
   return homework
@@ -71,6 +72,7 @@ export const getters = {
     homeworks,
     specialGroups = ['late', 'today']
   ) => {
+    // TODO(beta-2.0.0): refactor this
     /* Groups the provided array of homework by due date
      * into an array of groups:
      * [ { due: <date>, homeworks: [ ... ], shown: <bool> }, ... ]
@@ -111,7 +113,7 @@ export const getters = {
     flat = flat.sort(firstBy('due'))
     flat = flat.map((g) => ({
       ...g,
-      homeworks: g.homeworks.map((h) => ({ ...h, due: h.realDue })),
+      homeworks: g.homeworks.map((h) => ({ ...h, due: h.realDue || h.due })),
       due: g.due === LATE_DUE_NUMBER ? 'LATE' : g.due
     }))
     return flat

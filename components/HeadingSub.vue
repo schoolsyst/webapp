@@ -3,6 +3,7 @@
     :is="small ? 'h3' : 'h2'"
     :class="{ buttons, small }"
     class="HeadingSub"
+    @click="$emit('click')"
   )
     slot
 </template>

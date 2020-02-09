@@ -31,7 +31,9 @@
                 )
                     HeadingSub 
                         span.due.late(v-if="group.due === 'LATE'") En retard
-                        span.due(v-else :class="{today: isToday(group.due)}") {{ compoundDate(group.due) }}
+                        span.due(v-else :class="{today: isToday(fromUnixTime(group.due))}")
+                          span.absolute-date {{ absoluteDate(group.due) }}
+                          span.relative-date(v-if="relativeDate(group.due)") {{ relativeDate(group.due) }}
                         button.mark-all-as-done(
                             v-tooltip="'Tout marquer comme terminé'"
                             @click="markAllAsDone(group.homeworks)"
@@ -43,7 +45,7 @@
                               @click="homework.editing = hw; $modal.open('edit-homework')"
                               @contextmenu.prevent="$refs.menu.open($event, { hw })"
                             )
-        ScreenEmpty.empty(v-else @cta="$modal.show('add-homework')" @cta-secondary="showCompleted = true")
+        ScreenEmpty.empty(v-else @cta="$modal.show('add-homework')" @cta-secondary="setSetting({ key: 'show_completed_exercises', value: true })")
             template(#smiley) \o/
             p Bravo. Vous n'avez plus rien à travailler, pour le moment.
             template(#cta) Ajouter des devoirs
@@ -66,14 +68,14 @@ import {
   formatDistance,
   format,
   getUnixTime,
-  isSameWeek,
   isSameMonth,
   isSameYear,
   isTomorrow,
   fromUnixTime,
   differenceInDays,
   isToday,
-  isValid
+  isValid,
+  addDays
 } from 'date-fns'
 import { fr } from 'date-fns/locale'
 import CardHomework from '~/components/CardHomework.vue'
@@ -118,13 +120,14 @@ export default {
   },
   computed: {
     ...mapGetters('homework', ['grouped']),
-    ...mapState(['now']),
+    ...mapState(['now', 'today']),
     showCompleted() {
       return this.getSettingValue()('show_completed_exercises')
     }
   },
   methods: {
     getUnixTime,
+    fromUnixTime,
     isToday,
     ...mapGetters('homework', ['group', '_needToShowGroup']),
     ...mapActions('homework', ['post', 'switchCompletion', 'patch']),
@@ -133,27 +136,34 @@ export default {
       getSettingValue: 'settings/value',
       getSetting: 'settings/one'
     }),
-    ...mapActions({ toggleSetting: 'settings/toggle' }),
-    compoundDate(date) {
+    ...mapActions({
+      toggleSetting: 'settings/toggle',
+      setSetting: 'settings/setValue'
+    }),
+    absoluteDate(date) {
       if (date === 'LATE') return 'En retard'
       date = fromUnixTime(date)
       if (isToday(date)) return "aujourd'hui"
       if (isTomorrow(date)) return 'demain'
       if (!isValid(date)) return '???'
 
-      let str = ''
-      str += format(date, this.smartDateFormat(date), { locale: fr })
-      if (differenceInDays(date, this.now) < 31) {
-        str +=
-          ' — ' +
-          formatDistance(date, this.now, { locale: fr, addSuffix: true })
+      return format(date, this.smartDateFormat(date), { locale: fr })
+    },
+    relativeDate(date) {
+      date = fromUnixTime(date)
+      const diff = differenceInDays(date, this.today)
+      if (diff < 31 && !isToday(date) && !isTomorrow(date) && isValid(date)) {
+        date = addDays(date, 1)
+        return formatDistance(date, this.today, {
+          locale: fr,
+          addSuffix: false
+        })
       }
-      return str
     },
     smartDateFormat(date) {
-      if (isSameWeek(date, this.now)) return 'cccc'
-      if (isSameMonth(date, this.now)) return 'cccc dd'
-      if (isSameYear(date, this.now)) return 'cccc dd MMM'
+      if (differenceInDays(date, this.today) <= 7) return 'cccc'
+      if (isSameMonth(date, this.today)) return 'cccc dd'
+      if (isSameYear(date, this.today)) return 'cccc dd MMM'
       else return 'cccc dd MMM yyyy'
     },
     async markAllAsDone(homeworks) {
@@ -242,11 +252,18 @@ li.group .mark-all-as-done i
   .due
     margin-right: 1em
 
+    .relative-date
+      color: var(--grey-light)
+      margin-left: 1em
+
   button
     margin-left: auto
 
   .late, .late button
     color: var(--red)
+
+.today, .today button
+  color: var(--yellow)
 
 li.group.all-done button
   opacity: 0

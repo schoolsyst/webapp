@@ -1,0 +1,129 @@
+## Code clarity guidelines
+### In vue files' <template>
+
+Language :: pug
+Indentation :: 2 spaces
+
+#### Directives
+
+Only the following should be written in directives
+
+* a unique scalar value
+** for template strings, interpolated values should be variables only.
+* a unique function call
+* a unique variable
+
+##### An exception for conditional directives (`v-if`, `v-else-if`)
+
+In conditonnal directives, the value can be one of the above, or a logical-operator-separated list of variables, but there must be at most two operators.
+
+.Example
+```pug
+template(v-if="loggedIn || passwordForgotten")
+```
+
+If the exact same condition is reused, make a computed property instead.
+
+### In vue _component_ files' <style>
+  
+Language :: stylus
+Indentation :: 2 spaces
+
+### Sections
+Separate your styles into sections using the following comment decorations (including the surrounding blank lines):
+
+```
+
+//
+// Section name
+//
+
+```
+
+Include the following sections (even if empty), in order:
+
+. Definitions +
+  _Includes stylus variables & functions as well as CSS variables_
+. Layout +
+  _Includes `position`, `display`, all positioning, sizing & spacing-related properties_
+. Decoration +
+  _Includes all `border-` properties, `outline` & `box-shadow`.
+. Colors +
+  _Includes `color`, `background-color`, `opacity`._
+. Typography +
+  _Includes all `font-` properties and `text-decoration`._
+. Reactions +
+  _Includes selectors that use `:hover`, `:focus` or other interaction-related pseudo selectors or classes, as well as `transition`, `animation` and `@keyframes`._
+. Hacks +
+  _CSS Hacks / bad practice styling rules_
+  
+### Selector nesting
+
+.Nest selectors when...
+* The class name is not unique to the component
+* Constructing multiple selectors with `&` becomes more readable than listing all selectors explicitly (should *not* exceed 3 indentation levels)
+
+### Selector separations
+
+- Put 2 empty lines between selectors that apply to a different part of the component
+- Put 1 empty lines between selectors that apply to the same part of the component
+
+### Value references
+
+Sometimes, we're forced to use constant values when refering to something else (eg. the padding on this component should be equal to the navbar's height).
+
+These kind of rules, if left undocumented, are huge sources of confusion when values referenced change.
+
+To work around this, add a comment above or after the rule:
+
+.Reference notice comment specification
+```
+//ref: <COMPONENT_NAME> [SELECTOR] REFERENCED_PROPERTY [(EXPLANATION)]
+```
+
+With:
+
+COMPONENT_NAME :: The referenced component
+SELECTOR :: The selector (if omitted, the selector is the component's root element)
+REFERENCED_PROPERTY :: The property the rule gets its value from
+EXPLANATION :: Explain why you must do a reference.
+
+## Commit messages
+
+This repository follows the https://github.com/carloscuesta/gitmoji[gitmoji] commit standard.
+Additonal conventions are added on top of the intent-indicating emoji. Here's how commit titles should be constructed:
+
+```
+EMOJI [SCOPE_PREFIX SCOPE SCOPE_SUFFIX] IMPERATIVE_SENTENCE
+```
+
+With:
+
+EMOJI :: The emoji used. Must follow the gitmoji standard. A second emoji can be appended to the first if it is one of the following:
+- 💩 (Writing bad code that needs to be fixed)
+- 🚧 (Work in progress)
+SCOPE_PREFIX, SCOPE_SUFFIX :: Indicates if the changes apply to one particular area of the codebase. Must be one of the <<Scope Prefix/Suffix characters>>
+SCOPE :: Indicates the file/topic affected.
+IMPERATIVE_SENTENCE :: A sentence at the imperative tense, indicating the change applied to the codebase.
+
+
+### Scope Prefix/Suffix characters
+The scope prefix indicates what area of the codebase changed.
+Less specific than the scope itself, but useful because file names overlaps. (eg. homework is a page & vuex module)
+
+.Prefixes
+[horizontal]
+pass:[=] :: Store (vuex)
+< :: Components
+/ :: Pages
+$ :: Plugins
+? :: Tests
+% :: Layouts
+~ :: Middlewares
+pass:[#] :: Assets
+&nbsp; :: Other (no scope prefix)
+
+.Suffixes
+[horizontal]
+pass:[>] :: Components
+: :: Everything else

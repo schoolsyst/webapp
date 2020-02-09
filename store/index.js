@@ -2,16 +2,20 @@ import { toDate, addDays, isBefore, format } from 'date-fns'
 import tinycolor from 'tinycolor2'
 import constantCase from 'constant-case'
 import Vue from 'vue'
+const npm = require('~/package.json')
+
+const version = npm.version.split('.')
 
 export const state = () => ({
   version: {
-    feature: 1,
-    ui: 0,
-    bug: 0,
+    feature: version[0],
+    ui: version[1],
+    bug: version[2],
     channel: 'beta'
   },
   now: toDate(Date.now()), // For time-dependent getters.
   tomorrow: addDays(toDate(Date.now()), 1),
+  today: new Date(),
   location: {
     latitude: null,
     longitude: null
@@ -61,10 +65,16 @@ export const state = () => ({
       id: 'settings'
     },
     {
-      name: 'Signaler un bug',
+      name: 'Vos contributions',
       href: '/reports',
       icon: 'bug_report',
       id: 'reports'
+    },
+    {
+      name: 'Signaler un bug',
+      href: '/reports/new',
+      icon: 'bug_report',
+      id: 'new-report'
     }
   ]
 })
@@ -91,11 +101,17 @@ export const getters = {
     if (time === null) return null
     return format(time, 'HH:mm')
   },
-  drawerLinks: (state) => state.links,
+  drawerLinks: (state) =>
+    state.links.filter((link) => {
+      if (link === 'separator') return true
+      return !['new-report'].includes(link.id)
+    }),
   sideRailLinks: (state) =>
     state.links.filter((link) => {
       if (link === 'separator') return false
-      return ['timeline', 'notes', 'homework', 'grades'].includes(link.id)
+      return ['timeline', 'notes', 'homework', 'grades', 'new-report'].includes(
+        link.id
+      )
     })
 }
 
@@ -473,4 +489,13 @@ export const removeByProp = (arrayOfObjects, propName, propValue) => {
     arr.findIndex((obj) => obj[propName] === propValue),
     1
   )
+}
+
+// Reset time component to 00:00:00
+// Useful to do date-wise comparison, w/o taking time into account.
+export const removeTime = (date) => {
+  date.setHours(0)
+  date.setMinutes(0)
+  date.setSeconds(0)
+  return date
 }
