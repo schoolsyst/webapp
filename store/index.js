@@ -72,7 +72,7 @@ export const state = () => ({
     },
     {
       name: 'Signaler un bug',
-      href: '/reports/new',
+      modal: 'add-report',
       icon: 'bug_report',
       id: 'new-report'
     }
