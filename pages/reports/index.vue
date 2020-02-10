@@ -1,6 +1,6 @@
 <template lang="pug">
   .container
-    ButtonNormal(variant="primary" href="/reports/new").new-report Nouveau rapport
+    ButtonNormal(variant="primary" @click="$modal.open('add-report')").new-report Nouveau rapport
     
     HeadingSub 
       | En cours de résolution
@@ -46,7 +46,6 @@ export default {
   mounted() {
     this.$withLoadingScreen(async () => {
       await this.$store.dispatch('reports/load')
-      if (!this.unresolved.length) this.$router.replace('/reports/new')
     })
   },
   methods: {
