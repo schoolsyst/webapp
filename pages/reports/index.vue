@@ -76,6 +76,8 @@ export default {
   margin-bottom 2em
   max-width 20em
   margin 0 auto
+.reports-list
+  max-width 100%
 .reports-list li
   display flex
   justify-content center
@@ -92,10 +94,10 @@ export default {
 .fold-unfold /deep/ i
   font-size: 2em
 
-
 //
 // Colors
 //
+
 .HeadingSub .count
   color var(--grey-light)
   margin-left: 0.5em
@@ -103,6 +105,7 @@ export default {
 //
 // Reactions
 //
+
 .HeadingSub
   cursor pointer
 .fold-unfold /deep/ i
