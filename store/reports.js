@@ -83,7 +83,7 @@ export const actions = {
     }
     try {
       const res = await this.$axios.post('reports/', report)
-      const { data } = this.$axios.get(`/reports/${res.data.uuid}/`)
+      const { data } = await this.$axios.get(`/reports/${res.data.uuid}/`)
       commit('ADD', data)
       return true
     } catch (error) {
