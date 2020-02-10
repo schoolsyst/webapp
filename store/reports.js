@@ -66,7 +66,7 @@ export const actions = {
       console.error(error)
     }
   },
-  async post({ getters, commit }, { report, force }) {
+  async post({ getters, commit, state }, { report, force }) {
     force = force || false
     const { browser, cpu, os } = UAParser(window.userAgent)
     if ('happened' in report) report.happened = formatISO(report.happened)
