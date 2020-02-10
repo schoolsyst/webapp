@@ -58,17 +58,22 @@ export default {
     deleteButtonText: {
       type: String,
       default: 'Supprimer'
+    },
+    modalTitle: {
+      type: String,
+      default: null
     }
   },
   computed: {
     modalOpts() {
       const name = this.action + '-' + this.name
       const title =
+        this.modalTitle ||
         this.verboseAction +
-        ' ' +
-        (this.gender === 'M' ? 'un' : 'une') +
-        ' ' +
-        this.verboseName
+          ' ' +
+          (this.gender === 'M' ? 'un' : 'une') +
+          ' ' +
+          this.verboseName
 
       return { name, title }
     },
