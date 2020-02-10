@@ -20,7 +20,12 @@
                     @click="$emit('close')"
                 )
                     hr(v-if="link === 'separator'")
-                    nuxt-link.link(v-else :to="link.href")
+                    component.link(
+                      v-else-if="link.href"
+                      :to="link.href || false"
+                      :is="link.href ? 'nuxt-link' : 'button'"
+                      @click="link.modal ? $modal.open(link.modal) : false"
+                    )
                         Icon(:filled="isCurrent(link)").icon {{link.icon}}
                         span.name {{link.name}}
                         span.notifications-badge(v-if="hasNotifications(link)") {{link.notifications}}
@@ -46,6 +51,7 @@ export default {
   computed: mapGetters({ links: 'drawerLinks' }),
   methods: {
     isCurrent(link) {
+      if (!link.href) return false
       if (link === 'separator') return false
       if (link.href === '/coming-soon') return false
       const topPathFragment = this.$route.path.split('/')[1]
