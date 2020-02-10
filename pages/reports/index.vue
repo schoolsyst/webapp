@@ -14,7 +14,7 @@
     HeadingSub(:class="{ folded: foldResolved }" @click="toggleFoldResolved")
       | Résolus
       span.count {{ resolved.length }}
-      button.fold-unfold
+      button.fold-unfold(v-if="resolved.length")
         Icon keyboard_arrow_down
     transition(name="reports")
       ul(:class="{ folded: foldResolved }").reports-list
@@ -23,7 +23,6 @@
           :key="report.uuid"
         )
           CardReport(v-bind="report")
-    //TODO: list reports, redir to new/ if no reports
 </template>
 
 <script>
