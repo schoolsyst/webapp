@@ -145,6 +145,25 @@ template(v-if="loggedIn || passwordForgotten")
 
 If the exact same condition is reused, make a computed property instead.
 
+#### Line breaks in attribute lists
+
+If the element contains more than two attributes:
+
+.Bad example
+```pug
+template(v-if="thing" my-stuff :thingie="foo" bar="baz" quux)
+```
+
+.Good example
+```pug
+template(
+  v-if="thing"
+  :thingie="foo"
+  bar="baz"
+  my-stuff quux
+)
+```
+
 ### In vue _component_ files' <style>
   
 Language :: stylus
