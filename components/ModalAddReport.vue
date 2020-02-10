@@ -1,9 +1,9 @@
 <template lang="pug">
   ModalObject(
     v-bind="{...description, action, validation}"
-    @submit="$emit('submit')"
+    @submit="handleSubmit()"
     @delete="$emit('delete')"
-    add-button-text="Envoyer"
+    :add-button-text="canSubmit ? 'Envoyer' : false"
     :modal-title="modalTitle"
     :delete-button-text="null"
   )
@@ -55,14 +55,17 @@
       p.notice
         | Votre rapport sera publié #[a(href="https://github.com/schoolsyst/frontend/issues" target="_blank") sur GitHub], où votre nom d'utilisateur
         | , navigateur, OS et type d'appareil seront visibles, afin d'aider le réglage de votre problème.
-    template(v-else)
-      ScreenEmpty(small @cta="$router.push('/')" @cta-secondary="goToGithub")
+    template(v-else-if="submitted")
+      ScreenSuccess(small @cta="$router.push('/reports')" image="thumbs-up")
+        h1 Merci pour votre contribution !
+        template(#cta) Voir vos rapports
+    template(v-else="!canSubmit")
+      ScreenEmpty(small @cta="$router.push('/')")
         template(#smiley) T_T
         h1 Revenez demain.
         p Pour éviter les abus, il est impossible de publier plus de 5 rapports par jour. Merci pour vos contributions acharnées !
         p Vous pouvez toujours créer votre demande sur github.com directement, mais il faudra vous faudra un compte GitHub.
-        template(#cta) Retour à l'accueil
-        template(#cta-secondary) Créer une demande sur GitHub
+        template(#cta) Créer une demande sur GitHub
 </template>
 
 <script>
@@ -70,9 +73,17 @@ import { mapGetters } from 'vuex'
 import ModalObject from '~/components/ModalObject.vue'
 import InputField from '~/components/InputField.vue'
 import InputButtonsSelect from '~/components/InputButtonsSelect.vue'
+import ScreenEmpty from '~/components/ScreenEmpty.vue'
+import ScreenSuccess from '~/components/ScreenSuccess.vue'
 
 export default {
-  components: { ModalObject, InputField, InputButtonsSelect },
+  components: {
+    ModalObject,
+    InputField,
+    InputButtonsSelect,
+    ScreenEmpty,
+    ScreenSuccess
+  },
   props: {
     value: {
       type: Object,
@@ -115,7 +126,8 @@ export default {
         expected: 'À quoi vous attendiez-vous ?',
         problem: 'À quel problème répond votre solution ?',
         solution: 'Décrivez votre solution'
-      }
+      },
+      submitted: true
     }
   },
   computed: {
@@ -158,7 +170,8 @@ export default {
       }
     },
     canSubmit() {
-      return this.$auth.user.remaining_daily_github_issues > 0
+      // return this.$auth.user.remaining_daily_github_issues > 0
+      return false
     },
     validation() {
       return this.validate()(this.value)
@@ -169,6 +182,16 @@ export default {
     handleMessageInput(section, $event) {
       this.message[section] = $event
       this.$emit('input', { ...this.value, content: this.fullMessage })
+    },
+    handleSubmmit() {
+      this.clearFields()
+      this.$emit('submit')
+    },
+    clearFields() {
+      this.$emit('input', {})
+    },
+    goToGithub() {
+      this.$router.push('https://github.com/schoolsyst/frontend/issues/new')
     }
   }
 }
@@ -184,4 +207,10 @@ export default {
   font-size: 0.75em
   width: 500px
   text-align: center
+
+/deep/ #empty-state
+  height: 100%
+  max-width: calc(100vw - 100px)
+  min-height: unset
+  width: 100%
 </style>

@@ -53,6 +53,10 @@ export default {
 
 &.small p
   font-size: 1.2rem
+&.small img
+  width: 300px
+&.small h1
+  font-size 1.6rem
 
 .buttons
   margin-top 3rem
