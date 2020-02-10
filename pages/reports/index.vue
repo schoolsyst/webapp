@@ -88,6 +88,8 @@ export default {
   margin-top: 1.5em
   max-width calc(100% - 2em) //ref: <CardReport>
   width 50rem //ref: <CardReport>
+  display flex
+  align-items center
 .fold-unfold
   margin-left auto
 .fold-unfold /deep/ i
