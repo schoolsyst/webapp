@@ -80,17 +80,6 @@ export const state = () => ({
 })
 
 export const getters = {
-  /* Why `=> () =>` ? To turn the getter into a function
-   * and therefore prevent caching.
-   */
-  requireInitialSetup: (state, getters, rootState, rootGetters) => () => {
-    const settings = rootGetters['settings/all']
-    // Non-optional settings that haven't been set by the user are considered "bad".
-    const badSettings = settings.filter(
-      (o) => o.isDefaultSetting && !o.optional
-    )
-    return badSettings.length > 0
-  },
   textColor: (state, getters) => (backgroundColor) =>
     // TODO: handle var(--) ?
     /* returns the corresponding text color most visible
