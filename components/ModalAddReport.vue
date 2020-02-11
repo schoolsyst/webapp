@@ -170,8 +170,7 @@ export default {
       }
     },
     canSubmit() {
-      // return this.$auth.user.remaining_daily_github_issues > 0
-      return false
+      return this.$auth.user.remaining_daily_github_issues > 0
     },
     validation() {
       return this.validate()(this.value)
