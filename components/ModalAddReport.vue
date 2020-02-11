@@ -127,7 +127,7 @@ export default {
         problem: 'À quel problème répond votre solution ?',
         solution: 'Décrivez votre solution'
       },
-      submitted: true
+      submitted: false
     }
   },
   computed: {
