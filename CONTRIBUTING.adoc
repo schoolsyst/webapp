@@ -21,6 +21,19 @@ Additionally, prefix component names with the following:
 | UI Component that are made for user data input
 |===
 
+### Inheritance
+
+[%header, cols=2*]
+|===
+| Components that... 
+a| Should inherit from...
+
+| are cards | `BaseCard`
+| are user input fields | `BaseInput`
+| are modals interacting with resources (add/edit/delete) | `BaseModalObject`
+| are modals | `BaseModal`
+|===
+
 ## vuex store
 ### Modules
 
