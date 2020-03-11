@@ -60,10 +60,6 @@ export default {
     link: [
       { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' },
       {
-        rel: 'stylesheet',
-        href: 'https://fonts.googleapis.com/css?family=Roboto+Mono'
-      },
-      {
         rel: 'apple-touch-icon',
         sizes: '180x180',
         href: '/apple-touch-icon.png'
@@ -106,6 +102,7 @@ export default {
     // Fonts
     '~/assets/fonts/FantasqueSansMono/import.css',
     '~/assets/fonts/Now/import.css',
+    '~/assets/fonts/RobotoMono/import.css',
     // Icons
     '~/assets/fonts/Material-Icons/import.css',
     // Plugins
@@ -140,7 +137,7 @@ export default {
     '@nuxtjs/pwa',
     '@nuxtjs/auth',
     '@nuxtjs/toast',
-    ['nuxt-vue-select', {}],
+    ['nuxt-vue-select', {}]
   ],
   /*
    ** Toasts
