@@ -35,12 +35,12 @@ Separate your styles into sections using the following comment decorations (incl
 ```
 
 //
-// Section name
+// SECTION_NAME
 //
 
 ```
 
-Include the following sections (even if empty), in order:
+Include the following sections (even if empty, except for Hack), in order:
 
 . Definitions +
   _Includes stylus variables & functions as well as CSS variables_
@@ -55,7 +55,7 @@ Include the following sections (even if empty), in order:
 . Reactions +
   _Includes selectors that use `:hover`, `:focus` or other interaction-related pseudo selectors or classes, as well as `transition`, `animation` and `@keyframes`._
 . Hacks +
-  _CSS Hacks / bad practice styling rules_
+  _CSS Hacks / bad practice styling rules. Don't include the section comment if this section is empty_
   
 ### Selector nesting
 
