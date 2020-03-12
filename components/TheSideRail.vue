@@ -5,9 +5,11 @@
         v-for="(link, i) in sideRailLinks" :key="link.href"
         v-tooltip.left="link.name"
       )
-        nuxt-link.link(
-          :to="link.href"
+        component.link(
+          :is="link.href ? 'nuxt-link' : 'button'"
+          :to="link.href || false"
           :class="{current: isCurrent(link), notifications: hasNotifications(link)}"
+          @click="link.modal ? $modal.open(link.modal) : false"
         )
           Icon.icon(:filled="isCurrent(link)") {{link.icon}}
           span.notifications-badge(v-if="hasNotifications(link)")

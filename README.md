@@ -17,7 +17,7 @@ Schoolsyst is a web app designed to help students throughout their entire days, 
 It offers the following features:
 
 - Take your notes from an intelligent word processor meant for writing consistently beautiful notes easily and as fast as possible.
-- Add your homework using a smart date picker, and easily everything you need to get done in one page.
+- Add your homework using a smart date picker, and easily see everything you need to get done in one page.
 - Enter your grades and analyze your performance with diverse stats and goals you can set up for yourself.
 - Take a quick peek at the Timeline to know how long you have to wait before the current course finishes, or to check where and when your next course takes place.
 - Learn efficiently from your notes by letting the software ask you questions, and estimate your grades

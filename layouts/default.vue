@@ -6,6 +6,7 @@
       aside.left
         TheSideRail
       main.right
+        ModalAddReport(action="add" v-model="newReport" @submit="postReport({ report: newReport })")
         nuxt#page
         #loading-screen
           OverlayLoadingLogo(animation="loop")
@@ -16,13 +17,14 @@
 
 <script>
 import { toDate } from 'date-fns'
-import { mapGetters, mapState } from 'vuex'
+import { mapGetters, mapState, mapActions } from 'vuex'
 import TheDrawer from '~/components/TheDrawer.vue'
 import TheTopBar from '~/components/TheTopBar.vue'
 import TheFooter from '~/components/TheFooter.vue'
 import TheSideRail from '~/components/TheSideRail.vue'
 import BaseModal from '~/components/BaseModal.vue'
 import OverlayLoadingLogo from '~/components/OverlayLoadingLogo.vue'
+import ModalAddReport from '~/components/ModalAddReport.vue'
 
 export default {
   components: {
@@ -31,11 +33,15 @@ export default {
     TheTopBar,
     TheSideRail,
     BaseModal,
-    OverlayLoadingLogo
+    OverlayLoadingLogo,
+    ModalAddReport
   },
   data() {
     return {
-      drawerOpened: false
+      drawerOpened: false,
+      newReport: {
+        type: 'BUG'
+      }
     }
   },
   computed: {
@@ -49,7 +55,10 @@ export default {
     }, 1 * 1000)
   },
   methods: {
-    ...mapGetters('theme', { theme: 'current' })
+    ...mapGetters('theme', { theme: 'current' }),
+    ...mapActions({
+      postReport: 'reports/post'
+    })
   }
 }
 </script>

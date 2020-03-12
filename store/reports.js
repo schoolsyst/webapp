@@ -66,7 +66,7 @@ export const actions = {
       console.error(error)
     }
   },
-  async post({ getters, commit }, { report, force }) {
+  async post({ getters, commit, state }, { report, force }) {
     force = force || false
     const { browser, cpu, os } = UAParser(window.userAgent)
     if ('happened' in report) report.happened = formatISO(report.happened)
@@ -83,7 +83,7 @@ export const actions = {
     }
     try {
       const res = await this.$axios.post('reports/', report)
-      const { data } = this.$axios.get(`/reports/${res.data.uuid}/`)
+      const { data } = await this.$axios.get(`/reports/${res.data.uuid}/`)
       commit('ADD', data)
       return true
     } catch (error) {

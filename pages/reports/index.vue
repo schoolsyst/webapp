@@ -1,6 +1,6 @@
 <template lang="pug">
   .container
-    ButtonNormal(variant="primary" href="/reports/new").new-report Nouveau rapport
+    ButtonNormal(variant="primary" @click="$modal.open('add-report')").new-report Nouveau rapport
     
     HeadingSub 
       | En cours de résolution
@@ -14,7 +14,7 @@
     HeadingSub(:class="{ folded: foldResolved }" @click="toggleFoldResolved")
       | Résolus
       span.count {{ resolved.length }}
-      button.fold-unfold
+      button.fold-unfold(v-if="resolved.length")
         Icon keyboard_arrow_down
     transition(name="reports")
       ul(:class="{ folded: foldResolved }").reports-list
@@ -23,7 +23,6 @@
           :key="report.uuid"
         )
           CardReport(v-bind="report")
-    //TODO: list reports, redir to new/ if no reports
 </template>
 
 <script>
@@ -46,7 +45,6 @@ export default {
   mounted() {
     this.$withLoadingScreen(async () => {
       await this.$store.dispatch('reports/load')
-      if (!this.unresolved.length) this.$router.replace('/reports/new')
     })
   },
   methods: {
@@ -76,6 +74,8 @@ export default {
   margin-bottom 2em
   max-width 20em
   margin 0 auto
+.reports-list
+  max-width 100%
 .reports-list li
   display flex
   justify-content center
@@ -87,15 +87,17 @@ export default {
   margin-top: 1.5em
   max-width calc(100% - 2em) //ref: <CardReport>
   width 50rem //ref: <CardReport>
+  display flex
+  align-items center
 .fold-unfold
   margin-left auto
 .fold-unfold /deep/ i
   font-size: 2em
 
-
 //
 // Colors
 //
+
 .HeadingSub .count
   color var(--grey-light)
   margin-left: 0.5em
@@ -103,6 +105,7 @@ export default {
 //
 // Reactions
 //
+
 .HeadingSub
   cursor pointer
 .fold-unfold /deep/ i
