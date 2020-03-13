@@ -71,6 +71,7 @@ export default {
     ...mapGetters('homework', ['one']),
     toggleComplete: debounce(
       async function() {
+        this.$emit('completion-switch', !this.completed)
         await this.switchCompletion({ uuid: this.uuid })
       },
       500,
