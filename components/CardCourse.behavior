@@ -1,0 +1,8 @@
+When the user clicks the card
+  It emits 'click'
+  If the component has [class="expanded"]
+    It emits 'close'
+    The component has not [class="expanded"]
+  Else
+    It emits 'expand'
+    The component has [class="expanded"]

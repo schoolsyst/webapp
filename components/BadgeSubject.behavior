@@ -1,0 +1,23 @@
+When the component is clicked
+  A click event is emitted
+
+When the color prop is null
+  A "more_horiz" icon is in the component
+
+When the component has variant="dot"
+  The span.name is not visible
+
+When the component has [clickable]
+  The component is a button
+Else
+  The component is a span
+
+When the component has :name="null" 
+and has not [no-tooltip]
+  The component's span.name is not empty (The component has a placeholder)
+
+When [color] is a dark color
+  The css`color` is `white`
+Else
+  The css`color` is `black`
+

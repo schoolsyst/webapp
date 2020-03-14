@@ -1,0 +1,17 @@
+If the component has a [href] that starts with regex https?://
+  The component is a <a>
+Else if the component has a [href]
+  The component is a <nuxt-link>
+Else
+  The component is a <button>
+
+If the component is a <button>
+  When the user clicks
+    A 'click' event is emitted
+
+If the component is disabled
+  When the user clicks
+    No 'click' event is emitted
+
+If the component is a <a>
+  The component has [target=_blank]
