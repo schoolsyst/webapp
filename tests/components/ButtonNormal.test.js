@@ -34,4 +34,28 @@ describe('<ButtonNormal>', () => {
       expect(btn.emitted('click')).toBeFalsy()
     })
   })
+  test('handles failed validation', () => {
+    const btn = getButtonNormal({
+      validation: {
+        validated: false,
+        errors: {
+          lorem: ['ipsum', 'dolor', 'sit']
+        }
+      }
+    })
+    expect(Object.keys(btn.get('.btn').attributes())).toContain('disabled')
+    expect(btn.vm.validationErrors).toBe(
+      `<ul class="default-styles" style="padding-left:1em;text-align:left"><li>ipsum</li></ul>`
+    )
+  })
+
+  test('is not disabled when validation succeeds', () => {
+    const btn = getButtonNormal({
+      validation: {
+        validated: true,
+        errors: {}
+      }
+    })
+    expect(btn.get('.btn').attributes()).not.toContain('disabled')
+  })
 })
