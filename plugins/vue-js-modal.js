@@ -42,9 +42,9 @@ const setup = (modal, closeFunc) => {
 }
 
 const close = (name) => {
-  console.log(`$modal: Closing ${name}`)
+  // console.log(`$modal: Closing ${name}`)
   const modal = document.getElementById(`modal_${name}`)
-  // console.log(modal)
+  // // console.log(modal)
   if (modal === null) return
   modal.classList.remove('opened')
   modal.setAttribute('aria-hidden', 'true')
@@ -55,10 +55,9 @@ const close = (name) => {
     wasFocused.focus()
   }
 }
-
-Vue.prototype.$modal = {
+const $modal = {
   show: (name, opts = { at: null, from: null, stretch: null }) => {
-    console.log(`$modal: Opening ${name}`)
+    // console.log(`$modal: Opening ${name}`)
     let openAt = opts.at || 'center'
     const calledBy = opts.from || null
     const modal = document.getElementById(`modal_${name}`)
@@ -128,7 +127,7 @@ Vue.prototype.$modal = {
         const { top } = calledBy.getBoundingClientRect()
         const contentWidth = wrapper.getBoundingClientRect().width
 
-        // console.log(e)
+        // // console.log(e)
 
         setPos({ top, left: window.innerWidth / 2 - contentWidth / 2 })
 
@@ -139,7 +138,7 @@ Vue.prototype.$modal = {
         const { left } = calledBy.getBoundingClientRect()
         const contentHeight = wrapper.getBoundingClientRect().height
 
-        // console.log(e)
+        // // console.log(e)
 
         setPos({
           left,
@@ -153,7 +152,7 @@ Vue.prototype.$modal = {
         const contentHeight = wrapper.getBoundingClientRect().height
         const contentWidth = wrapper.getBoundingClientRect().width
 
-        // console.log(e)
+        // // console.log(e)
 
         setPos({
           left: window.innerWidth / 2 - contentWidth / 2,
@@ -215,7 +214,7 @@ Vue.prototype.$modal = {
         // get bottom/right coordinates of element
         // for absolute positionning
         // eslint-disable-next-line
-        console.log('cehck')
+        // console.log('cehck')
         const { top, left, width, height } = calledBy.getBoundingClientRect()
         modal.classList.add('opened')
         const modalHeight = modal
@@ -261,5 +260,8 @@ Vue.prototype.$modal = {
   hide: close
 }
 
+Vue.prototype.$modal = $modal
 Vue.prototype.$modal.open = Vue.prototype.$modal.show
 Vue.prototype.$modal.close = Vue.prototype.$modal.hide
+
+export default $modal
