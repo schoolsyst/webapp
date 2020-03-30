@@ -17,11 +17,17 @@ cache:
     - node_modules
 
 install:
+  - pip install poetry
   - yarn install
+  - cd tests/e2e
+  - poetry install
+  - cd ../..
 
 script:
   - yarn build
   - yarn test
+  - cd tests/e2e
+  - poetry run behave
 
 after_success:
   - bash <(curl -s https://codecov.io/bash)
