@@ -35,6 +35,9 @@ matrix:
       python:
         - 3.7
       
+      before_install:
+        - cd tests/e2e
+        
       sudo: on
       install:
         - pip install poetry
