@@ -1,7 +1,3 @@
-language: node_js
-node_js:
-  - 13.5.0
-
 git:
   depth: 3
   quiet: yes
@@ -11,28 +7,42 @@ branches:
     - legacy
     - experimental
 
-cache:
-  yarn: true
-  directories:
-    - node_modules
+notifications:
+  email: ewen.lebihan7@gmail.com
 
+matrix:
+  include:
+    - language: node_js
+      node_js:
+        - 13.5.0
 
-install:
-  - pip install poetry
-  - yarn install
-  - cd tests/e2e
-  - poetry install
-  - cd ../..
+      cache:
+        yarn: true
+        directories:
+          - node_modules
 
-before_script:
-  - export DISPLAY=:99.0
-  - sh -e /etc/init.d/xvfb start
+      install:
+        - yarn install
 
-script:
-  - yarn build
-  - yarn test
-  - cd tests/e2e
-  - poetry run behave
+      script:
+        - yarn build
+        - yarn test
 
-after_success:
-  - bash <(curl -s https://codecov.io/bash)
+      after_success:
+        - bash <(curl -s https://codecov.io/bash)
+
+    - language: python
+      python:
+        - 3.7
+      
+      sudo: on
+      install:
+        - pip install poetry
+        - poetry install
+      
+      before_script:
+        - export DISPLAY=:99.0
+        - sh -e /etc/init.d/xvfb start  
+      
+      script:
+        - poetry run behave
