@@ -9,7 +9,7 @@
     h1 Rentrez votre emploi du temps
     .schedule
       ButtonNormal.add(variant="outline" @click="$modal.show('add-event')") Ajouter
-      Schedule(both-weeks)
+      Schedule(both-weeks :events="events")
     TheBottomBar
       ButtonNormal(variant="text-blue" href="/setup/schedule/settings") #[Icon arrow_back] Retour
       ButtonNormal.to-right(variant="primary" href="/") Terminer
@@ -17,6 +17,7 @@
 
 <script>
 import { mapActions } from 'vuex'
+import { parse, getUnixTime } from 'date-fns'
 import TheBottomBar from '~/components/TheBottomBar.vue'
 import ButtonNormal from '~/components/ButtonNormal.vue'
 import ModalDialogConfirm from '~/components/ModalDialogConfirm.vue'
@@ -53,6 +54,13 @@ export default {
   computed: {
     settings() {
       return this.$store.getters['settings/fromCategory']('Emploi du temps')
+    },
+    events() {
+      return this.$store.getters['schedule/events'].map((event) => ({
+        ...event,
+        start: getUnixTime(parse(event.start, 'HH:mm:ss', new Date(0))),
+        end: getUnixTime(parse(event.end, 'HH:mm:ss', new Date(0)))
+      }))
     }
   },
   mounted() {
@@ -91,4 +99,7 @@ ul.settings
 .schedule
   // Compensate for the bottom bar
   margin-bottom: 96px
+  display flex
+  align-items center
+  flex-direction column
 </style>
