@@ -11,7 +11,8 @@
     "start": "nuxt start",
     "generate": "nuxt generate",
     "lint": "eslint --ext .js,.vue --ignore-path .gitignore .",
-    "test": "cross-env NODE_ENV=test jest"
+    "test": "cross-env NODE_ENV=test jest",
+    "dev-backend": "cd ../schoolsyst-api && poetry run python manage.py runserver 9999"
   },
   "jest": {
     "moduleFileExtensions": [
@@ -63,6 +64,7 @@
     "fuse.js": "^3.4.5",
     "js-search": "^1.4.3",
     "jwt-decode": "^2.2.0",
+    "konva": "^4.2.2",
     "lodash.debounce": "^4.0.8",
     "lodash.flatten": "^4.4.0",
     "lodash.groupby": "^4.6.0",
@@ -89,6 +91,7 @@
     "vue-context": "^5.0.0",
     "vue-context-menu": "^2.0.6",
     "vue-infinite-loading": "^2.4.4",
+    "vue-konva": "^2.1.1",
     "vue-multiselect": "^2.1.6",
     "vue2-touch-events": "^2.1.0",
     "vuex-persist": "^2.2.0"
