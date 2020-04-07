@@ -73,7 +73,7 @@ export default {
   methods: {
     closeModal() {
       this.$emit('close')
-      this.$modal.hide(name)
+      this.$modal.close(this.name)
     }
   }
 }
