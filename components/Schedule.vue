@@ -94,11 +94,26 @@ export default {
       // Get the length of each day
       const dayLengths = eventsDayGrouped.map((events) => {
         const sorted = events.sort(firstBy('start'))
-        const length = sorted[sorted.length - 1].end - sorted[0].start
+        const length =
+          sorted[sorted.length - 1].end - this.earliestStartTimeOfWeek
         return length
       })
       // Get the max length
       return Math.max(...dayLengths)
+    },
+    earliestStartTimeOfWeek() {
+      // Mapping of day: events[]
+      const eventsByDay = groupBy(this.events, 'day')
+      // List of events[] grouped by day
+      const eventsDayGrouped = Object.values(eventsByDay)
+      // Get the length of each day
+      const dayStarts = eventsDayGrouped.map((events) => {
+        const sorted = events.sort(firstBy('start'))
+        const dayStart = sorted[0].start
+        return dayStart
+      })
+      // Get the max length
+      return Math.min(...dayStarts)
     },
     canvasConfig() {
       // Trick to allow for recomputation of values on window resize
@@ -158,12 +173,9 @@ export default {
       let x = baseWidth * event.day - baseWidth
       // If the event is in Q2, we need to offset it to the right
       if (event.week_type === 'Q2') x += baseWidth / 2
-      // Get the start time of the first event for this day
-      const eventsOfDay = this.events.filter((e) => e.day === event.day)
-      const startOfDay = Math.min(...eventsOfDay.map((e) => e.start))
       // Get the difference between the start of the day and the start of this event,
       // Multiply by the height factor
-      const y = ((event.start - startOfDay) / 60) * 1.5
+      const y = ((event.start - this.earliestStartTimeOfWeek) / 60) * 1.5
       return { x, y }
     },
     resolveRect(event) {
