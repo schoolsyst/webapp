@@ -1,65 +1,39 @@
 <template lang="pug">
-  .schedule(:class="{ mnml: false }")
-    ModalAddEvent(
-      v-model="editingEvent"
-      action="edit"
-      @submit="patch({ modifications: editingEvent, uuid: editingEvent.uuid })"
-      @delete="del({ uuid: editingEvent.uuid })"
+.--schedule
+  ModalAddEvent(
+    v-model="editingEvent"
+    action="edit"
+    @submit="patch({ modifications: editingEvent, uuid: editingEvent.uuid })"
+    @delete="del({ uuid: editingEvent.uuid })"
+  )
+  v-stage(:config="canvasConfig")
+    v-layer(
+      @click="handleEventClick"
+      @mouseenter="handleHover"
+      @mouseleave="handleHover"
     )
-    table
-      thead
-        tr.days
-          td.empty &nbsp;
-          td(
-            v-for="dayName in dayNames"
-            colspan="2"
-          ) {{ dayName }}
-        tr.week-types
-          td.empty &nbsp;
-          template(
-            v-for="dayName in dayNames"
-          )
-            td.week-type Paire
-            td.week-type Impaire
-      tbody
-        tr(
-          v-for="minute in minutes"
-          :class="{ 'new-hour': minute.time.endsWith(':00'), 'has-events': minute.hasEvents }"
-          :data-time="minute.time"
+      template(v-for="(event, i) in events")
+        v-rect(
+          :key="`${event.uuid}-rect`"
+          :config="resolveRect(event)"
         )
-          td.time(
-            v-if="minute.time.endsWith(':00')"
-            rowspan="60"
-          ) {{ minute.time }}
-          template(v-if="minute.hasEvents")
-            template(v-for="(dayName, day) in dayNames")
-              td.event(
-                v-for="event in minute.events[day+1]"
-                v-bind="cellAttrs(event)"
-                @click="cellOnClick(event)"
-              )
-                template(v-if="!event.empty")
-                  .subject {{ event.subject.name }}
-                  .room {{ event.room }}
-
+        v-text(
+          :key="`${event.uuid}-text`"
+          :config="resolveText(event)"
+        )
+      template(v-for="day in days")
+        v-text(:config="day" :key="day.text")
+        template(v-if="!allEventsAreOnBothWeeks")
+          v-text(:config="weekTypes(day).even" :key="`${day.text}-even`")
+          v-text(:config="weekTypes(day).odd" :key="`${day.text}-odd`")
 </template>
 
 <script>
-import { mapState, mapGetters, mapActions } from 'vuex'
-import {
-  setSeconds,
-  setMinutes,
-  setHours,
-  format,
-  startOfWeek,
-  endOfWeek,
-  addMinutes,
-  differenceInMinutes,
-  isWithinInterval,
-  parse
-} from 'date-fns'
-// eslint-disable-next-line no-unused-vars
+import { mapGetters, mapActions } from 'vuex'
 import groupBy from 'lodash.groupby'
+import clamp from 'lodash.clamp'
+import { firstBy } from 'thenby'
+import { parse } from 'date-fns'
 import ModalAddEvent from '~/components/ModalAddEvent.vue'
 
 export default {
@@ -80,6 +54,26 @@ export default {
     namespace: {
       type: String,
       default: ''
+    },
+    pixelsPerMinute: {
+      type: Number,
+      default: 1.5
+    },
+    events: {
+      type: Array,
+      default: () => [
+        {
+          day: 1,
+          room: 'L666',
+          start: 8 * 3600,
+          end: 9 * 3600,
+          subject: {
+            name: 'English',
+            color: 'blue'
+          },
+          week_type: 'Q1'
+        }
+      ]
     }
   },
   data() {
@@ -97,231 +91,207 @@ export default {
         ...defaults,
         uuid: null
       },
-      dayNames: [
-        'Lundi',
-        'Mardi',
-        'Mercredi',
-        'Jeudi',
-        'Vendredi',
-        'Samedi'
-        // 'Dimanche'
-      ]
+      recomputeCanvasWidth: 1,
+      headerHeight: 50
     }
   },
   computed: {
-    ...mapState(['now']),
-    ...mapGetters('schedule', ['coursesIn']),
-    scheduleStart() {
-      let start = new Date()
-      start = setHours(start, 8)
-      start = setMinutes(start, 0)
-      start = setSeconds(start, 0)
-      return start
+    dayNames() {
+      const names = ['Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi']
+      if (this.colmunsCount >= 6) names.push('Samedi')
+      if (this.colmunsCount === 7) names.push('Dimanche')
+      return names
     },
-    scheduleEnd() {
-      let end = new Date()
-      end = setHours(end, 19)
-      end = setMinutes(end, 0)
-      end = setSeconds(end, 0)
-      return end
+    dayWidth() {
+      return this.resolveWidth({ week_type: 'BOTH' })
     },
-    emptyMinutes() {
-      // Create an object <time>: [] with time being every minute from scheduleStart to scheduleEnd
-      const keys = []
-      let currentTime = this.scheduleStart
-      while (currentTime.getTime() <= this.scheduleEnd.getTime()) {
-        keys.push(format(currentTime, 'HH:mm'))
-        currentTime = addMinutes(currentTime, 1)
-      }
-      const minutes = {}
-      keys.forEach((time) => {
-        minutes[time] = []
-      })
-      return minutes
-    },
-    courses() {
-      return this.coursesIn(startOfWeek(new Date()), endOfWeek(new Date()), {
-        includeBothWeekTypes: true,
-        includeDeleted: true
-      })
-    },
-    minutes() {
-      // Structure:
-      /*
-        [
-          {
-            time: <HH:mm>
-            events: <Event>[]
-          }
-        ]
-      */
-      // In the DOM:
-      /*
-      <tr>
-        <td class="hour"> {{ time.minutes == 0 ? time : "" }} </td>
-        @each events
-          <td :data-weektype="week_type"> (<Event> markup...) </td>
-     */
-      let courses = this.courses
-      const flatGroups = []
-      // Add a `time` prop to each course in order to group them.
-      courses = courses.map((course) => {
-        let time = course.start
-        time = format(time, 'HH:mm', new Date())
-        return { ...course, time, empty: false }
-      })
-      const emptyEvent = { empty: true }
-      const dayIndexes = [1, 2, 3, 4, 5, 6]
-      Object.keys(this.emptyMinutes).forEach((time) => {
-        let events = {}
-        dayIndexes.forEach((day) => {
-          const matchingEvents = courses.filter(
-            (c) =>
-              isWithinInterval(parse(time, 'HH:mm', c.start), {
-                start: c.start,
-                end: c.end
-              }) && c.day === day
-          )
-          if (matchingEvents.length > 0) {
-            events[day] = matchingEvents.filter((c) => c.time === time)
-          } else {
-            events[day] = [emptyEvent]
-          }
+    days() {
+      const dayConfigs = []
+      // eslint-disable-next-line no-unused-vars
+      for (const day of this.dayNames) {
+        dayConfigs.push({
+          text: day,
+          y: 0,
+          x: this.dayWidth * this.dayNames.indexOf(day),
+          width: this.dayWidth,
+          height: this.headerHeight / 2,
+          fontSize: 20,
+          fontFamily: 'Now',
+          align: 'center'
         })
-        if (time === '08:01')
-          console.log(
-            Object.values(events).filter(
-              (e) => e.filter((y) => !y.empty).length > 0
-            )
-          )
-        const emptyMinute =
-          Object.values(events).filter(
-            (e) => e.filter((y) => !y.empty).length > 0
-          ).length === 0
-        if (emptyMinute) events = {}
-        flatGroups.push({ time, events, hasEvents: !emptyMinute })
+      }
+      return dayConfigs
+    },
+    heightOfLongestDay() {
+      // Get the latest event to end
+      const latestEndingEvent = Math.max(
+        ...this.events.map((event) => event.end)
+      )
+      return latestEndingEvent - this.earliestStartTimeOfWeek
+    },
+    earliestStartTimeOfWeek() {
+      // Mapping of day: events[]
+      const eventsByDay = groupBy(this.events, 'day')
+      // List of events[] grouped by day
+      const eventsDayGrouped = Object.values(eventsByDay)
+      // Get the length of each day
+      const dayStarts = eventsDayGrouped.map((events) => {
+        const sorted = events.sort(firstBy('start'))
+        const dayStart = sorted[0].start
+        return dayStart
       })
-      return flatGroups
+      // Get the max length
+      return Math.min(...dayStarts)
+    },
+    canvasConfig() {
+      // Trick to allow for recomputation of values on window resize
+      const windowWidth =
+        window.innerWidth +
+        this.recomputeCanvasWidth -
+        +this.recomputeCanvasWidth
+      return {
+        // height: this.headerHeight + this.heightOfLongestDay, gives a strange NS_ERROR_FAILURE from konvaJS on ff only
+        // it looks like any computation that involves this.events fails with the same error.
+        // thus we assume calendars will be at most 12 hours long.
+        height: this.headerHeight + 12 * 60 * this.pixelsPerMinute,
+        // width: Math.min(windowWidth - 100, 1000)
+        width: clamp(windowWidth - 100, 500, 1000)
+      }
+    },
+    colmunsCount() {
+      // Get an array of days of events (unique)
+      const days = [...new Set(this.events.map((event) => event.day))]
+      // Work week (excluding weekends)
+      let colmunsCount = 5
+      // If we have saturday, bump the column count to 6
+      if (days.includes(6)) {
+        colmunsCount = 6
+      }
+      // If we have sunday, bump to 7 (the whole week)
+      if (days.includes(7)) {
+        colmunsCount = 7
+      }
+      return colmunsCount
+    },
+    allEventsAreOnBothWeeks() {
+      // Get all the events' week_types (unique)
+      const weekTypes = [
+        ...new Set(this.events.map((event) => event.week_type))
+      ]
+      return !weekTypes.includes('Q1') && !weekTypes.includes('Q2')
     }
   },
   mounted() {
-    this.$withLoadingScreen(async () => {
-      await this.$store.dispatch('settings/load')
+    window.addEventListener('resize', (ev) => {
+      this.recomputeCanvasWidth += 1
     })
-    window.iAmAMinimalist = () => {
-      console.log('<Ewen Le Bihan> Me too!')
-      console.log(
-        '<Ewen Le Bihan> btw, if you like mmnl music, please take a listen over at https://youtube.com/c/mx3_music'
-      )
-      console.log(
-        "<Ewen Le Bihan> (You also discovered schoolsyst's first easter egg, congrats!)"
-      )
-      console.log(
-        '%cTo turn the schedule back to normal, simply refresh the page',
-        'font-style: italic;'
-      )
-      document
-        .querySelectorAll('.schedule')
-        .forEach((el) => el.classList.add('mnml'))
-      return 'good choice!'
-    }
   },
   methods: {
-    ...mapActions('schedule', { patch: 'patchEvent', del: 'deleteEvent' }),
     ...mapGetters(['textColor']),
-    ...mapGetters('settings', { setting: 'value' }),
-    cellStyles(event) {
+    ...mapGetters('schedule', ['event']),
+    ...mapActions('schedule', { patch: 'patchEvent', del: 'deleteEvent' }),
+    weekTypes(day) {
+      const week = { ...day }
+      week.y = this.headerHeight / 2
+      week.width /= 2
+      week.fontSize *= 0.75
+      week.opacity = 0.5
+      const evenWeek = { ...week }
+      const oddWeek = { ...week }
+      evenWeek.text = 'Paire'
+      evenWeek.x = week.x
+      oddWeek.text = 'Impaire'
+      oddWeek.x += evenWeek.width
+      return { even: evenWeek, odd: oddWeek }
+    },
+    resolveWidth(event) {
+      // Get the total width the canvas should be
+      const total = this.canvasConfig.width
+      // The width is the total width divided by the number of columns there should be
+      let width = total / this.colmunsCount
+      // Half the width if its not on both week types
+      if (event.week_type !== 'BOTH') {
+        width /= 2
+      }
+      return width
+    },
+    resolveHeight(event) {
+      // Get the duration of this event
+      const duration = event.end - event.start
+      // Multiply by the factor
+      return (duration / 60) * this.pixelsPerMinute
+    },
+    resolvePosition(event) {
+      // Get the day and multiply by the base width of an event
+      const baseWidth = this.resolveWidth({ week_type: 'BOTH' })
+      let x = baseWidth * event.day - baseWidth
+      // If the event is in Q2, we need to offset it to the right
+      if (event.week_type === 'Q2') x += baseWidth / 2
+      // Get the difference between the start of the day and the start of this event,
+      // Multiply by the height factor
+      let y =
+        ((event.start - this.earliestStartTimeOfWeek) / 60) *
+        this.pixelsPerMinute
+      // Make room for the table headers
+      y += this.headerHeight
+      return { x, y }
+    },
+    resolveRect(event) {
+      const { x, y } = this.resolvePosition(event)
       return {
-        color: this.textColor()(event.subject.color),
-        backgroundColor: event.subject.color,
-        borderTopColor: event.subject.color,
-        borderBottomColor: event.subject.color
+        width: this.resolveWidth(event),
+        height: this.resolveHeight(event),
+        x,
+        y,
+        fill: event.subject.color
       }
     },
-    cellRowspan(event) {
-      const diff = differenceInMinutes(event.start, event.end)
-      const minutes = Math.abs(diff)
-      return minutes
-    },
-    cellColspan(event) {
-      let colspan = 2
-      if (event.week_type !== 'BOTH' && this.bothWeeks) {
-        colspan = 1
+    resolveText(event) {
+      const rect = this.resolveRect(event)
+      return {
+        text: event.subject.name + '\n' + event.room,
+        fontFamily: 'Now, sans-serif',
+        y: rect.y,
+        x: rect.x,
+        width: rect.width,
+        height: rect.height,
+        align: 'center',
+        verticalAlign: 'middle',
+        fontSize: 15,
+        wrap: 'none',
+        ellipsis: true,
+        padding: 3,
+        fill: this.textColor()(rect.fill),
+        lineHeight: 1.5,
+        id: event.uuid
       }
-      return colspan
     },
-    cellAttrs(event) {
-      if (event.empty)
-        return {
-          class: 'empty',
-          colspan: 2
-        }
-      else
-        return {
-          style: this.cellStyles(event),
-          colspan: this.cellColspan(event),
-          rowspan: this.cellRowspan(event)
-        }
-    },
-    cellOnClick(event) {
-      if (event.empty) return
-      this.editingEvent = event
+    handleEventClick(vueComponent) {
+      const eventUUID = vueComponent.target.attrs.id
+      if (!eventUUID) return
+      console.log(vueComponent)
+      const event = this.event()(eventUUID)
+      this.editingEvent = {
+        ...event,
+        start: parse(event.start, 'HH:mm:ss', new Date(0)),
+        end: parse(event.end, 'HH:mm:ss', new Date(0))
+      }
       this.$modal.open('edit-event')
-      this.$emit('event-click', event)
+    },
+    handleHover(evt) {
+      const canvas = this.$el
+      // Check if its an event
+      if (!evt.target.attrs.id) return
+      switch (evt.type) {
+        case 'mouseenter':
+          canvas.style.cursor = 'pointer'
+          break
+
+        case 'mouseleave':
+          canvas.style.cursor = 'default'
+          break
+      }
     }
   }
 }
 </script>
-
-<style lang="stylus" scoped>
-.schedule
-  overflow-x auto
-table
-  table-layout fixed
-  width 100%
-  min-width 6 * 7rem
-  border-collapse collapse
-thead
-  td
-    height 1.5rem
-    text-align center
-.week-type
-  color var(--grey)
-
-td.time
-  border-right 2px solid var(--grey)
-  height 5rem
-  font-family var(--fonts-monospace-light)
-  width 5 * 1ch + .5em
-  text-align right
-  padding 1em
-  vertical-align top
-tr.new-hour
-  // min-height 1rem
-  border-top 2px solid var(--grey)
-
-.event:not(.empty)
-  height 2rem
-  text-align center
-  padding 0.5em
-  cursor pointer
-  .room
-    opacity: 0.75
-    font-family var(--fonts-monospace-light)
-  .subject
-    overflow-x hidden
-    overflow-y visible
-    width 100%
-    text-overflow ellipsis
-    white-space normal
-.event.empty
-  height: 0 !important
-
-.schedule.mnml
-  thead
-    opacity: 0
-  .time
-    opacity: 0
-  td, tr
-    border: none
-</style>

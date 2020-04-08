@@ -8,11 +8,12 @@
           CardMutation(v-bind="mutation")
     .schedule
       HeadingSub Emploi du temps
-      Schedule(:now="scheduleDate")
+      Schedule(:events="events")
 </template>
 
 <script>
 import { mapGetters, mapState } from 'vuex'
+import { getUnixTime, addDays } from 'date-fns'
 import Schedule from '~/components/Schedule.vue'
 import HeadingSub from '~/components/HeadingSub.vue'
 import ButtonNormal from '~/components/ButtonNormal.vue'
@@ -27,10 +28,24 @@ export default {
     ...mapGetters('schedule', ['mutations']),
     scheduleDate() {
       return this.now
+    },
+    events() {
+      return this.coursesIn()(
+        this.scheduleDate,
+        addDays(this.scheduleDate, 7)
+      ).map((event) => ({
+        ...event,
+        start: getUnixTime(event.start),
+        end: getUnixTime(event.end),
+        week_type: 'BOTH'
+      }))
     }
   },
   async mounted() {
     await this.$store.dispatch('schedule/load')
+  },
+  methods: {
+    ...mapGetters('schedule', ['coursesIn'])
   }
 }
 </script>
