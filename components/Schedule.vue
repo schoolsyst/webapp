@@ -6,25 +6,34 @@
     @submit="patch({ modifications: editingEvent, uuid: editingEvent.uuid })"
     @delete="del({ uuid: editingEvent.uuid })"
   )
-  v-stage(:config="canvasConfig"): v-layer(@click="handleEventClick")
-    v-rect(
-      v-for="(day, i) in days" :key="day"
-      
+  v-stage(:config="canvasConfig")
+    v-layer(
+      @click="handleEventClick"
+      @mouseenter="handleHover"
+      @mouseleave="handleHover"
     )
-    template(v-for="event in events")
-      v-rect(
-        :key="event.uuid"
-        :config="resolveRect(event)"
-      )
-      v-text(
-        :config="resolveText(event)"
-      )
+      template(v-for="(event, i) in events")
+        v-rect(
+          :key="`${event.uuid}-rect`"
+          :config="resolveRect(event)"
+        )
+        v-text(
+          :key="`${event.uuid}-text`"
+          :config="resolveText(event)"
+        )
+      template(v-for="day in days")
+        v-text(:config="day" :key="day.text")
+        template(v-if="!allEventsAreOnBothWeeks")
+          v-text(:config="weekTypes(day).even" :key="`${day.text}-even`")
+          v-text(:config="weekTypes(day).odd" :key="`${day.text}-odd`")
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
+import { mapGetters, mapActions } from 'vuex'
 import groupBy from 'lodash.groupby'
+import clamp from 'lodash.clamp'
 import { firstBy } from 'thenby'
+import { parse } from 'date-fns'
 import ModalAddEvent from '~/components/ModalAddEvent.vue'
 
 export default {
@@ -46,8 +55,12 @@ export default {
       type: String,
       default: ''
     },
+    pixelsPerMinute: {
+      type: Number,
+      default: 1.5
+    },
     events: {
-      type: Object,
+      type: Array,
       default: () => [
         {
           day: 1,
@@ -78,28 +91,43 @@ export default {
         ...defaults,
         uuid: null
       },
-      recomputeCanvasWidth: 1
+      recomputeCanvasWidth: 1,
+      headerHeight: 50
     }
   },
   computed: {
+    dayNames() {
+      const names = ['Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi']
+      if (this.colmunsCount >= 6) names.push('Samedi')
+      if (this.colmunsCount === 7) names.push('Dimanche')
+      return names
+    },
+    dayWidth() {
+      return this.resolveWidth({ week_type: 'BOTH' })
+    },
     days() {
-      return null
+      const dayConfigs = []
+      // eslint-disable-next-line no-unused-vars
+      for (const day of this.dayNames) {
+        dayConfigs.push({
+          text: day,
+          y: 0,
+          x: this.dayWidth * this.dayNames.indexOf(day),
+          width: this.dayWidth,
+          height: this.headerHeight / 2,
+          fontSize: 20,
+          fontFamily: 'Now',
+          align: 'center'
+        })
+      }
+      return dayConfigs
     },
     heightOfLongestDay() {
-      // Mapping of day: events[]
-      const eventsByDay = groupBy(this.events, 'day')
-      console.log(eventsByDay)
-      // List of events[] grouped by day
-      const eventsDayGrouped = Object.values(eventsByDay)
-      // Get the length of each day
-      const dayLengths = eventsDayGrouped.map((events) => {
-        const sorted = events.sort(firstBy('start'))
-        const length =
-          sorted[sorted.length - 1].end - this.earliestStartTimeOfWeek
-        return length
-      })
-      // Get the max length
-      return Math.max(...dayLengths)
+      // Get the latest event to end
+      const latestEndingEvent = Math.max(
+        ...this.events.map((event) => event.end)
+      )
+      return latestEndingEvent - this.earliestStartTimeOfWeek
     },
     earliestStartTimeOfWeek() {
       // Mapping of day: events[]
@@ -122,8 +150,12 @@ export default {
         this.recomputeCanvasWidth -
         +this.recomputeCanvasWidth
       return {
-        height: (this.heightOfLongestDay / 60) * 1.5,
-        width: Math.min(windowWidth - 100, 1000)
+        // height: this.headerHeight + this.heightOfLongestDay, gives a strange NS_ERROR_FAILURE from konvaJS on ff only
+        // it looks like any computation that involves this.events fails with the same error.
+        // thus we assume calendars will be at most 12 hours long.
+        height: this.headerHeight + 12 * 60 * this.pixelsPerMinute,
+        // width: Math.min(windowWidth - 100, 1000)
+        width: clamp(windowWidth - 100, 500, 1000)
       }
     },
     colmunsCount() {
@@ -140,6 +172,13 @@ export default {
         colmunsCount = 7
       }
       return colmunsCount
+    },
+    allEventsAreOnBothWeeks() {
+      // Get all the events' week_types (unique)
+      const weekTypes = [
+        ...new Set(this.events.map((event) => event.week_type))
+      ]
+      return !weekTypes.includes('Q1') && !weekTypes.includes('Q2')
     }
   },
   mounted() {
@@ -150,6 +189,21 @@ export default {
   methods: {
     ...mapGetters(['textColor']),
     ...mapGetters('schedule', ['event']),
+    ...mapActions('schedule', { patch: 'patchEvent', del: 'deleteEvent' }),
+    weekTypes(day) {
+      const week = { ...day }
+      week.y = this.headerHeight / 2
+      week.width /= 2
+      week.fontSize *= 0.75
+      week.opacity = 0.5
+      const evenWeek = { ...week }
+      const oddWeek = { ...week }
+      evenWeek.text = 'Paire'
+      evenWeek.x = week.x
+      oddWeek.text = 'Impaire'
+      oddWeek.x += evenWeek.width
+      return { even: evenWeek, odd: oddWeek }
+    },
     resolveWidth(event) {
       // Get the total width the canvas should be
       const total = this.canvasConfig.width
@@ -165,7 +219,7 @@ export default {
       // Get the duration of this event
       const duration = event.end - event.start
       // Multiply by the factor
-      return (duration / 60) * 1.5
+      return (duration / 60) * this.pixelsPerMinute
     },
     resolvePosition(event) {
       // Get the day and multiply by the base width of an event
@@ -175,7 +229,11 @@ export default {
       if (event.week_type === 'Q2') x += baseWidth / 2
       // Get the difference between the start of the day and the start of this event,
       // Multiply by the height factor
-      const y = ((event.start - this.earliestStartTimeOfWeek) / 60) * 1.5
+      let y =
+        ((event.start - this.earliestStartTimeOfWeek) / 60) *
+        this.pixelsPerMinute
+      // Make room for the table headers
+      y += this.headerHeight
       return { x, y }
     },
     resolveRect(event) {
@@ -210,8 +268,29 @@ export default {
     },
     handleEventClick(vueComponent) {
       const eventUUID = vueComponent.target.attrs.id
-      this.editingEvent = this.event()(eventUUID)
+      if (!eventUUID) return
+      console.log(vueComponent)
+      const event = this.event()(eventUUID)
+      this.editingEvent = {
+        ...event,
+        start: parse(event.start, 'HH:mm:ss', new Date(0)),
+        end: parse(event.end, 'HH:mm:ss', new Date(0))
+      }
       this.$modal.open('edit-event')
+    },
+    handleHover(evt) {
+      const canvas = this.$el
+      // Check if its an event
+      if (!evt.target.attrs.id) return
+      switch (evt.type) {
+        case 'mouseenter':
+          canvas.style.cursor = 'pointer'
+          break
+
+        case 'mouseleave':
+          canvas.style.cursor = 'default'
+          break
+      }
     }
   }
 }
