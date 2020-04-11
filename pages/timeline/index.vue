@@ -12,8 +12,8 @@
 					v-if="currentCourse" 
 					v-bind="currentCourse"
 					:expanded="expandedCourse === currentCourse.uuid"
-					@expanded="expandedCourse = currentCourse.uuid"
-					@closed="expandedCourse = null"
+					@expand="expandedCourse = currentCourse.uuid"
+					@close="expandedCourse = null"
 				)
 				CardCourse(v-else empty) Pas de cours en ce moment
 							

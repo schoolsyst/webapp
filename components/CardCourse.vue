@@ -1,15 +1,10 @@
 <template lang="pug">
   .card-wrapper(
-    @click="$emit(expanded ? 'closed' : 'expanded')"
+    @click="$emit(expanded ? 'close' : 'expand')"
     :class="{empty, expanded}"
   )
     .card(
-      :style="!empty ? {\
-        backgroundColor,\
-        color: backgroundColor \
-          ? textColor()(backgroundColor) \
-          : false\
-        } : false"
+      :style="cardStyles"
       :class="{empty, expanded}"
     )
       template(v-if="subject")
@@ -19,26 +14,22 @@
             span.subject-name {{ subject.name }}
           .room-and-time 
             .room {{ room }}
-        //- .homework(v-if="currentWeek")
-        //-   ul
-        //-     li(v-for="hw in currentWeek" :key="hw.uuid")
-        //-       .card
-        //-         span.name {{ hw.name }}
       template(v-else)
         slot
 </template>
 
 <script>
-import { mapState, mapGetters } from 'vuex'
+import { mapGetters } from 'vuex'
 import BadgeSubject from '~/components/BadgeSubject.vue'
 import HeadingSub from '~/components/HeadingSub.vue'
 import Icon from '~/components/Icon.vue'
+
 export default {
   components: { Icon, BadgeSubject, HeadingSub },
   props: {
     subject: {
       type: Object,
-      default: null
+      required: true
     },
     room: {
       type: String,
@@ -52,22 +43,31 @@ export default {
       type: Boolean,
       default: false
     },
-    start: Date,
-    end: Date
+    start: {
+      type: Date,
+      default: null
+    },
+    end: {
+      type: Date,
+      default: null
+    }
   },
   computed: {
-    ...mapState('subject', ['placeholder']),
-    ...mapGetters('homework', ['currentWeek']),
     backgroundColor() {
+      return this.subject.color
+    },
+    cardStyles() {
       if (this.empty) {
         return false
-      } else {
-        return this.subject.color
+      }
+      return {
+        backgroundColor: this.backgroundColor,
+        color: this.textColor()(this.backgroundColor)
       }
     }
   },
   methods: {
-    ...mapGetters(['textColor', 'formatTime'])
+    ...mapGetters(['textColor'])
   }
 }
 </script>
