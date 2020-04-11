@@ -1,6 +1,6 @@
 <template lang="pug">
 component.subject(
-  :style="{backgroundColor: color || 'var(--black)', color: color ? textColor()(color) : 'var(--white)'}"
+  :style="styles"
   @click="$emit('click')"
   :class="{clickable, multiline, thin, inline, [`variant-${variant}`]: true}"
   :is="clickable ? 'button' : 'span'"
@@ -58,6 +58,14 @@ export default {
   },
   methods: {
     ...mapGetters(['textColor'])
+  },
+  computed: {
+    styles() {
+      return {
+        backgroundColor: this.color || 'var(--black)',
+        color: this.color ? this.textColor()(this.color) : 'var(--white)'
+      }
+    }
   }
 }
 </script>
