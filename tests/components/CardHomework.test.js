@@ -47,9 +47,11 @@ describe('<CardHomework>', () => {
   })
 
   it('calls switchCompletion when the complete slider is clicked', () => {
-    const CardHomework = mnt()
+    const CardHomework = mnt({ progress: 0 })
     CardHomework.get('.complete-slider').trigger('click')
     setTimeout(() => {
+      expect(CardHomework.emitted('completion-switch')).toBeTruthy()
+      expect(CardHomework.emitted('completion-switch')[1]).toEqual(true)
       expect(store.dispatch).toHaveBeenCalledWith('homework/switchCompletion', {
         uuid: mockHomework.uuid
       })
