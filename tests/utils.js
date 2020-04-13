@@ -1,5 +1,6 @@
 import { shallowMount, mount, createLocalVue } from '@vue/test-utils'
 import VTooltip from 'v-tooltip'
+import VTouch from 'vue2-touch-events'
 import Vuex from 'vuex'
 import indexStore from '~/store/index'
 
@@ -13,6 +14,7 @@ export const bootstrapComponentTest = (
   const vue = createLocalVue()
   vue.use(Vuex)
   vue.directive('tooltip', VTooltip)
+  vue.directive('touch', VTouch)
   const store = new Vuex.Store({
     modules: moduleStore,
     ...indexStore
