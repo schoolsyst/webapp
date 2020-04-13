@@ -15,13 +15,13 @@
                 span.name {{ name }}
                 Icon.graded-indicator(
                   v-if="['COURSEWORK', 'TEST'].includes(type)"
-                  v-tooltip="type === 'TEST' ? 'Contrôle' : 'Noté'").
-                    error_outline
+                  v-tooltip="type === 'TEST' ? 'Contrôle' : 'Noté'"
+                ) error_outline
             .details(v-if="details" v-html="details")
 </template>
 
 <script>
-import { mapActions, mapGetters } from 'vuex'
+import { mapActions } from 'vuex'
 import debounce from 'lodash.debounce'
 import Icon from '~/components/Icon.vue'
 import BadgeSubject from '~/components/BadgeSubject.vue'
@@ -68,7 +68,6 @@ export default {
   },
   methods: {
     ...mapActions('homework', ['switchCompletion']),
-    ...mapGetters('homework', ['one']),
     toggleComplete: debounce(
       async function() {
         this.$emit('completion-switch', !this.completed)
