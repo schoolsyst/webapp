@@ -1,4 +1,4 @@
-<h1 align="center"> <img width="80%" src="https://www.schoolsyst.com/assets/logotype-horizontal.png"><br>Frontend </h1> </center>
+<h1 align="center"> <img width="80%" src="https://www.schoolsyst.com/assets/logotype-black.svg"><br>Frontend </h1> </center>
 
 [![HitCount](http://hits.dwyl.io/schoolsyst/schoolsyst/frontend.svg)](http://hits.dwyl.io/schoolsyst/schoolsyst/frontend)
 ![GitHub repo size](https://img.shields.io/github/repo-size/schoolsyst/frontend?style=flat-square)
