@@ -34,6 +34,30 @@ a| Should inherit from...
 | are modals | `BaseModal`
 |===
 
+### Tests
+
+All components should be tested using a single test file at `tests/components/ComponentName.test.js`
+
+Use the following boilerplate for the tests:
+```javascript
+import { bootstrapComponentTest } from '../utils'
+import ComponentName from '~/components/ComponentName.vue'
+
+const { mnt, store } = bootstrapComponentTest(
+  ComponentName
+  // Put the default store here
+  // Put the default propsData here
+)
+
+describe('<ComponentName>', () => {
+  it('does what it is supposed to do', () => {
+    const ComponentName = mnt(/* Provide propsData if needed */)
+    // Do your actions (emit a click, etc)
+    expect(/* predicate */)./* assertion */
+  })
+})
+```
+
 ## vuex store
 ### Modules
 
