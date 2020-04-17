@@ -149,7 +149,7 @@ export default {
     width: 100%
     overflow: hidden
     text-overflow: ellipsis
-    white-space: wrap
+    white-space: pre-wrap
     font-size: 0.75em
     flex-grow: 0
 
