@@ -1,14 +1,12 @@
 <h1 align="center"> <img width="80%" src="https://www.schoolsyst.com/assets/logotype-black.svg"><br>Frontend </h1> </center>
 
 [![HitCount](http://hits.dwyl.io/schoolsyst/schoolsyst/frontend.svg)](http://hits.dwyl.io/schoolsyst/schoolsyst/frontend)
-![GitHub repo size](https://img.shields.io/github/repo-size/schoolsyst/frontend?style=flat-square)
 [![time tracker](https://wakatime.com/badge/github/schoolsyst/frontend.svg)](https://wakatime.com/badge/github/schoolsyst/frontend)
 ![GitHub issues enhancement](https://img.shields.io/github/issues/schoolsyst/frontend/enhancement?style=flat-square)
-![GitHub issues bugs](https://img.shields.io/github/issues/schoolsyst/frontend/bug?style=flat-square)
-![GitHub issues from website](https://img.shields.io/github/issues-raw/schoolsyst/frontend/from:schoolsyst.com?label=reports%20from%20schoolsyst.com&style=flat-square)
-![GitHub tag (latest SemVer pre-release)](https://img.shields.io/github/v/tag/schoolsyst/frontend?include_prereleases&label=latest%20pre-release&sort=semver&style=flat-square)
-![GitHub tag (latest SemVer)](https://img.shields.io/github/v/tag/schoolsyst/frontend?label=latest%20release&sort=semver&style=flat-square)
+![GitHub issues enhancement](https://img.shields.io/github/issues/schoolsyst/frontend/bug?style=flat-square)
 [![Build status](https://img.shields.io/travis/com/schoolsyst/frontend?style=flat-square&label=stable%20build)](https://travis-ci.com/schoolsyst/frontend)
+[![CodeFactor](https://www.codefactor.io/repository/github/schoolsyst/frontend/badge/master)](https://www.codefactor.io/repository/github/schoolsyst/frontend/overview/master)
+[![License: AGPL v3](https://img.shields.io/badge/License-AGPL%20v3-blue.svg)](https://www.gnu.org/licenses/agpl-3.0)
 > The code for the nuxt.js-powered webapp available at [![app.schoolsyst.com](https://img.shields.io/website?down_message=unavailable&label=app.schoolsyst.com&style=flat-square&up_message=online&url=https%3A%2F%2Fapp.schoolsyst.com%2F)](https://app.schoolsyst.com)
 
 ## What is schoolsyst?
