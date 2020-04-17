@@ -42,7 +42,7 @@
         img(src="/misc/checkmark.svg")
         .text
           p
-            | Vous voici fin prêt,
+            | Vous voici fin prêt, 
             wbr
             span.username {{ username }}
             |.
