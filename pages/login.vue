@@ -81,13 +81,14 @@ export default {
 @import '~/assets/defaults'
 
 .container
-  height: 100vh
+  min-height: 100vh
   width: 100vw
   display: flex
   align-items: center
   justify-content: center
   flex-direction: column
   text-align: center
+  padding-bottom: 2.5em
 
 .register-link
   margin-bottom: 4em
