@@ -1,3 +1,7 @@
+NOTE: I'm currently going through the code base to refactor it, modifying this along the way. Guidelines defined here are temporary and subject to changes
+
+The style guide is based on https://vuejs.org/v2/style-guide/[vuejs'], and rules defined there  are to be followed except when superseded by rules defined here.
+
 ## Components
 ### File names
 All components filenames should reflect the component's name, and be in PascalCase.
@@ -162,14 +166,111 @@ order(objects, { by: '_your_default_sorting_method_' }) ::
 Language :: pug
 Indentation :: 2 spaces
 
-#### Directives
+#### Attribute shorthands order
 
-Only the following should be written in directives
+_In single-line component uses_:
+Put the class shorthand .class _after_ an attribute list and the #id shortand _before_:
+
+```pug
+ComponentName#id(attr="value").class.class2
+```
+
+_In multiline uses (eg. the attributes list is split on multiple lines)_:
+Put all of the shorthands _before_ the attribute list
+
+```pug
+component#id.class.class2(
+  :is="componentName"
+  :style="styles"
+  :class="{clickable, multiline, thin, inline}"
+  :data-variant="variant"
+  type="button"
+  @click="$emit('click')"
+  v-tooltip="tooltipContent"
+)
+```
+
+#### Attribute list order
+
+Put attributes in the following order:
+
+1. Definition: `is` (or `:is`)
+1. List rendering: `v-for`
+1. Conditionals `v-if`, `v-else-if`, `v-else`, `v-show`, `v-cloak`
+1. Render modifiers: `v-pre`, `v-once`
+1. Unique attributes: `ref`, `key` (or `:key`) note: `key` should be on the same line as `v-for`, _even when you use one attribute per line_. This helps differentiate `key` from other props
+1. Two-way binding: `v-model`
+1. Other directives: 
+1. Bound attributes: `:attribute-name`
+1. Regular attributes: `attribute-name`
+1. Value-less attributes: `attribute-name` (without `="value"`)
+1. Events: `@event-name`, `v-touch`
+1. Content: `v-html`, `v-text`, `v-tooltip`
+
+#### Directive shorthands
+
+_Always_ use the v- shorthands:
+
+[horizontal]
+Use... :: Instead of
+`:attr` :: `v-bind:attr` note: a bare `v-bind` is still allowed
+`@event` :: `v-on:event`
+`#name` :: `v-slot:name`
+
+#### Attribute values
+
+Only the following should be written in attribute values
 
 * a unique scalar value
 ** for template strings, interpolated values should be variables only.
+* an object literal with ≤ 5 words:
+** a key counts as a word
+** a value counts as a word
+*** the value should be a scalar or a variable
 * a unique function call
 * a unique variable
+
+For object literals, don't add spaces around the braces (but do it in JS code)
+
+For multi-values attributes (eg. `style` or `class`), prefer an object literal of computed values instead of a single computed value returning the entire object:
+
+.`<template>`
+```pug
+component(
+  :style="{backgroundColor, color: subjectNameColor}"
+)
+```
+
+.`<script>`
+```js
+computed: {
+  backgroundColor() {
+    return this.color || 'var(--black)'
+  },
+  subjectNameColor() {
+    return this.color ? this.textColor()(this.color) : 'var(--white)'
+  },
+}
+```
+
+Instead of:
+
+.`<template>`
+```pug
+component(:style="styles")
+```
+
+.`<script>`
+```js
+computed: {
+  styles() {
+    return {
+      backgroundColor: this.color || 'var(--black)',
+      color: this.color ? this.textColor()(this.color) : 'var(--white)'
+    }
+  }
+}
+```
 
 ##### An exception for conditional directives (`v-if`, `v-else-if`)
 
@@ -199,6 +300,51 @@ template(
   bar="baz"
   my-stuff quux
 )
+```
+
+### In vue _component_ file's <script>
+
+If your component declares props that have different purposes, separate them with a comment into three categories:
+
+- Data
+- Supporting data (non-essential, must declare a default)
+- Styling
+
+.Example
+```javascript
+props: {
+  // Data
+  color: {
+    type: String,
+    default: null
+  },
+  name: {
+    type: String,
+    default: null
+  },
+  // Supporting data
+  placeholderName: {
+    type: String,
+    default: 'Choisir...'
+  },
+  // Style
+  clickable: {
+    type: Boolean,
+    default: false
+  },
+  variant: {
+    type: String,
+    default: 'badge'
+  },
+  thin: {
+    type: Boolean,
+    default: false
+  },
+  noTooltip: {
+    type: Boolean,
+    default: false
+  }
+},
 ```
 
 ### In vue _component_ files' <style>
