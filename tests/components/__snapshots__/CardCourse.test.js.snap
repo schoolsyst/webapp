@@ -3,7 +3,7 @@
 exports[`<CardCourse> empty matches snapshot 1`] = `
 <div class="card-wrapper empty">
   <div class="card empty">
-    <div class="infos"><span type="button" class="subject subject-color variant-dot" style="background-color: red;"><!----><span class="name">Choisir...</span></span><span class="subject"><span class="subject-name"></span></span>
+    <div class="infos"><span data-variant="dot" type="button" class="subject subject-color" style="background-color: red;"><!----><span class="name">Choisir...</span></span><span class="subject"><span class="subject-name"></span></span>
       <div class="room-and-time">
         <div class="room">—</div>
       </div>
@@ -15,7 +15,7 @@ exports[`<CardCourse> empty matches snapshot 1`] = `
 exports[`<CardCourse> with a course matches snapshot 1`] = `
 <div class="card-wrapper">
   <div class="card" style="background-color: red;">
-    <div class="infos"><span type="button" class="subject subject-color variant-dot" style="background-color: red;"><!----><span class="name">Choisir...</span></span><span class="subject"><span class="subject-name"></span></span>
+    <div class="infos"><span data-variant="dot" type="button" class="subject subject-color" style="background-color: red;"><!----><span class="name">Choisir...</span></span><span class="subject"><span class="subject-name"></span></span>
       <div class="room-and-time">
         <div class="room">L102</div>
       </div>
