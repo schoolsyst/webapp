@@ -23,7 +23,7 @@
         )
       template(v-for="day in days")
         v-text(:config="day" :key="day.text")
-        template(v-if="!allEventsAreOnBothWeeks")
+        template(v-if="showWeekTypesHeader")
           v-text(:config="weekTypes(day).even" :key="`${day.text}-even`")
           v-text(:config="weekTypes(day).odd" :key="`${day.text}-odd`")
 </template>
@@ -91,11 +91,22 @@ export default {
         ...defaults,
         uuid: null
       },
-      recomputeCanvasWidth: 1,
-      headerHeight: 50
+      recomputeCanvasWidth: 1
     }
   },
   computed: {
+    headerHeight() {
+      const dayHeaderHeight = 40
+      const weekTypesHeaderHeight = 20
+      let headerHeight = dayHeaderHeight
+      if (this.showWeekTypesHeader) {
+        headerHeight += weekTypesHeaderHeight
+      }
+      return headerHeight
+    },
+    showWeekTypesHeader() {
+      return !this.allEventsAreOnBothWeeks && this.bothWeeks
+    },
     dayNames() {
       const names = ['Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi']
       if (this.colmunsCount >= 6) names.push('Samedi')
@@ -210,7 +221,7 @@ export default {
       // The width is the total width divided by the number of columns there should be
       let width = total / this.colmunsCount
       // Half the width if its not on both week types
-      if (event.week_type !== 'BOTH') {
+      if (event.week_type !== 'BOTH' && this.bothWeeks) {
         width /= 2
       }
       return width
@@ -226,7 +237,7 @@ export default {
       const baseWidth = this.resolveWidth({ week_type: 'BOTH' })
       let x = baseWidth * event.day - baseWidth
       // If the event is in Q2, we need to offset it to the right
-      if (event.week_type === 'Q2') x += baseWidth / 2
+      if (event.week_type === 'Q2' && this.bothWeeks) x += baseWidth / 2
       // Get the difference between the start of the day and the start of this event,
       // Multiply by the height factor
       let y =
