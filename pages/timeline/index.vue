@@ -1,68 +1,84 @@
 <template lang="pug">
 .container
-	//- @ Main Timeline
-	.timeline(v-if="nextCourses.length || currentCourse")
-		//- Timeline's dotted line
-		.line.-invert-on-dark-theme
-		ul.events
-			//- Current event
-			li.current
-				span.time {{ formatTime()(now, 'HH:mm') }}
-				CardCourse(
-					v-if="currentCourse" 
-					v-bind="currentCourse"
-					:expanded="expandedCourse === currentCourse.uuid"
-					@expand="expandedCourse = currentCourse.uuid"
-					@close="expandedCourse = null"
-				)
-				CardCourse(v-else empty) Pas de cours en ce moment
-							
-			li.title(v-if="nextCourses.length")
-				span.time.empty
-				HeadingSub
-					| dans {{ formatDistance(nextCourses[0].start) }}
-			//- For each course that are upcoming
-			li(v-for="(course, i) in nextCourses" :key="course.uuid")
-				span.time
-					| {{ formatTime()(course.start, 'HH:mm') }}
-					//- Don't show redundant info: hide end time when courses immediately follow
-					template(v-if="formatTime()(nextCourse(i).start) !== formatTime()(course.end)")
-						Icon chevron_right
-						| {{ formatTime()(course.end, 'HH:mm') }}
-				CardCourse(
-					v-bind="course"
-					:expanded="expandedCourse === course.uuid"
-					@expanded="expandedCourse = course.uuid"
-					@closed="expandedCourse = null"
-				)
-			//- Time until end of courses
-			li.title
-				span.time.empty
-				HeadingSub fin dans {{ formatDistance(endOfDay()) }}
-	ScreenEmpty(v-else @cta="$router.push('/homework')")
-		template(#smiley) ^^
-		p {{todayCourses.length ? 'Plus' : 'Pas'}} de cours pour aujourd'hui
-		template(#cta) Voir les devoirs
+  ModalAddEvent(
+    v-model="editingEvent"
+    action="edit"
+    @submit="patch({ modifications: editingEvent, uuid: editingEvent.uuid })"
+    @delete="del({ uuid: editingEvent.uuid })"
+  )
+  //- @ Main Timeline
+  .timeline(v-if="nextCourses.length || currentCourse")
+    //- Timeline's dotted line
+    .line.-invert-on-dark-theme
+    ul.events
+      //- Current event
+      li.current
+        span.time {{ formatTime()(now, 'HH:mm') }}
+        CardCourse(
+          v-if="currentCourse"
+          v-bind="currentCourse"
+          :expanded="expandedCourse === currentCourse.uuid"
+          @expand="expandedCourse = currentCourse.uuid"
+          @close="expandedCourse = null"
+        )
+        CardCourse(v-else empty) Pas de cours en ce moment
+
+      li.title(v-if="nextCourses.length")
+        span.time.empty
+        HeadingSub
+          | dans {{ formatDistance(nextCourses[0].start) }}
+      //- For each course that are upcoming
+      li(v-for="(course, i) in nextCourses" :key="course.uuid")
+        span.time
+          | {{ formatTime()(course.start, 'HH:mm') }}
+          //- Don't show redundant info: hide end time when courses immediately follow
+          template(v-if="formatTime()(nextCourse(i).start) !== formatTime()(course.end)")
+            Icon chevron_right
+            | {{ formatTime()(course.end, 'HH:mm') }}
+        CardCourse(
+          v-bind="course"
+          :expanded="expandedCourse === course.uuid"
+          @expanded="expandedCourse = course.uuid"
+          @closed="expandedCourse = null"
+          @click="handleCardCourseClick(course)"
+        )
+      //- Time until end of courses
+      li.title
+        span.time.empty
+        HeadingSub fin dans {{ formatDistance(endOfDay()) }}
+  ScreenEmpty(v-else @cta="$router.push('/homework')")
+    template(#smiley) ^^
+    p {{todayCourses.length ? 'Plus' : 'Pas'}} de cours pour aujourd'hui
+    template(#cta) Voir les devoirs
 </template>
 
 <script>
-import { formatDistanceStrict } from 'date-fns'
+import { formatDistanceStrict, parse } from 'date-fns'
 import { fr } from 'date-fns/locale'
 import { firstBy } from 'thenby'
-import { mapState, mapGetters } from 'vuex'
+import { mapState, mapGetters, mapActions } from 'vuex'
 import HeadingSub from '~/components/HeadingSub.vue'
 import Icon from '~/components/Icon.vue'
 import CardCourse from '~/components/CardCourse.vue'
 import ScreenEmpty from '~/components/ScreenEmpty.vue'
+import ModalAddEvent from '~/components/ModalAddEvent.vue'
 
 export default {
-  components: { HeadingSub, Icon, CardCourse, ScreenEmpty },
+  components: { HeadingSub, Icon, CardCourse, ScreenEmpty, ModalAddEvent },
   head: {
     title: 'Timeline'
   },
   data() {
     return {
-      expandedCourse: null
+      expandedCourse: null,
+      editingEvent: {
+        subject: null,
+        week_type: 'BOTH',
+        day: null,
+        start: null,
+        end: null,
+        room: null
+      }
     }
   },
   computed: {
@@ -71,7 +87,8 @@ export default {
       'todayCourses',
       'currentCourse',
       'nextCoursesIn',
-      'endOfDay'
+      'endOfDay',
+      'event'
     ]),
     ...mapGetters(['textColor']),
     nextCourses() {
@@ -82,6 +99,7 @@ export default {
     this.$withLoadingScreen(
       async () => {
         await this.$store.dispatch('schedule/load')
+        await this.$store.dispatch('settings/load')
       },
       { title: '' }
     )
@@ -89,6 +107,7 @@ export default {
   },
   methods: {
     ...mapGetters(['formatTime']),
+    ...mapActions('schedule', { patch: 'patchEvent', del: 'deleteEvent' }),
     nextCourse(i) {
       let ret
       // If that condition is true, we're already on the last course.
@@ -98,11 +117,15 @@ export default {
     },
     formatDistance(date) {
       return formatDistanceStrict(date, this.now, { locale: fr })
-    }
-  },
-  watch: {
-    expandedCourse() {
-      console.log(this.expandedCourse)
+    },
+    handleCardCourseClick({ uuid }) {
+      const event = this.event(uuid)
+      this.editingEvent = {
+        ...event,
+        start: parse(event.start, 'HH:mm:ss', new Date(0)),
+        end: parse(event.end, 'HH:mm:ss', new Date(0))
+      }
+      this.$modal.open('edit-event')
     }
   }
 }
