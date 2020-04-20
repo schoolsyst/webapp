@@ -47,5 +47,9 @@ describe('<BadgeSubject>', () => {
     component.trigger('click')
     expect(component.emitted('click')).toBeTruthy()
   })
-  // TODO: test [no-tooltip]
+
+  test('no tooltip is shown when has attribute [no-tooltip]', () => {
+    const component = mnt(BadgeSubject, { propsData: { noTooltip: true } })
+    expect(component.vm.tooltipContent).toBeNull()
+  })
 })
