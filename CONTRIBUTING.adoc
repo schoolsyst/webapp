@@ -440,7 +440,6 @@ pass:[=] :: Store (vuex)
 < :: Components
 / :: Pages
 $ :: Plugins
-? :: Tests
 % :: Layouts
 ~ :: Middlewares
 pass:[#] :: Assets
