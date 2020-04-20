@@ -116,6 +116,7 @@ export default {
     '~plugins/loading-screen',
     '~plugins/vue-chartkick',
     '~plugins/v-tooltip.js',
+    '~plugins/vue-konva.js',
     '~plugins/vue2-touch-events',
     { src: '~plugins/ga.js', mode: 'client' }
   ],

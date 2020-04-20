@@ -12,8 +12,8 @@
 					v-if="currentCourse" 
 					v-bind="currentCourse"
 					:expanded="expandedCourse === currentCourse.uuid"
-					@expanded="expandedCourse = currentCourse.uuid"
-					@closed="expandedCourse = null"
+					@expand="expandedCourse = currentCourse.uuid"
+					@close="expandedCourse = null"
 				)
 				CardCourse(v-else empty) Pas de cours en ce moment
 							
@@ -48,6 +48,7 @@
 <script>
 import { formatDistanceStrict } from 'date-fns'
 import { fr } from 'date-fns/locale'
+import { firstBy } from 'thenby'
 import { mapState, mapGetters } from 'vuex'
 import HeadingSub from '~/components/HeadingSub.vue'
 import Icon from '~/components/Icon.vue'
@@ -74,7 +75,7 @@ export default {
     ]),
     ...mapGetters(['textColor']),
     nextCourses() {
-      return this.nextCoursesIn(this.now)
+      return this.nextCoursesIn(this.now).sort(firstBy('start'))
     }
   },
   mounted() {

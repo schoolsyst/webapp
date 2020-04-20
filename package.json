@@ -12,8 +12,7 @@
     "generate": "nuxt generate",
     "lint": "eslint --ext .js,.vue --ignore-path .gitignore .",
     "test": "cross-env NODE_ENV=test jest",
-    "test:unit": "cross-env TEST=unit ava --config unit.config.js",
-    "test:e2e": "cross-env TEST=e2e ava --config e2e.config.js"
+    "dev-backend": "cd ../schoolsyst-api && poetry run python manage.py runserver 9999"
   },
   "jest": {
     "moduleFileExtensions": [
@@ -32,9 +31,44 @@
     },
     "globals": {
       "vue-jest": {
-        "babelConfig": true
+        "babelConfig": {
+          "plugins": [
+            "@babel/plugin-transform-regenerator",
+            "@babel/plugin-transform-runtime"
+          ],
+          "presets": [
+            [
+              "@babel/preset-env",
+              {
+                "modules": false
+              }
+            ]
+          ],
+          "env": {
+            "test": {
+              "presets": [
+                [
+                  "@babel/preset-env",
+                  {
+                    "targets": {
+                      "node": "current"
+                    }
+                  }
+                ]
+              ]
+            }
+          }
+        }
       }
-    }
+    },
+    "collectCoverage": true,
+    "collectCoverageFrom": [
+      "components/**.vue",
+      "plugins/**.js",
+      "store/**.js",
+      "pages/**.vue",
+      "layouts/**.vue"
+    ]
   },
   "lint-staged": {
     "*.{js,vue}": "eslint"
@@ -45,7 +79,6 @@
     }
   },
   "dependencies": {
-    "@ava/babel": "^1.0.1",
     "@nuxtjs/auth": "^4.8.1",
     "@nuxtjs/axios": "^5.3.6",
     "@nuxtjs/dotenv": "^1.4.0",
@@ -58,6 +91,8 @@
     "fuse.js": "^3.4.5",
     "js-search": "^1.4.3",
     "jwt-decode": "^2.2.0",
+    "konva": "^4.2.2",
+    "lodash.clamp": "^4.0.3",
     "lodash.debounce": "^4.0.8",
     "lodash.flatten": "^4.4.0",
     "lodash.groupby": "^4.6.0",
@@ -84,6 +119,7 @@
     "vue-context": "^5.0.0",
     "vue-context-menu": "^2.0.6",
     "vue-infinite-loading": "^2.4.4",
+    "vue-konva": "^2.1.1",
     "vue-multiselect": "^2.1.6",
     "vue2-touch-events": "^2.1.0",
     "vuex-persist": "^2.2.0"
@@ -91,28 +127,31 @@
   "devDependencies": {
     "@babel/core": "^7.8.7",
     "@babel/plugin-transform-modules-commonjs": "^7.8.3",
+    "@babel/plugin-transform-regenerator": "^7.8.7",
+    "@babel/plugin-transform-runtime": "^7.9.0",
     "@babel/preset-env": "^7.8.7",
     "@nuxtjs/eslint-config": "^1.0.1",
     "@nuxtjs/eslint-module": "^1.0.0",
     "@nuxtjs/stylelint-module": "^3.1.0",
     "@vue/test-utils": "^1.0.0-beta.32",
-    "ava": "^3.5.0",
     "babel-core": "7.0.0-bridge.0",
     "babel-eslint": "^10.0.1",
     "babel-jest": "^25.1.0",
     "babel-plugin-module-resolver": "^3.2.0",
     "babel-register": "^6.26.0",
     "browser-env": "^3.3.0",
+    "codecov": "^3.6.5",
     "cross-env": "^7.0.2",
     "eslint": "^6.1.0",
     "eslint-config-prettier": "^4.1.0",
     "eslint-plugin-nuxt": ">=0.4.2",
     "eslint-plugin-prettier": "^3.0.1",
     "husky": "^2.6.0",
-    "jest": "^25.1.0",
+    "jest": "^24.1.0",
     "jest-serializer-vue": "^2.0.2",
     "lint-staged": "^8.2.1",
     "prettier": "^1.16.4",
+    "regenerator-runtime": "^0.13.5",
     "require-extension-hooks": "^0.3.3",
     "require-extension-hooks-babel": "^1.0.0",
     "require-extension-hooks-vue": "^3.0.0",

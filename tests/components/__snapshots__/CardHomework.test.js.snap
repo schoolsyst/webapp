@@ -1,0 +1,35 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`<CardHomework> completed state matches snapshot 1`] = `
+<div class="card completed is-a-homework">
+  <div title="Marquer comme non-terminé" class="complete-slider">
+    <icon-stub>refresh</icon-stub>
+    <icon-stub style="display: none;">check</icon-stub>
+  </div>
+  <div class="infos">
+    <div class="first-line">
+      <div class="strikethrough-line"></div>
+      <badgesubject-stub color="#c0ffee" name="Subject" placeholdername="Choisir..." variant="dot" class="subject-color"></badgesubject-stub><span class="name">Lorem ipsum</span>
+      <!---->
+    </div>
+    <div class="details">Lorem ipsum dolor sit amet consecitur nae doe flat is justice et deald.</div>
+  </div>
+</div>
+`;
+
+exports[`<CardHomework> uncompleted state matches snapshot 1`] = `
+<div class="card is-a-homework">
+  <div title="Marquer comme terminé" class="complete-slider">
+    <icon-stub style="display: none;">refresh</icon-stub>
+    <icon-stub>check</icon-stub>
+  </div>
+  <div class="infos">
+    <div class="first-line">
+      <div class="strikethrough-line"></div>
+      <badgesubject-stub color="#c0ffee" name="Subject" placeholdername="Choisir..." variant="dot" class="subject-color"></badgesubject-stub><span class="name">Lorem ipsum</span>
+      <!---->
+    </div>
+    <div class="details">Lorem ipsum dolor sit amet consecitur nae doe flat is justice et deald.</div>
+  </div>
+</div>
+`;

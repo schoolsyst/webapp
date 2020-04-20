@@ -1,5 +1,5 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`BadgeSubject variant 'badge' matches snapshot 1`] = `<span type="button" class="subject variant-badge"><i class="unknown-icon material-icons-outlined">more_horiz</i><span class="name">Choisir...</span></span>`;
+exports[`<BadgeSubject> variant 'badge' matches snapshot 1`] = `<span data-variant="badge" type="button" class="subject"><i class="unknown-icon material-icons-outlined">more_horiz</i><span class="name">Choisir...</span></span>`;
 
-exports[`BadgeSubject variant 'dot' matches snapshot 1`] = `<span type="button" class="subject variant-dot"><i class="unknown-icon material-icons-outlined">more_horiz</i><span class="name">Choisir...</span></span>`;
+exports[`<BadgeSubject> variant 'dot' matches snapshot 1`] = `<span data-variant="dot" type="button" class="subject"><i class="unknown-icon material-icons-outlined">more_horiz</i><span class="name">Choisir...</span></span>`;

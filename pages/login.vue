@@ -1,6 +1,11 @@
 <template lang="pug">
 .container
   OverlayLoadingLogo(animation="animate-in-compound")
+  p.explain
+    span.-mobile-only schoolsyst: 
+    | Une application web tout-en-un pour gérer notes, devoirs, emploi du temps et bien plus encore. 
+    wbr
+    a(href="https://schoolsyst.com/") En savoir plus
   .register-link
     p 
       | Pas de compte ?
@@ -76,13 +81,14 @@ export default {
 @import '~/assets/defaults'
 
 .container
-  height: 100vh
+  min-height: 100vh
   width: 100vw
   display: flex
   align-items: center
   justify-content: center
   flex-direction: column
   text-align: center
+  padding-bottom: 2.5em
 
 .register-link
   margin-bottom: 4em
@@ -90,4 +96,12 @@ export default {
   margin-top: 0em
 .submit
   margin-top: 3em
+.explain
+  margin-top: -1em
+  margin-bottom: 3em
+  max-width: 700px
+
+@media (min-width: 500px)
+  .explain .-mobile-only
+    display: none
 </style>

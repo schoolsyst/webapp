@@ -1,13 +1,13 @@
-<template lang="pug"> 
+<template lang="pug">
 //TODO(beta-1.0.0): do not open in full screen modals w/o close btns @ mobile
-//https://www.w3.org/TR/wai-aria-practices/examples/dialog-modal/dialog.html 
-aside.BaseModal(:id="`modal_${name}`", 
-    aria-hidden="true" 
-    aria-modal="false" 
-    role="dialog" 
-    @click.self="$emit('close'); $modal.hide(name)" 
+//https://www.w3.org/TR/wai-aria-practices/examples/dialog-modal/dialog.html
+aside.BaseModal(:id="`modal_${name}`",
+    aria-hidden="true"
+    aria-modal="false"
+    role="dialog"
+    @click.self="!noBackdrop && closeModal()"
     :class="{'edge-to-edge': edgeToEdge, 'no-backdrop': noBackdrop, shadow, 'has-header': hasHeader, 'close-button': closeButton, 'no-close-button': !closeButton}"
-) 
+)
     .modal-wrapper(
       :style="{\
         resize: resizable || 'none',\
@@ -17,13 +17,13 @@ aside.BaseModal(:id="`modal_${name}`",
           p.title(v-if="title") {{ title }}
           button.close-modal(
             v-if="closeButton",
-            @click="$modal.hide(name)"
+            @click="closeModal"
           ): Icon close
         template(v-if="hasHeader")
           .content: slot
         template(v-else)
           slot
- 
+
 </template>
 
 <script>
@@ -68,6 +68,12 @@ export default {
   computed: {
     hasHeader() {
       return this.closeButton || this.title
+    }
+  },
+  methods: {
+    closeModal() {
+      this.$emit('close')
+      this.$modal.close(this.name)
     }
   }
 }
