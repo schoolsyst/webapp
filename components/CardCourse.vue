@@ -9,7 +9,6 @@
     )
       template(v-if="subject")
         .infos
-          BadgeSubject.subject-color(v-bind="subject" variant="dot")
           span.subject
             span.subject-name {{ subject.name }}
           .room-and-time 
@@ -107,7 +106,6 @@ export default {
     align-items: center
 
     .subject-name
-      margin-left: -1.2em
       transition: margin 0.25s ease
 
     .subject-color
