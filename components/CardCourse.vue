@@ -1,6 +1,6 @@
 <template lang="pug">
   .card-wrapper(
-    @click="$emit(expanded ? 'close' : 'expand')"
+    @click="$emit('click'); $emit(expanded ? 'close' : 'expand')"
     :class="{empty, expanded}"
   )
     .card(

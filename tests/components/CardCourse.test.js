@@ -48,11 +48,13 @@ describe('<CardCourse>', () => {
     const CardCourse = mnt({ expanded: true })
     CardCourse.trigger('click')
     expect(CardCourse.emitted('close')).toBeTruthy()
+    expect(CardCourse.emitted('click')).toBeTruthy()
   })
 
   test("Emits 'expand' when not expanded and clicked", () => {
     const CardCourse = mnt()
     CardCourse.trigger('click')
     expect(CardCourse.emitted('expand')).toBeTruthy()
+    expect(CardCourse.emitted('click')).toBeTruthy()
   })
 })
