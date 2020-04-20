@@ -1,19 +1,22 @@
 <template lang="pug">
   .container.-sideby-side
-    .mutations-area
-      HeadingSub Cours supprimés / reportés
-      ul.mutations
-        li.new: ButtonNormal Nouveau cours reporté ou supprimé
-        li(v-for="mutation in mutations" :key="mutation.uuid")
-          CardMutation(v-bind="mutation")
+    //- .mutations-area
+    //-   HeadingSub Cours supprimés / reportés
+    //-   ul.mutations
+    //-     li.new: ButtonNormal Nouveau cours reporté ou supprimé
+    //-     li(v-for="mutation in mutations" :key="mutation.uuid")
+    //-       CardMutation(v-bind="mutation")
     .schedule
-      HeadingSub Emploi du temps
-      Schedule(:events="events")
+      .heading
+        HeadingSub Emploi du temps
+        ButtonNormal(small variant="outline" href="/setup/schedule/events") Modifier
+      Schedule(:events="events" read-only)
 </template>
 
 <script>
 import { mapGetters, mapState } from 'vuex'
-import { getUnixTime, addDays } from 'date-fns'
+// eslint-disable-next-line no-unused-vars
+import { getUnixTime, addDays, parse, format } from 'date-fns'
 import Schedule from '~/components/Schedule.vue'
 import HeadingSub from '~/components/HeadingSub.vue'
 import ButtonNormal from '~/components/ButtonNormal.vue'
@@ -35,9 +38,12 @@ export default {
         addDays(this.scheduleDate, 7)
       ).map((event) => ({
         ...event,
-        start: getUnixTime(event.start),
-        end: getUnixTime(event.end),
-        week_type: 'BOTH'
+        start: getUnixTime(
+          parse(format(event.start, 'HH:mm:ss'), 'HH:mm:ss', new Date(0))
+        ),
+        end: getUnixTime(
+          parse(format(event.end, 'HH:mm:ss'), 'HH:mm:ss', new Date(0))
+        )
       }))
     }
   },
@@ -45,7 +51,7 @@ export default {
     await this.$store.dispatch('schedule/load')
   },
   methods: {
-    ...mapGetters('schedule', ['coursesIn'])
+    ...mapGetters('schedule', ['coursesIn', 'events'])
   }
 }
 </script>
@@ -56,6 +62,12 @@ export default {
   // Cheap hack, if overflow-x is auto, overflow-y becomes either auto or scroll.
   // See: https://stackoverflow.com/a/39554003
   padding-bottom: 500px
+  display flex
+  flex-direction column
+  align-items center
+
+.schedule .heading
+  margin-bottom 2em
 
 h2
   margin-bottom: 1em
