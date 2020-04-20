@@ -53,6 +53,18 @@ export default {
     setInterval(() => {
       this.$store.commit('UPDATE_TIME', toDate(Date.now()))
     }, 1 * 1000)
+    // Check if browser is online
+    window.addEventListener('offline', (e) => {
+      this.$toast.error(`Vous n'êtes pas connecté à Internet.`, {
+        icon: 'warning_outline',
+        className: 'warn'
+      })
+    })
+    window.addEventListener('online', (e) => {
+      this.$toast.success(`Vous êtes de nouveau en ligne.`, {
+        icon: 'check'
+      })
+    })
   },
   methods: {
     ...mapGetters('theme', { theme: 'current' }),
