@@ -267,6 +267,7 @@ export default {
       }
     },
     handleEventClick(vueComponent) {
+      if (this.readOnly) return
       const eventUUID = vueComponent.target.attrs.id
       if (!eventUUID) return
       console.log(vueComponent)
@@ -279,6 +280,7 @@ export default {
       this.$modal.open('edit-event')
     },
     handleHover(evt) {
+      if (this.readOnly) return
       const canvas = this.$el
       // Check if its an event
       if (!evt.target.attrs.id) return
