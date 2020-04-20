@@ -48,6 +48,7 @@
 <script>
 import { formatDistanceStrict } from 'date-fns'
 import { fr } from 'date-fns/locale'
+import { firstBy } from 'thenby'
 import { mapState, mapGetters } from 'vuex'
 import HeadingSub from '~/components/HeadingSub.vue'
 import Icon from '~/components/Icon.vue'
@@ -74,7 +75,7 @@ export default {
     ]),
     ...mapGetters(['textColor']),
     nextCourses() {
-      return this.nextCoursesIn(this.now)
+      return this.nextCoursesIn(this.now).sort(firstBy('start'))
     }
   },
   mounted() {
