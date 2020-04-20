@@ -22,8 +22,7 @@
     .-side-by-side
       .obtained-grade
         .fraction
-          // comment #1
-          //FIXME: the step value causes the scroll to 
+          //FIXME #73: the step value causes the scroll to 
           // increase by ridiculously small steps.
           // consider using a custom JS implementation
           // with InputField type="number" variant="transparent"
