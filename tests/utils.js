@@ -8,7 +8,8 @@ export const bootstrapComponentTest = (
   component,
   moduleStore,
   defaultPropsData,
-  shallow = true
+  shallow = true,
+  mocks = {}
 ) => {
   const mountFn = shallow ? shallowMount : mount
   const vue = createLocalVue()
@@ -24,7 +25,8 @@ export const bootstrapComponentTest = (
     mountFn(component, {
       propsData: { ...defaultPropsData, ...props },
       localVue: vue,
-      store
+      store,
+      mocks
     })
   return { vue, mnt, store }
 }
