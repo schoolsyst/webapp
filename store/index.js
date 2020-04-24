@@ -2,9 +2,14 @@ import { toDate, addDays, isBefore, format } from 'date-fns'
 import tinycolor from 'tinycolor2'
 import constantCase from 'constant-case'
 import Vue from 'vue'
-const npm = require('~/package.json')
+const version = require('~/package.json').version.split('.')
 
-const version = npm.version.split('.')
+// eslint-disable-next-line import/order
+const commitHash = require('child_process')
+  .execSync('git rev-parse HEAD')
+  .toString()
+  .trim()
+const commitHashShort = commitHash.slice(0, 7)
 
 export const state = () => ({
   version: {
@@ -12,6 +17,10 @@ export const state = () => ({
     ui: version[1],
     bug: version[2],
     channel: 'beta',
+    build: {
+      full: commitHash,
+      short: commitHashShort,
+    },
   },
   now: toDate(Date.now()), // For time-dependent getters.
   tomorrow: addDays(toDate(Date.now()), 1),

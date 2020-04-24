@@ -1,20 +1,22 @@
 <template lang="pug">
-    <footer class="TheFooter">
-        OverlayLoadingLogo(animate-when="scrolled-into-view")
-        a(href="https://www.schoolsyst.com/").logotype-wrapper: Logotype.logotype
-        code.version
-          span.channel {{ version.channel }}
-          span(title="Incrémentée par l'ajout de fonctionnalités").feat {{ version.feature }}.
-          span(title="Incrémentée lors de changements dans l'interface").ui {{ version.ui }}.
-          span(title="Incrémentée quand des bugs sont réglés").bug {{ version.bug }}
-        p.open-source
-          | Projet open source, code disponible chez 
-          a(href="//github.com/schoolsyst") GitHub
-        p.wakatime
-          img(title="API" src="https://wakatime.com/badge/github/schoolsyst/backend.svg")
-          span.plus-sign +
-          img(title="Application web" src="https://wakatime.com/badge/github/schoolsyst/frontend.svg")
-    </footer>
+  footer.TheFooter
+    OverlayLoadingLogo(animate-when="scrolled-into-view")
+    a(href="https://www.schoolsyst.com/").logotype-wrapper: Logotype.logotype
+    code.version
+      span.channel {{ version.channel }}
+      span(title="Incrémentée par l'ajout de fonctionnalités").feat {{ version.feature }}.
+      span(title="Incrémentée lors de changements dans l'interface").ui {{ version.ui }}.
+      span(title="Incrémentée quand des bugs sont réglés").bug {{ version.bug }}
+    p.open-source
+      | Projet open source, code disponible chez 
+      a(href="//github.com/schoolsyst") GitHub
+    p.wakatime
+      img(title="API" src="https://wakatime.com/badge/github/schoolsyst/backend.svg")
+      span.plus-sign +
+      img(title="Application web" src="https://wakatime.com/badge/github/schoolsyst/frontend.svg")
+    code.build-number
+      | commit 
+      a(:href="`https://github.com/schoolsyst/frontend/commit/${version.build.full}`") {{ version.build.short }}
 </template>
 
 <script>
