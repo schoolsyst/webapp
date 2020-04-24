@@ -2,7 +2,6 @@ import { Mark } from 'tiptap'
 import { toggleMark, markInputRule, markPasteRule } from 'tiptap-commands'
 
 export default class Code extends Mark {
-
   get name() {
     return 'code'
   }
@@ -10,9 +9,7 @@ export default class Code extends Mark {
   get schema() {
     return {
       excludes: '_',
-      parseDOM: [
-        { tag: 'code' },
-      ],
+      parseDOM: [{ tag: 'code' }],
       toDOM: () => ['code', 0],
     }
   }
@@ -28,15 +25,10 @@ export default class Code extends Mark {
   }
 
   inputRules({ type }) {
-    return [
-      markInputRule(/(?:`)([^`]+)(?:`)$/, type),
-    ]
+    return [markInputRule(/(?:`)([^`]+)(?:`)$/, type)]
   }
 
   pasteRules({ type }) {
-    return [
-      markPasteRule(/(?:`)([^`]+)(?:`)/g, type),
-    ]
+    return [markPasteRule(/(?:`)([^`]+)(?:`)/g, type)]
   }
-
 }

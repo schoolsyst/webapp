@@ -11,19 +11,19 @@ export default class Math extends Mark {
       excludes: '_',
       parseDOM: [
         {
-          tag: 'math[display=inline]'
+          tag: 'math[display=inline]',
         },
         {
-          tag: 'span.inline-math'
-        }
+          tag: 'span.inline-math',
+        },
       ],
-      toDOM: () => ['span', { class: 'inline-math asciimath' }, 0]
+      toDOM: () => ['span', { class: 'inline-math asciimath' }, 0],
     }
   }
 
   keys({ type }) {
     return {
-      'Mod-e': toggleMark(type)
+      'Mod-e': toggleMark(type),
     }
   }
 

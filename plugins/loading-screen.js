@@ -20,7 +20,7 @@ Vue.prototype.$withLoadingScreen = async (
   asyncFunc,
   { title, subtitle } = {
     title: 'Chargement...',
-    subtitle: 'Veuillez patienter'
+    subtitle: 'Veuillez patienter',
   }
 ) => {
   title = title || 'Chargement...'

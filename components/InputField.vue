@@ -55,74 +55,74 @@ export default {
   props: {
     type: {
       type: String,
-      default: 'text'
+      default: 'text',
     },
     name: {
       type: String,
-      default: null
+      default: null,
     },
     validation: {
       type: Object,
-      default: () => ({ validated: true, errors: {} })
+      default: () => ({ validated: true, errors: {} }),
     },
     value: {
-      default: null
+      default: null,
     },
     noActionButton: {
       type: Boolean,
-      default: false
+      default: false,
     },
     actionIcon: {
       type: String,
-      default: null
+      default: null,
     },
     backgroundColor: {
       type: String,
-      default: 'var(--white)'
+      default: 'var(--white)',
     },
     placeholder: String,
     noErrorMessages: {
       type: Boolean,
-      default: false
+      default: false,
     },
     noLabel: {
       type: Boolean,
-      default: false
+      default: false,
     },
     tabindex: {
       type: [String, Boolean],
-      default: false
+      default: false,
     },
     variant: {
       type: String,
-      default: 'outline'
+      default: 'outline',
     },
     disabled: {
       type: Boolean,
-      default: false
+      default: false,
     },
     resizable: {
       type: [Boolean, String],
-      default: false
+      default: false,
     },
     preventDefaultClick: {
       type: Boolean,
-      default: false
+      default: false,
     },
     narrow: {
       type: Boolean,
-      default: false
+      default: false,
     },
     noErrorStyling: {
       type: Boolean,
-      default: false
-    }
+      default: false,
+    },
   },
   data() {
     return {
       active: false,
       passwordShown: false,
-      initial: true
+      initial: true,
     }
   },
   computed: {
@@ -159,7 +159,7 @@ export default {
       )
     },
     camelCaseName() {
-      return this.dName.replace(/([-_][a-z])/g, (group) =>
+      return this.dName.replace(/([-_][a-z])/g, group =>
         group
           .toUpperCase()
           .replace('-', '')
@@ -172,12 +172,12 @@ export default {
     },
     JSValue() {
       return this.toJSValue(this.value)
-    }
+    },
   },
   watch: {
     HTMLValue() {
       this.$el.querySelector('input, textarea').value = this.HTMLValue
-    }
+    },
   },
   methods: {
     clearField() {
@@ -222,139 +222,139 @@ export default {
           break
       }
       return value
-    }
-  }
+    },
+  },
 }
 </script>
 
 <style lang="stylus" scoped>
-// === Vars
+//=== Vars
 side-padding = 15px
 stroke-thickness = 2px
 errors-space = 2em
 
-// === Setup
+//=== Setup
 .field
-  // Used for the label's absolute positionning
-  position: relative
+  //Used for the label's absolute positionning
+  position relative
 
-  // The label goes outside the bounding box and will potentially overlap with stuff around the field if we don't do this
+  //The label goes outside the bounding box and will potentially overlap with stuff around the field if we don't do this
   &.has-label
-    padding-top: calc(1em + 3px)
+    padding-top calc(1em + 3px)
 
 .field-inner
-  // Vertically center the action button
-  display: flex
-  align-items: center
-  // Make it take the height of the parent element
-  height: 100%
+  //Vertically center the action button
+  display flex
+  align-items center
+  //Make it take the height of the parent element
+  height 100%
 
 .input
-  // Let the input take the whole .inner-field width
-  width: 100%
+  //Let the input take the whole .inner-field width
+  width 100%
 
-// === Typography
+//=== Typography
 label
-  text-transform: uppercase
-  letter-spacing: 1px
-  font-size: 0.75em
-  font-weight: 500
+  text-transform uppercase
+  letter-spacing 1px
+  font-weight 500
+  font-size 0.75em
 
-// === Passive state
+//=== Passive state
 .input
-  // LAYOUT
-  min-width: 250px
-  padding: 15px side-padding
+  padding 15px side-padding
+  //LAYOUT
+  min-width 250px
 
 .input[type=number], .input[type=time], .narrow .input
-  min-width: 50px
+  min-width 50px
 
 .has-action-button .input
-  padding-right: (side-padding * 2 + 10px)
+  padding-right (side-padding * 2 + 10px)
 
 .input
-  // LOOKS
-  background: transparent
-  border: stroke-thickness solid var(--grey-dark)
-  border-radius: var(--border-radius)
-  color: var(--black)
+  border stroke-thickness solid var(--grey-dark)
+  border-radius var(--border-radius)
+  //LOOKS
+  background transparent
+  color var(--black)
 
 textarea
-  height: 100%
+  height 100%
 
 label
-  position: absolute
-  left: 5px
-  padding: 0 5px
-  top: 0px
-  background: transparent
+  position absolute
+  top 0
+  left 5px
+  padding 0 5px
+  background transparent
 
-// === Hover state
+//=== Hover state
 .input:hover, .input:focus
   &
-    border-color: var(--black)
-    outline: none
+    outline none
+    border-color var(--black)
 
   & + label
-    left: 10px
+    left 10px
 
-// === Active state
+//=== Active state
 .active
   label
-    top: 15px
-    left: 10px
-    color: var(--blue)
+    top 15px
+    left 10px
+    color var(--blue)
 
   .input
-    border-color: var(--blue)
+    border-color var(--blue)
 
-// === Errored state
+//=== Errored state
 .field.errored:not(.active)
   label
-    color: var(--red)
+    color var(--red)
 
   .input
-    border-color: var(--red)
+    border-color var(--red)
 
-// === Filled state
+//=== Filled state
 :not(.active).field.filled label
-  color: var(--grey-dark)
+  color var(--grey-dark)
 
-// === Disabled state
+//=== Disabled state
 .field.disabled
   .input
-    background: var(--grey)
-    pointer-events: none
+    background var(--grey)
+    pointer-events none
 
   label
-    opacity: 0.25
+    opacity 0.25
 
-// === Interactions
+//=== Interactions
 .input
-  transition: all 0.25s ease
+  transition all 0.25s ease
 
 label
-  transition: left 0.125s ease, top 0.125s ease, color 0.25s ease, background 0.01s ease
+  transition left 0.125s ease, top 0.125s ease, color 0.25s ease, background 0.01s ease
 
 .action:not(.always-show)
-  display: none
+  display none
 
 .field:hover, .field.active
   .action
-    display: block
+    display block
 
-// === Other elements
+//=== Other elements
 .action
-  position: absolute
-  right: side-padding
-  z-index: 2
-  color: var(--black)
+  position absolute
+  right side-padding
+  z-index 2
+  color var(--black)
 
-// Align action button to top-left for type=block
+//Align action button to top-left for type=block
 .type-block .action
-  top: 32px // FIXME: Pixel-perfect value
+  top 32px //FIXME: Pixel-perfect value
 
-/* WARN: Does *not* work on Firefox.
+/*WARN: Does *not* work on Firefox.
  * Another solution would be to set the date to required, but
  * that would render our custom clear btn pointless...
  * Though, this issue would be gone once the custom date & time pickers are
@@ -363,33 +363,33 @@ label
  * do not offer enough customisability. (especially on FF)
  */
 input[type='time']::-webkit-clear-button, input[type='date']::-webkit-clear-button
-  display: none
+  display none
 
 .error
-  text-align: center
-  color: var(--red)
-  font-size: 0.85em
-  margin-top: 0.45em
-  flex-grow: 0
-  height: errors-space
-  overflow-y: hidden
+  flex-grow 0
+  overflow-y hidden
+  margin-top 0.45em
+  height errors-space
+  color var(--red)
+  text-align center
+  font-size 0.85em
 
-/* Background variant
+/*Background variant
  *
  */
 .variant-filled
-  // === Passive state
+  //=== Passive state
   .input
-    background: var(--grey-offset)
-    border: 2px solid transparent
+    border 2px solid transparent
+    background var(--grey-offset)
 
-  // === Hover state
+  //=== Hover state
   .input:hover, .input:active
-    background: transparent
-    border: 2px solid var(--grey-dark)
+    border 2px solid var(--grey-dark)
+    background transparent
 
-  // === Active state
+  //=== Active state
   &.active .input
-    background: transparent
-    border: 2px solid var(--blue)
+    border 2px solid var(--blue)
+    background transparent
 </style>

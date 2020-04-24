@@ -33,52 +33,52 @@ export default {
   props: {
     value: {
       type: [String, Number, Object],
-      required: true
+      required: true,
     },
     selectedLabel: {
       type: String,
-      default: ''
+      default: '',
     },
     selectLabel: {
       type: String,
-      default: ''
+      default: '',
     },
     deselectLabel: {
       type: String,
-      default: ''
+      default: '',
     },
     trackBy: {
       type: String,
-      default: 'key'
+      default: 'key',
     },
     placeholder: {
       type: String,
-      default: ''
+      default: '',
     },
     name: {
       type: String,
-      default: null
+      default: null,
     },
     label: {
       type: String,
-      default: 'label'
+      default: 'label',
     },
     allowEmpty: {
       type: Boolean,
-      default: false
+      default: false,
     },
     searchable: {
       type: Boolean,
-      default: false
+      default: false,
     },
     options: {
       type: Array,
-      default: () => []
+      default: () => [],
     },
     customLabel: {
       type: Function,
-      default: undefined
-    }
+      default: undefined,
+    },
   },
   computed: {
     dName() {
@@ -93,63 +93,64 @@ export default {
         console.groupEnd()
         return ret
       }
-    }
-  }
+    },
+  },
 }
 </script>
 
 <style lang="stylus" scoped>
 body .multiselect
   sel-width = 20rem
-  // width: sel-width
-  cursor: pointer
-  // display flex
-  align-items: center
+
+  //display flex
+  align-items center
+  //width: sel-width
+  cursor pointer
 
   & /deep/ .multiselect__content-wrapper
-    // width: sel-width
-    border-radius: var(--border-radius)
-    border-top-left-radius: 0
-    border-top-right-radius: 0
-    background-color: var(--white)
-    color: var(--black)
-    overflow-x: hidden
-    border-color: var(--grey-dark)
-    border-width: 2px
+    overflow-x hidden
+    border-width 2px
+    border-color var(--grey-dark)
+    //width: sel-width
+    border-radius var(--border-radius)
+    border-top-left-radius 0
+    border-top-right-radius 0
+    background-color var(--white)
+    color var(--black)
 
   & /deep/ .multiselect__option, & /deep/ .multiselect__single
-    display: flex
-    align-items: center
+    display flex
+    align-items center
 
     .subject
-      margin-right: 0.5em
+      margin-right 0.5em
 
   & /deep/ .multiselect__option
     &--highlight, &--selected
-      background: var(--blue-offset)
-      color: var(--black)
+      background var(--blue-offset)
+      color var(--black)
 
   & /deep/ .multiselect__tags, & /deep/ .multiselect__input
-    height: 100%
-    width: 100%
-    background-color: var(--white)
-    color: var(--black)
-    font-size: 1rem
-    border-color: var(--grey-dark)
-    border-width: 2px
-    display: flex
-    align-items: center
+    display flex
+    align-items center
+    width 100%
+    height 100%
+    border-width 2px
+    border-color var(--grey-dark)
+    background-color var(--white)
+    color var(--black)
+    font-size 1rem
 
   & /deep/ .multiselect__single
-    background-color: var(--white)
-    white-space: nowrap
-    text-overflow: ellipsis
-    overflow: hidden
+    overflow hidden
+    background-color var(--white)
+    text-overflow ellipsis
+    white-space nowrap
 
   & /deep/ .multiselect__select::before
-    border-top-color: var(--black)
+    border-top-color var(--black)
 
   & /deep/ .multiselect__input::placeholder, & /deep/ .multiselect__placeholder
-    color: var(--grey-light)
-    opacity: 1
+    color var(--grey-light)
+    opacity 1
 </style>

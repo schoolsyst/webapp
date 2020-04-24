@@ -75,7 +75,7 @@ import {
   differenceInDays,
   isToday,
   isValid,
-  addDays
+  addDays,
 } from 'date-fns'
 import { fr } from 'date-fns/locale'
 import CardHomework from '~/components/CardHomework.vue'
@@ -95,10 +95,10 @@ export default {
     VueContext,
     HeadingSub,
     Icon,
-    InputSetting
+    InputSetting,
   },
   head: {
-    title: 'Devoirs'
+    title: 'Devoirs',
   },
   data() {
     const defaults = {
@@ -106,16 +106,16 @@ export default {
       due: null,
       name: null,
       subject: null,
-      type: 'EXERCISE'
+      type: 'EXERCISE',
     }
     return {
       homework: {
         defaults,
         adding: defaults,
         editing: {
-          uuid: null
-        }
-      }
+          uuid: null,
+        },
+      },
     }
   },
   computed: {
@@ -123,7 +123,7 @@ export default {
     ...mapState(['now', 'today']),
     showCompleted() {
       return this.getSettingValue()('show_completed_exercises')
-    }
+    },
   },
   methods: {
     getUnixTime,
@@ -134,11 +134,11 @@ export default {
     ...mapActions('homework', { del: 'delete' }),
     ...mapGetters({
       getSettingValue: 'settings/value',
-      getSetting: 'settings/one'
+      getSetting: 'settings/one',
     }),
     ...mapActions({
       toggleSetting: 'settings/toggle',
-      setSetting: 'settings/setValue'
+      setSetting: 'settings/setValue',
     }),
     absoluteDate(date) {
       if (date === 'LATE') return 'En retard'
@@ -156,7 +156,7 @@ export default {
         date = addDays(date, 1)
         return formatDistance(date, this.today, {
           locale: fr,
-          addSuffix: false
+          addSuffix: false,
         })
       }
     },
@@ -171,7 +171,7 @@ export default {
         if (hw.progress !== 1)
           await this.switchCompletion({ uuid: hw.uuid, value: 1 })
       }
-    }
+    },
   },
   mounted() {
     this.$withLoadingScreen(
@@ -187,103 +187,103 @@ export default {
     homework() {
       console.log(this.homework.editing)
       console.log(this.homework.adding)
-    }
-  }
+    },
+  },
 }
 </script>
 
 <style lang="stylus" scoped>
 .container
-  display: flex
-  justify-content: center
-  align-items: flex-start
-  padding: 0 20px
+  display flex
+  justify-content center
+  align-items flex-start
+  padding 0 20px
 
 .grades-wrapper
-  display: flex
-  justify-content: center
-  flex-direction: column
+  display flex
+  flex-direction column
+  justify-content center
 
   &, & > *
-    width: 500px
-    max-width: 100%
+    max-width 100%
+    width 500px
 
 .show-completed-exercises, .new
-  display: flex
-  justify-content: center
-  margin-bottom: 2rem
+  display flex
+  justify-content center
+  margin-bottom 2rem
 
 .new
-  cursor: pointer
-  height: 5em
+  height 5em
+  cursor pointer
 
   .icon
-    font-size: 3em
-    display: flex
-    align-items: center
+    display flex
+    align-items center
+    font-size 3em
 
-  background: var(--blue-offset)
-  color: var(--blue)
-  border-radius: var(--border-radius)
+  border-radius var(--border-radius)
+  background var(--blue-offset)
+  color var(--blue)
 
   &:hover
-    background: var(--blue-offset-dark)
-    color: var(--blue-dark)
+    background var(--blue-offset-dark)
+    color var(--blue-dark)
 
 ul.homework li
-  margin-bottom: 1.2em
+  margin-bottom 1.2em
 
 li.group, ul.homework-groups
-  flex-direction: column
+  flex-direction column
 
 li.group .mark-all-as-done i
-  color: var(--black)
+  color var(--black)
 
-// .container required to override the margin-left from layout:default.
+//.container required to override the margin-left from layout:default.
 .container h2
-  display: flex
-  align-items: center
-  margin-bottom: 0.75em
-  margin-top: 3em
-  width: 500px
-  max-width: 100%
-  margin-left: 0
+  display flex
+  align-items center
+  margin-top 3em
+  margin-bottom 0.75em
+  margin-left 0
+  max-width 100%
+  width 500px
 
   .due
-    margin-right: 1em
+    margin-right 1em
 
     .relative-date
-      color: var(--grey-light)
-      margin-left: 1em
+      margin-left 1em
+      color var(--grey-light)
 
   button
-    margin-left: auto
+    margin-left auto
 
   .late, .late button
-    color: var(--red)
+    color var(--red)
 
 .today, .today button
-  color: var(--yellow)
+  color var(--yellow)
 
 li.group.all-done button
-  opacity: 0
-  pointer-events: none
+  opacity 0
+  pointer-events none
 
 @media (pointer: fine)
   li.group:not(:hover) button
-    opacity: 0
-    pointer-events: none
+    opacity 0
+    pointer-events none
 
 @media (pointer: coarse), (pointer: none)
   li.group:not(.all-done) button
-    opacity: 1
-    pointer-events: auto
+    opacity 1
+    pointer-events auto
 
 h2 button:hover
-  color: var(--blue)
+  color var(--blue)
 
 .empty /deep/ .Checkbox
-  margin-top: 0.5em
-  font-size: 0.8em
-  justify-content: center
+  justify-content center
+  margin-top 0.5em
+  font-size 0.8em
 </style>

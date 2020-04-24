@@ -17,44 +17,47 @@ export default {
   props: {
     small: {
       type: Boolean,
-      default: false
+      default: false,
     },
     image: {
       type: String,
-      default: 'checkmark'
-    }
-  }
+      default: 'checkmark',
+    },
+  },
 }
 </script>
 
 <style lang="stylus" scoped>
 .success-wrapper
-  display: flex
-  align-items: center
-  justify-content: center
+  display flex
+  justify-content center
+  align-items center
 
 .success
-  display: flex
-  align-items: center
+  display flex
   flex-direction column
+  align-items center
   width 100%
 
 .image-checkmark img
-  margin-bottom: -70px
+  margin-bottom -70px
+
 .image-thumbs-up img
-  margin-bottom: 60px
+  margin-bottom 60px
 
 @media (max-width: 888px)
   img
-    width: 70%
+    width 70%
 
 .text
   text-align center
 
 &.small p
-  font-size: 1.2rem
+  font-size 1.2rem
+
 &.small img
-  width: 300px
+  width 300px
+
 &.small h1
   font-size 1.6rem
 

@@ -53,7 +53,7 @@ export default {
     TheHeading,
     OverlayLoadingLogo,
     ButtonNormal,
-    InputField
+    InputField,
   },
 
   data() {
@@ -62,18 +62,18 @@ export default {
       password: '',
       email: '',
       error: null,
-      submitted: false
+      submitted: false,
     }
   },
   computed: {
     validation() {
       return this.validateLogin()(this)
-    }
+    },
   },
   methods: {
     ...mapGetters('auth', ['validateLogin']),
-    ...mapActions('auth', ['login'])
-  }
+    ...mapActions('auth', ['login']),
+  },
 }
 </script>
 

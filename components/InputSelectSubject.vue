@@ -36,17 +36,17 @@ export default {
     value: Object,
     placeholder: {
       type: String,
-      default: 'Choisissez une matière'
+      default: 'Choisissez une matière',
     },
     name: String,
     filter: {
       type: Function,
-      default: (subjects) => subjects
+      default: subjects => subjects,
     },
     emptyChoice: {
       type: [String, Boolean],
-      default: 'Tout'
-    }
+      default: 'Tout',
+    },
   },
   computed: {
     ...mapGetters('subjects', ['all']),
@@ -56,14 +56,14 @@ export default {
     choices() {
       if (!this.emptyChoice) return this.all
       return [this.emptyChoiceObj, ...this.all]
-    }
-  }
+    },
+  },
 }
 </script>
 
 <style lang="stylus" scoped>
 .multiselect /deep/ .icon
-  margin-right: 0.2em
-  font-size: 1.5em
-  margin-left: -0.1em
+  margin-right 0.2em
+  margin-left -0.1em
+  font-size 1.5em
 </style>

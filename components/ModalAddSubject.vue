@@ -58,21 +58,21 @@ export default {
   props: {
     value: {
       type: Object,
-      required: true
+      required: true,
     },
     action: {
       type: String,
-      required: true
-    }
+      required: true,
+    },
   },
   data() {
     return {
       description: {
         name: 'subject',
         verboseName: 'matière',
-        gender: 'F'
+        gender: 'F',
       },
-      goal: null
+      goal: null,
     }
   },
   computed: {
@@ -84,7 +84,7 @@ export default {
     },
     modalName() {
       return this.action + '-' + this.description.name
-    }
+    },
   },
   mounted() {
     this.$withLoadingScreen(async () => {
@@ -93,36 +93,39 @@ export default {
   },
   methods: {
     ...mapGetters('subjects', ['validate']),
-    ...mapGetters('settings', { settingValue: 'value' })
-  }
+    ...mapGetters('settings', { settingValue: 'value' }),
+  },
 }
 </script>
 
 <style lang="stylus" scoped>
 .color-and-name
-  display: flex
-  align-items: center
-  margin-bottom: 2em
+  display flex
+  align-items center
+  margin-bottom 2em
 
   .color-picker
-    font-size: 1.25em
+    font-size 1.25em
 
     & /deep/ .opener
-      margin-top: 0.5em
-      margin-right: 1em
+      margin-top 0.5em
+      margin-right 1em
 
 .grades-related
   display flex
   align-items center
+
   .field:first-child /deep/ input
-    max-width: 110px
+    max-width 110px
+
   .field:nth-child(2) /deep/ input
-    max-width: 200px
+    max-width 200px
+
   .field:first-child
     margin-right 1rem
 
 .submit
-  margin-top: 1.5em
-  display: flex
-  justify-content: flex-end
+  display flex
+  justify-content flex-end
+  margin-top 1.5em
 </style>

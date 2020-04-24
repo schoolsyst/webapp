@@ -71,25 +71,25 @@ export default {
     InputField,
     ButtonNormal,
     BadgeSubject,
-    PickerDateDue
+    PickerDateDue,
   },
   props: {
     value: {
       type: Object,
-      default: null
+      default: null,
     },
     action: {
       type: String,
-      required: true
-    }
+      required: true,
+    },
   },
   data() {
     return {
       description: {
         name: 'homework',
         verboseName: 'devoir',
-        gender: 'M'
-      }
+        gender: 'M',
+      },
     }
   },
   computed: {
@@ -103,7 +103,7 @@ export default {
         EXERCISE: 'faire',
         TOBRING: 'apporter',
         COURSEWORK: 'faire',
-        TEST: 'réviser'
+        TEST: 'réviser',
       }[this.value.type]
     },
     namespace() {
@@ -126,62 +126,62 @@ export default {
     },
     valueWithDue() {
       return { ...this.value, due: this.due }
-    }
+    },
   },
   methods: {
-    ...mapGetters('homework', ['validate'])
-  }
+    ...mapGetters('homework', ['validate']),
+  },
 }
 </script>
 
 <style lang="stylus" scoped>
 .content
-  height: 100%
-  display: grid
-  grid-template-rows: 1fr 3fr 1fr
+  display grid
+  height 100%
+  grid-template-rows 1fr 3fr 1fr
 
 .header
-  display: flex
-  align-items: center
+  display flex
+  align-items center
 
   @media (max-width: 650px)
-    flex-direction: column
-    justify-content: center
+    flex-direction column
+    justify-content center
 
   .subject
-    margin-right: 0.5em
+    margin-right 0.5em
 
     @media (min-width: 651px)
-      max-width: 33%
-      font-size: 1.75rem
+      max-width 33%
+      font-size 1.75rem
 
     @media (max-width: 650px)
-      margin-bottom: 1.5rem
-      font-size: 1.25rem
-      width: 100%
+      margin-bottom 1.5rem
+      width 100%
+      font-size 1.25rem
 
   .name
-    width: 100%
+    width 100%
 
 .details
-  height: 100%
+  height 100%
 
 .type
-  flex-direction: column
+  flex-direction column
 
   & /deep/ .RadioButton:not(:last-child)
-    margin-bottom: 0.5em
+    margin-bottom 0.5em
 
-  margin-bottom: 1em
-  margin-top: 0.75em // FIXME: Pixel perfect. (to vertically line it up w/ the .details field)
+  margin-top 0.75em //FIXME: Pixel perfect. (to vertically line it up w/ the .details field)
+  margin-bottom 1em
 
 .due.active
   & /deep/ label
-    top: 0
+    top 0
 
 .submit-area
-  margin-top: 2rem
-  display: flex
-  justify-content: flex-end
-  align-items: flex-end
+  display flex
+  justify-content flex-end
+  align-items flex-end
+  margin-top 2rem
 </style>

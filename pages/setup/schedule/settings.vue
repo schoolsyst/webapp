@@ -38,16 +38,16 @@ export default {
     ButtonNormal,
     InputSetting,
     TheBottomBar,
-    ModalDialogConfirm
+    ModalDialogConfirm,
   },
   layout: 'bare',
   computed: {
     ...mapGetters('settings', ['all']),
     settings() {
       return this.all.filter(
-        (s) => !s.optional && !s.hidden && s.category === 'Emploi du temps'
+        s => !s.optional && !s.hidden && s.category === 'Emploi du temps'
       )
-    }
+    },
   },
   mounted() {
     this.$withLoadingScreen(async () => {
@@ -56,12 +56,12 @@ export default {
   },
   methods: {
     ...mapActions({
-      setSetting: 'settings/setValue'
+      setSetting: 'settings/setValue',
     }),
     async skip() {
       await this.setSetting({
         key: 'use_schedule',
-        value: false
+        value: false,
       })
       // setValue is debounced to 500ms
       setTimeout(() => {
@@ -69,24 +69,24 @@ export default {
         this.$router.push('/')
         this.$modal.close('confirm-skip')
       }, 500)
-    }
-  }
+    },
+  },
 }
 </script>
 
 <style lang="stylus" scoped>
 .container
-  display: flex
-  justify-content: center
-  align-items: center
-  flex-direction: column
-  margin-bottom: 100px // scroll space needed because of <TheBottomBar>
+  display flex
+  flex-direction column
+  justify-content center
+  align-items center
+  margin-bottom 100px //scroll space needed because of <TheBottomBar>
 
 h1
-  margin-bottom: 1em
-  text-align: center
+  margin-bottom 1em
+  text-align center
 
 ul.settings
   li
-    margin-bottom: 1em
+    margin-bottom 1em
 </style>

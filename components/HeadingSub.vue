@@ -15,13 +15,13 @@ export default {
   props: {
     buttons: {
       type: Boolean,
-      default: false
+      default: false,
     },
     small: {
       type: Boolean,
-      default: false
-    }
-  }
+      default: false,
+    },
+  },
 }
 </script>
 
@@ -36,11 +36,11 @@ export default {
   &.small
     font-size: 0.9em
 
-+desktop
+    +desktop
   .HeadingSub
     display: inline-flex
     align-items: center
-+mobile
+    +mobile
   .HeadingSub
     margin-top: 10px
 </style>

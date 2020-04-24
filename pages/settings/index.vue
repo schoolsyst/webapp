@@ -57,29 +57,29 @@ export default {
     InputSetting,
     Icon,
     ModalAddSubject,
-    ButtonNormal
+    ButtonNormal,
   },
   data() {
     const defaults = {
       name: '',
       color: '#000000',
-      weight: 1
+      weight: 1,
     }
     return {
       newSubject: {
-        ...defaults
+        ...defaults,
       },
       editingSubject: {
         ...defaults,
-        uuid: null
-      }
+        uuid: null,
+      },
     }
   },
   methods: {
     ...mapActions('subjects', {
       postSubject: 'post',
       patchSubject: 'patch',
-      delSubject: 'delete'
+      delSubject: 'delete',
     }),
     modifySubject(subject) {
       this.editingSubject = subject
@@ -90,18 +90,18 @@ export default {
         // Reload the page to apply the theme
         this.$router.go({ path: '/settings', force: true })
       }
-    }
+    },
   },
   computed: {
     ...mapGetters('settings', ['grouped', 'all']),
-    ...mapGetters('subjects', { subjects: 'all', sortSubjects: 'orderBy' })
+    ...mapGetters('subjects', { subjects: 'all', sortSubjects: 'orderBy' }),
   },
   mounted() {
     this.$withLoadingScreen(async () => {
       await this.$store.dispatch('settings/load')
       await this.$store.dispatch('subjects/load')
     })
-  }
+  },
 }
 </script>
 
@@ -110,40 +110,40 @@ export default {
   padding 0 1.2em
 
 ul.categories li
-  display: flex
-  flex-direction: column
-  justify-content: center
-  margin-bottom: 1.5rem
+  display flex
+  flex-direction column
+  justify-content center
+  margin-bottom 1.5rem
 
   p.description
-    margin-bottom: 0.5em
-    margin-top: 0.5em
-    font-size: 0.9em
-    text-align: center
-    font-style: italic
+    margin-top 0.5em
+    margin-bottom 0.5em
+    text-align center
+    font-style italic
+    font-size 0.9em
 
 h2
-  margin-bottom: 0.5em
+  margin-bottom 0.5em
 
 ul.subjects li
-  margin-bottom: 1em
+  margin-bottom 1em
 
   &.new
-    background: var(--blue-offset)
-    color: var(--blue)
-    border-radius: var(--border-radius)
-    display: flex
-    justify-content: center
-    align-items: center
-    width: 100%
-    max-width: 450px
-    height: 100px
-    cursor: pointer
+    display flex
+    justify-content center
+    align-items center
+    max-width 450px
+    width 100%
+    height 100px
+    border-radius var(--border-radius)
+    background var(--blue-offset)
+    color var(--blue)
+    cursor pointer
 
     & /deep/ i
-      font-size: 3rem
+      font-size 3rem
 
     &:hover
-      background: var(--blue-offset-dark)
-      color: var(--blue-dark)
+      background var(--blue-offset-dark)
+      color var(--blue-dark)
 </style>

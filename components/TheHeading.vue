@@ -6,19 +6,19 @@
 
 <script>
 export default {
-  name: 'TheHeading'
+  name: 'TheHeading',
 }
 </script>
 
 <style lang="stylus" scoped>
 .TheHeading
-  font-weight: 100
+  font-weight 100
 
-  @media (max-width 650px)
-    font-size: 48px
-    margin-bottom: 5px
+  @media (max-width: 650px)
+    margin-bottom 5px
+    font-size 48px
 
-  @media (min-width 650px)
-    font-size: 3rem
-    line-height: 3rem
+  @media (min-width: 650px)
+    font-size 3rem
+    line-height 3rem
 </style>

@@ -4,7 +4,6 @@ import { getMarkAttrs } from 'tiptap-utils'
 import { InputRule } from 'prosemirror-inputrules'
 
 export default class Link extends Mark {
-
   get name() {
     return 'link'
   }
@@ -31,11 +30,15 @@ export default class Link extends Mark {
           }),
         },
       ],
-      toDOM: node => ['a', {
-        ...node.attrs,
-        rel: 'noopener noreferrer nofollow',
-        target: '_blank'
-      }, 0],
+      toDOM: node => [
+        'a',
+        {
+          ...node.attrs,
+          rel: 'noopener noreferrer nofollow',
+          target: '_blank',
+        },
+        0,
+      ],
     }
   }
 
@@ -54,7 +57,7 @@ export default class Link extends Mark {
       pasteRule(
         /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._+~#=]{2,256}\.[a-zA-Z]{2,}\b([-a-zA-Z0-9@:%_+.~#?&//=]*)/g,
         type,
-        url => ({ href: url }),
+        url => ({ href: url })
       ),
     ]
   }
@@ -64,8 +67,8 @@ export default class Link extends Mark {
       InputRule(
         /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._+~#=]{2,256}\.[a-zA-Z]{2,}\b([-a-zA-Z0-9@:%_+.~#?&//=]*)/g,
         type,
-        url => ({ href: url }),
-      )
+        url => ({ href: url })
+      ),
     ]
   }
 
@@ -90,5 +93,4 @@ export default class Link extends Mark {
       }),
     ]
   }
-
 }

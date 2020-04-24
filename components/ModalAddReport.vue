@@ -82,34 +82,34 @@ export default {
     InputField,
     InputButtonsSelect,
     ScreenEmpty,
-    ScreenSuccess
+    ScreenSuccess,
   },
   props: {
     value: {
       type: Object,
-      required: true
+      required: true,
     },
     action: {
       type: String,
-      required: true
-    }
+      required: true,
+    },
   },
   data() {
     return {
       description: {
         name: 'report',
         verboseName: 'rapport',
-        gender: 'M'
+        gender: 'M',
       },
       reportTypes: [
         {
           key: 'BUG',
-          label: 'Signaler un bug'
+          label: 'Signaler un bug',
         },
         {
           key: 'FEATURE',
-          label: 'Proposer une fonctionnalité'
-        }
+          label: 'Proposer une fonctionnalité',
+        },
       ],
       message: {
         // Bug report
@@ -118,16 +118,16 @@ export default {
         expected: '',
         // Feature request
         problem: '',
-        solution: ''
+        solution: '',
       },
       titles: {
         how: 'Comment avez-vous rencontré ce bug ?',
         what: "Que s'est-il passé ?",
         expected: 'À quoi vous attendiez-vous ?',
         problem: 'À quel problème répond votre solution ?',
-        solution: 'Décrivez votre solution'
+        solution: 'Décrivez votre solution',
       },
-      submitted: false
+      submitted: false,
     }
   },
   computed: {
@@ -142,8 +142,8 @@ export default {
       // let message = sections
       // console.log(`getFullMessage: message=${message}`)
       const message = sections
-        .filter((s) => !!this.message[s])
-        .map((s) => `<h2>${this.titles[s]}</h2>${this.message[s]}`)
+        .filter(s => !!this.message[s])
+        .map(s => `<h2>${this.titles[s]}</h2>${this.message[s]}`)
         .join('')
       console.log(`getFullMessage: message=${message}`)
 
@@ -174,7 +174,7 @@ export default {
     },
     validation() {
       return this.validate()(this.value)
-    }
+    },
   },
   methods: {
     ...mapGetters('reports', ['validate']),
@@ -191,25 +191,25 @@ export default {
     },
     goToGithub() {
       this.$router.push('https://github.com/schoolsyst/frontend/issues/new')
-    }
-  }
+    },
+  },
 }
 </script>
 
 <style lang="stylus" scoped>
 .report-type
-  display: flex
-  justify-content: center
-  margin-bottom: 1em
+  display flex
+  justify-content center
+  margin-bottom 1em
 
 .notice
-  font-size: 0.75em
-  width: 500px
-  text-align: center
+  width 500px
+  text-align center
+  font-size 0.75em
 
 /deep/ #empty-state
-  height: 100%
-  max-width: calc(100vw - 100px)
-  min-height: unset
-  width: 100%
+  min-height unset
+  max-width calc(100vw - 100px)
+  width 100%
+  height 100%
 </style>

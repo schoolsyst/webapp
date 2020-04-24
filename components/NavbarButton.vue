@@ -13,7 +13,7 @@ export default {
   props: {
     to: String,
     icon: String,
-    title: String
+    title: String,
   },
 
   methods: {
@@ -27,7 +27,7 @@ export default {
       }
 
       return currentPage
-    }
+    },
   },
 
   updated() {
@@ -37,7 +37,7 @@ export default {
       document.querySelector('.NavbarButton.bad-icon i').innerHTML =
         'work_outline'
     }
-  }
+  },
 }
 </script>
 
@@ -47,30 +47,30 @@ export default {
 .NavbarButton
   &:focus
     outline: none
-  background-color: transparent
-  width: 100%
+    background-color: transparent
+    width: 100%
   @media (min-width: $bk-sidebar)
-      height: 64px
-      width: 64px
-  border-radius: 50%
-  display: flex
-  justify-content: center
-  align-items: center
+    height: 64px
+    width: 64px
+    border-radius: 50%
+    display: flex
+    justify-content: center
+    align-items: center
 
 .NavbarButton i
-    font-size: calc((100vw - 30px) / 6 / 1.5 - 10px)
+  font-size: calc((100vw - 30px) / 6 / 1.5 - 10px)
     // The automatic font-size becomes ridiculously high for vw >= 500
-    @media (min-width: 450px)
-      font-size: 40px
+  @media (min-width: 450px)
+    font-size: 40px
     user-select: none
 
 @media (min-width: $bk-sidebar)
-    .NavbarButton.current-page
-        background-color: var(--blue-offset)
+  .NavbarButton.current-page
+    background-color: var(--blue-offset)
 
 .NavbarButton:hover i,
 .NavbarButton.current-page i,
 .NavbarButton:focus i
-    color: var(--blue)
-    font-family: 'Material Icons'
+  color: var(--blue)
+  font-family: 'Material Icons'
 </style>

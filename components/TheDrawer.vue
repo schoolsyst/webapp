@@ -45,8 +45,8 @@ export default {
   props: {
     opened: {
       type: Boolean,
-      default: false
-    }
+      default: false,
+    },
   },
   computed: mapGetters({ links: 'drawerLinks' }),
   methods: {
@@ -61,108 +61,108 @@ export default {
       if (link.hasOwnProperty('notifications')) {
         return link.notifications >= 1 || link.notifications === '99+'
       }
-    }
-  }
+    },
+  },
 }
 </script>
 
 <style lang="stylus" scoped>
 nav
-  position: fixed
-  left: 0
-  bottom: 0
-  top: 0
-  padding-top: 1.25em
-  display: flex
-  background: var(--white)
-  z-index: 1000
-  width: 20em
-  overflow-y: auto
-  transition: left 0.375s ease
-  box-shadow: 0 8px 10px -5px rgba(0, 0, 0, 0.2), 0 16px 24px 2px rgba(0, 0, 0, 0.14), 0 6px 30px 5px rgba(0, 0, 0, 0.12)
+  position fixed
+  top 0
+  bottom 0
+  left 0
+  z-index 1000
+  display flex
+  overflow-y auto
+  padding-top 1.25em
+  width 20em
+  background var(--white)
+  box-shadow 0 8px 10px -5px rgba(0, 0, 0, 0.2), 0 16px 24px 2px rgba(0, 0, 0, 0.14), 0 6px 30px 5px rgba(0, 0, 0, 0.12)
+  transition left 0.375s ease
 
 .image
-  padding-bottom: 0
+  padding-bottom 0
 
   svg
-    width: 15em
-    height: 3em
+    width 15em
+    height 3em
 
 .user
-  padding-top: 0
-  margin-bottom: 0.5em
-  display: flex
-  align-items: center
+  display flex
+  align-items center
+  margin-bottom 0.5em
+  padding-top 0
 
   .email
-    font-size: 0.85em
+    font-size 0.85em
 
   .logout
-    font-size: 1.5em
-    margin-right: 0.5em
-    color: var(--red)
+    margin-right 0.5em
+    color var(--red)
+    font-size 1.5em
 
     &:hover
-      color: var(--red-dark)
+      color var(--red-dark)
 
 .link
-  display: flex
-  align-items: center
+  display flex
+  align-items center
 
   .icon
-    font-size: 1.4em
+    font-size 1.4em
 
   .name
-    margin-left: 1em
-    font-size: 1.2em
-    white-space: nowrap
+    margin-left 1em
+    white-space nowrap
+    font-size 1.2em
 
   &:hover, &:focus
     .icon, .name
-      color: var(--blue-dark)
+      color var(--blue-dark)
 
   &::-moz-focus-inner
-    border-style: none
+    border-style none
 
   .notifications-badge
-    margin-left: auto
-    background: var(--red)
-    color: var(--white)
-    padding: 0.2em 0.5em
-    border-radius: calc(var(--border-radius) * (1 / 2))
-    display: flex
-    font-family: var(--fonts-monospace)
+    display flex
+    margin-left auto
+    padding 0.2em 0.5em
+    border-radius calc(var(--border-radius) * (1 / 2))
+    background var(--red)
+    color var(--white)
+    font-family var(--fonts-monospace)
 
 li
-  padding: 0.85em 1.5em
-  margin: 0.25em 0
+  margin 0.25em 0
+  padding 0.85em 1.5em
 
   &.current
-    color: var(--blue)
-    background: var(--blue-offset)
-    border-top-right-radius: 3em
-    border-bottom-right-radius: 3em
+    border-top-right-radius 3em
+    border-bottom-right-radius 3em
+    background var(--blue-offset)
+    color var(--blue)
 
 hr
-  margin: 0.5em 0
-  opacity: 0.25
+  margin 0.5em 0
+  opacity 0.25
 
 ul
-  z-index: 1000
+  z-index 1000
 
 .overlay
-  position: fixed
-  top: 0
-  right: 0
-  bottom: 0
-  top: 0
-  width: 100vw
-  // background rgba(0,0,0,0.125)
-  background: transparent
-  z-index: 900
+  position fixed
+  top 0
+  top 0
+  right 0
+  bottom 0
+  z-index 900
+  width 100vw
+  //background rgba(0,0,0,0.125)
+  background transparent
 
 .nav-wrapper:not(.opened) .overlay
-  opacity: 0
-  transition: opacity 0.5s ease
-  pointer-events: none
+  opacity 0
+  transition opacity 0.5s ease
+  pointer-events none
 </style>

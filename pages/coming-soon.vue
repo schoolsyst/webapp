@@ -7,8 +7,8 @@
 
 <style lang="stylus" scoped>
 .container
-  display: flex
-  justify-content: center
-  align-items: center
-  flex-direction: column
+  display flex
+  flex-direction column
+  justify-content center
+  align-items center
 </style>

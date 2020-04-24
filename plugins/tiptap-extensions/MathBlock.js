@@ -13,7 +13,7 @@ export default class MathBlock extends Node {
       defining: true,
       draggable: false,
       parseDOM: [{ tag: 'math[display=block]' }],
-      toDOM: () => ['math', { display: 'block' }, 0]
+      toDOM: () => ['math', { display: 'block' }, 0],
     }
   }
 
@@ -23,7 +23,7 @@ export default class MathBlock extends Node {
 
   keys({ type }) {
     return {
-      'Mod-Shift-e': toggleWrap(type)
+      'Mod-Shift-e': toggleWrap(type),
     }
   }
 

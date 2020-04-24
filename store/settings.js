@@ -11,16 +11,16 @@ export const state = () => ({
   verboseChoices: {
     LIGHT: 'Clair',
     DARK: 'Sombre',
-    AUTO: 'Automatique'
-  }
+    AUTO: 'Automatique',
+  },
 })
 
 export const getters = {
   all: (state, getters) => state.settings,
-  fromCategory: (state, getters) => (category) =>
-    state.settings.filter((s) => s.category === category),
+  fromCategory: (state, getters) => category =>
+    state.settings.filter(s => s.category === category),
   one: (state, getters) => (propval, prop = 'key') =>
-    state.settings.find((o) => o[prop] === propval) || null,
+    state.settings.find(o => o[prop] === propval) || null,
   value: (state, getters) => (propval, fallback = null, prop = 'key') => {
     const setting = getters.one(propval, prop)
     if (setting === null)
@@ -29,7 +29,7 @@ export const getters = {
         // eslint-disable-next-line
         console.error(
           `No setting with ${prop}=${propval}. Available ${prop}s: ${getters.all.map(
-            (o) => o[prop]
+            o => o[prop]
           )}`
         )
         return
@@ -43,7 +43,7 @@ export const getters = {
      * ^__.+__$
      */
     if (removeHidden)
-      settings = settings.filter((o) => !o.category.match(/^__.+__$/))
+      settings = settings.filter(o => !o.category.match(/^__.+__$/))
     settings = groupBy(settings, 'category')
     return [...Object.entries(settings)]
   },
@@ -51,7 +51,7 @@ export const getters = {
   userHasSetting: (_, { one }) => (propval, prop = 'key') => {
     const setting = one(propval, prop)
     return setting ? !setting.isDefaultValue : null
-  }
+  },
 }
 
 export const mutations = {
@@ -60,12 +60,12 @@ export const mutations = {
      * and a value (Setting.value in the backend)
      */
     let hydratedSettings = []
-    definitions.forEach((definition) => {
+    definitions.forEach(definition => {
       let value, uuid
       let { choices } = definition
       const { category } = definition
       // Attempt to get the user's value for this setting definition
-      const setting = settings.find((o) => o.setting.key === definition.key)
+      const setting = settings.find(o => o.setting.key === definition.key)
       // Set `value` property: if setting is undefined, fallback to the default
       // value, else use the one on the found setting
       const isDefaultValue = setting === undefined
@@ -94,7 +94,7 @@ export const mutations = {
         isDefaultValue,
         rawValue,
         uuid,
-        hidden
+        hidden,
       }
 
       hydratedSettings.push(hydratedDefinition)
@@ -107,12 +107,12 @@ export const mutations = {
   // eslint-disable-next-line
   ...getMutations(
     'setting',
-    (o) => ({ ...o, value: parsedValue(o.value, o) }),
+    o => ({ ...o, value: parsedValue(o.value, o) }),
     true,
     ['del', 'add', 'patch'],
     'key',
     true
-  )
+  ),
   // TODO validator: customConstraints from definitions
   // eg: if (definition.required) /* check if setting is not empty */ else return true
   // eg2: try { parseValue(definition.type, setting.value) } catch (e) { return false }
@@ -155,7 +155,7 @@ export const actions = {
     setting = {
       ...setting,
       value: stringifiedValue(setting.value),
-      user: this.$auth.user.id
+      user: this.$auth.user.id,
     }
     if (early) commit('PATCH', { modifications: setting })
     const res = await this.$axios.post('/settings/', setting)
@@ -169,7 +169,7 @@ export const actions = {
     if (modifications.hasOwnProperty('value')) {
       modifications.value = stringifiedValue({
         value: modifications.value,
-        type
+        type,
       })
     }
     if (early) {
@@ -225,21 +225,21 @@ export const actions = {
           await dispatch('patch', {
             key,
             modifications: { value },
-            early
+            early,
           })
           // The setting exist but that user has never set a value
         } else if (getters.one(key)) {
           await dispatch('post', {
             setting: {
               setting: key,
-              value
+              value,
             },
-            early
+            early,
           })
           // The setting does not exist
         } else {
           this.$toast.error("Ce réglage n'exsite pas", {
-            icon: 'error_outline'
+            icon: 'error_outline',
           })
         }
       } catch (error) {
@@ -260,7 +260,7 @@ export const actions = {
     }
     const value = !setting.value
     await dispatch('setValue', { key, force, value, early: true })
-  }
+  },
 }
 
 const parsedValue = (
@@ -285,8 +285,8 @@ const parsedValue = (
     // Handle multiple values
     parsed = value
       .split('\n') // split by newlines
-      .map((v) => v.replace('\r', '')) // remove windows fuckeries
-      .map((v) =>
+      .map(v => v.replace('\r', '')) // remove windows fuckeries
+      .map(v =>
         // parse each value                  ↓ Prevents ∞ recursion
         parsedValue(v, { type, multiple: false, positive }, recursionLevel + 1)
       )
@@ -317,13 +317,13 @@ const parsedValue = (
         // Gets the start and stop dates.
         let dates = value.split(' - ')
         // Parse each date
-        dates = dates.map((date) =>
+        dates = dates.map(date =>
           parsedValue(
             date,
             {
               type: 'DATE',
               multiple: false,
-              positive: false
+              positive: false,
             },
             recursionLevel + 1
           )
@@ -374,8 +374,8 @@ const stringifiedValue = ({ value, type }) => {
         representation: {
           DATE: 'complete',
           TIME: 'time',
-          DATETIME: 'complete'
-        }[type]
+          DATETIME: 'complete',
+        }[type],
       })
 
     case 'BOOLEAN':

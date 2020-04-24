@@ -31,32 +31,32 @@ export default {
   props: {
     name: {
       type: String,
-      required: true
+      required: true,
     },
     details: {
       type: String,
-      default: ''
+      default: '',
     },
     subject: {
       type: Object,
-      required: true
+      required: true,
     },
     uuid: {
       type: String,
-      required: true
+      required: true,
     },
     progress: {
       type: Number,
-      default: 0
+      default: 0,
     },
     opened: {
       type: Boolean,
-      default: false
+      default: false,
     },
     type: {
       type: String,
-      required: true
-    }
+      required: true,
+    },
   },
   computed: {
     completed() {
@@ -64,7 +64,7 @@ export default {
     },
     sliderTooltip() {
       return `Marquer comme ${this.completed ? 'non-' : ''}terminé`
-    }
+    },
   },
   methods: {
     ...mapActions('homework', ['switchCompletion']),
@@ -75,113 +75,113 @@ export default {
       },
       500,
       { leading: true, trailing: false }
-    )
-  }
+    ),
+  },
 }
 </script>
 
 <style lang="stylus" scoped>
 .card
-  cursor: pointer
-  display: flex
-  // height: 100px
-  width: 500px
-  max-width: 100%
-  overflow: hidden
-  border-radius: var(--border-radius)
-  transition: box-shadow 0.25s ease
+  display flex
+  overflow hidden
+  max-width 100%
+  //height: 100px
+  width 500px
+  border-radius var(--border-radius)
+  cursor pointer
+  transition box-shadow 0.25s ease
 
 .strikethrough-line
-  --strikethrough-line-offset: 0px
-  height: 0.1em
-  background: var(--black)
-  position: absolute
-  top: 50%
-  left: calc(((100% - (100% - (var(--strikethrough-line-offset) * 2))) / 2))
-  width: 0
-  transition: width 0.25s ease
+  position absolute
+  top 50%
+  left calc(((100% - (100% - (var(--strikethrough-line-offset) * 2))) / 2))
+  width 0
+  height 0.1em
+  background var(--black)
+  transition width 0.25s ease
+  --strikethrough-line-offset 0
 
 .card.completed .complete-slider
-  background-color: var(--blue)
+  background-color var(--blue)
 
 .card:not(.completed) .complete-slider
-  background-color: var(--green)
+  background-color var(--green)
 
 .complete-slider
-  width: 0
-  overflow: hidden
-  color: var(--white)
-  display: flex
-  align-items: center
-  transition: width 0.25s ease
-  flex-shrink: 0
-  z-index: 10
-  border-radius: var(--border-radius)
-  border-top-right-radius: 0
-  border-bottom-right-radius: 0
+  z-index 10
+  display flex
+  flex-shrink 0
+  align-items center
+  overflow hidden
+  width 0
+  border-radius var(--border-radius)
+  border-top-right-radius 0
+  border-bottom-right-radius 0
+  color var(--white)
+  transition width 0.25s ease
 
   i
-    margin-left: 0.5em
+    margin-left 0.5em
 
 .infos
-  padding: 1.1em 1.2em
-  border: 1px solid var(--grey-light)
-  border-radius: var(--border-radius)
-  width: 100%
-  display: flex
-  flex-direction: column
-  position: relative
+  position relative
+  display flex
+  flex-direction column
+  padding 1.1em 1.2em
+  width 100%
+  border 1px solid var(--grey-light)
+  border-radius var(--border-radius)
 
   .first-line
-    align-items: center
-    display: flex
-    width: 100%
-    overflow: hidden
-    text-overflow: ellipsis
-    white-space: nowrap
-    position: relative
+    position relative
+    display flex
+    align-items center
+    overflow hidden
+    width 100%
+    text-overflow ellipsis
+    white-space nowrap
 
   .name
-    margin-left: 0.5rem
+    margin-left 0.5rem
 
   .details
-    margin-top: 0.5em
-    width: 100%
-    overflow: hidden
-    text-overflow: ellipsis
-    white-space: pre-wrap
-    font-size: 0.75em
-    flex-grow: 0
+    flex-grow 0
+    overflow hidden
+    margin-top 0.5em
+    width 100%
+    text-overflow ellipsis
+    white-space pre-wrap
+    font-size 0.75em
 
   .graded-indicator
-    font-size: 1.3em
-    margin-left: auto
+    margin-left auto
+    font-size 1.3em
 
 .is-a-test .graded-indicator
   color var(--red)
 
 .card.completed
   .infos
-    opacity: 0.5
+    opacity 0.5
 
   .strikethrough-line
-    width: calc(100% - (var(--strikethrough-line-offset) * 2))
+    width calc(100% - (var(--strikethrough-line-offset) * 2))
 
 .card:hover
   &
-    box-shadow: var(--shadow-2)
+    box-shadow var(--shadow-2)
 
   .complete-slider
-    width: 3em
+    width 3em
 
   &.completed .complete-slider:hover
-    background-color: var(--blue-dark)
+    background-color var(--blue-dark)
 
   &:not(.completed) .complete-slider:hover
-    background-color: var(--green-light)
+    background-color var(--green-light)
 
   .infos
-    border-top-left-radius: 0px
-    border-bottom-left-radius: 0px
-    border-left: 0px
+    border-left 0
+    border-top-left-radius 0
+    border-bottom-left-radius 0
 </style>

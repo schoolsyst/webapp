@@ -7,7 +7,7 @@ import {
   parseISO,
   getUnixTime,
   fromUnixTime,
-  isSameDay
+  isSameDay,
 } from 'date-fns'
 // (caused by removeTime) eslint-disable-next-line import/named
 import { getValidator, getMutations, removeTime } from './index'
@@ -18,12 +18,12 @@ export const state = () => ({
     { importance: 1, key: 'TOBRING', label: 'À apporter' },
     { importance: 1, key: 'EXERCISE', label: 'Exercice' },
     { importance: 2, key: 'COURSEWORK', label: 'Travail noté' },
-    { importance: 3, key: 'TEST', label: 'Contrôle' }
+    { importance: 3, key: 'TEST', label: 'Contrôle' },
   ],
-  loaded: false
+  loaded: false,
 })
 
-const parseHomeworkDates = (homework) => {
+const parseHomeworkDates = homework => {
   if (homework.due && typeof homework.due === 'string')
     homework.due = removeTime(parseISO(homework.due))
   if (homework.added && typeof homework.added === 'string')
@@ -44,28 +44,28 @@ export const getters = {
   types: ({ types }) => types,
   all: ({ homeworks }, { order }) => order(homeworks),
   one: (_, { all }) => (value, prop = 'uuid') =>
-    all.find((o) => o[prop] === value) || null,
+    all.find(o => o[prop] === value) || null,
   nextWeek: (_, { all }, rootState) =>
-    all.filter((o) => differenceInWeeks(o.due, rootState.now) === 1),
+    all.filter(o => differenceInWeeks(o.due, rootState.now) === 1),
   currentWeek: (_, { all }, rootState) =>
-    all.filter((o) => isSameWeek(o.due, rootState.now)),
+    all.filter(o => isSameWeek(o.due, rootState.now)),
   currentOrNextWeek: (_, { currentWeek, nextWeek }) => [
     ...currentWeek,
-    ...nextWeek
+    ...nextWeek,
   ],
-  importanceOf: ({ types }) => (homework) => {
-    if (types.map((t) => t.key).includes(homework.type)) {
-      return types.find((t) => t.key === homework.type).importance
+  importanceOf: ({ types }) => homework => {
+    if (types.map(t => t.key).includes(homework.type)) {
+      return types.find(t => t.key === homework.type).importance
     }
     return 0
   },
   pending: (_, { currentOrNextWeek }) =>
-    currentOrNextWeek.filter((o) => o.progress === 1),
-  order: (_, { importanceOf }) => (homeworks) =>
+    currentOrNextWeek.filter(o => o.progress === 1),
+  order: (_, { importanceOf }) => homeworks =>
     [...homeworks].sort(
       firstBy((o1, o2) => isBefore(o1.due, o2.due))
-        .thenBy((o) => importanceOf(o))
-        .thenBy((o) => o.subject.weight)
+        .thenBy(o => importanceOf(o))
+        .thenBy(o => o.subject.weight)
         .thenBy('uuid')
     ),
   group: (_, { _needToShowGroup }, rootState) => (
@@ -80,7 +80,7 @@ export const getters = {
      */
     if (homeworks.length < 1) return []
     if (specialGroups.length) {
-      homeworks = homeworks.map((hw) => {
+      homeworks = homeworks.map(hw => {
         if (
           specialGroups.includes('late') &&
           isBefore(hw.due, getTodayDate()) &&
@@ -93,7 +93,7 @@ export const getters = {
       })
     }
     // Remove done homework from LATE group
-    homeworks = homeworks.filter((hw) => {
+    homeworks = homeworks.filter(hw => {
       if (hw.due === 'LATE') {
         return hw.progress < 1
       }
@@ -106,15 +106,15 @@ export const getters = {
     }
     // To put the LATE group at the top, we change its value to a negtive number.
     const LATE_DUE_NUMBER = -666 // No reason to use this number, huh. R-really, I-I-I mean... It's 1 AM
-    const index = flat.findIndex((g) => g.due === 'LATE')
+    const index = flat.findIndex(g => g.due === 'LATE')
     if (index !== -1) {
       flat[index].due = LATE_DUE_NUMBER
     }
     flat = flat.sort(firstBy('due'))
-    flat = flat.map((g) => ({
+    flat = flat.map(g => ({
       ...g,
-      homeworks: g.homeworks.map((h) => ({ ...h, due: h.realDue || h.due })),
-      due: g.due === LATE_DUE_NUMBER ? 'LATE' : g.due
+      homeworks: g.homeworks.map(h => ({ ...h, due: h.realDue || h.due })),
+      due: g.due === LATE_DUE_NUMBER ? 'LATE' : g.due,
     }))
     return flat
   },
@@ -132,9 +132,9 @@ export const getters = {
 		- - if the setting "show completed exercises" is true
     */
     const isEmpty = homeworks.length === 0
-    const someHomeworkNotCompleted = !!homeworks.filter((o) => o.progress < 1)
+    const someHomeworkNotCompleted = !!homeworks.filter(o => o.progress < 1)
       .length
-    const hasTests = homeworks.filter((o) => o.graded).length > 0
+    const hasTests = homeworks.filter(o => o.graded).length > 0
     // console.log({due, isEmpty, someHomeworkNotCompleted, hasTests, showCompleted})
     if (isEmpty) return false
     if (['LATE', 'TODAY'].includes(due)) {
@@ -146,37 +146,36 @@ export const getters = {
   only: (_, { all }) => (what, homeworks = null) => {
     homeworks = homeworks || all
     return homeworks.filter(
-      (o) => o.type === what.replace(/(.+)s$/, ($0, $1) => $1).toUpperCase()
+      o => o.type === what.replace(/(.+)s$/, ($0, $1) => $1).toUpperCase()
     )
   },
   exercises: (_, { only, all }) => only('exercises', all),
   tests: (_, { only, all }) => only('tests', all),
   counts: (_, { only, pending, currentOrNextWeek }) => ({
     exercises: only('exercises', pending),
-    tests: only('tests', currentOrNextWeek)
+    tests: only('tests', currentOrNextWeek),
   }),
-  verboseType: (_, { types }) => (type) =>
-    types.find((t) => t.key === type).label,
+  verboseType: (_, { types }) => type => types.find(t => t.key === type).label,
   validate: getValidator({
     constraints: {
       required: ['subject', 'name', 'due'],
       minimum: {
-        0: ['progress']
+        0: ['progress'],
       },
       maximum: {
-        1: ['progress']
+        1: ['progress'],
       },
       maxLength: {
-        300: ['name', 'room']
-      }
+        300: ['name', 'room'],
+      },
     },
     customConstraints: [
       {
         field: 'type',
         message: 'Type de devoir invalide',
         constraint: ({ types }, object) =>
-          types.map((t) => t.key).includes(object.type)
-      }
+          types.map(t => t.key).includes(object.type),
+      },
     ],
     fieldNames: {
       subject: { gender: 'F', name: 'matière' },
@@ -184,15 +183,15 @@ export const getters = {
       type: { gender: 'M', name: 'type' },
       room: { gender: 'F', name: 'salle' },
       progress: { gender: 'F', name: 'progression' },
-      due: { gender: 'F', name: 'date due' }
+      due: { gender: 'F', name: 'date due' },
     },
-    resourceName: { gender: 'M', name: 'devoir' }
-  })
+    resourceName: { gender: 'M', name: 'devoir' },
+  }),
 }
 
 export const mutations = {
   ...getMutations('homework', parseHomeworkDates),
-  POSTLOAD: (state) => (state.loaded = true)
+  POSTLOAD: state => (state.loaded = true),
 }
 
 export const actions = {
@@ -250,9 +249,9 @@ export const actions = {
           onClick: async (e, toast) => {
             await dispatch(`post`, { homework })
             toast.goAway(0)
-          }
+          },
         },
-        duration: 8000
+        duration: 8000,
       })
     } catch (error) {
       console.error(error)
@@ -311,7 +310,7 @@ export const actions = {
       uuid,
       modifications: { progress },
       force: true,
-      earlyMutation: true
+      earlyMutation: true,
     })
-  }
+  },
 }

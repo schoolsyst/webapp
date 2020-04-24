@@ -8,17 +8,17 @@ export default {
   props: {
     animateWhen: {
       type: String,
-      default: 'page-loads'
+      default: 'page-loads',
     },
     animation: {
       type: String,
-      default: 'animate-in'
-    }
+      default: 'animate-in',
+    },
   },
   computed: {
     id() {
       return 'lottie-overlay-loading-logo-' + this._uid
-    }
+    },
   },
   mounted() {
     if (window.innerWidth < 500 && this.animation === 'animate-in-compound') {
@@ -34,7 +34,7 @@ export default {
       renderer: 'svg',
       loop: this.animation === 'loop',
       autoplay: this.animateWhen === 'page-loads',
-      path: `/animations/data-${this.animation}${white ? '-white' : ''}.json`
+      path: `/animations/data-${this.animation}${white ? '-white' : ''}.json`,
     })
 
     if (this.animateWhen !== 'page-loads') {
@@ -46,10 +46,10 @@ export default {
         const intersectionObserverOptions = {
           root: null,
           rootMargin: '150px',
-          threshold: 1.0
+          threshold: 1.0,
         }
         const onIntersection = function(entries) {
-          entries.forEach((entry) => {
+          entries.forEach(entry => {
             // Are we in viewport?
             if (entry.intersectionRatio > 0) {
               // console.log('<OverlayLoadingLogo> playing animation: scrolled-into-view')
@@ -68,7 +68,7 @@ export default {
         observer.observe(self)
       }
     }
-  }
+  },
 }
 </script>
 

@@ -11,97 +11,97 @@ export const state = () => ({
     feature: version[0],
     ui: version[1],
     bug: version[2],
-    channel: 'beta'
+    channel: 'beta',
   },
   now: toDate(Date.now()), // For time-dependent getters.
   tomorrow: addDays(toDate(Date.now()), 1),
   today: new Date(),
   location: {
     latitude: null,
-    longitude: null
+    longitude: null,
   },
   links: [
     {
       name: 'Timeline',
       href: '/timeline',
       icon: 'timeline',
-      id: 'timeline'
+      id: 'timeline',
     },
     {
       name: 'Cours',
       href: '/notes',
       icon: 'insert_drive_file',
-      id: 'notes'
+      id: 'notes',
     },
     {
       name: 'Devoirs',
       href: '/homework',
       icon: 'book',
-      id: 'homework'
+      id: 'homework',
     },
     {
       name: 'Emploi du temps',
       href: '/coming-soon',
       icon: 'today',
-      id: 'schedule'
+      id: 'schedule',
     },
     {
       name: 'Notes',
       href: '/coming-soon',
       icon: 'school',
-      id: 'grades'
+      id: 'grades',
     },
     {
       name: 'Sac',
       href: '/coming-soon',
       icon: 'work_outline',
-      id: 'bag'
+      id: 'bag',
     },
     'separator',
     {
       name: 'Paramètres',
       href: '/settings',
       icon: 'settings',
-      id: 'settings'
+      id: 'settings',
     },
     {
       name: 'Vos contributions',
       href: '/reports',
       icon: 'bug_report',
-      id: 'reports'
+      id: 'reports',
     },
     {
       name: 'Signaler un bug',
       modal: 'add-report',
       icon: 'bug_report',
-      id: 'new-report'
-    }
-  ]
+      id: 'new-report',
+    },
+  ],
 })
 
 export const getters = {
-  textColor: (state, getters) => (backgroundColor) =>
+  textColor: (state, getters) => backgroundColor =>
     // TODO: handle var(--) ?
     /* returns the corresponding text color most visible
      * on backgroundColor: either 'black' or 'white'.
      */
     tinycolor(backgroundColor).isLight() ? 'black' : 'white',
-  formatTime: (state, getters) => (time) => {
+  formatTime: (state, getters) => time => {
     if (time === null) return null
     return format(time, 'HH:mm')
   },
-  drawerLinks: (state) =>
-    state.links.filter((link) => {
+  drawerLinks: state =>
+    state.links.filter(link => {
       if (link === 'separator') return true
       return !['new-report'].includes(link.id)
     }),
-  sideRailLinks: (state) =>
-    state.links.filter((link) => {
+  sideRailLinks: state =>
+    state.links.filter(link => {
       if (link === 'separator') return false
       return ['timeline', 'notes', 'homework', 'grades', 'new-report'].includes(
         link.id
       )
-    })
+    }),
 }
 
 export const mutations = {
@@ -111,7 +111,7 @@ export const mutations = {
   },
   UPDATE_LOCATION: (state, newLocation) => {
     state.location = newLocation
-  }
+  },
 }
 
 export const actions = {
@@ -133,7 +133,7 @@ export const actions = {
   acquireLocation({ commit, state }) {
     if (state.longitude === null || state.latitude === null)
       navigator.geolocation.getCurrentPosition(
-        (pos) => {
+        pos => {
           commit('UPDATE_LOCATION', pos.coords)
         },
         // eslint-disable-next-line
@@ -142,7 +142,7 @@ export const actions = {
           this.$toast.error("Impossible d'obtenir la localisation")
         }
       )
-  }
+  },
 }
 
 export const getValidator = ({
@@ -150,8 +150,8 @@ export const getValidator = ({
   resourceName,
   fieldNames,
   customConstraints = [],
-  debug
-}) => (getters) => (object) => {
+  debug,
+}) => getters => object => {
   debug = debug || false
   if (process.env.NODE_ENV !== 'development') debug = false
   /* Factory to create a validator.
@@ -166,7 +166,7 @@ export const getValidator = ({
     console.log(
       // eslint-disable-line
       Object.fromEntries(
-        Object.keys(fieldNames).map((field) => [field, object[field]])
+        Object.keys(fieldNames).map(field => [field, object[field]])
       )
     )
   }
@@ -192,7 +192,7 @@ export const getValidator = ({
   )
 
   // Uppercase first char
-  const upperFirst = (string) => string[0].toUpperCase() + string.slice(1)
+  const upperFirst = string => string[0].toUpperCase() + string.slice(1)
 
   // Checkers
   const checkers = {
@@ -223,7 +223,7 @@ export const getValidator = ({
       ) !== null,
     isOfType: ({ arg, fieldName }) =>
       // eslint-disable-next-line valid-typeof
-      typeof object[fieldName] === arg
+      typeof object[fieldName] === arg,
   }
   const check = ({ errorName, fieldName, errorArg }) => {
     // Wrap checkers with object property existential check
@@ -266,7 +266,7 @@ export const getValidator = ({
         isAnEmail:
           name === 'adresse email'
             ? `${fieldNameWithArticle} doit être valide`
-            : `${fieldNameWithArticle} doit être une adresse email valide`
+            : `${fieldNameWithArticle} doit être une adresse email valide`,
       }[errorName]
     )
   }
@@ -274,7 +274,7 @@ export const getValidator = ({
   // Stores the errors
   const errorMessages = {}
   // Fill each field with an empty array
-  Object.keys(fieldNames).forEach((field) => {
+  Object.keys(fieldNames).forEach(field => {
     errorMessages[field] = []
   })
   let validated = true
@@ -286,7 +286,7 @@ export const getValidator = ({
       // No arguments, field names are passed directly
       // eslint-disable-next-line
       if (fieldsOrArgs instanceof Array) {
-        fieldsOrArgs.forEach((fieldName) => {
+        fieldsOrArgs.forEach(fieldName => {
           if (!check({ errorName, fieldName, errorArg: null })) {
             // Some error occured, add the error message
             errorMessages[fieldName].push(
@@ -301,7 +301,7 @@ export const getValidator = ({
         for (const errorArg in fieldsOrArgs) {
           if (fieldsOrArgs.hasOwnProperty(errorArg)) {
             const fields = fieldsOrArgs[errorArg]
-            fields.forEach((fieldName) => {
+            fields.forEach(fieldName => {
               if (!check({ errorName, fieldName, errorArg })) {
                 errorMessages[fieldName].push(
                   message({ errorName, fieldName, errorArg })
@@ -347,7 +347,7 @@ export const getValidator = ({
     validated,
     errors: errorMessages,
     message: flatErrorMessage,
-    count: errorsCount
+    count: errorsCount,
   }
   if (debug) {
     if (ret.validated) {
@@ -369,7 +369,7 @@ export const getValidator = ({
 
 export const getMutations = (
   what,
-  mapWith = (o) => o,
+  mapWith = o => o,
   pure = true,
   verbs = ['add', 'set', 'del', 'patch'],
   primaryKey = 'uuid',
@@ -437,7 +437,7 @@ export const getMutations = (
       Vue.set(
         state,
         whats,
-        state[whats].filter((o) => o[primaryKey] !== pk)
+        state[whats].filter(o => o[primaryKey] !== pk)
       )
       if (debug) {
         console.log('after:')
@@ -453,7 +453,7 @@ export const getMutations = (
         console.log(state[whats])
       }
       // Get the requested item's index in the state array
-      const idx = state[whats].map((o) => o[primaryKey]).indexOf(pk)
+      const idx = state[whats].map(o => o[primaryKey]).indexOf(pk)
       // Apply modifications
       let item = { ...state[whats][idx], ...modifications }
       // Re-run mapWith
@@ -475,14 +475,14 @@ export const getMutations = (
 export const removeByProp = (arrayOfObjects, propName, propValue) => {
   const arr = [...arrayOfObjects]
   return arr.splice(
-    arr.findIndex((obj) => obj[propName] === propValue),
+    arr.findIndex(obj => obj[propName] === propValue),
     1
   )
 }
 
 // Reset time component to 00:00:00
 // Useful to do date-wise comparison, w/o taking time into account.
-export const removeTime = (date) => {
+export const removeTime = date => {
   date.setHours(0)
   date.setMinutes(0)
   date.setSeconds(0)

@@ -22,19 +22,19 @@ export default {
     ...mapGetters('settings', ['all']),
     settings() {
       return this.all.filter(
-        (s) => !s.optional && !s.hidden && s.category !== 'Emploi du temps'
+        s => !s.optional && !s.hidden && s.category !== 'Emploi du temps'
       )
-    }
+    },
   },
   mounted() {
     this.$withLoadingScreen(async () => {
       await this.$store.dispatch('settings/load')
     })
-  }
+  },
 }
 </script>
 
 <style lang="stylus" scoped>
 ul.settings li
-  margin-bottom: 1em
+  margin-bottom 1em
 </style>

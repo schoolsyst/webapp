@@ -10,16 +10,16 @@ export default class Superscript extends Mark {
     return {
       parseDOM: [
         {
-          tag: 'sup'
-        }
+          tag: 'sup',
+        },
       ],
-      toDOM: () => ['sup', 0]
+      toDOM: () => ['sup', 0],
     }
   }
 
   keys({ type }) {
     return {
-      'Mod-;': toggleMark(type)
+      'Mod-;': toggleMark(type),
     }
   }
 

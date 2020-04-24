@@ -3,15 +3,15 @@ import { firstBy } from 'thenby'
 import { getValidator, getMutations } from './index'
 const UAParser = require('ua-parser-js')
 
-export const parseReportDates = (report) => ({
+export const parseReportDates = report => ({
   ...report,
   published: report.published ? parseISO(report.published) : null,
-  added: report.added ? parseISO(report.added) : null
+  added: report.added ? parseISO(report.added) : null,
 })
 
 export const state = () => ({
   reports: [],
-  loaded: false
+  loaded: false,
 })
 
 export const getters = {
@@ -25,29 +25,29 @@ export const getters = {
   },
   all: ({ reports }, { order }) => order(reports),
   one: ({ reports }) => (what = 'uuid', value) =>
-    reports.find((o) => o[what] === value),
+    reports.find(o => o[what] === value),
   latest: ({ reports }) =>
     reports.length > 0 ? [...reports].sort(firstBy('added'))[0] : null,
-  resolved: ({ reports }) => reports.filter((o) => o.resolved),
-  unresolved: ({ reports }) => reports.filter((o) => !o.resolved),
+  resolved: ({ reports }) => reports.filter(o => o.resolved),
+  unresolved: ({ reports }) => reports.filter(o => !o.resolved),
   validate: getValidator({
     fieldNames: {
       type: { gender: 'M', name: 'type de demande' },
       title: { gender: 'M', name: 'titre' },
       content: { gender: 'M', name: 'message' },
-      happened: { gender: 'M', name: 'date' }
+      happened: { gender: 'M', name: 'date' },
     },
     resourceName: { gender: 'M', name: 'Rapport' },
     constraints: {
-      notEmpty: ['title', 'type', 'content']
+      notEmpty: ['title', 'type', 'content'],
     },
-    debug: true
-  })
+    debug: true,
+  }),
 }
 
 export const mutations = {
   ...getMutations('report', parseReportDates),
-  POSTLOAD: (state) => (state.loaded = true)
+  POSTLOAD: state => (state.loaded = true),
 }
 
 export const actions = {
@@ -61,7 +61,7 @@ export const actions = {
       }
     } catch (error) {
       this.$toast.error('Impossible de charger les rapports', {
-        icon: 'error_outline'
+        icon: 'error_outline',
       })
       console.error(error)
     }
@@ -75,7 +75,7 @@ export const actions = {
       browser: `${browser.name}/${browser.version}`,
       os: `${cpu.architecture}/${os.name}/${os.version}`,
       language: 'fr',
-      ...report
+      ...report,
     }
     if (!force) {
       const validation = getters.validate(report)
@@ -91,5 +91,5 @@ export const actions = {
       console.error(error)
       return false
     }
-  }
+  },
 }

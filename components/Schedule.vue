@@ -41,23 +41,23 @@ export default {
   props: {
     showDeleted: {
       type: Boolean,
-      default: true
+      default: true,
     },
     readOnly: {
       type: Boolean,
-      default: false
+      default: false,
     },
     bothWeeks: {
       type: Boolean,
-      default: false
+      default: false,
     },
     namespace: {
       type: String,
-      default: ''
+      default: '',
     },
     pixelsPerMinute: {
       type: Number,
-      default: 1.5
+      default: 1.5,
     },
     events: {
       type: Array,
@@ -69,12 +69,12 @@ export default {
           end: 9 * 3600,
           subject: {
             name: 'English',
-            color: 'blue'
+            color: 'blue',
           },
-          week_type: 'Q1'
-        }
-      ]
-    }
+          week_type: 'Q1',
+        },
+      ],
+    },
   },
   data() {
     const defaults = {
@@ -84,15 +84,15 @@ export default {
       start: null,
       end: null,
       room: null,
-      identifier$action: 'edit'
+      identifier$action: 'edit',
     }
     return {
       editingEvent: {
         ...defaults,
-        uuid: null
+        uuid: null,
       },
       recomputeCanvasWidth: 1,
-      headerHeight: 50
+      headerHeight: 50,
     }
   },
   computed: {
@@ -117,16 +117,14 @@ export default {
           height: this.headerHeight / 2,
           fontSize: 20,
           fontFamily: 'Now',
-          align: 'center'
+          align: 'center',
         })
       }
       return dayConfigs
     },
     heightOfLongestDay() {
       // Get the latest event to end
-      const latestEndingEvent = Math.max(
-        ...this.events.map((event) => event.end)
-      )
+      const latestEndingEvent = Math.max(...this.events.map(event => event.end))
       return latestEndingEvent - this.earliestStartTimeOfWeek
     },
     earliestStartTimeOfWeek() {
@@ -135,7 +133,7 @@ export default {
       // List of events[] grouped by day
       const eventsDayGrouped = Object.values(eventsByDay)
       // Get the length of each day
-      const dayStarts = eventsDayGrouped.map((events) => {
+      const dayStarts = eventsDayGrouped.map(events => {
         const sorted = events.sort(firstBy('start'))
         const dayStart = sorted[0].start
         return dayStart
@@ -155,12 +153,12 @@ export default {
         // thus we assume calendars will be at most 12 hours long.
         height: this.headerHeight + 12 * 60 * this.pixelsPerMinute,
         // width: Math.min(windowWidth - 100, 1000)
-        width: clamp(windowWidth - 100, 500, 1000)
+        width: clamp(windowWidth - 100, 500, 1000),
       }
     },
     colmunsCount() {
       // Get an array of days of events (unique)
-      const days = [...new Set(this.events.map((event) => event.day))]
+      const days = [...new Set(this.events.map(event => event.day))]
       // Work week (excluding weekends)
       let colmunsCount = 5
       // If we have saturday, bump the column count to 6
@@ -175,14 +173,12 @@ export default {
     },
     allEventsAreOnBothWeeks() {
       // Get all the events' week_types (unique)
-      const weekTypes = [
-        ...new Set(this.events.map((event) => event.week_type))
-      ]
+      const weekTypes = [...new Set(this.events.map(event => event.week_type))]
       return !weekTypes.includes('Q1') && !weekTypes.includes('Q2')
-    }
+    },
   },
   mounted() {
-    window.addEventListener('resize', (ev) => {
+    window.addEventListener('resize', ev => {
       this.recomputeCanvasWidth += 1
     })
   },
@@ -243,7 +239,7 @@ export default {
         height: this.resolveHeight(event),
         x,
         y,
-        fill: event.subject.color
+        fill: event.subject.color,
       }
     },
     resolveText(event) {
@@ -263,7 +259,7 @@ export default {
         padding: 3,
         fill: this.textColor()(rect.fill),
         lineHeight: 1.5,
-        id: event.uuid
+        id: event.uuid,
       }
     },
     handleEventClick(vueComponent) {
@@ -274,7 +270,7 @@ export default {
       this.editingEvent = {
         ...event,
         start: parse(event.start, 'HH:mm:ss', new Date(0)),
-        end: parse(event.end, 'HH:mm:ss', new Date(0))
+        end: parse(event.end, 'HH:mm:ss', new Date(0)),
       }
       this.$modal.open('edit-event')
     },
@@ -291,7 +287,7 @@ export default {
           canvas.style.cursor = 'default'
           break
       }
-    }
-  }
+    },
+  },
 }
 </script>

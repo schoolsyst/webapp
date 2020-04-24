@@ -21,7 +21,7 @@ import CardMutation from '~/components/CardMutation.vue'
 export default {
   components: { Schedule, HeadingSub, ButtonNormal, CardMutation },
   head: {
-    title: 'Emploi du temps'
+    title: 'Emploi du temps',
   },
   computed: {
     ...mapState(['now']),
@@ -33,30 +33,30 @@ export default {
       return this.coursesIn()(
         this.scheduleDate,
         addDays(this.scheduleDate, 7)
-      ).map((event) => ({
+      ).map(event => ({
         ...event,
         start: getUnixTime(event.start),
         end: getUnixTime(event.end),
-        week_type: 'BOTH'
+        week_type: 'BOTH',
       }))
-    }
+    },
   },
   async mounted() {
     await this.$store.dispatch('schedule/load')
   },
   methods: {
-    ...mapGetters('schedule', ['coursesIn'])
-  }
+    ...mapGetters('schedule', ['coursesIn']),
+  },
 }
 </script>
 
 <style lang="stylus" scoped>
 .schedule
-  overflow-x: auto
-  // Cheap hack, if overflow-x is auto, overflow-y becomes either auto or scroll.
-  // See: https://stackoverflow.com/a/39554003
-  padding-bottom: 500px
+  overflow-x auto
+  //Cheap hack, if overflow-x is auto, overflow-y becomes either auto or scroll.
+  //See: https://stackoverflow.com/a/39554003
+  padding-bottom 500px
 
 h2
-  margin-bottom: 1em
+  margin-bottom 1em
 </style>

@@ -37,17 +37,17 @@ export default {
     RadioButtons,
     InputSelect,
     Checkbox,
-    InputField
+    InputField,
   },
   props: {
     namespace: {
       type: String,
-      default: ''
+      default: '',
     },
     note: {
       type: Object,
-      required: true
-    }
+      required: true,
+    },
   },
   data() {
     return {
@@ -62,14 +62,14 @@ export default {
         { key: 'txt', label: 'Texte brut' },
         // { key: 'png', label: 'Image' },
         { key: 'asciidoc', label: 'AsciiDoc' },
-        { key: 'mediawiki', label: 'MediaWiki' }
+        { key: 'mediawiki', label: 'MediaWiki' },
       ],
       advancedFormats: ['mediawiki', 'asciidoc', 'png', 'txt'],
       advanced: false,
       format: 'pdf',
       mFilename: null,
       pdfRenderStyles: ['Normal', 'LaTeX'],
-      pdfRenderStyle: 'Normal'
+      pdfRenderStyle: 'Normal',
     }
   },
   computed: {
@@ -84,14 +84,14 @@ export default {
       },
       set(filename) {
         this.mFilename = filename
-      }
+      },
     },
     notAdvancedFormats() {
-      return this.formats.filter((f) => !this.advancedFormats.includes(f.key))
+      return this.formats.filter(f => !this.advancedFormats.includes(f.key))
     },
     extension() {
-      return this.formats.find((f) => f.key === this.format).key
-    }
+      return this.formats.find(f => f.key === this.format).key
+    },
   },
   methods: {
     dlPDF: debounce(async function() {
@@ -101,7 +101,7 @@ export default {
         ? 'blob'
         : 'text'
       let {
-        data
+        data,
       } = await this.$axios.get(
         `notes/convert/${this.note.uuid}/${this.format}/`,
         { responseType }
@@ -113,31 +113,31 @@ export default {
       link.setAttribute('download', `${this.filename}.${this.extension}`)
       document.body.appendChild(link)
       link.click()
-    })
-  }
+    }),
+  },
 }
 </script>
 
 <style lang="stylus" scoped>
 .formats
-  margin-bottom: 1em
+  margin-bottom 1em
 
 .advanced-formats
-  margin-bottom: 2em
-  display: flex
-  justify-content: center
+  display flex
+  justify-content center
+  margin-bottom 2em
 
 .filename
-  margin-top: auto
+  margin-top auto
 
 .styles
-  margin-bottom: 1em
+  margin-bottom 1em
 
 .submit-area
-  display: flex
-  justify-content: flex-end
-  align-items: flex-end
+  display flex
+  justify-content flex-end
+  align-items flex-end
 
 .right
-  height: 100%
+  height 100%
 </style>

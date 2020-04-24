@@ -45,7 +45,7 @@ export default {
     CardSubject,
     ButtonNormal,
     Icon,
-    TheBottomBar
+    TheBottomBar,
   },
   layout: 'bare',
   data() {
@@ -53,19 +53,19 @@ export default {
       color: '#000000',
       name: null,
       weight: null,
-      goal: null
+      goal: null,
     }
     return {
       defaults,
       newSubject: defaults,
       editingSubject: {
         ...defaults,
-        uuid: null
-      }
+        uuid: null,
+      },
     }
   },
   computed: {
-    ...mapGetters('subjects', ['all'])
+    ...mapGetters('subjects', ['all']),
   },
   mounted() {
     this.$withLoadingScreen(async () => {
@@ -74,46 +74,46 @@ export default {
   },
   methods: {
     ...mapActions('subjects', ['post', 'patch']),
-    ...mapActions('subjects', { del: 'delete' })
-  }
+    ...mapActions('subjects', { del: 'delete' }),
+  },
 }
 </script>
 
 <style lang="stylus" scoped>
 .container
-  display: flex
-  justify-content: center
-  align-items: center
-  flex-direction: column
-  padding-bottom: 100px
+  display flex
+  flex-direction column
+  justify-content center
+  align-items center
+  padding-bottom 100px
 
-@media (max-width 650px)
+@media (max-width: 650px)
   .left
     text-align center
+
   h1
-    margin-top: 25vh
+    margin-top 25vh
 
 p.help, h1
   margin 0 10px
 
-
 .add /deep/ i
-  font-size: 5em
-  padding: 1em
+  padding 1em
+  font-size 5em
 
 ul.subjects
-  display: flex
-  flex-direction: column
-  justify-content: center
-  align-items: center
-  width: 100%
+  display flex
+  flex-direction column
+  justify-content center
+  align-items center
+  width 100%
 
   @media (max-width: 1000px)
-    max-width: calc(100vw - (2 * 10px)) // ref: layout .container padding
+    max-width calc(100vw - (2 * 10px)) //ref: layout .container padding
 
   li
-    margin: 0 auto
-    width: 450px // ref: <CardSubject> max-with
-    max-width: calc(100vw - (2 * 10px)) // ref: layout .container padding
-    margin-bottom: 1.5em
+    margin 0 auto
+    margin-bottom 1.5em
+    max-width calc(100vw - (2 * 10px)) //ref: layout .container padding
+    width 450px //ref: <CardSubject> max-with
 </style>

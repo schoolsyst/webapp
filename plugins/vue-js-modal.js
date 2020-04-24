@@ -4,7 +4,7 @@ const setup = (modal, closeFunc) => {
   const focusableEls = 'button, a, input, textarea, select'
   const focusables = Array.from(modal.querySelectorAll(focusableEls))
 
-  window.addEventListener('keydown', (event) => {
+  window.addEventListener('keydown', event => {
     const key = (event.key || '__unknownkey__').toLowerCase() // not sure about the capitalization
     const modalOpened = modal.classList.contains('opened')
     // close on escape key
@@ -17,7 +17,7 @@ const setup = (modal, closeFunc) => {
       event.preventDefault()
       // get the tabindex of the currently focused element
       let focusIndex = focusables.findIndex(
-        (f) => f === modal.querySelector(':focus')
+        f => f === modal.querySelector(':focus')
       )
       // get the tabindex of the element to focus after the keypress
       if (event.shiftKey) {
@@ -41,7 +41,7 @@ const setup = (modal, closeFunc) => {
   })
 }
 
-const close = (name) => {
+const close = name => {
   // console.log(`$modal: Closing ${name}`)
   const modal = document.getElementById(`modal_${name}`)
   // // console.log(modal)
@@ -78,7 +78,7 @@ const $modal = {
     // - NUMBERxNUMBER: from a given position
     modal.classList.remove('centered') // clear previous open position state
     const wrapper = modal.querySelector('.modal-wrapper')
-    const setPos = (coords) => {
+    const setPos = coords => {
       wrapper.style.left = wrapper.style.right = wrapper.style.top = wrapper.style.bottom = // clean everything
         ''
 
@@ -142,7 +142,7 @@ const $modal = {
 
         setPos({
           left,
-          bottom: window.innerHeight / 2 + contentHeight / 2
+          bottom: window.innerHeight / 2 + contentHeight / 2,
         })
 
         break
@@ -156,7 +156,7 @@ const $modal = {
 
         setPos({
           left: window.innerWidth / 2 - contentWidth / 2,
-          bottom: window.innerHeight / 2 + contentHeight / 2
+          bottom: window.innerHeight / 2 + contentHeight / 2,
         })
 
         break
@@ -181,7 +181,7 @@ const $modal = {
 
         setPos({
           top,
-          right: window.innerWidth - (left + width)
+          right: window.innerWidth - (left + width),
         })
         break
       }
@@ -193,7 +193,7 @@ const $modal = {
 
         setPos({
           bottom: window.innerHeight - (top + height),
-          right: window.innerWidth - (left + width)
+          right: window.innerWidth - (left + width),
         })
         break
       }
@@ -205,7 +205,7 @@ const $modal = {
 
         setPos({
           bottom: window.innerHeight - (top + height),
-          left
+          left,
         })
         break
       }
@@ -224,7 +224,7 @@ const $modal = {
 
         setPos({
           bottom: window.innerHeight - (top + modalHeight + height),
-          left
+          left,
         })
 
         if (opts.stretch === 'width') {
@@ -257,7 +257,7 @@ const $modal = {
     modal.setAttribute('aria-hidden', 'false')
     modal.setAttribute('aria-modal', 'true')
   },
-  hide: close
+  hide: close,
 }
 
 Vue.prototype.$modal = $modal

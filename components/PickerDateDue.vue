@@ -53,7 +53,7 @@ import {
   differenceInDays,
   isValid,
   addWeeks,
-  isSameDay
+  isSameDay,
 } from 'date-fns'
 import { fr } from 'date-fns/locale'
 import { mapGetters, mapState } from 'vuex'
@@ -69,24 +69,24 @@ export default {
     subject: Object,
     namespace: {
       type: String,
-      default: null
+      default: null,
     },
     variant: {
       type: String,
-      default: 'outline'
+      default: 'outline',
     },
     disabled: {
       type: Boolean,
-      default: false
+      default: false,
     },
     value: {
       type: [Date, Number],
-      default: null
-    }
+      default: null,
+    },
   },
   data() {
     return {
-      opened: false
+      opened: false,
     }
   },
   computed: {
@@ -95,7 +95,7 @@ export default {
       'nextCoursesIn',
       'coursesIn',
       'nextCourseOf',
-      'coursesOf'
+      'coursesOf',
     ]),
     name() {
       return this.namespace
@@ -108,15 +108,15 @@ export default {
     courseBefore() {
       if (this.subject && this.value) {
         const courses = this.coursesIn(addWeeks(this.value, -1), this.value)
-          .filter((c) => c.subject.uuid === this.subject.uuid)
+          .filter(c => c.subject.uuid === this.subject.uuid)
           .sort((c1, c2) => isBefore(c1.start, c2.start))
-          .filter((c) => !isSameDay(c.start, Date.now()))
-          .filter((c) => !isSameDay(c.start, this.value))
-          .filter((c) => isBefore(Date.now(), c.start))
+          .filter(c => !isSameDay(c.start, Date.now()))
+          .filter(c => !isSameDay(c.start, this.value))
+          .filter(c => isBefore(Date.now(), c.start))
         console.log(
           'courseBefore::' +
             courses
-              .map((c) => formatISO(c.start, { representation: 'date' }))
+              .map(c => formatISO(c.start, { representation: 'date' }))
               .join('|')
         )
         if (courses.length) return courses[0].start
@@ -126,12 +126,12 @@ export default {
     courseAfter() {
       if (this.subject && this.value) {
         const courses = this.nextCoursesIn(this.value, addWeeks(this.value, 2))
-          .filter((c) => c.subject.uuid === this.subject.uuid)
+          .filter(c => c.subject.uuid === this.subject.uuid)
           .sort((c1, c2) => isAfter(c1.start, c2.start))
         console.log(
           'courseAfter::' +
             courses
-              .map((c) => formatISO(c.start, { representation: 'date' }))
+              .map(c => formatISO(c.start, { representation: 'date' }))
               .join('|')
         )
         if (courses.length) return courses[0].start
@@ -146,8 +146,8 @@ export default {
     nextWeekCourse() {
       if (this.subject) {
         const courses = this.nextCoursesIn(Date.now(), addWeeks(Date.now(), 1))
-          .filter((c) => !isSameWeek(c.start, Date.now()))
-          .filter((c) => c.subject.uuid === this.subject.uuid)
+          .filter(c => !isSameWeek(c.start, Date.now()))
+          .filter(c => c.subject.uuid === this.subject.uuid)
         if (courses.length) return courses[0].start
       }
       return null
@@ -161,11 +161,11 @@ export default {
           return daysDiff / 7 + ' semaine' + (daysDiff / 7 > 1 ? 's' : '')
         return formatDistance(this.value, this.now, {
           locale: fr,
-          addSuffix: false
+          addSuffix: false,
         })
       }
       return null
-    }
+    },
   },
   methods: {
     format(date, fmt) {
@@ -179,7 +179,7 @@ export default {
         this.$modal.show(this.name, {
           at: 'self.below.left',
           from: this.$el.querySelector('input'),
-          stretch: 'width'
+          stretch: 'width',
         })
         this.opened = true
       }
@@ -187,10 +187,10 @@ export default {
     toTitleCase(str) {
       return str.replace(
         /\w\S*/g,
-        (txt) => txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase()
+        txt => txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase()
       )
-    }
-  }
+    },
+  },
 }
 </script>
 
@@ -198,65 +198,66 @@ export default {
 side-padding = 0.75rem
 
 .BaseModal /deep/ .modal-wrapper
-  padding: side-padding
-  border-top-right-radius: 0
-  border-top-left-radius: 0
+  padding side-padding
+  border-top-left-radius 0
+  border-top-right-radius 0
 
 h3
-  margin-bottom: 0
+  margin-bottom 0
 
 .next-courses
-  display: flex
-  align-items: center
+  display flex
+  align-items center
+
   spinner-buttons-width = 1.75rem
   spinner-buttons-spacing = 0.5rem
   spinner-buttons-height = 4rem
 
   .viewer
-    height: spinner-buttons-height
-    width: 'calc(100% - (%s * 2) - (%s * 2))' % (spinner-buttons-width spinner-buttons-spacing)
-    display: flex
-    flex-direction: column
-    text-align: center
-    justify-content: center
+    display flex
+    flex-direction column
+    justify-content center
+    width 'calc(100% - (%s * 2) - (%s * 2))' % (spinner-buttons-width spinner-buttons-spacing)
+    height spinner-buttons-height
+    text-align center
 
     .relative
-      font-weight: 500
-      font-size: 1.3em
+      font-weight 500
+      font-size 1.3em
 
     .absolute
-      opacity: 0.25
-      font-size: 0.9em
+      font-size 0.9em
+      opacity 0.25
 
   button
     &
-      height: spinner-buttons-height
+      height spinner-buttons-height
 
     &[disabled] i
-      color: var(--grey-offset)
+      color var(--grey-offset)
 
     &.before
-      margin-right: spinner-buttons-spacing
+      margin-right spinner-buttons-spacing
 
     &.after
-      margin-left: spinner-buttons-spacing
+      margin-left spinner-buttons-spacing
 
     i
-      color: var(--black)
-      font-size: spinner-buttons-width
+      color var(--black)
+      font-size spinner-buttons-width
 
 .buttons
-  display: flex
-  justify-content: space-between
+  display flex
+  justify-content space-between
 
   .button /deep/ button
-    margin: 0
+    margin 0
 
   .button:not(:last-child)
-    margin-right: 1em
+    margin-right 1em
 
 .picker-opened
   .field /deep/ button
-    border-bottom-right-radius: 0
-    border-bottom-left-radius: 0
+    border-bottom-right-radius 0
+    border-bottom-left-radius 0
 </style>

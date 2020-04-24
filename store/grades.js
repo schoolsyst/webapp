@@ -5,24 +5,24 @@ import {
   parseISO,
   isWeekend,
   differenceInWeeks,
-  isSameWeek
+  isSameWeek,
 } from 'date-fns'
 import { getMutations, getValidator } from './index'
 
 export const state = () => ({
-  grades: []
+  grades: [],
 })
 
-const parseGradeDates = (grade) => ({
+const parseGradeDates = grade => ({
   ...grade,
   added: parseISO(grade.added),
-  obtained_date: parseISO(grade.obtained)
+  obtained_date: parseISO(grade.obtained),
 })
 
 export const getters = {
   all: (state, getters) => getters.order(state.grades),
   one: (state, getters) => (value, prop = 'uuid') =>
-    getters.all.find((o) => o[prop] === value) || null,
+    getters.all.find(o => o[prop] === value) || null,
   of: (state, getters, rootState, rootGetters) => (
     value,
     what = 'trimester',
@@ -40,45 +40,45 @@ export const getters = {
         if (trimesterInterval === null) return []
         // Gets all the grades that have been added within the `value`th trimester
         return getters.all.filter(
-          (o) => o[date] && isWithinInterval(o[date], trimesterInterval)
+          o => o[date] && isWithinInterval(o[date], trimesterInterval)
         )
 
       case 'interval':
         return getters.all.filter(
-          (o) => o[date] && isWithinInterval(o[date], value)
+          o => o[date] && isWithinInterval(o[date], value)
         )
 
       default:
         return []
     }
   },
-  pending: (state, getters) => getters.all.filter((o) => o.obtained === null),
-  order: (state, getters) => (grades) => {
+  pending: (state, getters) => getters.all.filter(o => o.obtained === null),
+  order: (state, getters) => grades => {
     // ↓ Makes a copy of grades to avoid mutating
     return [...grades].sort(firstBy((o1, o2) => isBefore(o1, o2)))
   },
-  format: (state, getters, rootState, rootGetters) => (value) => {
+  format: (state, getters, rootState, rootGetters) => value => {
     let unit = rootGetters['settings/value']('grade_max')
     unit = unit === 100 ? '%' : `/${unit}`
     return { value, unit }
   },
   mean: (state, getters) => (grades, debug = false) => {
     let ret
-    grades = grades.filter((o) => o.obtained !== null)
+    grades = grades.filter(o => o.obtained !== null)
     if (!grades.length) ret = null
     else {
       const sumOfWeights = grades
-        .map((o) => o.weight * o.subject.weight)
+        .map(o => o.weight * o.subject.weight)
         .reduce((acc, cur) => acc + cur)
       const sumOfGrades = grades
-        .map((o) => o.obtained * o.weight * o.subject.weight)
+        .map(o => o.obtained * o.weight * o.subject.weight)
         .reduce((acc, cur) => acc + cur)
 
       ret = sumOfGrades / sumOfWeights
     }
     return ret
   },
-  evolution: (state, getters) => (grades) => {
+  evolution: (state, getters) => grades => {
     /* Returns a number ∈ [0,1] that represents the relative gap between...
      * - the old mean (mean before the latest grade), and
      * - the new mean (mean with the latest grade)
@@ -87,7 +87,7 @@ export const getters = {
      */
     // Just to be sure, sort the grades
     // Also remove notes that have no `obtained` score (see `const oldMean = `) for why
-    grades = getters.order(grades).filter((o) => !!o.obtained)
+    grades = getters.order(grades).filter(o => !!o.obtained)
     if (!grades.length) return null
     // Get the current mean (w/ all the grades given)
     const newMean = getters.mean(grades)
@@ -138,7 +138,7 @@ export const getters = {
     return getters.mean(grades)
   },
   ofWeekSmart: (_, { all }) =>
-    all.filter((o) => {
+    all.filter(o => {
       const now = Date.now()
       if (isWeekend(now)) return differenceInWeeks(o.added, now) === 1
       else return isSameWeek(o.added, now)
@@ -146,13 +146,13 @@ export const getters = {
   validate: getValidator({
     constraints: {
       maxLength: {
-        300: ['name']
+        300: ['name'],
       },
       minimum: {
         0: ['obtained', 'expected', 'goal', 'weight'],
-        1: ['unit']
+        1: ['unit'],
       },
-      required: ['name', 'subject', 'weight', 'unit']
+      required: ['name', 'subject', 'weight', 'unit'],
     },
     /* We use custom constraints because the default error message
      * is "should be less than 1", which does not coincide
@@ -163,20 +163,20 @@ export const getters = {
         message: 'La note obtenue est trop grande',
         field: 'obtained',
         constraint: (getters, object) =>
-          object.obtained === null || object.obtained <= 1
+          object.obtained === null || object.obtained <= 1,
       },
       {
         message: 'La note estimée est trop grande',
         field: 'expected',
         constraint: (getters, object) =>
-          object.expected === null || object.expected <= 1
+          object.expected === null || object.expected <= 1,
       },
       {
         message: "L'objectif de note est trop grand",
         field: 'goal',
         constraint: (getters, object) =>
-          object.goal === null || object.goal <= 1
-      }
+          object.goal === null || object.goal <= 1,
+      },
     ],
     fieldNames: {
       name: { gender: 'M', name: 'nom' },
@@ -185,14 +185,14 @@ export const getters = {
       goal: { gender: 'M', name: 'objectif de note' },
       weight: { gender: 'M', name: 'coefficient' },
       unit: { gender: 'F', name: 'unité' },
-      subject: { gender: 'F', name: 'matière' }
+      subject: { gender: 'F', name: 'matière' },
     },
-    resourceName: { gender: 'F', name: 'note' }
-  })
+    resourceName: { gender: 'F', name: 'note' },
+  }),
 }
 
 export const mutations = {
-  ...getMutations('grade', parseGradeDates)
+  ...getMutations('grade', parseGradeDates),
 }
 
 export const actions = {
@@ -271,5 +271,5 @@ export const actions = {
         console.error(error)
       }
     }
-  }
+  },
 }

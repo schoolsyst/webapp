@@ -21,46 +21,46 @@ export default {
   props: {
     namespace: {
       type: String,
-      default: null
-    }
+      default: null,
+    },
   },
   computed: {
     ...mapGetters({
-      subjects: 'subjects/all'
+      subjects: 'subjects/all',
     }),
     name() {
       return this.namespace
         ? `${this.namespace}-subject-picker`
         : 'subject-picker'
-    }
+    },
   },
   async mounted() {
     await this.$store.dispatch('subjects/load')
-  }
+  },
 }
 </script>
 
 <style lang="stylus" scoped>
-// !importants are needed to override the BaseModal's styling
+//!importants are needed to override the BaseModal's styling
 .PickerSubject
-  z-index: 2000 !important
+  z-index 2000 !important
 
 ul.subjects
-  width: 100%
-  list-style: none
+  width 100%
+  list-style none
 
-  // TODO: ↓ Not sure about this
+  //TODO: ↓ Not sure about this
   @media (max-width: 650px)
-    display: grid
-    grid-template-columns: repeat(2, 1fr)
+    display grid
+    grid-template-columns repeat(2, 1fr)
 
 li > .subject
-  border-radius: 0 !important // !important needed to overwrite it
-  height: 3.25rem
+  height 3.25rem
+  border-radius 0 !important //!important needed to overwrite it
 
   @media (max-width: 650px)
-    height: 5rem
+    height 5rem
 
-  font-size: 1.1rem
-  width: 100%
+  width 100%
+  font-size 1.1rem
 </style>

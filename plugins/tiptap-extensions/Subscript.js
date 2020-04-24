@@ -10,16 +10,16 @@ export default class Subscript extends Mark {
     return {
       parseDOM: [
         {
-          tag: 'sub'
-        }
+          tag: 'sub',
+        },
       ],
-      toDOM: () => ['sub', 0]
+      toDOM: () => ['sub', 0],
     }
   }
 
   keys({ type }) {
     return {
-      'Mod-,': toggleMark(type)
+      'Mod-,': toggleMark(type),
     }
   }
 

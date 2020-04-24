@@ -52,7 +52,7 @@ export default {
       password: null,
       passwordConfirmation: null,
       mEmail: null,
-      changed: null
+      changed: null,
     }
   },
   computed: {
@@ -62,15 +62,15 @@ export default {
       },
       set(email) {
         this.mEmail = email
-      }
+      },
     },
     validation() {
       return this.validatePasswordReset()({
         email: this.email,
         password: this.password,
-        passwordConfirmation: this.passwordConfirmation
+        passwordConfirmation: this.passwordConfirmation,
       })
-    }
+    },
   },
   methods: {
     ...mapGetters('auth', ['validatePasswordReset']),
@@ -78,44 +78,44 @@ export default {
     async changePassword() {
       this.changed = await this._changePassword({
         password: this.password,
-        token: this.$route.query.token
+        token: this.$route.query.token,
       })
-    }
-  }
+    },
+  },
 }
 </script>
 
 <style lang="stylus" scoped>
 .container
-  display: flex
-  flex-direction: column
-  justify-content: center
-  align-items: center
-  text-align: center
+  display flex
+  flex-direction column
+  justify-content center
+  align-items center
+  text-align center
 
   form
-    margin-top: 3em
+    margin-top 3em
 
   .field
-    width: 80vw
-    max-width: 400px
+    max-width 400px
+    width 80vw
 
   .button
-    margin-top: 2em
+    margin-top 2em
 
   .go-back
-    margin-top: 1em
+    margin-top 1em
 
   .token
-    margin-top: 5em
-    font-size: 1em
-    display: flex
-    align-items: center
-    color: var(--grey-dark)
+    display flex
+    align-items center
+    margin-top 5em
+    color var(--grey-dark)
+    font-size 1em
 
     i
-      cursor: pointer
-      margin-left: 0.25em
-      font-size: 1.3em
-      color: var(--grey)
+      margin-left 0.25em
+      color var(--grey)
+      font-size 1.3em
+      cursor pointer
 </style>

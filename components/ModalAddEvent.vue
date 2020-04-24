@@ -88,12 +88,12 @@ export default {
     PickerSubject,
     BadgeSubject,
     RadioButtons,
-    Icon
+    Icon,
   },
   props: {
     action: {
       type: String,
-      required: true
+      required: true,
     },
     value: {
       type: Object,
@@ -103,9 +103,9 @@ export default {
         day: null,
         start: null,
         end: null,
-        room: null
-      })
-    }
+        room: null,
+      }),
+    },
   },
   data() {
     return {
@@ -114,12 +114,12 @@ export default {
       description: {
         name: 'event',
         verboseName: 'cours',
-        gender: 'M'
+        gender: 'M',
       },
       week_types: [
         { key: 'BOTH', label: 'Les deux' },
         { key: 'Q1', label: 'Semaine paire / Q1' },
-        { key: 'Q2', label: 'Semaine impaire / Q2' }
+        { key: 'Q2', label: 'Semaine impaire / Q2' },
       ],
       days: [
         { key: 1, label: 'Lu' },
@@ -128,8 +128,8 @@ export default {
         { key: 4, label: 'Je' },
         { key: 5, label: 'Ve' },
         { key: 6, label: 'Sa' },
-        { key: 7, label: 'Di' }
-      ]
+        { key: 7, label: 'Di' },
+      ],
     }
   },
   computed: {
@@ -138,7 +138,7 @@ export default {
     },
     modalName() {
       return this.action + '-event'
-    }
+    },
   },
   methods: {
     ...mapGetters('schedule', ['validateEvent']),
@@ -159,10 +159,10 @@ export default {
       this.$emit('input', {
         ...this.value,
         action: this.action,
-        day: $event
+        day: $event,
       })
-    }
-  }
+    },
+  },
 }
 </script>
 
@@ -170,43 +170,43 @@ export default {
 time-input-width = 7em
 
 .subject, .day, .duration, .weektype, .room
-  margin-bottom: 2em
+  margin-bottom 2em
 
 .subject
   .badge
-    width: 100%
+    width 100%
 
 .timeframe
-  display: flex
-  align-items: center
-  justify-content: center
+  display flex
+  justify-content center
+  align-items center
 
-  // @media (max-width 600px)
-  // flex-direction column
+  //@media (max-width 600px)
+  //flex-direction column
   .field
-    width: time-input-width
+    width time-input-width
 
   & > *:not(:last-child)
-    margin-right: 1rem
+    margin-right 1rem
 
-  // .field /deep/ input
-  // max-width time-input-width
-  // min-width time-input-width
+  //.field /deep/ input
+  //max-width time-input-width
+  //min-width time-input-width
   & /deep/ i
-    font-size: 2rem
-    padding-top: 1.1rem // FIXME: manual vertical centering...
+    padding-top 1.1rem //FIXME: manual vertical centering...
+    font-size 2rem
 
 .duration
-  margin-top: 1em
-  display: flex
-  justify-content: center
+  display flex
+  justify-content center
+  margin-top 1em
 
 .non-field-errors
-  margin-bottom: 2em
-  color: var(--red)
-  text-align: center
+  margin-bottom 2em
+  color var(--red)
+  text-align center
 
 .submit
-  display: flex
-  justify-content: flex-end
+  display flex
+  justify-content flex-end
 </style>

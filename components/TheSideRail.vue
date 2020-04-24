@@ -32,47 +32,47 @@ export default {
       if (link.hasOwnProperty('notifications')) {
         return link.notifications >= 1 || link.notifications === '99+'
       }
-    }
-  }
+    },
+  },
 }
 </script>
 
 <style lang="stylus" scoped>
 nav
-  position: fixed
+  position fixed
 
 .item
-  display: flex
-  flex-direction: column
-  justify-content: center
-  width: 4em
-  overflow: hidden
-  margin-bottom: 2.5em
-  padding: 0.25em 0
+  display flex
+  flex-direction column
+  justify-content center
+  overflow hidden
+  margin-bottom 2.5em
+  padding 0.25em 0
+  width 4em
 
 .link
-  text-align: center
-  color: var(--black)
+  color var(--black)
+  text-align center
 
   &:hover, &.current
-    color: var(--blue)
+    color var(--blue)
 
   &:hover .name
-    opacity: 1
+    opacity 1
 
-  position: relative
+  position relative
 
 .link .notifications-badge
-  position: absolute
-  display: block
-  background: var(--red)
-  height: 0.8em
-  width: 0.8em
-  border-radius: 50%
-  top: 0
-  right: 25%
+  position absolute
+  top 0
+  right 25%
+  display block
+  width 0.8em
+  height 0.8em
+  border-radius 50%
+  background var(--red)
 
 .icon
-  font-size: 1.85em
-  display: block
+  display block
+  font-size 1.85em
 </style>
