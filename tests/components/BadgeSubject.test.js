@@ -8,10 +8,12 @@ const vue = createLocalVue()
 vue.directive('tooltip', VTooltip)
 vue.use(Vuex)
 const store = {
-  getters: { textColor: getters.textColor }
+  getters: { textColor: getters.textColor },
 }
 const mnt = (component, opts) =>
   mount(component, { ...opts, localVue: vue, store })
+
+// TODO #77: Test w/ color:red and color:cyan
 
 describe('<BadgeSubject>', () => {
   test('is a Vue instance', () => {
@@ -21,8 +23,8 @@ describe('<BadgeSubject>', () => {
   test('is a <button> when clickable', () => {
     const component = mnt(BadgeSubject, {
       propsData: {
-        clickable: true
-      }
+        clickable: true,
+      },
     })
     expect(component.is('button')).toBeTruthy()
   })
