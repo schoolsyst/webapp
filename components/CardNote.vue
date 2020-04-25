@@ -25,7 +25,6 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
 import Icon from '~/components/Icon.vue'
 import BadgeSubject from '~/components/BadgeSubject.vue'
 export default {
@@ -35,26 +34,23 @@ export default {
       type: String,
       required: true,
     },
+    content: {
+      type: String,
+      default: '',
+    },
+    name: {
+      type: String,
+      required: true,
+    },
+    subject: {
+      type: Object,
+      required: true,
+    },
+    format: {
+      type: String,
+      required: true,
+    },
   },
-  data() {
-    return {
-      content: '',
-      name: null,
-      subject: {
-        name: '',
-        color: 'black',
-      },
-      format: '',
-    }
-  },
-  mounted() {
-    const note = this.one()(this.uuid)
-    this.content = note.content
-    this.subject = note.subject
-    this.name = note.name
-    this.format = note.format
-  },
-  methods: mapGetters('notes', ['one']),
 }
 </script>
 
