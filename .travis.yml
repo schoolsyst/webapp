@@ -31,23 +31,23 @@ matrix:
       after_success:
         - bash <(curl -s https://codecov.io/bash)
 
-    - language: python
-      python:
-        - 3.7
+    # - language: python
+    #   python:
+    #     - 3.7
       
-      services:
-        - xvfb
+    #   services:
+    #     - xvfb
         
-      before_install:
-        - cd tests/e2e
+    #   before_install:
+    #     - cd tests/e2e
         
-      sudo: on
-      install:
-        - pip install poetry
-        - poetry install
+    #   sudo: on
+    #   install:
+    #     - pip install poetry
+    #     - poetry install
       
-      before_script:
-        - export DISPLAY=:99.0
+    #   before_script:
+    #     - export DISPLAY=:99.0
       
-      script:
-        - poetry run behave
+    #   script:
+    #     - poetry run behave
