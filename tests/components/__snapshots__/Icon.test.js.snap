@@ -1,0 +1,5 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`<Icon> filled matches snapshot 1`] = `<i class="material-icons">close</i>`;
+
+exports[`<Icon> outline matches snapshot 1`] = `<i class="material-icons-outlined">close</i>`;

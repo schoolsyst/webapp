@@ -21,12 +21,13 @@ export const bootstrapComponentTest = (
     ...indexStore,
   })
   store.dispatch = jest.fn()
-  const mnt = props =>
+  const mnt = (props, slots = {}) =>
     mountFn(component, {
       propsData: { ...defaultPropsData, ...props },
       localVue: vue,
       store,
       mocks,
+      slots,
     })
   return { vue, mnt, store }
 }
