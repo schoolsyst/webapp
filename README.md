@@ -44,7 +44,7 @@ git clone https://github.com/schoolsyst/frontend.git
 cd frontend
 ```
 
-2. Install NodeJS
+2. Install NodeJS, version `13.5.0`.
 _The installation procedure changes depending on your platform, head over to [NodeJS's website](https://nodejs.org/)_
 
 3. Install the project's dependencies
