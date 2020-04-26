@@ -238,9 +238,6 @@ export default {
     clearFields() {
       this.$emit('input', { type: 'BUG' })
     },
-    goToGithub() {
-      this.$router.push('https://github.com/schoolsyst/frontend/issues/new')
-    },
   },
 }
 </script>
