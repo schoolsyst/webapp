@@ -91,3 +91,6 @@ sw.*
 
 # Files marked as sensitive
 *.nogit.*
+
+# Now by Vercel
+.now/
