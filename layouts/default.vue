@@ -6,7 +6,7 @@
       aside.left
         TheSideRail
       main.right
-        ModalAddReport(action="add" v-model="newReport" @submit="postReport({ report: newReport })")
+        ModalAddReport(action="add" v-model="newReport")
         nuxt#page
         #loading-screen
           OverlayLoadingLogo(animation="loop")
@@ -104,7 +104,7 @@ main, .container
 .side-by-side
   display flex
 
-#page, /deep/ [id$=-state], /deep/ #loading-screen
+#page, /deep/ [class$=-state].fullscreen, /deep/ #loading-screen
   min-height calc(100vh - 100px) //top bar height
 
 /deep/ #loading-screen

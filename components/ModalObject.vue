@@ -1,6 +1,6 @@
 <template lang="pug">
-  BaseModal(v-bind="modalOpts")
-    form(@submit.prevent="$emit('submit'); closeModal()")
+  BaseModal(v-bind="modalOpts" @close="$emit('close')")
+    form(@submit.prevent="handleFormSubmit")
       slot
       .submit-area
         ButtonNormal(
@@ -63,19 +63,32 @@ export default {
       type: String,
       default: null,
     },
+    closeOnFormSubmit: {
+      type: Boolean,
+      default: true,
+    },
+    closeButton: {
+      type: Boolean,
+      default: true,
+    },
+    noHeader: {
+      type: Boolean,
+      default: true,
+    },
   },
   computed: {
     modalOpts() {
       const name = this.action + '-' + this.name
-      const title =
-        this.modalTitle ||
-        this.verboseAction +
-          ' ' +
-          (this.gender === 'M' ? 'un' : 'une') +
-          ' ' +
-          this.verboseName
+      const title = this.noHeader
+        ? null
+        : this.modalTitle ||
+          this.verboseAction +
+            ' ' +
+            (this.gender === 'M' ? 'un' : 'une') +
+            ' ' +
+            this.verboseName
 
-      return { name, title }
+      return { name, title, closeButton: this.closeButton }
     },
     verboseAction() {
       return {
@@ -87,6 +100,12 @@ export default {
   methods: {
     closeModal() {
       this.$modal.close(this.modalOpts.name)
+    },
+    handleFormSubmit() {
+      this.$emit('submit')
+      if (this.closeOnFormSubmit) {
+        this.closeModal()
+      }
     },
   },
 }
