@@ -73,34 +73,34 @@ export default {
     VueContext,
     Icon,
     InputSelectSubject,
-    BadgeSubject
+    BadgeSubject,
   },
   data() {
     return {
       chart: {
         options: {
           xAxes: { display: true },
-          yAxes: { display: true }
-        }
+          yAxes: { display: true },
+        },
       },
       editingGrade: null,
       gradesListLimit: 10,
       showAllGrades: false,
-      meansSubject: null
+      meansSubject: null,
     }
   },
   computed: {
     ...mapGetters('grades', ['all', 'meanOfDays']),
     ...mapGetters({
-      subjects: 'subjects/all'
+      subjects: 'subjects/all',
     }),
     grades() {
       let grades = [...this.all]
       if (this.meansSubject)
-        grades = grades.filter((o) => o.subject.uuid === this.meansSubject.uuid)
+        grades = grades.filter(o => o.subject.uuid === this.meansSubject.uuid)
       if (!this.showAllGrades) grades = grades.slice(0, this.gradesListLimit)
       return grades
-    }
+    },
   },
   mounted() {
     this.$withLoadingScreen(
@@ -119,68 +119,68 @@ export default {
         this.$toast.success('Note ajoutée', { icon: 'check' })
       } else {
         this.$toast.error("Erreur lors de l'ajout de la note", {
-          icon: 'error_outline'
+          icon: 'error_outline',
         })
       }
     },
     async del(grade) {
       await this.delete({ uuid: grade.uuid })
-    }
-  }
+    },
+  },
 }
 </script>
 
 <style lang="stylus" scoped>
 h2
-  margin-bottom: 2rem
+  margin-bottom 2rem
 
 .grades, .all-grades
   &
-    display: flex
-    flex-wrap: wrap
+    display flex
+    flex-wrap wrap
 
   .card-wrapper:not(.more)
-    height: 10rem
-    width: 25rem
-    margin-top: 1em
-    margin-right: 1em
+    margin-top 1em
+    margin-right 1em
+    width 25rem
+    height 10rem
 
 .-side-by-side:not(.show-all)
   ul
-    display: flex
-    width: 100%
-    max-width: 90vw
-    flex-wrap: wrap
-    justify-content: center
+    display flex
+    flex-wrap wrap
+    justify-content center
+    max-width 90vw
+    width 100%
 
 .-side-by-side
-  height: 100%
-  grid-template-columns: 1fr
+  height 100%
+  grid-template-columns 1fr
 
   &.show-all
     @media (min-width: 651px)
-      grid-template-columns: 2fr 1fr
+      grid-template-columns 2fr 1fr
 
   .left, .right
-    overflow: auto
+    overflow auto
 
 .new .card-wrapper
-  cursor: pointer
-  border-radius: var(--border-radius)
-  display: flex
-  justify-content: center
-  align-items: center
-  background: var(--blue-offset)
+  display flex
+  justify-content center
+  align-items center
+  border-radius var(--border-radius)
+  background var(--blue-offset)
+  cursor pointer
 
   i
-    font-size: 3rem
-    color: var(--blue)
+    color var(--blue)
+    font-size 3rem
 
   &:hover
-    background: var(--blue-offset-dark)
-    color: var(--blue-dark)
+    background var(--blue-offset-dark)
+    color var(--blue-dark)
 
 .grades .more
-  display: flex
-  justify-content: center
+  display flex
+  justify-content center
 </style>

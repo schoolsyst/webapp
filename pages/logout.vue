@@ -15,18 +15,18 @@ export default {
     await this.$store.dispatch('clearAllData')
     // Logout
     this.$auth.logout()
-  }
+  },
 }
 </script>
 
 <style lang="stylus" scoped>
 .container
-  display: flex
-  justify-content: center
-  align-items: center
-  flex-direction: column
+  display flex
+  flex-direction column
+  justify-content center
+  align-items center
 
   p
-    margin-top: 10px
-    opacity: 0.25
+    margin-top 10px
+    opacity 0.25
 </style>

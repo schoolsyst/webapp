@@ -1,9 +1,7 @@
-import { Mark, Plugin } from 'tiptap'
-import { updateMark, removeMark, pasteRule } from 'tiptap-commands'
-import { getMarkAttrs } from 'tiptap-utils'
+import { Mark } from 'tiptap'
+import { updateMark, removeMark } from 'tiptap-commands'
 
 export default class TextColor extends Mark {
-
   get name() {
     return 'textcolor'
   }
@@ -24,9 +22,13 @@ export default class TextColor extends Mark {
           }),
         },
       ],
-      toDOM: node => ['span', {
-        ...node.style,
-      }, 0],
+      toDOM: node => [
+        'span',
+        {
+          ...node.style,
+        },
+        0,
+      ],
     }
   }
 
@@ -39,5 +41,4 @@ export default class TextColor extends Mark {
       return removeMark(type)
     }
   }
-
 }

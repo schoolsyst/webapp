@@ -3,14 +3,14 @@ import { isBefore, parseISO } from 'date-fns'
 import { getMutations, getValidator } from './index'
 
 export const state = () => ({
-  learndatas: []
+  learndatas: [],
 })
 
-const parseObjectDates = (object) => ({
+const parseObjectDates = object => ({
   ...object,
   modified: parseISO(object.modified),
   added: parseISO(object.added),
-  opened: parseISO(object.opened)
+  opened: parseISO(object.opened),
 })
 
 export const getters = {
@@ -20,20 +20,20 @@ export const getters = {
         .thenBy('name')
         .thenBy('uuid')
     ),
-  all: (state) => state.learndatas,
+  all: state => state.learndatas,
   one: (state, { all }, rootState) => (value, prop = 'uuid') =>
-    all.find((o) => o[prop] === value) || null,
+    all.find(o => o[prop] === value) || null,
   of: ({ learndatas }, getters) => (value, prop = 'note') => {
     switch (prop) {
       case 'note':
-        return learndatas.filter((o) =>
+        return learndatas.filter(o =>
           // If the requested note's UUID is in
           // the array of UUIDs of notes linked to that learndata
-          o.notes.map((n) => n.uuid).includes(value)
+          o.notes.map(n => n.uuid).includes(value)
         )
 
       case 'subject':
-        return learndatas.filter((o) => o.subject.uuid === value)
+        return learndatas.filter(o => o.subject.uuid === value)
 
       default:
         // console.error(`[notes/learndatasOf] Unrecognized prop: ${prop}`)
@@ -44,14 +44,14 @@ export const getters = {
     constraints: {
       required: ['subject', 'name', 'data'],
       maxLength: {
-        300: ['name']
+        300: ['name'],
       },
       maximum: {
-        1: ['progress']
+        1: ['progress'],
       },
       minimum: {
-        0: ['progress', 'test_tries', 'train_tries']
-      }
+        0: ['progress', 'test_tries', 'train_tries'],
+      },
     },
     fieldNames: {
       subject: { gender: 'F', name: 'matière' },
@@ -59,14 +59,14 @@ export const getters = {
       data: { gender: 'M', name: 'contenu' },
       progress: { gender: 'F', name: 'progression' },
       test_tries: { gender: 'M', name: 'nombre de tests' },
-      train_tries: { gender: 'M', name: "nombre d'entraînements" }
+      train_tries: { gender: 'M', name: "nombre d'entraînements" },
     },
-    resourceName: { gender: 'M', name: 'learndata' }
-  })
+    resourceName: { gender: 'M', name: 'learndata' },
+  }),
 }
 
 export const mutations = {
-  ...getMutations('learndata', parseObjectDates)
+  ...getMutations('learndata', parseObjectDates),
 }
 
 export const actions = {
@@ -78,7 +78,7 @@ export const actions = {
       return false
     } catch (error) {
       this.$toast.error('Erreur interne lors du chargement', {
-        icon: 'error_outline'
+        icon: 'error_outline',
       })
       return true
     }
@@ -145,5 +145,5 @@ export const actions = {
         console.error(error)
       }
     }
-  }
+  },
 }

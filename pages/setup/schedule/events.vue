@@ -34,7 +34,7 @@ export default {
     Icon,
     InputSetting,
     ModalDialogConfirm,
-    TheBottomBar
+    TheBottomBar,
   },
   layout: 'bare',
   data() {
@@ -45,10 +45,10 @@ export default {
       start: null,
       end: null,
       room: null,
-      identifier$action: 'add'
+      identifier$action: 'add',
     }
     return {
-      addingEvent: defaults
+      addingEvent: defaults,
     }
   },
   computed: {
@@ -56,12 +56,12 @@ export default {
       return this.$store.getters['settings/fromCategory']('Emploi du temps')
     },
     events() {
-      return this.$store.getters['schedule/events'].map((event) => ({
+      return this.$store.getters['schedule/events'].map(event => ({
         ...event,
         start: getUnixTime(parse(event.start, 'HH:mm:ss', new Date(0))),
-        end: getUnixTime(parse(event.end, 'HH:mm:ss', new Date(0)))
+        end: getUnixTime(parse(event.end, 'HH:mm:ss', new Date(0))),
       }))
-    }
+    },
   },
   mounted() {
     this.$withLoadingScreen(async () => {
@@ -71,35 +71,35 @@ export default {
     }, 'Veuillez patienter...')
   },
   methods: {
-    ...mapActions('schedule', ['postEvent', 'validateEvent'])
-  }
+    ...mapActions('schedule', ['postEvent', 'validateEvent']),
+  },
 }
 </script>
 
 <style lang="stylus" scoped>
 .container
-  padding: 2em
+  padding 2em
 
 h1
-  text-align: center
-  margin-bottom: 1em
+  margin-bottom 1em
+  text-align center
 
 .-side-by-side > *:first-child
-  border-right: 2px solid var(--grey-light)
+  border-right 2px solid var(--grey-light)
 
 ul.settings
   li
-    margin-bottom: 2em
+    margin-bottom 2em
 
 .schedule .add
-  display: flex
-  justify-content: center
-  margin-bottom: 3em
+  display flex
+  justify-content center
+  margin-bottom 3em
 
 .schedule
-  // Compensate for the bottom bar
-  margin-bottom: 96px
   display flex
-  align-items center
   flex-direction column
+  align-items center
+  //Compensate for the bottom bar
+  margin-bottom 96px
 </style>

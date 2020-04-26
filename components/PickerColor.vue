@@ -52,18 +52,18 @@ export default {
   components: {
     BaseModal,
     InputField,
-    Icon
+    Icon,
   },
   props: {
     value: {
       type: String,
-      default: '#000000'
+      default: '#000000',
     },
     namespace: String,
     tooltip: {
       type: [Boolean, String],
-      default: false
-    }
+      default: false,
+    },
   },
   data() {
     return {
@@ -89,8 +89,8 @@ export default {
         { hex: 'a7c0cd', name: 'Bleu-gris' },
         { hex: 'bdbdbd', name: 'Gris' },
         { hex: '6d4c41', name: 'Marron' },
-        { hex: 'B38C80', name: 'Marron clair' }
-      ]
+        { hex: 'B38C80', name: 'Marron clair' },
+      ],
     }
   },
   computed: {
@@ -101,102 +101,101 @@ export default {
     colorName() {
       if (!this.value || typeof this.value !== 'string') return false
       const value = this.value.toUpperCase()
-      const preset = this.presets.find(
-        (p) => '#' + p.hex.toUpperCase() === value
-      )
+      const preset = this.presets.find(p => '#' + p.hex.toUpperCase() === value)
       return preset ? `${preset.name} (${value})` : value
     },
     sortedPresets() {
-      return [...this.presets].sort(firstBy((col) => tinycolor(col).toHsl().h))
-    }
-  }
+      return [...this.presets].sort(firstBy(col => tinycolor(col).toHsl().h))
+    },
+  },
 }
 </script>
 
 <style lang="stylus" scoped>
-// FIXME: Bad, copy-pasted from <RadioButtons>
+//FIXME: Bad, copy-pasted from <RadioButtons>
 .BaseModal /deep/
   .content
-    display: flex
-    justify-content: center
+    display flex
+    justify-content center
 
 legend
-  padding: 0 10px
-  margin-bottom: 5px
-  text-transform: uppercase
-  letter-spacing: 1px
-  font-size: 0.75em
-  font-weight: 500
-  display: block
+  display block
+  margin-bottom 5px
+  padding 0 10px
+  text-transform uppercase
+  letter-spacing 1px
+  font-weight 500
+  font-size 0.75em
 
 .opener
-  cursor: pointer
-  border-radius: var(--border-radius)
+  border-radius var(--border-radius)
+  cursor pointer
 
 swatch-width = 2.5em
 
 .swatch
-  display: block
-  height: swatch-width
-  width: swatch-width
+  display block
+  width swatch-width
+  height swatch-width
 
 .swatches
-  // justify-content center
-  margin-bottom: 1em
-  display: flex
-  flex-wrap: wrap
-  width: swatch-width * 7
+  display flex
+  flex-wrap wrap
+  //justify-content center
+  margin-bottom 1em
+  width swatch-width * 7
 
   @media (max-width: 375px)
-    width: swatch-width * 6
+    width swatch-width * 6
 
   input
-    display: none
+    display none
 
   .swatch
-    border-radius: 0
-    height: swatch-width
-    width: swatch-width
-    cursor: pointer
+    width swatch-width
+    height swatch-width
+    border-radius 0
+    cursor pointer
 
 .custom-color
   hex-input-padding = 0.5em
-  font-family: var(--fonts-monospace-light)
-  display: flex
-  align-items: center
-  // justify-content center
-  width: 100%
-  height: swatch-width
+
+  display flex
+  align-items center
+  //justify-content center
+  width 100%
+  height swatch-width
+  font-family var(--fonts-monospace-light)
 
   .swatch
-    width: 'calc(%s / 2)' % swatch-width
-    margin-right: 0.25em
+    margin-right 0.25em
+    width 'calc(%s / 2)' % swatch-width
 
   label
-    display: flex
-    align-items: center
+    display flex
+    align-items center
 
   .native-picker-opener
-    font-size: 1.5em
-    cursor: pointer
+    font-size 1.5em
+    cursor pointer
 
   input
-    display: none
+    display none
 
   .octothorpe
-    color: var(--grey-dark)
-    margin-left: auto
-    margin-right: 0.5em
-    font-size: 1.2em
+    margin-right 0.5em
+    margin-left auto
+    color var(--grey-dark)
+    font-size 1.2em
 
   .hex-input
-    height: swatch-width
+    height swatch-width
 
   .hex-input, .hex-input /deep/ input
-    width: 'calc(6ch + %s * 2 + 5px)' % hex-input-padding
-    font-family: var(--fonts-monospace-light) !important // FIXME: make a 'font-family' opt on <InputField>
+    width 'calc(6ch + %s * 2 + 5px)' % hex-input-padding
+    font-family var(--fonts-monospace-light) !important //FIXME: make a 'font-family' opt on <InputField>
 
   .hex-input /deep/ input
-    min-width: 'calc(6ch + %s * 2 + 5px)' % hex-input-padding
-    padding: hex-input-padding
+    padding hex-input-padding
+    min-width 'calc(6ch + %s * 2 + 5px)' % hex-input-padding
 </style>

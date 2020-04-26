@@ -23,42 +23,42 @@ export default {
   props: {
     type: {
       type: String,
-      default: 'button'
+      default: 'button',
     },
     variant: {
       type: String,
-      default: 'outline'
+      default: 'outline',
       // validator: (v) => ["primary", "outline", "secondary"].includes(v)
     },
     validation: {
       type: Object,
-      default: null
+      default: null,
     },
     disabled: {
       type: Boolean,
-      default: false
+      default: false,
     },
     small: {
       type: Boolean,
-      default: false
+      default: false,
     },
     smaller: {
       type: Boolean,
-      default: false
+      default: false,
     },
     href: {
       type: String,
-      default: null
+      default: null,
     },
     role: {
       type: String,
-      default: null
+      default: null,
     },
     inPlace: {
       // Open external links in-place
       type: Boolean,
-      default: false
-    }
+      default: false,
+    },
   },
   computed: {
     v() {
@@ -70,148 +70,152 @@ export default {
       return (
         '<ul class="default-styles" style="padding-left:1em;text-align:left">' +
         Object.values(this.v.errors)
-          .filter((v) => v.length)
-          .map((v) => '<li>' + v[0] + '</li>')
+          .filter(v => v.length)
+          .map(v => '<li>' + v[0] + '</li>')
           .join('') +
         '</ul>'
       )
     },
     externalHref() {
       return this.href && /^https?:\/\//.test(this.href)
-    }
-  }
+    },
+  },
 }
 </script>
 
 <style lang="stylus" scoped>
 .button
-  display: inline-block
+  display inline-block
 
 .btn
-  -webkit-appearance: none
-  appearance: none
-  transition: all 0.125s ease
-  margin: 0 5px
-  padding: 15px 20px
-  font-size: 1.05em
-  display: flex
+  display flex
+  margin 0 5px
+  padding 15px 20px
+  font-size 1.05em
+  transition all 0.125s ease
+  -webkit-appearance none
+  appearance none
 
   &.small, &.smaller
-    font-size: 0.9em
-    margin: 0 1.5em
-    display: inline-flex
+    display inline-flex
+    margin 0 1.5em
+    font-size 0.9em
 
   &.small
-    padding: 0.75em 1em
+    padding 0.75em 1em
 
   &.smaller
-    padding: 0.5em 0.8em
+    padding 0.5em 0.8em
 
-  border-radius: var(--border-radius)
-  justify-content: center
-  align-items: center
-  text-align: center
+  justify-content center
+  align-items center
+  border-radius var(--border-radius)
+  text-align center
 
   &[disabled]
-    cursor: not-allowed
+    cursor not-allowed
 
   & /deep/ i
-    margin-right: 0.2em
-    font-size: 1.3em
+    margin-right 0.2em
+    font-size 1.3em
 
 .btn--outline
-  border: 2px solid var(--grey)
-  color: var(--blue)
+  border 2px solid var(--grey)
+  color var(--blue)
+
   &[role=danger]
     color var(--red)
 
   &:hover, &:focus
-    background-color: transparent
-    border-color: var(--blue)
+    border-color var(--blue)
+    background-color transparent
+
     &[role=danger]
-      background-color: transparent
-      border-color: var(--red)
+      border-color var(--red)
+      background-color transparent
 
   &:active
-    background-color: var(--blue-offset)
-    border-color: var(--blue-offset)
-    color: var(--blue-dark)
+    border-color var(--blue-offset)
+    background-color var(--blue-offset)
+    color var(--blue-dark)
+
     &[role=danger]
-      background-color: var(--red)
-      border-color: var(--red)
-      color: white
+      border-color var(--red)
+      background-color var(--red)
+      color white
 
   &[disabled]
-    color: var(--grey)
-    border-color: var(--grey)
-    background: transparent
+    border-color var(--grey)
+    background transparent
+    color var(--grey)
 
 .btn--primary
-  background-color: var(--blue)
-  border: 2px solid var(--blue)
-  color: white
-  &[role=danger]
-    background-color: var(--red)
-    border: 2px solid var(--red)
+  border 2px solid var(--blue)
+  background-color var(--blue)
+  color white
 
+  &[role=danger]
+    border 2px solid var(--red)
+    background-color var(--red)
 
   &:hover, &:focus
-    background-color: var(--blue-dark)
-    border: 2px solid var(--blue-dark)
+    border 2px solid var(--blue-dark)
+    background-color var(--blue-dark)
+
     &[role=danger]
-      background-color: var(--red-dark)
-      border: 2px solid var(--red-dark)
+      border 2px solid var(--red-dark)
+      background-color var(--red-dark)
 
   &:active
-    color: rgba(255, 255, 255, 0.25)
+    color rgba(255, 255, 255, 0.25)
 
   &[disabled]
-    background: var(--grey-offset)
-    border: 2px solid var(--grey-offset)
-    color: var(--grey-dark)
+    border 2px solid var(--grey-offset)
+    background var(--grey-offset)
+    color var(--grey-dark)
 
 .btn--secondary
-  background-color: var(--blue-offset)
-  border: 2px solid var(--blue-offset)
-  color: var(--blue)
+  border 2px solid var(--blue-offset)
+  background-color var(--blue-offset)
+  color var(--blue)
 
   &:hover, &:focus
-    background-color: var(--blue)
-    border: 2px solid var(--blue)
-    color: white
+    border 2px solid var(--blue)
+    background-color var(--blue)
+    color white
 
   &:active
-    background-color: var(--blue-dark)
-    border: 2px solid var(--blue-dark)
+    border 2px solid var(--blue-dark)
+    background-color var(--blue-dark)
 
 .btn--text
-  background-color: transparent
-  border: 2px solid transparent
-  color: black
+  border 2px solid transparent
+  background-color transparent
+  color black
 
   &:hover, &:focus
-    border: 2px solid var(--grey-light)
+    border 2px solid var(--grey-light)
 
 .btn--flat
-  padding: 10px 0
-  margin: 0
-  text-transform: uppercase
-  letter-spacing: 0.125em
-  font-weight: bold
-  color: var(--blue)
+  margin 0
+  padding 10px 0
+  color var(--blue)
+  text-transform uppercase
+  letter-spacing 0.125em
+  font-weight bold
 
   &:hover, &:focus
-    color: var(--blue-dark)
+    color var(--blue-dark)
 
   & /deep/ i
-    margin-bottom: 0.15em // vertical centering
+    margin-bottom 0.15em //vertical centering
 
 .btn--text-blue
-  padding: 0
-  background-color: transparent
-  color: var(--blue)
-  font-size: 1.2em
+  padding 0
+  background-color transparent
+  color var(--blue)
+  font-size 1.2em
 
   &:hover, &:focus
-    color: var(--blue-dark)
+    color var(--blue-dark)
 </style>

@@ -8,19 +8,19 @@ export const state = () => ({
     color: 'black',
     abbreviation: '...',
     name: 'Veuillez sélectionner une matière…',
-    _isPlaceholder: true
-  }
+    _isPlaceholder: true,
+  },
 })
 
 export const getters = {
   all: (state, getters) => getters.orderBy('hue', state.subjects),
   one: (state, getters) => (value, prop = 'uuid') =>
-    state.subjects.find((o) => o[prop] === value) || null,
+    state.subjects.find(o => o[prop] === value) || null,
   orderBy: (state, getters) => (what = 'hue', subjects = null) => {
     const sorters = {
-      hue: firstBy((o) => tinycolor(o.color).toHsl().h),
+      hue: firstBy(o => tinycolor(o.color).toHsl().h),
       weight: firstBy('weight'),
-      uuid: firstBy('uuid')
+      uuid: firstBy('uuid'),
     }
 
     if (!sorters.hasOwnProperty(what)) {
@@ -43,13 +43,13 @@ export const getters = {
   validate: getValidator({
     constraints: {
       maxLength: {
-        300: ['name', 'room']
+        300: ['name', 'room'],
       },
       isAColor: ['color'],
       required: ['name', 'color', 'weight'],
       minimum: {
-        0: ['goal', 'weight']
-      }
+        0: ['goal', 'weight'],
+      },
     },
     customConstraints: [
       // {
@@ -64,23 +64,23 @@ export const getters = {
         field: 'goal',
         constraint: (getters, object) => {
           return object.goal <= 1
-        }
-      }
+        },
+      },
     ],
     fieldNames: {
       color: { gender: 'F', name: 'couleur' },
       name: { gender: 'M', name: 'nom' },
       goal: { gender: 'M', name: 'objectif de moyenne' },
       weight: { gender: 'M', name: 'coefficient' },
-      room: { gender: 'F', name: 'salle' }
+      room: { gender: 'F', name: 'salle' },
     },
     resourceName: { gender: 'F', name: 'matière' },
-    debug: true
-  })
+    debug: true,
+  }),
 }
 
 export const mutations = {
-  ...getMutations('subject')
+  ...getMutations('subject'),
 }
 
 export const actions = {
@@ -161,12 +161,12 @@ export const actions = {
           onClick: async (e, toast) => {
             await dispatch(`post`, { subject })
             toast.goAway(0)
-          }
+          },
         },
-        duration: 8000
+        duration: 8000,
       })
     } catch (error) {
       console.error(error)
     }
-  }
+  },
 }

@@ -26,86 +26,91 @@ export default {
   components: {
     HeadingSub,
     OverlayLoadingLogo,
-    Logotype
+    Logotype,
   },
   computed: {
-    ...mapState(['version'])
-  }
+    ...mapState(['version']),
+  },
 }
 </script>
 
 <style lang="stylus" scoped>
 .TheFooter
-  margin-top: 10rem
-  width: 100%
-  min-height: 500px
-  height: 50vh
+  margin-top 10rem
+  min-height 500px
+  width 100%
+  height 50vh
 
   +mobile
-    height: 75vh
+    height 75vh
 
-  background: var(--blue)
-  position: relative
-  z-index: 999
-  display: flex
-  align-items: center
-  justify-content: center
-  flex-direction: column
+  position relative
+  z-index 999
+  display flex
+  flex-direction column
+  justify-content center
+  align-items center
+  background var(--blue)
 
 .OverlayLoadingLogo
-  height: 25vh
-  width: 25vw
-  // transform: scale(2)
+  width 25vw
+  height 25vh
+  //transform: scale(2)
 
 .OverlayLoadingLogo /deep/ svg *
-  stroke: white
+  stroke white
 
 .logotype
-  // --- positioning ---
+  //---   margins   ---
+  margin-bottom 30px
+  max-width 500px
+  //--- positioning ---
 
-  // --- dimensions  ---
-  width: 80%
-  max-width: 500px
-  // ---   margins   ---
-  margin-bottom: 30px
-  // ---  appearance ---
-  stroke: #ffffff
+  //--- dimensions  ---
+  width 80%
+  //---  appearance ---
+  stroke #ffffff
+
 .logotype-wrapper
-  height: 100px
   display flex
   justify-content center
   align-items center
-  margin-top: -30px
+  margin-top -30px
+  height 100px
 
 .version
-  // --- positioning ---
-  // --- dimensions  ---
-  font-size: 15px
-  // ---   margins   ---
+  //---   margins   ---
 
-  // ---  appearance ---
-  color: #ffffff
-  // ---  animation  ---
+  //---  appearance ---
+  color #ffffff
+  //--- positioning ---
+  //--- dimensions  ---
+  font-size 15px
+  //---  animation  ---
+
 .version .channel
   margin-right 1em
   padding 0.5em
-  text-transform uppercase
   border 2px solid white
   border-radius var(--border-radius)
+  text-transform uppercase
 
 .open-source
   margin-top 2em
-  text-align center
   color white
+  text-align center
+
   a
-    color white
     border-color white
+    color white
+
 .wakatime
-  margin-top: 0.5em
   display flex
   align-items center
+  margin-top 0.5em
+
   .plus-sign
+    padding 0 0.2em
     color white
-    padding 0 .2em
-    font-size: 2em
+    font-size 2em
 </style>

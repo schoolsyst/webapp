@@ -2,11 +2,11 @@ import SunCalc from 'suncalc'
 import { isBefore, isAfter } from 'date-fns'
 
 export const state = () => ({
-  current: 'LIGHT'
+  current: 'LIGHT',
 })
 
 export const getters = {
-  current: (state) => state.current,
+  current: state => state.current,
   resolveAuto: (state, getters, rootState) => {
     const { latitude, longitude } = rootState.location
     const now = rootState.now
@@ -17,13 +17,13 @@ export const getters = {
     } else {
       return 'DARK'
     }
-  }
+  },
 }
 
 export const mutations = {
   SET: (state, newTheme) => {
     state.current = newTheme
-  }
+  },
 }
 
 export const actions = {
@@ -43,5 +43,5 @@ export const actions = {
     commit('SET', theme)
     // Attach the theme to <body>
     document.body.setAttribute('theme', theme)
-  }
+  },
 }

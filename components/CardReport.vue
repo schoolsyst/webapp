@@ -24,28 +24,28 @@ export default {
   props: {
     title: {
       type: String,
-      required: true
+      required: true,
     },
     // eslint-disable-next-line vue/prop-name-casing
     github_issue: {
       type: Number,
-      default: null
+      default: null,
     },
     published: {
       type: Date,
-      default: null
+      default: null,
     },
     type: {
       type: String,
-      required: true
-    }
+      required: true,
+    },
   },
   data() {
     return {
       verboseTypes: {
         FEATURE: 'Fonctionnalité',
-        BUG: 'Bug'
-      }
+        BUG: 'Bug',
+      },
     }
   },
   computed: {
@@ -63,54 +63,49 @@ export default {
     },
     verboseType() {
       return this.verboseTypes[this.type]
-    }
-  }
+    },
+  },
 }
 </script>
 
 <style lang="stylus" scoped>
-
 //
-// Definitions
-//
-
-
-//
-// Layout
+//Definitions
 //
 
+//
+//Layout
+//
 .card
   display flex
   align-items center
   padding 1em
-  width 50rem
   max-width calc(100% - 2em)
+  width 50rem
 
 .actions
   margin-left auto
 
 .actions .button /deep/ .btn
-  margin-right: 0
+  margin-right 0
 
 .title
   display flex
   align-items center
 
 .top-line
-  font-size: 0.85em
+  font-size 0.85em
 
 //
-// Decoration
+//Decoration
 //
-
 .card
   border 1px solid
   border-radius var(--border-radius)
 
 //
-// Colors
+//Colors
 //
-
 .card
   border-color var(--grey)
 
@@ -121,18 +116,13 @@ export default {
   color var(--grey-light)
 
 //
-// Typography
+//Typography
 //
-
 .text
   text-align left
 
 .top-line
   text-transform uppercase
+  letter-spacing 0.1em
   font-weight bold
-  letter-spacing .1em
-
-//
-// Reactions
-//
 </style>

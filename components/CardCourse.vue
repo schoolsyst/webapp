@@ -28,28 +28,28 @@ export default {
   props: {
     subject: {
       type: Object,
-      required: true
+      required: true,
     },
     room: {
       type: String,
-      default: '—'
+      default: '—',
     },
     empty: {
       type: Boolean,
-      default: false
+      default: false,
     },
     expanded: {
       type: Boolean,
-      default: false
+      default: false,
     },
     start: {
       type: Date,
-      default: null
+      default: null,
     },
     end: {
       type: Date,
-      default: null
-    }
+      default: null,
+    },
   },
   computed: {
     backgroundColor() {
@@ -61,82 +61,82 @@ export default {
       }
       return {
         backgroundColor: this.backgroundColor,
-        color: this.textColor()(this.backgroundColor)
+        color: this.textColor()(this.backgroundColor),
       }
-    }
+    },
   },
   methods: {
-    ...mapGetters(['textColor'])
-  }
+    ...mapGetters(['textColor']),
+  },
 }
 </script>
 
 <style lang="stylus" scoped>
 .card-wrapper
-  cursor: pointer
+  cursor pointer
 
 .card
-  padding: 0 1.5em
-  z-index: 10
-  height: 65px
-  width: 500px
-  border-radius: var(--border-radius)
-  display: flex
-  align-items: center
-  transition: all 0.25s ease
-  border: 2px solid var(--grey-light)
-  border-color: transparent
+  z-index 10
+  display flex
+  align-items center
+  padding 0 1.5em
+  width 500px
+  height 65px
+  border 2px solid var(--grey-light)
+  border-color transparent
+  border-radius var(--border-radius)
+  transition all 0.25s ease
 
   &.current
-    justify-content: center
+    justify-content center
 
   &.empty
-    color: var(--black)
-    background: var(--white)
-    border-color: var(--grey-light)
+    border-color var(--grey-light)
+    background var(--white)
+    color var(--black)
 
 .infos
-  display: flex
-  align-items: center
-  width: 100%
+  display flex
+  align-items center
+  width 100%
 
   .subject
-    font-size: 1.2rem
-    display: flex
-    align-items: center
+    display flex
+    align-items center
+    font-size 1.2rem
 
     .subject-name
-      transition: margin 0.25s ease
+      transition margin 0.25s ease
 
     .subject-color
-      width: 0px
-      height: 0px
+      width 0
+      height 0
 
   .room-and-time
-    font-size: 1rem
-    margin-left: auto
+    margin-left auto
+    font-size 1rem
 
 .room, .room-and-time
-  margin-left: auto
-  font-family: var(--fonts-monospace)
+  margin-left auto
+  font-family var(--fonts-monospace)
 
 .room-and-time
-  display: flex
-  align-items: center
-  text-align: right
-  flex-direction: column
+  display flex
+  flex-direction column
+  align-items center
+  text-align right
 
 .time
-  display: flex
-  align-items: center
+  display flex
+  align-items center
 
 @media (max-width: 888px)
   .card-wrapper
-    width: 100%
-    display: flex
-    justify-content: flex-start
+    display flex
+    justify-content flex-start
+    width 100%
 
   .card
-    width: 100%
-    max-width: 500px
+    max-width 500px
+    width 100%
 </style>

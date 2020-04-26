@@ -58,11 +58,11 @@ import ScreenEmpty from '~/components/ScreenEmpty.vue'
 export default {
   components: { HeadingSub, Icon, CardCourse, ScreenEmpty },
   head: {
-    title: 'Timeline'
+    title: 'Timeline',
   },
   data() {
     return {
-      expandedCourse: null
+      expandedCourse: null,
     }
   },
   computed: {
@@ -71,12 +71,12 @@ export default {
       'todayCourses',
       'currentCourse',
       'nextCoursesIn',
-      'endOfDay'
+      'endOfDay',
     ]),
     ...mapGetters(['textColor']),
     nextCourses() {
       return this.nextCoursesIn(this.now).sort(firstBy('start'))
-    }
+    },
   },
   mounted() {
     this.$withLoadingScreen(
@@ -98,144 +98,144 @@ export default {
     },
     formatDistance(date) {
       return formatDistanceStrict(date, this.now, { locale: fr })
-    }
+    },
   },
   watch: {
     expandedCourse() {
       console.log(this.expandedCourse)
-    }
-  }
+    },
+  },
 }
 </script>
 
 <style lang="stylus" scoped>
-// =====================
-// LOADING
-// =====================
+//=====================
+//LOADING
+//=====================
 .loading
-  position: fixed
-  top: 0
-  right: 0
-  bottom: 0
-  left: 0
-  width: 100vw
-  height: 100vh
-  background: var(--white)
-  display: flex
-  text-align: center
-  justify-content: center
-  align-items: center
-  z-index: 100
+  position fixed
+  top 0
+  right 0
+  bottom 0
+  left 0
+  z-index 100
+  display flex
+  justify-content center
+  align-items center
+  width 100vw
+  height 100vh
+  background var(--white)
+  text-align center
 
-// =====================
-// LINE
-// =====================
+//=====================
+//LINE
+//=====================
 .timeline .line
-  position: relative
-  left: 2.25em * 7.75
-  z-index: -10
+  position relative
+  left 2.25em * 7.75
+  z-index -10
 
   @media (max-width: 888px)
-    left: 30px
+    left 30px
 
-  opacity: 0.25
-  background: url('/misc/timeline-line.svg')
-  background-repeat: repeat-y
-  // background-size 2em 40em
-  width: 1em
+  //background-size 2em 40em
+  width 1em
+  background url('/misc/timeline-line.svg')
+  background-repeat repeat-y
+  opacity 0.25
 
-// =====================
-// TITLES
-// =====================
+//=====================
+//TITLES
+//=====================
 li.title > :not(.time)
-  background: var(--white)
-  position: relative
-  z-index: 10
-  padding: 0.2em 0
+  position relative
+  z-index 10
+  padding 0.2em 0
+  background var(--white)
 
   @media (min-width: calc(888px + 1px))
-    margin-left: var(--border-radius)
+    margin-left var(--border-radius)
 
   @media (max-width: 888px)
-    width: 100%
+    width 100%
 
-// =====================
-// TIME STAMPS
-// =====================
+//=====================
+//TIME STAMPS
+//=====================
 li .time
-  font-family: var(--fonts-monospace)
-  font-size: 1.5em
-  width: 180px
-  display: flex
-  justify-content: flex-end
-  align-items: center
+  display flex
+  justify-content flex-end
+  align-items center
+  width 180px
+  font-size 1.5em
+  font-family var(--fonts-monospace)
 
-  i // <-- Caret icon between two time stamps
-    padding: 0 0.25em
+  i //<-- Caret icon between two time stamps
+    padding 0 0.25em
 
-  // Mobile
+  //Mobile
   @media (min-width: calc(888px + 1px))
-    margin-right: 1.5rem
+    margin-right 1.5rem
 
   @media (max-width: 888px)
-    justify-content: flex-start
-    width: 100%
-    margin-bottom: 0.5em
-    padding: 0.5em 0
+    justify-content flex-start
+    margin-bottom 0.5em
+    padding 0.5em 0
+    width 100%
 
     &:not(.empty)
-      background: var(--white)
-      position: relative
-      z-index: 10
+      position relative
+      z-index 10
+      background var(--white)
 
 li.current .time
-  font-size: 2.25em
+  font-size 2.25em
 
-// =====================
-// ITEM LAYOUT
-// =====================
+//=====================
+//ITEM LAYOUT
+//=====================
 ul
-  margin-left: 1em
-  list-style: none
+  margin-left 1em
+  list-style none
 
   @media (max-width: 888px)
-    margin-left: -1em // FIXME
-    width: 100%
+    margin-left -1em //FIXME
+    width 100%
 
 li
-  margin-bottom: 2em
+  margin-bottom 2em
 
   &.title, &.current
-    margin-bottom: 1em
+    margin-bottom 1em
 
-  display: flex
-  align-items: center
+  display flex
+  align-items center
 
   @media (max-width: 888px)
-    flex-direction: column
+    flex-direction column
 
-// =====================
-// SPECIAL CASES
-// =====================
+//=====================
+//SPECIAL CASES
+//=====================
 .no-courses
-  display: flex
-  flex-direction: column
-  align-items: center
-  text-align: center
-  font-size: 1.5em
-  width: 100%
-  margin-top: 3em
+  display flex
+  flex-direction column
+  align-items center
+  margin-top 3em
+  width 100%
+  text-align center
+  font-size 1.5em
 
   p
-    margin-top: 1em
+    margin-top 1em
 
-// =====================
-// GLOBAL LAYOUT
-// =====================
+//=====================
+//GLOBAL LAYOUT
+//=====================
 .timeline
-  display: flex
+  display flex
 
   @media (max-width: 600px)
-    margin-left: 20px
-    margin-right: 20px
+    margin-right 20px
+    margin-left 20px
 </style>

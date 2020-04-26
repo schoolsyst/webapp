@@ -7,8 +7,8 @@ export default {
   props: {
     filled: {
       type: Boolean,
-      default: false
-    }
+      default: false,
+    },
   },
   computed: {
     className() {
@@ -21,7 +21,7 @@ export default {
       } else {
         return rawText
       }
-    }
-  }
+    },
+  },
 }
 </script>

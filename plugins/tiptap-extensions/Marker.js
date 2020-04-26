@@ -10,16 +10,16 @@ export default class Marker extends Mark {
     return {
       parseDOM: [
         {
-          tag: 'mark'
-        }
+          tag: 'mark',
+        },
       ],
-      toDOM: () => ['mark', 0]
+      toDOM: () => ['mark', 0],
     }
   }
 
   keys({ type }) {
     return {
-      'Mod-j': toggleMark(type)
+      'Mod-j': toggleMark(type),
     }
   }
 

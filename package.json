@@ -66,8 +66,7 @@
       "components/**.vue",
       "plugins/**.js",
       "store/**.js",
-      "pages/**.vue",
-      "layouts/**.vue"
+      "pages/**.vue"
     ]
   },
   "lint-staged": {

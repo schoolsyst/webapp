@@ -66,13 +66,13 @@ export default {
       email: '',
       password: '',
       passwordConfirmation: '',
-      registered: false
+      registered: false,
     }
   },
   computed: {
     validation() {
       return this.validateRegister()(this)
-    }
+    },
   },
   methods: {
     ...mapGetters('auth', ['validateRegister']),
@@ -81,74 +81,74 @@ export default {
       this.registered = await this._register({
         email: this.email,
         username: this.username,
-        password: this.password
+        password: this.password,
       })
-    }
-  }
+    },
+  },
 }
 </script>
 
 <style lang="stylus" scoped>
 .container
-  min-height: 100vh
-  min-width: 100vw
-  display: flex
-  justify-content: center
-  align-items: center
-  flex-direction: column
-  text-align: center
+  display flex
+  flex-direction column
+  justify-content center
+  align-items center
+  min-width 100vw
+  min-height 100vh
+  text-align center
 
 @media (min-width: calc(888px + 1px))
   form
-    display: grid
-    grid-template-columns: repeat(2, 1fr)
-    grid-gap: 2em
+    display grid
+    grid-template-columns repeat(2, 1fr)
+    grid-gap 2em
 
   .group-both
-    grid-column: 1 / span 2
-    width: 100%
-    display: flex
-    justify-content: center
+    display flex
+    justify-content center
+    width 100%
+    grid-column 1 / span 2
 
 .login-link
-  margin-bottom: 4em
+  margin-bottom 4em
 
 .forgotten-password
-  margin-top: 2em
+  margin-top 2em
 
 .submit
-  margin-top: 1em
+  margin-top 1em
 
 .field
-  width: 300px
+  width 300px
 
 .registered
-  display: flex
-  align-items: center
+  display flex
+  align-items center
 
   @media (max-width: 888px)
-    flex-direction: column
-    justify-content: center
+    flex-direction column
+    justify-content center
 
     img
-      width: 90vw
+      width 90vw
 
   p
-    font-size: 1.5rem
-    line-height: 1.2em
+    font-size 1.5rem
+    line-height 1.2em
 
   .text
-    text-align: left
+    text-align left
 
     @media (max-width: 888px)
-      text-align: center
+      text-align center
 
-    max-width: 20em
+    max-width 20em
 
     & /deep/ .btn
-      margin-top: 2em
+      margin-top 2em
 
 @media (max-width: 888px)
   .registered .logo
-    display: none
+    display none
 </style>

@@ -2,7 +2,7 @@ import { getValidator } from './index'
 
 export const store = () => ({
   username: '',
-  loggedIn: false
+  loggedIn: false,
 })
 
 // TODO: passwordStrengthConstraint using https://www.npmjs.com/package/password-validator
@@ -14,7 +14,7 @@ const passwordConfirmationConstraint = {
     const pwd1 = object.password
     const pwd2 = object.passwordConfirmation
     return pwd1 === pwd2
-  }
+  },
 }
 
 export const getters = {
@@ -22,14 +22,14 @@ export const getters = {
     resourceName: { gender: 'M', name: 'compte' },
     fieldNames: {
       username: { gender: 'M', name: "nom d'utilisateur" },
-      password: { gender: 'M', name: 'mot de passe' }
+      password: { gender: 'M', name: 'mot de passe' },
     },
     constraints: {
       notEmpty: ['username', 'password'],
       maxLength: {
-        300: ['username']
-      }
-    }
+        300: ['username'],
+      },
+    },
   }),
   validateRegister: getValidator({
     resourceName: { gender: 'M', name: 'compte' },
@@ -39,17 +39,17 @@ export const getters = {
       password: { gender: 'M', name: 'mot de passe' },
       passwordConfirmation: {
         gender: 'F',
-        name: 'confirmation du mot de passe'
-      }
+        name: 'confirmation du mot de passe',
+      },
     },
     constraints: {
       notEmpty: ['username', 'password', 'email'],
       maxLength: {
-        300: ['username', 'email']
+        300: ['username', 'email'],
       },
-      isAnEmail: ['email']
+      isAnEmail: ['email'],
     },
-    customConstraints: [passwordConfirmationConstraint]
+    customConstraints: [passwordConfirmationConstraint],
   }),
   validatePasswordReset: getValidator({
     resourceName: { gender: 'M', name: 'mot de passe' },
@@ -57,30 +57,30 @@ export const getters = {
       password: { gender: 'M', name: 'mot de passe' },
       passwordConfirmation: {
         gender: 'F',
-        name: 'confirmation du mot de passe'
+        name: 'confirmation du mot de passe',
       },
-      email: { gender: 'F', name: 'adresse email' }
+      email: { gender: 'F', name: 'adresse email' },
     },
     constraints: {
       required: ['password'],
       isAnEmail: ['email'],
       maxLength: {
-        300: ['email']
-      }
+        300: ['email'],
+      },
     },
     customConstraints: [passwordConfirmationConstraint],
-    debug: true
+    debug: true,
   }),
   validateEmailAdress: getValidator({
     resourceName: { gender: 'M', name: 'addresse email' },
     fieldNames: {
-      email: { gender: 'F', name: 'adresse email' }
+      email: { gender: 'F', name: 'adresse email' },
     },
     constraints: {
       required: ['email'],
-      isAnEmail: ['email']
-    }
-  })
+      isAnEmail: ['email'],
+    },
+  }),
 }
 
 export const actions = {
@@ -95,12 +95,12 @@ export const actions = {
           'Unable to log in with provided credentials.'
       ) {
         this.$toast.error("Mot de passe ou nom d'utilisateur incorrect", {
-          icon: 'error_outline'
+          icon: 'error_outline',
         })
         return false
       }
       this.$toast.error('Erreur interne, veuillez réessayer plus tard.', {
-        icon: 'error_outline'
+        icon: 'error_outline',
       })
     }
   },
@@ -115,18 +115,18 @@ export const actions = {
         data.email[0] === 'user with this email already exists.'
       ) {
         this.$toast.error('Cette adresse e-mail est déjà prise', {
-          icon: 'error_outline'
+          icon: 'error_outline',
         })
       } else if (
         data.username &&
         data.username[0] === 'A user with that username already exists.'
       ) {
         this.$toast.error("Ce nom d'utilisateur est déjà pris", {
-          icon: 'error_outline'
+          icon: 'error_outline',
         })
       } else {
         this.$toast.error('Erreur lors de la création du compte', {
-          icon: 'error_outline'
+          icon: 'error_outline',
         })
       }
       return false
@@ -147,5 +147,5 @@ export const actions = {
     } catch (error) {
       return false
     }
-  }
+  },
 }

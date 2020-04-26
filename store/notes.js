@@ -4,24 +4,22 @@ import JsSearch from 'js-search'
 import { getMutations, getValidator } from './index'
 
 export const state = () => ({
-  notes: []
+  notes: [],
 })
 
-const parseObjectDates = (object) => ({
+const parseObjectDates = object => ({
   ...object,
   modified: parseISO(object.modified),
   added: parseISO(object.added),
-  opened: parseISO(object.opened)
+  opened: parseISO(object.opened),
 })
 //
 export const getters = {
   all: ({ notes }, { orderBy }) => orderBy(notes),
   one: ({ notes }) => (value, prop = 'uuid') =>
-    notes.find((o) => o[prop] === value) || null,
+    notes.find(o => o[prop] === value) || null,
   of: (state, { all }) => (value, what = 'subject') =>
-    all.filter(
-      (o) => (what === 'subject' ? o.subject.uuid : o[what]) === value
-    ),
+    all.filter(o => (what === 'subject' ? o.subject.uuid : o[what]) === value),
   currentSubject: (state, getters, rootState, rootGetters) => {
     const currentCourse = rootGetters['schedule/currentCourse']
     if (currentCourse === null) return null
@@ -35,7 +33,7 @@ export const getters = {
     ),
   learndatas: ({ learndatas }) => learndatas,
   learndata: (state, { learndatas }) => (value, prop = 'uuid') =>
-    learndatas.find((o) => o[prop] === value) || null,
+    learndatas.find(o => o[prop] === value) || null,
   latest: (state, { orderBy }) => (notesOrLearndatas, by = 'modified') => {
     const sorted = orderBy(notesOrLearndatas, by)
     return sorted.length ? sorted[0] : null
@@ -43,14 +41,14 @@ export const getters = {
   learndatasOf: (state, { all }) => (value, prop = 'note') => {
     switch (prop) {
       case 'note':
-        return all.filter((o) =>
+        return all.filter(o =>
           // If the requested note's UUID is in
           // the array of UUIDs of notes linked to that learndata
-          o.notes.map((n) => n.uuid).includes(value)
+          o.notes.map(n => n.uuid).includes(value)
         )
 
       case 'subject':
-        return all.filter((o) => o.subject.uuid === value)
+        return all.filter(o => o.subject.uuid === value)
 
       default:
         return []
@@ -60,15 +58,15 @@ export const getters = {
     constraints: {
       required: ['subject'],
       maxLength: {
-        300: ['name']
-      }
+        300: ['name'],
+      },
     },
     customConstraints: [
       {
         field: 'format',
         message: 'Format de note non reconnu',
-        constraint: (getters, obj) => ['MARKDOWN', 'HTML'].includes(obj.format)
-      }
+        constraint: (getters, obj) => ['MARKDOWN', 'HTML'].includes(obj.format),
+      },
     ],
     fieldNames: {
       subject: { gender: 'F', name: 'matière' },
@@ -77,14 +75,14 @@ export const getters = {
       format: { gender: 'M', name: 'format' },
       modified: { gender: 'F', name: 'date de modification' },
       added: { gender: 'F', name: 'date de création' },
-      opened: { gender: 'F', name: "date d'ouverture" }
+      opened: { gender: 'F', name: "date d'ouverture" },
     },
-    resourceName: { gender: 'F', name: 'prise de notes' }
-  })
+    resourceName: { gender: 'F', name: 'prise de notes' },
+  }),
 }
 
 export const mutations = {
-  ...getMutations('note', parseObjectDates)
+  ...getMutations('note', parseObjectDates),
 }
 
 export const actions = {
@@ -125,7 +123,7 @@ export const actions = {
     await dispatch('load')
     const note = {
       ...getters.one(uuid),
-      ...modifications
+      ...modifications,
     }
     if (!force) {
       const validation = await getters.validate(note)
@@ -162,9 +160,9 @@ export const actions = {
           onClick: async (e, toast) => {
             await dispatch(`post`, { note })
             toast.goAway(0)
-          }
+          },
         },
-        duration: 8000
+        duration: 8000,
       })
       // console.log(`[from API] DELETE /notes/${uuid}/: OK`)
     } catch (error) {
@@ -192,8 +190,8 @@ export const actions = {
           uuid,
           modifications: {
             content: clientNoteContent,
-            modified: rootState.now
-          }
+            modified: rootState.now,
+          },
         })
       }
       return true
@@ -205,7 +203,7 @@ export const actions = {
     // Init search
     const search = new JsSearch.Search('uuid')
     // Add indexes
-    indexes.forEach((index) => search.addIndex(index))
+    indexes.forEach(index => search.addIndex(index))
     // Add datasets
     search.addDocuments(getters.notes)
     // Return the object to search with
@@ -221,6 +219,6 @@ export const actions = {
      */
     searcher = searcher || (await dispatch('initSearch'))
     apply = apply || getters.note
-    return searcher.search(query).map((uuid) => apply(uuid))
-  }
+    return searcher.search(query).map(uuid => apply(uuid))
+  },
 }

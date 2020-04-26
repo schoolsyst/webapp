@@ -23,9 +23,9 @@ export default {
       },
       {
         title: 'Veuillez patienter...',
-        subtitle: "On vérifie que tout soit bien dans l'ordre"
+        subtitle: "On vérifie que tout soit bien dans l'ordre",
       }
     )
-  }
+  },
 }
 </script>

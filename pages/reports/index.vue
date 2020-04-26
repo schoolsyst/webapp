@@ -36,11 +36,11 @@ export default {
   components: { ButtonNormal, CardReport, HeadingSub, Icon },
   data() {
     return {
-      foldResolved: true
+      foldResolved: true,
     }
   },
   computed: {
-    ...mapGetters('reports', ['all', 'resolved', 'unresolved'])
+    ...mapGetters('reports', ['all', 'resolved', 'unresolved']),
   },
   mounted() {
     this.$withLoadingScreen(async () => {
@@ -50,74 +50,81 @@ export default {
   methods: {
     toggleFoldResolved() {
       this.foldResolved = !this.foldResolved
-    }
-  }
+    },
+  },
 }
 </script>
 
 <style lang="stylus" scoped>
-
 //
-// Definitions
-//
-
-//
-// Layout
+//Definitions
 //
 
+//
+//Layout
+//
 .container
   display flex
-  align-items center
   flex-direction column
+  align-items center
   text-align center
+
 .new-report
+  margin 0 auto
   margin-bottom 2em
   max-width 20em
-  margin 0 auto
+
 .reports-list
   max-width 100%
+
 .reports-list li
   display flex
   justify-content center
+
 .reports-list li:not(:last-child)
   margin-bottom 1em
+
 .HeadingSub
-  margin: 0 auto
-  margin-bottom .5em
-  margin-top: 1.5em
-  max-width calc(100% - 2em) //ref: <CardReport>
-  width 50rem //ref: <CardReport>
   display flex
   align-items center
+  margin 0 auto
+  margin-top 1.5em
+  margin-bottom 0.5em
+  max-width calc(100% - 2em) //ref: <CardReport>
+  width 50rem //ref: <CardReport>
+
 .fold-unfold
   margin-left auto
+
 .fold-unfold /deep/ i
-  font-size: 2em
+  font-size 2em
 
 //
-// Colors
+//Colors
 //
-
 .HeadingSub .count
+  margin-left 0.5em
   color var(--grey-light)
-  margin-left: 0.5em
 
 //
-// Reactions
+//Reactions
 //
-
 .HeadingSub
   cursor pointer
+
 .fold-unfold /deep/ i
-  transition transform .125s ease
+  transition transform 0.125s ease
+
 .HeadingSub:not(.folded) .fold-unfold /deep/ i
   transform rotate(180deg)
   transform-origin center
 
 .reports-list
   transition opacity 0.125s ease
+
   &.folded
     opacity 0
+
   &:not(.folded)
     opacity 1
 

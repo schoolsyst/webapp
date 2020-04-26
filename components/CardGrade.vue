@@ -36,99 +36,99 @@ export default {
     goal: Number,
     name: String,
     unit: Number,
-    weight: Number
+    weight: Number,
   },
   methods: {
     ...mapGetters('grades', ['formatUnit']),
-    ...mapGetters(['textColor'])
+    ...mapGetters(['textColor']),
   },
   computed: {
     offsetSubjectColor() {
       return {
         backgroundColor: this.subject.color,
-        opacity: this.textColor()(this.subject.color) === 'black' ? 0.75 : 0.5
+        opacity: this.textColor()(this.subject.color) === 'black' ? 0.75 : 0.5,
       }
-    }
+    },
   },
   mounted() {
     console.log(this.$props)
-  }
+  },
 }
 </script>
 
 <style lang="stylus" scoped>
 .card
-  padding: 1.1em 1.2em
-  border: 1px solid var(--grey-light)
-  border-radius: var(--border-radius)
-  transition: all 0.25s ease
-  cursor: pointer
+  padding 1.1em 1.2em
+  border 1px solid var(--grey-light)
+  border-radius var(--border-radius)
+  cursor pointer
+  transition all 0.25s ease
 
 .card:not(.theme-is-dark):hover
-  box-shadow: var(--shadow-2)
-  border-color: transparent
+  border-color transparent
+  box-shadow var(--shadow-2)
 
 .card-wrapper
-  padding: 3px
+  padding 3px
 
 .header
-  font-size: 1.1rem
-  display: flex
-  align-items: center
+  display flex
+  align-items center
+  font-size 1.1rem
 
   .subject
-    margin-right: 0.75em
-    max-width: 7.5em
+    margin-right 0.75em
+    max-width 7.5em
 
   .menu
-    margin-left: auto
+    margin-left auto
 
 .grade
-  display: flex
-  padding: 0.5em 0
+  display flex
+  padding 0.5em 0
 
 .slanted-fraction
-  font-family: var(--fonts-monospace-light)
-  font-size: 2rem
-  display: flex
-  align-items: center
+  display flex
+  align-items center
+  font-size 2rem
+  font-family var(--fonts-monospace-light)
 
   .denominator, .numerator
-    font-size: 0.9em
+    font-size 0.9em
 
   .denominator
-    margin-bottom: -0.5em
-    margin-left: -0.4em
+    margin-bottom -0.5em
+    margin-left -0.4em
 
   .numerator
-    margin-top: -0.5em
-    margin-right: -0.4em
+    margin-top -0.5em
+    margin-right -0.4em
 
   .fraction-bar
-    opacity: 0.25
-    height: 2em
-    width: 0.07em
-    transform: rotate(45deg)
-    left: 1em
-    margin: 0 0.5em
+    left 1em
+    margin 0 0.5em
+    width 0.07em
+    height 2em
+    opacity 0.25
+    transform rotate(45deg)
 
   .multiplication-sign
-    opacity: 0.25
-    display: flex
-    justify-content: center
-    align-items: center
-    margin: 0 0.75em
+    display flex
+    justify-content center
+    align-items center
+    margin 0 0.75em
+    opacity 0.25
 
     .bar
-      position: relative
-      width: 0.07em
-      height: 0.75em
+      position relative
+      width 0.07em
+      height 0.75em
 
       &.bar-1
-        position: absolute
-        transform: rotate(45deg)
+        position absolute
+        transform rotate(45deg)
 
       &.bar-2
-        position: absolute
-        transform: rotate(-45deg)
+        position absolute
+        transform rotate(-45deg)
 </style>

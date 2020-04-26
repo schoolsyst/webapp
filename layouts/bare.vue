@@ -16,8 +16,8 @@ export default {
   head() {
     return {
       bodyAttrs: {
-        class: 'layoutBare'
-      }
+        class: 'layoutBare',
+      },
     }
   },
   async mounted() {
@@ -26,7 +26,7 @@ export default {
     setInterval(() => {
       this.$store.commit('UPDATE_TIME', toDate(Date.now()))
     }, 1 * 1000)
-  }
+  },
 }
 </script>
 
@@ -38,7 +38,7 @@ export default {
   min-width: 100vw
   padding: 20px
 
-+mobile
+  +mobile
   .container
     padding: 10px
 </style>

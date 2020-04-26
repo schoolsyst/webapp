@@ -23,7 +23,7 @@ import BadgeSubject from '~/components/BadgeSubject.vue'
 export default {
   components: { BadgeSubject },
   props: {
-    uuid: String
+    uuid: String,
   },
   computed: {
     m() {
@@ -39,7 +39,7 @@ export default {
     },
     date() {
       return this.formatDate(this.$store.state.now)
-    }
+    },
   },
   methods: {
     ...mapGetters('schedule', ['mutation']),
@@ -48,10 +48,10 @@ export default {
     },
     formatTime(date) {
       return format(date, 'HH:mm', { locale: fr })
-    }
+    },
   },
   async mounted() {
     await this.$store.dispatch('schedule/load')
-  }
+  },
 }
 </script>

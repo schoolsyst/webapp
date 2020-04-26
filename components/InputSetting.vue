@@ -45,47 +45,47 @@ export default {
   props: {
     choices: {
       type: [Array, Object, String],
-      default: () => []
+      default: () => [],
     },
     name: String,
     _key: String,
     value: {
-      default: null
+      default: null,
     },
     multiple: {
       type: Boolean,
-      default: false
+      default: false,
     },
     type: String,
     description: {
       type: String,
-      default: ''
-    }
+      default: '',
+    },
   },
   computed: {
     ...mapState('settings', ['verboseChoices']),
     verboseChoices() {
       const choices = []
-      this.choices.forEach((choice) => {
+      this.choices.forEach(choice => {
         const verboseChoice = this.verboseChoices.hasOwnProperty(choice)
           ? this.verboseChoices[choice]
           : choice
         choices.push({ key: choice, label: verboseChoice })
       })
       return choices
-    }
+    },
   },
   methods: {
     ...mapActions('settings', ['setValue']),
     async set({ key, value }) {
       await this.setValue({ key, value })
       this.$emit('value-set', { key, value })
-    }
-  }
+    },
+  },
 }
 </script>
 
 <style lang="stylus" scoped>
 .input
-  max-width: 500px
+  max-width 500px
 </style>

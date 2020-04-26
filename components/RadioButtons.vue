@@ -22,24 +22,24 @@ export default {
   props: {
     name: {
       type: String,
-      required: true
+      required: true,
     },
     values: {
       type: Array,
-      default: () => []
+      default: () => [],
     },
     value: {
-      default: null
+      default: null,
     },
     variant: String,
     vertical: {
       type: Boolean,
-      default: false
-    }
+      default: false,
+    },
   },
   data() {
     return {
-      checked: this.value
+      checked: this.value,
     }
   },
   computed: {
@@ -49,15 +49,15 @@ export default {
     },
     choices() {
       if (typeof this.values[0] !== 'object') {
-        return this.values.map((v) => ({ key: v, label: v }))
+        return this.values.map(v => ({ key: v, label: v }))
       } else {
         return this.values
       }
-    }
+    },
   },
   methods: {
-    slugify
-  }
+    slugify,
+  },
 }
 </script>
 
@@ -65,75 +65,75 @@ export default {
 size = 1.15em
 
 input
-  display: none
+  display none
 
 label
-  height: size
-  display: flex
-  align-items: center
-  flex-shrink: 0
+  display flex
+  flex-shrink 0
+  align-items center
+  height size
 
 label::before
-  content: ''
-  display: flex
-  text-align: center
-  align-items: center
-  font-family: 'Material Icons'
-  display: inline-block
-  height: size
-  width: size
-  border-style: solid
-  border-width: 'calc(%s / 8)' % size
-  border-color: var(--grey-dark)
-  border-radius: 50%
-  transition: all 0.125s ease
-  margin-right: 0.25rem
-  // Fix the vertical alignement (might be because of the font 'Now')
-  margin-bottom: 0.125em
+  display flex
+  display inline-block
+  align-items center
+  margin-right 0.25rem
+  //Fix the vertical alignement (might be because of the font 'Now')
+  margin-bottom 0.125em
+  width size
+  height size
+  border-width 'calc(%s / 8)' % size
+  border-style solid
+  border-color var(--grey-dark)
+  border-radius 50%
+  content ''
+  text-align center
+  font-family 'Material Icons'
+  transition all 0.125s ease
 
 .RadioButton
-  display: inline-flex
-  align-items: center
-  margin-right: 1rem
+  display inline-flex
+  align-items center
+  margin-right 1rem
 
 fieldset
-  display: flex
-  border: 2px solid var(--grey-dark)
-  // padding 0.75em 0.625em
-  border-radius: var(--border-radius)
-  flex-wrap: wrap
+  display flex
+  flex-wrap wrap
+  border 2px solid var(--grey-dark)
+  //padding 0.75em 0.625em
+  border-radius var(--border-radius)
 
 fieldset.vertical
-  flex-direction: column
+  flex-direction column
 
   .RadioButton
-    margin-bottom: 0.7em
+    margin-bottom 0.7em
 
   .RadioButton:first-of-type
-    margin-top: 0.5rem
+    margin-top 0.5rem
 
 legend
-  padding: 0 10px
-  text-transform: uppercase
-  letter-spacing: 1px
-  font-size: 0.75em
-  font-weight: 500
+  padding 0 10px
+  text-transform uppercase
+  letter-spacing 1px
+  font-weight 500
+  font-size 0.75em
 
 input:hover + label::before
-  border-color: var(--black)
+  border-color var(--black)
 
 input:checked + label::before
-  border-width: 'calc(%s / 2)' % size
-  border-color: var(--black)
+  border-width 'calc(%s / 2)' % size
+  border-color var(--black)
 
 input[disabled] + label
-  opacity: 0.5
+  opacity 0.5
 
 input, label
-  cursor: pointer
+  cursor pointer
 
-/* Filled variant
+/*Filled variant
  */
 fieldset
-  border-color: var(--grey-offset)
+  border-color var(--grey-offset)
 </style>

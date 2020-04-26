@@ -33,14 +33,14 @@ import {
   formatISO,
   setDate,
   setMonth,
-  setYear
+  setYear,
 } from 'date-fns'
 import { getMutations, getValidator } from './index'
 
 export const state = () => ({
   events: [],
   mutations: [],
-  loadedMutations: false
+  loadedMutations: false,
 })
 
 const _mergeDateAndTime = (date, time) => {
@@ -56,12 +56,12 @@ export const getters = {
   events: ({ events }) => events,
   mutations: ({ mutations }) => mutations,
   event: (state, { events }) => (value, prop = 'uuid') =>
-    events.find((o) => o[prop] === value) || null,
+    events.find(o => o[prop] === value) || null,
   mutation: (state, { mutations }) => (value, prop = 'uuid') =>
-    mutations.find((o) => o[prop] === value) || null,
+    mutations.find(o => o[prop] === value) || null,
   course: (state, { currentWeekCourses }) => (value, prop = 'uuid') =>
-    currentWeekCourses.find((o) => o[prop] === value) || null,
-  trimester: (state, getters, rootState, rootGetters) => (idx) => {
+    currentWeekCourses.find(o => o[prop] === value) || null,
+  trimester: (state, getters, rootState, rootGetters) => idx => {
     /*
      *  Returns an Interval to test dates against using isWithinInterval(date, Interval)
      */
@@ -81,13 +81,13 @@ export const getters = {
     // Invalid index
     throw new Error(`Trimester #${idx} does not exist.`)
   },
-  isOffday: (state, getters, rootState, rootGetters) => (date) => {
+  isOffday: (state, getters, rootState, rootGetters) => date => {
     /* Check if the given `date` is an offday, by using the
      * `offdays` setting.
      */
     // Loop through each date/dateinterval in the `offdays` settings
     const offdays = rootGetters['settings/value']('offdays') || []
-    offdays.forEach((dateOrInterval) => {
+    offdays.forEach(dateOrInterval => {
       if (isDate(dateOrInterval)) {
         // If it's a regular date, check if they're the same day
         if (isSameDay(date, dateOrInterval)) return true
@@ -111,22 +111,22 @@ export const getters = {
      * Returns null if the current date is outside any trimester
      */
     [1, 2, 3]
-      .map((idx) => trimester(idx))
-      .find((trimester) => isWithinInterval(now, trimester)) || null,
+      .map(idx => trimester(idx))
+      .find(trimester => isWithinInterval(now, trimester)) || null,
   mutationsOf: (state, { mutations }) => ({ event, date }) => {
     /* Provided an event and a date, returns either a schedule mutation object
      * or null if no mutation matches the arguments given.
      */
     if (event) {
       // Filter by the given event.
-      mutations = mutations.filter((o) => o.event.uuid === event.uuid)
+      mutations = mutations.filter(o => o.event.uuid === event.uuid)
     }
     if (date) {
       /* Filter with the provided date, whether the events are...
        * - rescheduled to that week, or
        * - deleted from that week
        */
-      mutations = mutations.filter((o) => {
+      mutations = mutations.filter(o => {
         let ret = false
         // If the mutation's deleted field is not null, compare deletion date & current date
         if (o.deleted) ret = isSameDay(o.deleted, date)
@@ -142,7 +142,7 @@ export const getters = {
       start = startOfDay(start)
       end = endOfDay(start)
     }
-    return mutations.filter((mutation) => {
+    return mutations.filter(mutation => {
       let addedInRange = false
       let deletedInRange = false
       if (mutation.added_start && mutation.added_end) {
@@ -162,13 +162,13 @@ export const getters = {
     const mutations = []
     const week = {
       start: startOfWeek(rootState.now),
-      end: endOfWeek(rootState.now)
+      end: endOfWeek(rootState.now),
     }
-    eachDayOfInterval(week).forEach((day) => {
+    eachDayOfInterval(week).forEach(day => {
       mutations.push(...mutationsOf({ date: day, event: null }))
     })
   },
-  orderCourses: (state, getters, rootState, rootGetters) => (courses) =>
+  orderCourses: (state, getters, rootState, rootGetters) => courses =>
     /* Sort courses objects by day & starting date
      */
     [...courses].sort(
@@ -211,24 +211,24 @@ export const getters = {
       if (getters.isOffday(day)) continue
       // Get the events for that day
       const events = getters.events.filter(
-        (o) =>
+        o =>
           o.day === getISODay(day) &&
           (includeBothWeekTypes ||
             [getters.weekType(day), 'BOTH'].includes(o.week_type))
       )
       courses = [
         ...courses,
-        ...events.map((event) => ({
+        ...events.map(event => ({
           ...event,
           start: _mergeDateAndTime(day, event.start),
-          end: _mergeDateAndTime(day, event.end)
-        }))
+          end: _mergeDateAndTime(day, event.end),
+        })),
       ]
     }
-    getters.mutationsIn(start, end).forEach((mutation) => {
+    getters.mutationsIn(start, end).forEach(mutation => {
       let courseIdx, course
       if (mutation.event) {
-        courseIdx = courses.findIndex((o) => o.uuid === mutation.event.uuid)
+        courseIdx = courses.findIndex(o => o.uuid === mutation.event.uuid)
         course = courses[courseIdx]
       }
       switch (mutation.type) {
@@ -236,7 +236,7 @@ export const getters = {
           courses[courseIdx] = {
             ...course,
             deleted: getters.isDeleted(course, mutation),
-            added: getters.isAdded(course, mutation)
+            added: getters.isAdded(course, mutation),
           }
           break
 
@@ -245,7 +245,7 @@ export const getters = {
             ...course,
             ...mutation,
             deleted: false,
-            added: false
+            added: false,
           }
           break
 
@@ -253,7 +253,7 @@ export const getters = {
           course[courseIdx] = {
             ...course,
             deleted: getters.isDeleted(course, mutation),
-            added: false
+            added: false,
           }
           break
 
@@ -263,13 +263,13 @@ export const getters = {
             start: parseISO(mutation.added_start),
             end: parseISO(mutation.added_end),
             added: true,
-            deleted: false
+            deleted: false,
           })
           break
       }
     })
     if (!includeDeleted) {
-      courses = courses.filter((course) => !course.deleted)
+      courses = courses.filter(course => !course.deleted)
     }
     return getters.orderCourses(courses)
   },
@@ -277,7 +277,7 @@ export const getters = {
     /* Gets courses in the current week.
      */
     getters.coursesIn(startOfWeek(rootState.now), endOfWeek(rootState.now)),
-  weekType: (state, getters, rootState, rootGetters) => (date) => {
+  weekType: (state, getters, rootState, rootGetters) => date => {
     // TODO: explain this better, can't understand the logic I've written (it works tho)
     date = date || rootState.now
     // get base Q1/Q2
@@ -289,7 +289,7 @@ export const getters = {
     const other = base === 'Q1' ? 'Q2' : 'Q1'
     return getISOWeek(date) % 2 === 0 && startingWeekIsEven ? base : other
   },
-  courseOrPlaceholder: (state, getters, rootState, rootGetters) => (course) => {
+  courseOrPlaceholder: (state, getters, rootState, rootGetters) => course => {
     /* If the given course is null, return a placeholder course.
       Useful in some cases where we want to access a course's subject
       no matter if it exists or not (eg. current courses's subject, fall back to placeholder)
@@ -298,12 +298,12 @@ export const getters = {
 
     return {
       subject: rootGetters['subjects/placeholder'],
-      placeholder: true
+      placeholder: true,
     }
   },
   currentCourse: (state, getters, rootState, rootGetters) => {
     const course = getters.currentWeekCourses.find(
-      (o) =>
+      o =>
         // Is the same day
         isSameDay(o.start, rootState.now) &&
         // Has started before now
@@ -317,14 +317,14 @@ export const getters = {
     start = null,
     end = null
   ) =>
-    coursesIn(start || Date.now(), end, false).filter((o) =>
+    coursesIn(start || Date.now(), end, false).filter(o =>
       isAfter(o.start, start)
     ),
   prevCoursesIn: (_, { coursesIn, orderCourses }) => (
     start = null,
     end = null
   ) =>
-    coursesIn(start, end || Date.now(), false).filter((o) =>
+    coursesIn(start, end || Date.now(), false).filter(o =>
       isBefore(o.start, start)
     ),
   nextCoursesOf: (_, { nextCoursesIn }) => (value, what = 'subject') => {
@@ -333,9 +333,9 @@ export const getters = {
       value = value.uuid || null
     if (!courses.length) return []
     if (what === 'subject') {
-      return courses.filter((o) => o.subject.uuid === value)
+      return courses.filter(o => o.subject.uuid === value)
     }
-    return courses.filter((o) => o[what] === value)
+    return courses.filter(o => o[what] === value)
   },
   prevCoursesOf: (_, { prevCoursesIn }, { now }) => (
     value,
@@ -346,9 +346,9 @@ export const getters = {
       value = value.uuid || null
     if (!courses.length) return []
     if (what === 'subject') {
-      return courses.filter((o) => o.subject.uuid === value)
+      return courses.filter(o => o.subject.uuid === value)
     }
-    return courses.filter((o) => o[what] === value)
+    return courses.filter(o => o[what] === value)
   },
   todayCourses: (state, getters, rootState, rootGetters) =>
     getters.coursesIn(rootState.now),
@@ -362,7 +362,7 @@ export const getters = {
     if (value === null) return null
     const nextCourses = nextCoursesOf(value, what)
       .sort((c1, c2) => isAfter(c1.start, c2.start))
-      .filter((c) => !isSameDay(c.start, Date.now()))
+      .filter(c => !isSameDay(c.start, Date.now()))
     if (nextCourses.length) return nextCourses[0]
     return null
   },
@@ -383,7 +383,7 @@ export const getters = {
   validateEvent: getValidator({
     constraints: {
       required: ['subject', 'start', 'end', 'day', 'week_type', 'room'],
-      isAWeekType: ['week_type']
+      isAWeekType: ['week_type'],
     },
     customConstraints: [
       {
@@ -401,7 +401,7 @@ export const getters = {
           console.log([start, end])
           if (!(start && end)) return true
           return isBefore(start, end)
-        }
+        },
       },
       {
         message: 'Ce créneau horaire est déjà pris par un autre cours',
@@ -409,14 +409,14 @@ export const getters = {
         // TODO: Move this to a getter
         // TODO: tell the conflicting course to the user
         constraint: ({ events }, object) => {
-          const parseTime = (time) => parse(time, 'HH:mm:ss', Date.now())
-          return !events.filter((o) => {
+          const parseTime = time => parse(time, 'HH:mm:ss', Date.now())
+          return !events.filter(o => {
             const [objStart, objEnd, start, end] = [
               object.start,
               object.end,
               o.start,
-              o.end
-            ].map((t) => parseTime(t))
+              o.end,
+            ].map(t => parseTime(t))
             return (
               !isEqual(objStart, end) &&
               (isWithinInterval(objStart, { start, end }) ||
@@ -425,8 +425,8 @@ export const getters = {
               (o.week_type === object.week_type || o.week_type === 'BOTH')
             )
           }).length
-        }
-      }
+        },
+      },
     ],
     fieldNames: {
       subject: { gender: 'F', name: 'matière' },
@@ -434,20 +434,20 @@ export const getters = {
       end: { gender: 'F', name: 'heure de fin' },
       room: { gender: 'F', name: 'salle' },
       day: { gender: 'M', name: 'jour' },
-      week_type: { gender: 'M', name: 'type de semaine' }
+      week_type: { gender: 'M', name: 'type de semaine' },
     },
     resourceName: { gender: 'M', name: 'cours' },
-    debug: true
+    debug: true,
   }),
   validateMutation: getValidator({
     constraints: {
       before: {
-        added_end: ['added_start']
+        added_end: ['added_start'],
       },
       required: ['subject'],
       maxLength: {
-        300: ['room']
-      }
+        300: ['room'],
+      },
     },
     customConstraints: [
       {
@@ -464,13 +464,13 @@ export const getters = {
             return !getters
               .coursesIn(object.added_start, object.added_end)
               .filter(
-                (o) =>
+                o =>
                   (isSameMinute(o.start, object.added_start) ||
                     isAfter(object.added_end, o.end)) &&
                   (isSameMinute(o.end, object.added_end) ||
                     isBefore(object.added_end, o.end))
               ).length
-        }
+        },
       },
       {
         message: "Aucun cours n'existe entre les dates de supression",
@@ -486,14 +486,14 @@ export const getters = {
               getters
                 .coursesIn(object.deleted_start, object.deleted_end)
                 .filter(
-                  (o) =>
+                  o =>
                     (isSameMinute(o.start, object.deleted_start) ||
                       isAfter(object.deleted_end, o.end)) &&
                     (isSameMinute(o.end, object.deleted_end) ||
                       isBefore(object.deleted_end, o.end))
                 ).length > 0
             )
-        }
+        },
       },
       {
         message: 'Il y a plusieurs cours entre les deux dates de suppression',
@@ -509,15 +509,15 @@ export const getters = {
               getters
                 .coursesIn(object.deleted_start, object.deleted_end)
                 .filter(
-                  (o) =>
+                  o =>
                     (isSameMinute(o.start, object.deleted_start) ||
                       isAfter(object.deleted_end, o.end)) &&
                     (isSameMinute(o.end, object.deleted_end) ||
                       isBefore(object.deleted_end, o.end))
                 ).length <= 1
             )
-        }
-      }
+        },
+      },
     ],
     fieldNames: {
       subject: { gender: 'F', name: 'matière' },
@@ -525,16 +525,16 @@ export const getters = {
       added_end: { gender: 'F', name: 'fin du nouveau cours' },
       deleted_start: { gender: 'M', name: 'début du cours supprimé' },
       deleted_end: { gender: 'F', name: 'fin du cours supprimé' },
-      room: { gender: 'F', name: 'salle' }
+      room: { gender: 'F', name: 'salle' },
     },
-    resourceName: { gender: 'M', name: "changement d'emploi du temps" }
-  })
+    resourceName: { gender: 'M', name: "changement d'emploi du temps" },
+  }),
 }
 
 export const mutations = {
-  ...getMutations('event', (o) => o, false),
-  ...getMutations('mutation', (o) => o, false),
-  MUTATIONS_POSTLOAD: (state) => (state.loadedMutations = true)
+  ...getMutations('event', o => o, false),
+  ...getMutations('mutation', o => o, false),
+  MUTATIONS_POSTLOAD: state => (state.loadedMutations = true),
 }
 
 export const actions = {
@@ -645,11 +645,11 @@ export const actions = {
         modifications.subject = modifications.subject.uuid
       if (modifications.start)
         modifications.start = formatISO(modifications.start, {
-          representation: 'time'
+          representation: 'time',
         })
       if (modifications.end)
         modifications.end = formatISO(modifications.end, {
-          representation: 'time'
+          representation: 'time',
         })
       await this.$axios.patch(`/events/${uuid}/`, modifications)
       const { data } = await this.$axios.get(`/events/${uuid}`)
@@ -705,7 +705,7 @@ export const actions = {
         //     toast.goAway(0)
         //   }
         // },
-        duration: 8000
+        duration: 8000,
       })
     } catch (error) {
       console.error(error)
@@ -726,5 +726,5 @@ export const actions = {
         console.error(error)
       }
     }
-  }
+  },
 }

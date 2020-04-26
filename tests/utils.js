@@ -8,7 +8,8 @@ export const bootstrapComponentTest = (
   component,
   moduleStore,
   defaultPropsData,
-  shallow = true
+  shallow = true,
+  mocks = {}
 ) => {
   const mountFn = shallow ? shallowMount : mount
   const vue = createLocalVue()
@@ -17,14 +18,15 @@ export const bootstrapComponentTest = (
   vue.directive('touch', VTouch)
   const store = new Vuex.Store({
     modules: moduleStore,
-    ...indexStore
+    ...indexStore,
   })
   store.dispatch = jest.fn()
-  const mnt = (props) =>
+  const mnt = props =>
     mountFn(component, {
       propsData: { ...defaultPropsData, ...props },
       localVue: vue,
-      store
+      store,
+      mocks,
     })
   return { vue, mnt, store }
 }

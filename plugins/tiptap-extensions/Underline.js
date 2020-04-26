@@ -1,8 +1,7 @@
 import { Mark } from 'tiptap'
-import { toggleMark } from 'tiptap-commands'
+import { toggleMark, markInputRule, markPasteRule } from 'tiptap-commands'
 
 export default class Underline extends Mark {
-
   get name() {
     return 'underline'
   }
@@ -33,15 +32,10 @@ export default class Underline extends Mark {
   }
 
   inputRules({ type }) {
-    return [
-      markInputRule(/(?:^|[^_])(__([^_]+)__)$/, type),
-    ]
+    return [markInputRule(/(?:^|[^_])(__([^_]+)__)$/, type)]
   }
 
   pasteRules({ type }) {
-    return [
-      markPasteRule(/__([^_]+)__/g, type),
-    ]
+    return [markPasteRule(/__([^_]+)__/g, type)]
   }
-
 }

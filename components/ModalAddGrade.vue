@@ -22,8 +22,7 @@
     .-side-by-side
       .obtained-grade
         .fraction
-          // comment #1
-          //FIXME: the step value causes the scroll to 
+          //FIXME #73: the step value causes the scroll to 
           // increase by ridiculously small steps.
           // consider using a custom JS implementation
           // with InputField type="number" variant="transparent"
@@ -87,17 +86,17 @@ export default {
     BadgeSubject,
     InputField,
     PickerSubject,
-    ButtonNormal
+    ButtonNormal,
   },
   props: {
     grade: {
       type: Object,
-      default: null
+      default: null,
     },
     modalName: {
       type: String,
-      default: 'add-grade'
-    }
+      default: 'add-grade',
+    },
   },
   data() {
     return {
@@ -107,7 +106,7 @@ export default {
       weight: this.setting()('default_grade_weight'),
       goal: null,
       subject: null,
-      name: null
+      name: null,
     }
   },
   computed: {
@@ -122,15 +121,25 @@ export default {
         weight: this.weight,
         subject: this.subject,
         name: this.name,
-        obtained_date: obtainedDate
+        obtained_date: obtainedDate,
       }
-    }
+    },
   },
   watch: {
     grade() {
       if (this.grade) {
         // eslint-disable-next-line
-        const { unit, obtained, expected, goal, weight, subject, name, obtained_date } = this.grade
+        const {
+          unit,
+          obtained,
+          expected,
+          goal,
+          weight,
+          subject,
+          name,
+          // eslint-disable-next-line camelcase
+          obtained_date,
+        } = this.grade
         this.obtained = obtained * unit
         this.expected = expected * unit
         this.goal = goal * unit
@@ -141,7 +150,7 @@ export default {
         // eslint-disable-next-line
         this.obtained_date = obtained_date
       }
-    }
+    },
   },
   mounted() {
     this.$withLoadingScreen(async () => {
@@ -165,83 +174,83 @@ export default {
       this.goal = null
       this.subject = null
       this.name = null
-    }
-  }
+    },
+  },
 }
 </script>
 
 <style lang="stylus" scoped>
 .obtained-grade
-  display: flex
-  align-items: center
-  font-size: 2.5rem
-  justify-content: center
-  margin: 1.5em 0
+  display flex
+  justify-content center
+  align-items center
+  margin 1.5em 0
+  font-size 2.5rem
 
 .other-grades
-  margin-top: 1.5rem
-  display: flex
-  flex-direction: column
+  display flex
+  flex-direction column
+  margin-top 1.5rem
 
   input
-    width: 3.25em
+    width 3.25em
 
     &:not(:last-child)
-      margin-bottom: 0.2em
+      margin-bottom 0.2em
 
 input
-  width: 100%
-  font-family: var(--fonts-monospace)
+  width 100%
+  font-family var(--fonts-monospace)
 
 .fraction
-  display: flex
-  flex-direction: column
-  justify-content: center
-  width: 3.25em
-  text-align: center
+  display flex
+  flex-direction column
+  justify-content center
+  width 3.25em
+  text-align center
 
   .denominator
-    border-top: 0.075em solid var(--black)
-    margin-top: 0.2em
-    padding-top: 0.2em
+    margin-top 0.2em
+    padding-top 0.2em
+    border-top 0.075em solid var(--black)
 
   input
-    text-align: center
+    text-align center
 
 .multiplication
   .weight
-    width: 2.5em
+    width 2.5em
 
   .operator
-    margin: 0 0.2em
+    margin 0 0.2em
 
 .grade
-  display: flex
-  border-radius: var(--border-radius)
+  display flex
+  border-radius var(--border-radius)
 
 .header
-  display: flex
-  align-items: center
+  display flex
+  align-items center
 
   @media (max-width: 650px)
-    flex-direction: column
-    justify-content: center
+    flex-direction column
+    justify-content center
 
   .subject
-    font-size: 1.25rem
-    margin-right: 0.5em
+    margin-right 0.5em
+    font-size 1.25rem
 
     @media (max-width: 650px)
-      margin-bottom: 1.5rem
-      font-size: 1.5rem
+      margin-bottom 1.5rem
+      font-size 1.5rem
 
     &.dot
-      font-size: 2em
+      font-size 2em
 
   .name
-    width: 100%
+    width 100%
 
 .submit
-  display: flex
-  justify-content: flex-end
+  display flex
+  justify-content flex-end
 </style>

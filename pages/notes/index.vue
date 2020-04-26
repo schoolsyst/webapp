@@ -115,10 +115,10 @@ export default {
     PickerSubject,
     InputSelect,
     BadgeSubject,
-    InputSelectSubject
+    InputSelectSubject,
   },
   head: {
-    title: 'Cours'
+    title: 'Cours',
   },
   data() {
     return {
@@ -133,32 +133,32 @@ export default {
         format: 'HTML',
         modified: null,
         added: null,
-        opened: null
+        opened: null,
       },
       editingNote: {
         uuid: null,
         subject: null,
         name: null,
-        mName: null
+        mName: null,
       },
       // UI data
       sortOptions: [
         { value: 'opened', name: 'Ouverture' },
         { value: 'added', name: 'Création' },
-        { value: 'modified', name: 'Modification' }
+        { value: 'modified', name: 'Modification' },
       ],
       openedContextMenuNote: null,
       // API Data
       loaded: false,
       // Fuse.js
-      fuse: null
+      fuse: null,
     }
   },
   computed: {
     ...mapGetters('notes', ['all', 'one']),
     ...mapGetters('schedule', ['currentCourse']),
     ...mapGetters({
-      subjects: 'subjects/all'
+      subjects: 'subjects/all',
     }),
     noResultsCtaText() {
       if (!this.filterSubject) return 'Nouvelle note'
@@ -172,7 +172,7 @@ export default {
         (startsWithVowel ? "d'" : 'de ') +
         this.lowercaseSubject()(this.filterSubject.uuid)
       )
-    }
+    },
   },
   mounted() {
     this.$withLoadingScreen(
@@ -188,7 +188,7 @@ export default {
       id: 'uuid',
       shouldSort: false,
       threshold: 0.2,
-      maxPatternLength: 64
+      maxPatternLength: 64,
     })
     // Default value for separateGroupSubject
     this.filterSubject = this.currentCourse ? this.currentCourse.subject : null
@@ -198,15 +198,15 @@ export default {
     ...mapActions('notes', { del: 'delete' }),
     ...mapActions('notes', ['post']),
     ...mapGetters({
-      lowercaseSubject: 'subjects/lowercaseName'
+      lowercaseSubject: 'subjects/lowercaseName',
     }),
     searched(notes) {
       if (this.searchQuery) {
         const uuids = this.fuse.search(this.searchQuery)
-        notes = notes.filter((o) => uuids.includes(o.uuid))
+        notes = notes.filter(o => uuids.includes(o.uuid))
       }
       if (this.filterSubject) {
-        notes = notes.filter((o) => o.subject.uuid === this.filterSubject.uuid)
+        notes = notes.filter(o => o.subject.uuid === this.filterSubject.uuid)
       }
       return notes
     },
@@ -225,7 +225,7 @@ export default {
         return
       }
       const createdNote = await this.$store.dispatch('notes/post', {
-        note: this.newNote
+        note: this.newNote,
       })
       this.$router.push(`/notes/${createdNote.uuid}`)
     },
@@ -235,7 +235,7 @@ export default {
       await this.$store.dispatch('notes/patch', {
         uuid,
         // eslint-disable-next-line
-        modifications: { subject }
+        modifications: { subject },
       })
       this.$toast.success('Matière modifiée', { icon: 'check' })
     },
@@ -243,7 +243,7 @@ export default {
       const { uuid, mName } = this.editingNote
       await this.$store.dispatch('notes/patch', {
         uuid,
-        modifications: { name: mName }
+        modifications: { name: mName },
       })
 
       this.$toast.success('Note renommée', { icon: 'check' })
@@ -251,45 +251,46 @@ export default {
     openRenameModal({ note }) {
       this.editingNote = { ...this.editingNote, ...note, mName: null }
       this.$modal.show('rename-note')
-    }
-  }
+    },
+  },
 }
 </script>
 
 <style lang="stylus" scoped>
-// -----------------------
-// TOOLBAR
-// -----------------------
+//-----------------------
+//TOOLBAR
+//-----------------------
 .toolbar
-  margin-bottom: 2rem
-  margin-left: 2rem
-  display: flex
-  align-items: center
+  display flex
+  align-items center
+  margin-bottom 2rem
+  margin-left 2rem
 
   i
-    margin-right: 0.5rem
-    font-size: 1.5rem
+    margin-right 0.5rem
+    font-size 1.5rem
 
     &:not(:first-child)
-      margin-left: 1.2rem
+      margin-left 1.2rem
 
     &.search-icon
-      transform: rotate(90deg)
+      transform rotate(90deg)
 
   /deep/ input, .multiselect
-    height: 2.75rem
+    height 2.75rem
 
   .multiselect
-    width: 13rem
-    max-width: 80vw
+    max-width 80vw
+    width 13rem
 
   /deep/ input
-    width: 22rem
-    max-width: 80vw
+    max-width 80vw
+    width 22rem
 
   .field-wrapper
     display flex
     align-items center
+
     &:not(:last-child)
       margin-right 1.5rem
 
@@ -297,117 +298,121 @@ export default {
     flex-wrap wrap
     justify-content flex-start
     align-items flex-start
+
     .field-wrapper:not(:last-child)
+      margin-right 0
       margin-bottom 1rem
-      margin-right: 0
+
   @media (max-width: 650px)
-    align-items center
     flex-direction column
+    align-items center
 
-// .search
-// display flex
-// align-items center
-// justify-content center
-// margin-bottom 3rem
-// width 100%
-// i
-// font-size 2.5em
-// margin-right 0.5rem
-// transform rotate(90deg)
-// & /deep/ input
-// width 500px
-// @media (max-width 600px)
-// width 80vw
-// @media (max-width 375px)
-// i
-// display none
+//.search
+//display flex
+//align-items center
+//justify-content center
+//margin-bottom 3rem
+//width 100%
+//i
+//font-size 2.5em
+//margin-right 0.5rem
+//transform rotate(90deg)
+//& /deep/ input
+//width 500px
+//@media (max-width 600px)
+//width 80vw
+//@media (max-width 375px)
+//i
+//display none
 
-// .v-context li:hover
-// &, a
-// background var(--blue-offset)
-// a, i
-// color var(--blue)
-// -----------------------
-// CARD LIST
-// -----------------------
+//.v-context li:hover
+//&, a
+//background var(--blue-offset)
+//a, i
+//color var(--blue)
+//-----------------------
+//CARD LIST
+//-----------------------
 .HeadingSub
-  margin-bottom: 1rem
-  margin-top: 3rem
+  margin-top 3rem
+  margin-bottom 1rem
 
 .all, .current-subject
-  flex-direction: column
+  flex-direction column
 
 ul.notes, .all, .current-subject
-  margin-left: 2rem
-  display: flex
-  width: 85vw
+  display flex
+  margin-left 2rem
+  width 85vw
 
   @media (max-width: 600px)
-    margin-left: 0
-    width: 100%
+    margin-left 0
+    width 100%
 
     ul.notes li
-      margin: 0
+      margin 0
 
 ul.notes
-  list-style: none
-  flex-wrap: wrap
+  flex-wrap wrap
+  list-style none
 
   @media (min-width: 600px)
     li
-      margin-right: 1.5rem
-      margin-bottom: 1.5rem
-  @media (max-width 600px)
+      margin-right 1.5rem
+      margin-bottom 1.5rem
+
+  @media (max-width: 600px)
     li
       width 50%
-  @media (max-width 350px)
+
+  @media (max-width: 350px)
     li
       width 100%
 
-// -----------------------
-// CARD
-// -----------------------
+//-----------------------
+//CARD
+//-----------------------
 .card, .card-new
-  height: 310px
-  width: 225px
-  display: flex
-  flex-direction: column
-  transition: all 0.25s ease
+  display flex
+  flex-direction column
+  width 225px
+  height 310px
+  transition all 0.25s ease
 
 .card-new
-  cursor: pointer
-  background: var(--blue-offset)
-  color: var(--blue)
+  background var(--blue-offset)
+  color var(--blue)
+  cursor pointer
 
   i
-    font-size: 5rem
+    font-size 5rem
 
-  justify-content: center
-  align-items: center
-  border-radius: var(--border-radius)
+  justify-content center
+  align-items center
+  border-radius var(--border-radius)
 
   &:hover
-    color: var(--blue-dark)
-    background: var(--blue-offset-dark)
+    background var(--blue-offset-dark)
+    color var(--blue-dark)
 
   @media (max-width: 600px)
-    width: 50%
-    // border solid 1px var(--grey)
-    border-radius: 0
+    width 50%
+    //border solid 1px var(--grey)
+    border-radius 0
 
   @media (max-width: 350px)
-    width: 100vw
+    width 100vw
 
-// -----------------------
-// SCREEN EMPTY: NO SEARCH RESULTS
-// -----------------------
+//-----------------------
+//SCREEN EMPTY: NO SEARCH RESULTS
+//-----------------------
 .no-search-results /deep/
-  min-height: calc(100vh - 200px) !important
+  min-height calc(100vh - 200px) !important
 
-// -----------------------
-// RENAME MODAL
-// -----------------------
+//-----------------------
+//RENAME MODAL
+//-----------------------
 #modal_rename-note /deep/ .modal-wrapper .content
-  display: flex
-  align-items: center
+  display flex
+  align-items center
 </style>

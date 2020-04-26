@@ -25,7 +25,6 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
 import Icon from '~/components/Icon.vue'
 import BadgeSubject from '~/components/BadgeSubject.vue'
 export default {
@@ -33,134 +32,131 @@ export default {
   props: {
     uuid: {
       type: String,
-      required: true
-    }
+      required: true,
+    },
+    content: {
+      type: String,
+      default: '',
+    },
+    name: {
+      type: String,
+      required: true,
+    },
+    subject: {
+      type: Object,
+      required: true,
+    },
+    format: {
+      type: String,
+      required: true,
+    },
   },
-  data() {
-    return {
-      content: '',
-      name: null,
-      subject: {
-        name: '',
-        color: 'black'
-      },
-      format: ''
-    }
-  },
-  mounted() {
-    const note = this.one()(this.uuid)
-    this.content = note.content
-    this.subject = note.subject
-    this.name = note.name
-    this.format = note.format
-  },
-  methods: mapGetters('notes', ['one'])
 }
 </script>
 
 <style lang="stylus" scoped>
 .card
-  overflow: hidden
-  height: 310px
-  width: 225px
-  display: flex
-  flex-direction: column
-  transition: all 0.25s ease
+  display flex
+  flex-direction column
+  overflow hidden
+  width 225px
+  height 310px
+  transition all 0.25s ease
 
 .preview
-  // Dimensions & spacing
-  padding: 15px
-  height: 75%
-  width: 100%
-  // Text
-  font-size: 0.5rem
-  overflow: hidden
-  line-height: 1.2em
-  // Colors
-  background: var(--grey-offset)
-  // Borders
-  border: 1px solid var(--grey-light)
-  border-radius: var(--border-radius)
-  border-bottom-left-radius: 0
-  border-bottom-right-radius: 0
-  border-bottom: none
+  overflow hidden
+  //Dimensions & spacing
+  padding 15px
+  width 100%
+  height 75%
+  //Borders
+  border 1px solid var(--grey-light)
+  border-bottom none
+  border-radius var(--border-radius)
+  border-bottom-right-radius 0
+  border-bottom-left-radius 0
+  //Colors
+  background var(--grey-offset)
+  //Text
+  font-size 0.5rem
+  line-height 1.2em
 
 .format-is-link .preview
-  // Text
-  font-family: var(--fonts-monospace-light)
-  font-size: 1rem
-  // Layout
-  word-break: break-all
-  text-overflow: ellipsis
-  display: flex
-  align-items: center
-  justify-content: center
-  flex-direction: column
-  // Colors
-  color: var(--grey-dark)
+  display flex
+  flex-direction column
+  justify-content center
+  align-items center
+  //Colors
+  color var(--grey-dark)
+  text-overflow ellipsis
+  //Layout
+  word-break break-all
+  font-size 1rem
+  //Text
+  font-family var(--fonts-monospace-light)
 
 .infos
-  // Dimensions & spacing
-  height: 25%
-  padding: 15px
-  // Borders
-  border: 1px solid var(--grey-light)
-  border-radius: var(--border-radius)
-  border-top-left-radius: 0
-  border-top-right-radius: 0
+  padding 15px
+  //Dimensions & spacing
+  height 25%
+  //Borders
+  border 1px solid var(--grey-light)
+  border-radius var(--border-radius)
+  border-top-left-radius 0
+  border-top-right-radius 0
 
 .name
-  // Dimensions & spacing
-  height: 1.2em
-  margin-bottom: 0.2rem
-  // Layout
-  display: inline-block
-  // Text
-  font-size: 1rem
-  overflow: hidden
-  text-overflow: ellipsis
-  width: 100%
-  white-space: nowrap
+  //Layout
+  display inline-block
+  overflow hidden
+  margin-bottom 0.2rem
+  width 100%
+  //Dimensions & spacing
+  height 1.2em
+  text-overflow ellipsis
+  white-space nowrap
+  //Text
+  font-size 1rem
 
   &.untitled
-    opacity: 0.5
+    opacity 0.5
 
 .info
-  // Layout
-  display: flex
-  align-items: center
+  //Layout
+  display flex
+  align-items center
 
   .subject-name
-    // Layout
-    display: inline-block
-    // Text
-    overflow: hidden
-    text-overflow: ellipsis
-    width: calc(100% - 0.4em) // Parent width - subject color margin
-    white-space: nowrap
+    //Layout
+    display inline-block
+    //Text
+    overflow hidden
+    width calc(100% - 0.4em) //Parent width - subject color margin
+    text-overflow ellipsis
+    white-space nowrap
 
   .subject-color
-    // Dimensions & spacing
-    margin-right: 0.4em
-    flex-shrink: 0
+    flex-shrink 0
+    //Dimensions & spacing
+    margin-right 0.4em
 
 .card:hover
   .preview
-    background: var(--grey)
+    background var(--grey)
 
   .infos
-    background: var(--grey-offset)
+    background var(--grey-offset)
 
 @media (max-width: 600px)
   .card
-    border: solid 1px var(--grey)
-    width: 100%
+    width 100%
+    border solid 1px var(--grey)
 
     .preview, .infos
-      border-radius: 0
-      border: none
+      border none
+      border-radius 0
 
 @media (max-width: 350px)
   .card-wrapper
-    width: 100vw
+    width 100vw
 </style>

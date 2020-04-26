@@ -23,27 +23,27 @@ export default {
   props: {
     name: {
       type: String,
-      required: true
+      required: true,
     },
     color: {
       type: String,
-      required: true
+      required: true,
     },
     weight: {
       type: Number,
       default: 1,
-      validate: (val) => val >= 0
+      validate: val => val >= 0,
     },
     goal: {
       type: Number,
       default: null,
-      validate: (val) => val === null || (val >= 0 && val <= 1)
+      validate: val => val === null || (val >= 0 && val <= 1),
     },
     // Options
     fullColor: {
       type: Boolean,
-      default: false
-    }
+      default: false,
+    },
   },
   computed: {
     backgroundColor() {
@@ -56,35 +56,35 @@ export default {
     textColor() {
       if (this.fullColor) return this._textColor()(this.color)
       return false
-    }
+    },
   },
   methods: {
-    ...mapGetters({ _textColor: 'textColor' })
-  }
+    ...mapGetters({ _textColor: 'textColor' }),
+  },
 }
 </script>
 
 <style lang="stylus" scoped>
 .card-wrapper
-  display: flex
-  align-items: center
-  max-width: 450px
-  padding: 1em 1.2em
-  border: solid 2px var(--grey-light)
-  border-radius: var(--border-radius)
-  cursor: pointer
+  display flex
+  align-items center
+  padding 1em 1.2em
+  max-width 450px
+  border solid 2px var(--grey-light)
+  border-radius var(--border-radius)
+  cursor pointer
 
   .color-dot
-    font-size: 1.3em
-    margin-right: 0.5em
+    margin-right 0.5em
+    font-size 1.3em
 
   .action
-    margin-left: auto
+    margin-left auto
 
   .action /deep/ i
-    color: inherit
-    font-size: 1.5em
+    color inherit
+    font-size 1.5em
 
   .name
-    font-size: 1.1em
+    font-size 1.1em
 </style>

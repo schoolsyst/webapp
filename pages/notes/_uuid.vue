@@ -223,7 +223,7 @@ import {
   History,
   Strike,
   BulletList,
-  Underline
+  Underline,
 } from 'tiptap-extensions'
 import debounce from 'lodash.debounce'
 import ModalNoteDownload from '~/components/ModalNoteDownload.vue'
@@ -250,7 +250,7 @@ export default {
     PickerSubject,
     InputSelect,
     TheBottomBar,
-    ModalNoteDownload
+    ModalNoteDownload,
   },
   layout: 'bare',
   data() {
@@ -261,7 +261,7 @@ export default {
         'Titre',
         'Partie',
         'Sous-partie',
-        'Sous-sous-partie'
+        'Sous-sous-partie',
       ],
       editor: new Editor({
         extensions: [
@@ -291,19 +291,19 @@ export default {
           new MathInline(),
           new Marker(),
           new Subscript(),
-          new Superscript()
+          new Superscript(),
         ],
-        content: ``
+        content: ``,
       }),
       name: null,
       subject: {
         name: 'Chargement...',
-        color: '#000000'
+        color: '#000000',
       },
       uuid: null,
       unsavedWork: false,
       countableJSloaded: false,
-      counts: null
+      counts: null,
     }
   },
   computed: {
@@ -318,7 +318,7 @@ export default {
         { value: all, label: 'Caractères + espaces' },
         { value: sentences, label: 'Phrases' },
         { value: paragraphs, label: 'Paragraphes' },
-        { value: wordsPerSentence, label: 'Mots / phrase' }
+        { value: wordsPerSentence, label: 'Mots / phrase' },
       ])
     },
     textDurations() {
@@ -326,9 +326,9 @@ export default {
       const { words } = this.counts
       const speeds = {
         speaking: 183,
-        reading: 300
+        reading: 300,
       }
-      const getTime = (mode) => {
+      const getTime = mode => {
         let raw = words / speeds[mode]
         let unit = 'm'
         if (raw < 1) {
@@ -339,26 +339,26 @@ export default {
       }
       return {
         speaking: getTime('speaking'),
-        reading: getTime('reading')
+        reading: getTime('reading'),
       }
     },
     textDurationsTooltip() {
       const { reading, speaking } = this.textDurations
       return this.getStatsTooltip([
         { value: reading, label: 'Lecture' },
-        { value: speaking, label: 'Parlé' }
+        { value: speaking, label: 'Parlé' },
       ])
-    }
+    },
   },
   watch: {
     async subject() {
       await this.$store.dispatch('notes/patch', {
         uuid: this.uuid,
         modifications: {
-          subject: this.subject
-        }
+          subject: this.subject,
+        },
       })
-    }
+    },
   },
   mounted() {
     this.$withLoadingScreen(
@@ -396,10 +396,10 @@ export default {
       page = document.querySelector('.editor-page .ProseMirror')
       if (page) {
         // initial count + counts when edit
-        Countable.count(page, (counts) => {
+        Countable.count(page, counts => {
           this.counts = counts
         })
-        Countable.on(page, (counts) => {
+        Countable.on(page, counts => {
           this.counts = counts
         })
         countableJSloaded = true
@@ -419,7 +419,7 @@ export default {
       console.log('deleting empty note:' + this.editor.getHTML())
       await this.$store.dispatch('notes/delete', {
         uuid: this.uuid,
-        toastMessage: 'Note vide supprimée'
+        toastMessage: 'Note vide supprimée',
       })
     }
     this.editor.destroy()
@@ -432,8 +432,8 @@ export default {
       this.$store.commit('notes/PATCH', {
         uuid: this.uuid,
         modifications: {
-          content: getHTML()
-        }
+          content: getHTML(),
+        },
       })
       console.log(contentSize)
       this.unsavedWork = true
@@ -443,7 +443,7 @@ export default {
         toast = toast === null ? true : toast
         const saved = await this.$store.dispatch('notes/save', {
           uuid: this.uuid,
-          content: this.editor.getHTML()
+          content: this.editor.getHTML(),
         })
         if (toast && saved) {
           this.$toast.success('Note sauvegardée', { icon: 'check' })
@@ -463,8 +463,8 @@ export default {
         await this.$store.dispatch('notes/patch', {
           uuid: this.uuid,
           modifications: {
-            name: this.name
-          }
+            name: this.name,
+          },
         })
         this.updateDocumentTitle()
       },
@@ -474,8 +474,8 @@ export default {
       document.title = `${this.name || 'Note sans titre'} · schoolsyst`
     },
     getStatsTooltip(stats) {
-      const maxCountLen = Math.max(stats.map((s) => s.value.toString().length))
-      const listItem = (stat) =>
+      const maxCountLen = Math.max(stats.map(s => s.value.toString().length))
+      const listItem = stat =>
         `<li><span style="font-family:var(--fonts-monospace-light)">${stat.value
           .toString()
           .padStart(maxCountLen, '')}</span> ${stat.label}</li>`
@@ -485,239 +485,243 @@ export default {
                     ${stats.map(listItem)}
                 </ul>
             `.trim()
-    }
-  }
+    },
+  },
 }
 </script>
 
 <style lang="stylus" scoped>
 body
-  padding: 1em
-  background: var(--grey-offset)
+  padding 1em
+  background var(--grey-offset)
 
 .toolbar
-  position: fixed
-  top: 0
-  left: 0
-  right: 0
-  background: var(--white)
-  z-index: 10
-  padding: 1em
-  padding-bottom: 0
-  border-bottom: 2px solid rgba(0, 0, 0, 0.25)
-  max-width: 100vw
+  position fixed
+  top 0
+  right 0
+  left 0
+  z-index 10
+  padding 1em
+  padding-bottom 0
+  max-width 100vw
+  border-bottom 2px solid rgba(0, 0, 0, 0.25)
+  background var(--white)
 
   .headings-dropdown
-    width: 200px
-    flex-shrink: 0
+    flex-shrink 0
+    width 200px
 
     .heading-item
-      font-family: var(--fonts-regular)
+      font-family var(--fonts-regular)
 
     p.heading-item
-      font-weight: normal
+      font-weight normal
 
 .top
-  margin-left: 0.5em
-  margin-bottom: 0.75em
-  display: flex
-  align-items: center
-  color: var(--black)
+  display flex
+  align-items center
+  margin-bottom 0.75em
+  margin-left 0.5em
+  color var(--black)
 
   .title
-    width: 100%
-    display: flex
-    align-items: center
-    flex-wrap: nowrap
-    font-size: 1.5rem
+    display flex
+    flex-wrap nowrap
+    align-items center
+    width 100%
+    font-size 1.5rem
+
     @media (max-width: 650px)
       flex-wrap wrap
       justify-content center
+
       .title-field
         text-align center
+
       .title-field::placeholder
         text-align center
 
     .title-field
-      margin-left: 0.5em
-      width: 100%
-      height: 2.5rem
-      color: var(--black)
+      margin-left 0.5em
+      width 100%
+      height 2.5rem
+      color var(--black)
 
     .subject
-      margin-left: 0.75em
-      // font-size: 1rem
+      margin-left 0.75em
+      //font-size: 1rem
 
   .icon
-    color: var(--black)
-    font-size: 2em
+    color var(--black)
+    font-size 2em
 
   .title.untitled
-    opacity: 0.25
+    opacity 0.25
 
   .unsaved-work
-    font-size: 0.85em
-    margin-left: 0.5em
+    margin-left 0.5em
+    font-size 0.85em
 
 .menubar
-  padding-bottom: 0.5em
-  display: flex
-  align-items: center
-  flex-wrap: wrap
-  // justify-content center
-  transition: opacity 0.5s ease
+  display flex
+  flex-wrap wrap
+  align-items center
+  padding-bottom 0.5em
+  //justify-content center
+  transition opacity 0.5s ease
 
   @media (max-width: 650px)
-    justify-content: center
+    justify-content center
 
     & > :not(.mobile)
-      display: none
+      display none
 
     .mobile
       i
-        font-size: 1.7em
+        font-size 1.7em
 
       &:not(:last-child) i
-        margin-left: 0.5em
+        margin-left 0.5em
 
 .menubar button
-  display: inline-flex
-  justify-content: center
-  align-items: center
-  padding: 0.5em
-  height: 2em
-  color: var(--black)
+  display inline-flex
+  justify-content center
+  align-items center
+  padding 0.5em
+  height 2em
+  color var(--black)
 
   &.active
-    color: var(--blue)
-    background: var(--blue-offset)
+    background var(--blue-offset)
+    color var(--blue)
 
   &:hover
-    color: var(--blue)
+    color var(--blue)
 
 .low-opacity, .sep
-  opacity: 0.25
+  opacity 0.25
 
 .sep
-  font-weight: thin
-  font-size: 2em
-  padding: 0 0.25em
+  padding 0 0.25em
+  font-weight thin
+  font-size 2em
 
 .show-bottom-bar
   position fixed
-  bottom: 1em
-  right: 1em
+  right 1em
+  bottom 1em
+
 #bottom-bar
-  padding: 0.75em 1em
-  display: flex
+  display flex
+  padding 0.75em 1em
 
   .time
-    font-family: var(--fonts-monospace-light)
-    font-size: 1.2em
+    font-size 1.2em
+    font-family var(--fonts-monospace-light)
 
   .stats
-    margin-left: auto
-    display: flex
-    align-items: center
+    display flex
+    align-items center
+    margin-left auto
 
   .stats li
-    display: inline-block
+    display inline-block
 
     &:not(:last-child)
-      margin-right: 0.5em
+      margin-right 0.5em
 
     .value
-      font-family: var(--fonts-monospace-light)
+      font-family var(--fonts-monospace-light)
 
 .ProseMirror::-moz-focus-inner
-  border: none !important
-  padding: 0
+  padding 0
+  border none !important
 
 .editor-page-wrapper
-  padding-top: 8rem
-  padding-bottom: 2rem
-  display: flex
-  justify-content: center
-  width: 100%
-  min-height: 100vh
-  background: var(--grey-offset)
-  overflow: auto
+  display flex
+  justify-content center
+  overflow auto
+  padding-top 8rem
+  padding-bottom 2rem
+  min-height 100vh
+  width 100%
+  background var(--grey-offset)
 
 .editor-page /deep/
   .inline-math
-    font-family: Cambria Math
-    color: var(--blue)
+    color var(--blue)
+    font-family Cambria Math
 
   td, tr
-    border: 2px solid black
+    border 2px solid black
 
   img
-    max-width: 100%
-    max-height: 50vh
-    text-align: center
+    max-width 100%
+    max-height 50vh
+    text-align center
 
     &.ProseMirror-selectednode
-      border: 2px solid var(--blue)
+      border 2px solid var(--blue)
 
 .editor-page
-  font-family: Arial, sans-serif
-  line-height: 1.2em
-  margin-top: 20px
-  padding: 3em
-  width: 800px
-  background: var(--white)
+  margin-top 20px
+  padding 3em
+  width 800px
+  background var(--white)
+  font-family Arial, sans-serif
+  line-height 1.2em
 
   & /deep/ .ProseMirror
-    height: 100%
-    // overflow-y auto
-    scrollbar-width: thin
-    scrollbar-color: var(--grey-light) transparent
+    height 100%
+    //overflow-y auto
+    scrollbar-width thin
+    scrollbar-color var(--grey-light) transparent
 
     &::-webkit-scrollbar-track
-      background: transparent
+      background transparent
 
     &::-webkit-scrollbar-thumb
-      background-color: var(--grey-light)
+      background-color var(--grey-light)
 
-    // page looks
-    font-family: var(--fonts-regular)
+    //page looks
+    font-family var(--fonts-regular)
 
     p
-      margin-bottom: 0.2em
+      margin-bottom 0.2em
 
     h1, h2, h3, h4, h5, h6
-      line-height: 1.2
+      line-height 1.2
 
       &:not(:first-child)
-        margin-top: 1.2em
+        margin-top 1.2em
 
       &:not(:last-child)
-        margin-bottom: 0.5em
+        margin-bottom 0.5em
 
     h1
-      text-align: center
+      text-align center
 
     ul, ol
-      padding-left: 2.5em
+      padding-left 2.5em
 
     ul li
-      list-style-type: disc
+      list-style-type disc
 
     hr
-      margin: 1em auto
-      width: 75%
+      margin 1em auto
+      width 75%
 
     code
-      font-family: var(--fonts-monospace-light)
+      font-family var(--fonts-monospace-light)
 
   .admonition
     &::before
-      content: 'more_vert'
-      font-family: 'Material Icons'
+      content 'more_vert'
+      font-family 'Material Icons'
 
     &-danger
-      background: var(--red-offset)
+      background var(--red-offset)
 
     &-note
-      background: var(--blue-offset)
+      background var(--blue-offset)
 </style>

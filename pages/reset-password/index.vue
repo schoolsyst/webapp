@@ -52,49 +52,49 @@ export default {
     ...mapActions('auth', { _requestPasswordReset: 'requestPasswordReset' }),
     async requestPasswordReset() {
       this.sent = await this._requestPasswordReset({ email: this.email })
-    }
-  }
+    },
+  },
 }
 </script>
 
 <style lang="stylus" scoped>
 .container
-  display: flex
-  justify-content: center
-  align-items: center
-  flex-direction: column
-  text-align: center
+  display flex
+  flex-direction column
+  justify-content center
+  align-items center
+  text-align center
 
   form
-    margin-top: 3em
-    display: flex
-    align-items: center
-    justify-content: center
-    flex-wrap: wrap
+    display flex
+    flex-wrap wrap
+    justify-content center
+    align-items center
+    margin-top 3em
 
     .field
-      width: 80vw
-      max-width: 400px
+      max-width 400px
+      width 80vw
 
     .button /deep/ .btn
-      margin-top: 1em
+      margin-top 1em
 
     @media (min-width: 651px)
       .button /deep/ .btn
-        margin: 0
+        margin 0
 
       .button /deep/ .btn
-        border-top-left-radius: 0
-        border-bottom-left-radius: 0
-        border-left: none
+        border-left none
+        border-top-left-radius 0
+        border-bottom-left-radius 0
 
       .field /deep/ input
-        border-top-right-radius: 0
-        border-bottom-right-radius: 0
+        border-top-right-radius 0
+        border-bottom-right-radius 0
 
   .go-back
-    margin-top: 3em
+    margin-top 3em
 
   .login
-    margin-top: 1.5em
+    margin-top 1.5em
 </style>

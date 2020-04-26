@@ -1,0 +1,26 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`<CardNote> for external note matches snapshot 1`] = `
+<div class="card-wrapper"><a to="/notes/8cedf-a41435-a15fde-4331c" href="" class="card format-is-link">
+    <p class="preview"><em>Lien externe:</em> <br></p>
+    <div class="infos"><span title="Test" class="name">Test</span><span title="subject" class="info"><badgesubject-stub color="orange" name="subject" placeholdername="Choisir..." variant="dot" class="subject-color"></badgesubject-stub><span class="subject-name">subject</span><span class="more"><icon-stub>more_vert</icon-stub></span></span></div>
+  </a></div>
+`;
+
+exports[`<CardNote> for regular note matches snapshot 1`] = `
+<div class="card-wrapper">
+  <nuxt-link to="/notes/8cedf-a41435-a15fde-4331c" href="/notes/8cedf-a41435-a15fde-4331c" class="card format-is-markdown">
+    <p class="preview"></p>
+    <div class="infos"><span title="Test" class="name">Test</span><span title="subject" class="info"><badgesubject-stub color="orange" name="subject" placeholdername="Choisir..." variant="dot" class="subject-color"></badgesubject-stub><span class="subject-name">subject</span><span class="more"><icon-stub>more_vert</icon-stub></span></span></div>
+  </nuxt-link>
+</div>
+`;
+
+exports[`<CardNote> untitled note matches snapshot 1`] = `
+<div class="card-wrapper">
+  <nuxt-link to="/notes/8cedf-a41435-a15fde-4331c" href="/notes/8cedf-a41435-a15fde-4331c" class="card format-is-markdown">
+    <p class="preview"></p>
+    <div class="infos"><span class="name untitled">(Document sans titre)</span><span title="subject" class="info"><badgesubject-stub color="orange" name="subject" placeholdername="Choisir..." variant="dot" class="subject-color"></badgesubject-stub><span class="subject-name">subject</span><span class="more"><icon-stub>more_vert</icon-stub></span></span></div>
+  </nuxt-link>
+</div>
+`;

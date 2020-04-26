@@ -34,18 +34,18 @@ export default {
     TheSideRail,
     BaseModal,
     OverlayLoadingLogo,
-    ModalAddReport
+    ModalAddReport,
   },
   data() {
     return {
       drawerOpened: false,
       newReport: {
-        type: 'BUG'
-      }
+        type: 'BUG',
+      },
     }
   },
   computed: {
-    ...mapState(['now'])
+    ...mapState(['now']),
   },
   async mounted() {
     await this.$store.dispatch('theme/set')
@@ -53,57 +53,69 @@ export default {
     setInterval(() => {
       this.$store.commit('UPDATE_TIME', toDate(Date.now()))
     }, 1 * 1000)
+    // Check if browser is online
+    window.addEventListener('offline', e => {
+      this.$toast.error(`Vous n'êtes pas connecté à Internet.`, {
+        icon: 'warning_outline',
+        className: 'warn',
+      })
+    })
+    window.addEventListener('online', e => {
+      this.$toast.success(`Vous êtes de nouveau en ligne.`, {
+        icon: 'check',
+      })
+    })
   },
   methods: {
     ...mapGetters('theme', { theme: 'current' }),
     ...mapActions({
-      postReport: 'reports/post'
-    })
-  }
+      postReport: 'reports/post',
+    }),
+  },
 }
 </script>
 
 <style scoped lang="stylus">
-// Keep footer outta the first page
+//Keep footer outta the first page
 .TheNavbar + div
-  min-height: 100vh
+  min-height 100vh
 
 main
-  margin-top: 100px
+  margin-top 100px
 
   @media (min-width: 650px)
-    margin-left: 110px
+    margin-left 110px
 
   @media (max-width: 650px)
-    margin-left: 20px
-    margin-right: 20px
+    margin-right 20px
+    margin-left 20px
 
 main, .container
-  width: 100%
-  height: 100%
+  width 100%
+  height 100%
 
 #side-rail
-  margin-top: 80px
-  padding-left: 15px
+  margin-top 80px
+  padding-left 15px
 
   @media (max-width: 650px)
-    display: none
+    display none
 
 .side-by-side
-  display: flex
+  display flex
 
 #page, /deep/ [id$=-state], /deep/ #loading-screen
-  min-height: calc(100vh - 100px) // top bar height
+  min-height calc(100vh - 100px) //top bar height
 
 /deep/ #loading-screen
   text-align center
 
 @media (max-width: 600px)
   main
-    margin-left: 0
-    margin-right: 0
+    margin-right 0
+    margin-left 0
 
     & /deep/ h2
-      margin-left: 20px
-      margin-right: 20px
+      margin-right 20px
+      margin-left 20px
 </style>

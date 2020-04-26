@@ -16,35 +16,35 @@ export default {
   props: {
     small: {
       type: Boolean,
-      default: false
-    }
-  }
+      default: false,
+    },
+  },
 }
 </script>
 
 <style lang="stylus" scoped>
 .empty-wrapper
-  display: flex
-  align-items: center
-  justify-content: center
+  display flex
+  justify-content center
+  align-items center
 
 .empty
-  text-align: center
-  display: flex
-  align-items: center
-  justify-content: center
-  flex-direction: column
+  display flex
+  flex-direction column
+  justify-content center
+  align-items center
+  text-align center
 
   .smiley
-    font-size: 10rem
-    font-family: var(--fonts-monospace)
-    color: var(--grey-offset-dark)
+    color var(--grey-offset-dark)
+    font-size 10rem
+    font-family var(--fonts-monospace)
 
   p
-    font-size: 1.5rem
-    margin-top: 5vh
-    margin-bottom: 0.75em
+    margin-top 5vh
+    margin-bottom 0.75em
+    font-size 1.5rem
 
 &.small p
-  font-size: 1.2rem
+  font-size 1.2rem
 </style>

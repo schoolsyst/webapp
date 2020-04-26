@@ -27,42 +27,42 @@ export default {
   props: {
     name: {
       type: String,
-      required: true
+      required: true,
     },
     verboseName: {
       type: String,
-      required: true
+      required: true,
     },
     gender: {
       type: String,
       required: true,
-      validator: (gender) => ['M', 'F'].includes(gender)
+      validator: gender => ['M', 'F'].includes(gender),
     },
     action: {
       type: String,
       required: true,
-      validator: (action) => ['add', 'edit'].includes(action)
+      validator: action => ['add', 'edit'].includes(action),
     },
     validation: {
       type: Object,
-      default: () => ({ validated: true, errors: {} })
+      default: () => ({ validated: true, errors: {} }),
     },
     addButtonText: {
       type: String,
-      default: 'Ajouter'
+      default: 'Ajouter',
     },
     editButtonText: {
       type: String,
-      default: 'Modifier'
+      default: 'Modifier',
     },
     deleteButtonText: {
       type: String,
-      default: 'Supprimer'
+      default: 'Supprimer',
     },
     modalTitle: {
       type: String,
-      default: null
-    }
+      default: null,
+    },
   },
   computed: {
     modalOpts() {
@@ -80,21 +80,21 @@ export default {
     verboseAction() {
       return {
         add: this.addButtonText,
-        edit: this.editButtonText
+        edit: this.editButtonText,
       }[this.action]
-    }
+    },
   },
   methods: {
     closeModal() {
       this.$modal.close(this.modalOpts.name)
-    }
-  }
+    },
+  },
 }
 </script>
 
 <style lang="stylus" scoped>
 .submit-area
+  display flex
+  justify-content flex-end
   margin-top 2em
-  display: flex
-  justify-content: flex-end
 </style>

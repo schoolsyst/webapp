@@ -30,48 +30,48 @@ export default {
   name: 'ModalDialogConfirm',
   components: {
     BaseModal,
-    ButtonNormal
+    ButtonNormal,
   },
   props: {
     heading: {
       type: String,
-      default: 'Êtes-vous sûr ?'
+      default: 'Êtes-vous sûr ?',
     },
     confirmText: {
       type: String,
-      default: 'Confirmer'
+      default: 'Confirmer',
     },
     cancelText: {
       type: String,
-      default: 'Annuler'
+      default: 'Annuler',
     },
     confirmRole: {
       type: String,
-      default: 'normal'
+      default: 'normal',
     },
     cancelRole: {
       type: String,
-      default: 'normal'
+      default: 'normal',
     },
     closeOnConfirm: {
       type: Boolean,
-      default: true
+      default: true,
     },
     name: String,
     challenge: {
       type: [Boolean, Function],
-      default: false
+      default: false,
     },
     challengeMessage: {
       type: String,
-      default: ''
-    }
+      default: '',
+    },
   },
   data() {
     return {
       challengeInput: '',
       challengeOpened: false,
-      challengeError: false
+      challengeError: false,
     }
   },
   methods: {
@@ -90,7 +90,7 @@ export default {
     endChallenge() {
       this.challengeOpened = false
       this.challengeError = false
-    }
+    },
   },
 
   watch: {
@@ -98,57 +98,57 @@ export default {
       if (!this.challengeInput) {
         this.challengeError = false
       }
-    }
-  }
+    },
+  },
 }
 </script>
 
 <style lang="stylus" scoped>
 .ModalDialogConfirm /deep/ .modal-wrapper
-  max-width: 500px
+  max-width 500px
 
 .buttons
-  margin-top: 2.5em
-  display: flex
-  justify-content: flex-end
+  display flex
+  justify-content flex-end
+  margin-top 2.5em
 
 .heading, .message
-  color: var(--black)
-  text-align: center
+  color var(--black)
+  text-align center
 
 .heading
-  font-size: 30px
-  font-weight: bold
-  margin-bottom: 20px
+  margin-bottom 20px
+  font-weight bold
+  font-size 30px
 
 .message
-  line-height: 1.2
+  line-height 1.2
 
 .challenge.errored .InputFlat /deep/ input
-  background: var(--red)
-  color: white
+  background var(--red)
+  color white
 
 .challenge
-  overflow: hidden
+  overflow hidden
 
   .inputs
-    display: flex
-    align-items: center
-    justify-content: center
+    display flex
+    justify-content center
+    align-items center
 
   label
-    margin-bottom: 15px
-    margin-top: 25px
-    color: black
+    margin-top 25px
+    margin-bottom 15px
+    color black
 
   .InputFlat
-    // padding: 0
-    max-width: calc(3 / 4 * 500px)
+    //padding: 0
+    max-width calc(3 / 4 * 500px)
 
   .InputFlat /deep/ input
-    background: rgba(0, 0, 0, 0.05)
-    border-radius: 7.5px
+    border-radius 7.5px
+    background rgba(0, 0, 0, 0.05)
 
   .ButtonIcon, .ButtonIcon /deep/ button
-    width: 30px
+    width 30px
 </style>

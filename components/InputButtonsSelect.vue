@@ -18,18 +18,18 @@ export default {
   props: {
     values: {
       type: Array,
-      default: null
+      default: null,
     },
     value: {
       type: String,
-      required: true
-    }
+      required: true,
+    },
   },
   methods: {
     handleInput(value) {
       this.$emit('input', value.key)
-    }
-  }
+    },
+  },
 }
 </script>
 
@@ -37,25 +37,31 @@ export default {
 ul
   display flex
   align-items center
+
 .button /deep/ .btn
   width 100%
+
 li:first-child /deep/ .btn
   border-top-right-radius 0
   border-bottom-right-radius 0
+
 li:last-child /deep/ .btn
   border-top-left-radius 0
   border-bottom-left-radius 0
+
 li:not(:last-child) /deep/ .btn
   border-right none
+
 li:not(:first-child):not(:last-child) /deep/ .btn
   border-radius 0
+
 .button /deep/ .btn
   border-color var(--grey) !important
+
 .button:hover /deep/ .btn
-  color: var(--blue-dark)
+  color var(--blue-dark)
+
 .button.selected /deep/ .btn
-  color: var(--blue-dark)
-  background: var(--blue-offset-dark)
-// .button /deep/ .btn
-  // padding: 0
+  background var(--blue-offset-dark)
+  color var(--blue-dark)
 </style>
