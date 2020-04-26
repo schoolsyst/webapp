@@ -3,10 +3,10 @@ const metaInfo = {
     'Gérez vos notes, prises de cours, devoirs et autres en un seul endroit. Une application web faite par un étudiant, pour les étudiants.',
   title: "schoolsyst: une nouvelle façon d'étudier",
   url: 'https://www.schoolsyst.com', // We link to the presentation website for SEO tags, better for discovery.
-  imagePath: '/assets/schoolsyst-social-preview-card.png' // Hosted on the presentation website
+  imagePath: '/assets/schoolsyst-social-preview-card.png', // Hosted on the presentation website
 }
 
-const getSocialCardPreviewTags = (data) => {
+const getSocialCardPreviewTags = data => {
   const tags = []
   // Prepend the url to the image
   data.image = data.url + data.imagePath
@@ -14,11 +14,11 @@ const getSocialCardPreviewTags = (data) => {
   const namespaces = ['og', 'twitter']
   const properties = ['title', 'url', 'image', 'description']
 
-  namespaces.forEach((namespace) => {
-    properties.forEach((prop) => {
+  namespaces.forEach(namespace => {
+    properties.forEach(prop => {
       tags.push({
         name: `${namespace}:${prop}`,
-        content: data[prop]
+        content: data[prop],
       })
     })
   })
@@ -35,7 +35,7 @@ export default {
    */
   head: {
     title: 'schoolsyst',
-    titleTemplate: (titleChunk) => {
+    titleTemplate: titleChunk => {
       return !titleChunk || titleChunk === 'schoolsyst'
         ? 'schoolsyst'
         : titleChunk + ' · schoolsyst'
@@ -50,47 +50,47 @@ export default {
         content:
           'A complete, centralized school management system made for students, by a student.' ||
           process.env.npm_package_description ||
-          ''
+          '',
       },
       { name: 'apple-mobile-web-app-title', content: 'Schoolsyst' },
       { name: 'application-name', content: 'Schoolsyst' },
       { name: 'msapplication-TileColor', content: '#2d89ef' },
-      { name: 'theme-color', content: '#1389df' }
+      { name: 'theme-color', content: '#1389df' },
     ],
     link: [
       { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' },
       {
         rel: 'apple-touch-icon',
         sizes: '180x180',
-        href: '/apple-touch-icon.png'
+        href: '/apple-touch-icon.png',
       },
       {
         rel: 'icon',
         type: 'image/png',
         sizes: '32x32',
-        href: '/favicon-32x32.png'
+        href: '/favicon-32x32.png',
       },
       {
         rel: 'icon',
         type: 'image/png',
         sizes: '16x16',
-        href: '/favicon-16x16.png'
+        href: '/favicon-16x16.png',
       },
       { rel: 'manifest', href: '/site.webmanifest' },
-      { rel: 'mask-icon', href: '/safari-pinned-tab.svg', color: '#1389fd' }
+      { rel: 'mask-icon', href: '/safari-pinned-tab.svg', color: '#1389fd' },
     ],
     script: [
       {
-        src: '/lottie.min.js'
-      }
-    ]
+        src: '/lottie.min.js',
+      },
+    ],
   },
   /*
    ** Customize the progress-bar color
    */
   loading: {
     color: 'var(--blue)',
-    height: '2px'
+    height: '2px',
   },
   /*
    ** Global CSS
@@ -106,7 +106,7 @@ export default {
     // Icons
     '~/assets/fonts/Material-Icons/import.css',
     // Plugins
-    '~/plugins/v-tooltip.scss'
+    '~/plugins/v-tooltip.scss',
   ],
   /*
    ** Plugins to load before mounting the App
@@ -118,14 +118,14 @@ export default {
     '~plugins/v-tooltip.js',
     '~plugins/vue-konva.js',
     '~plugins/vue2-touch-events',
-    { src: '~plugins/ga.js', mode: 'client' }
+    { src: '~plugins/ga.js', mode: 'client' },
   ],
   /*
    ** Nuxt.js dev-modules
    */
   buildModules: [
     // Doc: https://github.com/nuxt-community/eslint-module
-    '@nuxtjs/eslint-module'
+    '@nuxtjs/eslint-module',
     // // Doc: https://github.com/nuxt-community/stylelint-module
     // '@nuxtjs/stylelint-module'
   ],
@@ -138,14 +138,14 @@ export default {
     '@nuxtjs/pwa',
     '@nuxtjs/auth',
     '@nuxtjs/toast',
-    ['nuxt-vue-select', {}]
+    ['nuxt-vue-select', {}],
   ],
   /*
    ** Toasts
    */
   toast: {
     position: 'bottom-left',
-    duration: 3000
+    duration: 3000,
   },
   /*
    ** Auth module configuration.
@@ -156,24 +156,24 @@ export default {
       login: '/login',
       logout: '/login',
       callback: false,
-      home: false
+      home: false,
     },
     strategies: {
       local: {
         endpoints: {
           login: { url: '/auth/', method: 'post', propertyName: 'token' },
           user: { url: '/users/self/', method: 'get', propertyName: '' },
-          logout: { url: '/auth/logout/', method: 'post' }
+          logout: { url: '/auth/logout/', method: 'post' },
         },
         tokenRequired: true,
-        tokenType: 'Bearer'
-      }
+        tokenType: 'Bearer',
+      },
     },
     // resetOnError: true,
-    rewriteRedirects: false
+    rewriteRedirects: false,
   },
   router: {
-    middleware: ['auth']
+    middleware: ['auth'],
   },
   /*
    ** Axios module configuration
@@ -183,7 +183,7 @@ export default {
     baseURL:
       process.env.NODE_ENV === 'development'
         ? 'http://localhost:9999/api'
-        : 'https://api.schoolsyst.com/api'
+        : 'https://api.schoolsyst.com/api',
   },
   /*
    ** Build configuration
@@ -196,7 +196,7 @@ export default {
       if (ctx.isDev) {
         config.devtool = ctx.isClient ? 'source-map' : 'inline-source-map'
       }
-    }
+    },
   },
   pwa: {
     meta: {
@@ -207,7 +207,7 @@ export default {
       theme_color: '#ffffff',
       lang: 'fr',
       // Needed to make sure it works w/ iOS, will do testing (See: https://medium.com/@firt/dont-use-ios-web-app-meta-tag-irresponsibly-in-your-progressive-web-apps-85d70f4438cb)
-      nativeUI: true
-    }
-  }
+      nativeUI: true,
+    },
+  },
 }
