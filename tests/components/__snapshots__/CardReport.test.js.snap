@@ -1,0 +1,32 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`<CardReport> with a linked github issue matches snpashot 1`] = `
+<div class="card report type-is-bug">
+  <div class="text">
+    <p class="top-line">#42 · Bug</p>
+    <p class="title">Lorem ispum dolor sit amet</p>
+    <p class="published">Soumis le 30/04/2020</p>
+  </div>
+  <ul class="actions">
+    <li>
+      <buttonnormal-stub type="button" variant="outline" small="true" href="https://github.com/schoolsyst/frontend/issues/42">
+        <icon-stub>open_in_new</icon-stub>Voir sur GitHub
+      </buttonnormal-stub>
+    </li>
+  </ul>
+</div>
+`;
+
+exports[`<CardReport> without a linked github issue matches snapshot 1`] = `
+<div class="card report type-is-bug">
+  <div class="text">
+    <p class="top-line">
+      <!---->Bug</p>
+    <p class="title">Lorem ispum dolor sit amet</p>
+    <p class="published">Non publié</p>
+  </div>
+  <ul class="actions">
+    <!---->
+  </ul>
+</div>
+`;
