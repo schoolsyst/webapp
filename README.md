@@ -6,7 +6,7 @@
 [![License: AGPL v3](https://img.shields.io/badge/License-AGPL%20v3-blue.svg)](https://www.gnu.org/licenses/agpl-3.0)
 [![Build status](https://img.shields.io/travis/com/schoolsyst/frontend/master?label=build)](https://travis-ci.com/schoolsyst/frontend)
 [![CodeFactor Grade](https://img.shields.io/codefactor/grade/github/schoolsyst/frontend)](https://www.codefactor.io/repository/github/schoolsyst/frontend/overview/master)
-[![Codecov branch](https://img.shields.io/codecov/c/gh/schoolsyst/frontend/master)](https://codecov.io/gh/schoolsyst/frontend)
+[![Codecov branch](https://img.shields.io/codecov/c/gh/schoolsyst/webapp/master)](https://codecov.io/gh/schoolsyst/webapp)
 </center>
 
 
