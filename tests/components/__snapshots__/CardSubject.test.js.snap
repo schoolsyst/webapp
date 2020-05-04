@@ -1,0 +1,12 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`<CardSubject> full-color variant matches snapshot 1`] = `
+<div class="card-wrapper" style="background-color: rgb(192, 255, 238); border-color: #c0ffee;">
+  <!----><span class="name">Lorem ipsum</span></div>
+`;
+
+exports[`<CardSubject> regular matches snapshot 1`] = `
+<div class="card-wrapper">
+  <badgesubject-stub color="#c0ffee" name="Lorem ipsum" placeholdername="Choisir..." variant="dot" notooltip="true" class="color-dot"></badgesubject-stub><span class="name">Lorem ipsum</span>
+</div>
+`;
