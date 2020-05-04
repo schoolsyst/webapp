@@ -6,13 +6,14 @@
   "author": "Ewen Le Bihan",
   "private": true,
   "scripts": {
-    "dev": "nuxt",
+    "dev": "tmux new -s schoolsyst-dev -d 'yarn dev:frontend' \\; split-window -h -d 'yarn dev:backend' \\; attach",
+    "dev:frontend": "nuxt",
     "build": "nuxt build",
     "start": "nuxt start",
     "generate": "nuxt generate",
     "lint": "eslint --ext .js,.vue --ignore-path .gitignore .",
     "test": "cross-env NODE_ENV=test jest",
-    "dev-backend": "cd ../schoolsyst-api && poetry run python manage.py runserver 9999"
+    "dev:backend": "cd ../schoolsyst-api && poetry run python manage.py runserver 9999"
   },
   "jest": {
     "moduleFileExtensions": [
