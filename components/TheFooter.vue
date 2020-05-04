@@ -10,10 +10,13 @@
         p.open-source
           | Projet open source, code disponible chez 
           a(href="//github.com/schoolsyst") GitHub
-        p.wakatime
-          img(title="API" src="https://wakatime.com/badge/github/schoolsyst/backend.svg")
-          span.plus-sign +
-          img(title="Application web" src="https://wakatime.com/badge/github/schoolsyst/frontend.svg")
+          br
+          | Créé par 
+          a(href="https://ewen.works") Ewen Le Bihan
+        //- p.wakatime
+        //-   img(title="API" src="https://wakatime.com/badge/github/schoolsyst/backend.svg")
+        //-   span.plus-sign +
+        //-   img(title="Application web" src="https://wakatime.com/badge/github/schoolsyst/frontend.svg")
     </footer>
 </template>
 
