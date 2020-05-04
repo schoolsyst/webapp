@@ -7,7 +7,7 @@ const { mnt } = bootstrapComponentTest(
   {
     title: 'Lorem ispum dolor sit amet',
     type: 'BUG',
-    published: new Date(),
+    published: new Date(2020, 5, 4, 23, 14, 0, 0),
     github_issue: 42,
   }
 )
