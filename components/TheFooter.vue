@@ -1,7 +1,7 @@
 <template lang="pug">
     <footer class="TheFooter">
         OverlayLoadingLogo(animate-when="scrolled-into-view")
-        a(href="https://www.schoolsyst.com/").logotype-wrapper: Logotype.logotype
+        a(href="https://www.schoolsyst.com/").logotype-wrapper: LogoWordmark.logotype
         code.version
           span.channel {{ version.channel }}
           span(title="Incrémentée par l'ajout de fonctionnalités").feat {{ version.feature }}.
@@ -24,12 +24,12 @@
 import { mapState } from 'vuex'
 import HeadingSub from '~/components/HeadingSub.vue'
 import OverlayLoadingLogo from '~/components/OverlayLoadingLogo.vue'
-import Logotype from '~/components/Logotype.vue'
+import LogoWordmark from '~/components/LogoWordmark.vue'
 export default {
   components: {
     HeadingSub,
     OverlayLoadingLogo,
-    Logotype,
+    LogoWordmark,
   },
   computed: {
     ...mapState(['version']),
