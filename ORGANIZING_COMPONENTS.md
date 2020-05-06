@@ -2,9 +2,7 @@
 
 Components should be stateless: this makes them easier to debug & test. Appart from utility getters defined in `store/index.js`, no component should import state/getters/actions or mutations (mutations shouldn't be called anywhere except inside actions, by the way.)
 
-Only the pages/layouts are responsible for state CRUD operations. Data should be passed by props to components via `v-bind`, or `v-model` when using inputs, 
-
-
+Only the pages/layouts are responsible for state CRUD operations. Data should be passed by props to components via `v-bind`, or `v-model` when using inputs,
 
 ## Legend
 
@@ -12,8 +10,8 @@ Only the pages/layouts are responsible for state CRUD operations. Data should be
 | --------------- | ------------------------------------------ |
 | *(Italic text)* | Notes                                      |
 | _Subcomponent_  | Component implemented as a "variant" prop. |
-| 🚧 Component    | To-Do component                            |
-| 🗃 Component    | Stateful components.                       |
+| 🚧 Component     | To-Do component                            |
+| 🗃 Component     | Stateful components.                       |
 | ▶ Component     | Components that takes inputs               |
 
 ## The tree
@@ -37,13 +35,9 @@ Only the pages/layouts are responsible for state CRUD operations. Data should be
 - ▶ Inputs
   
   - Text input
-    
     - passwords
-    
     - date
-      
-      - due date (smart)
-    
+    - due date (smart)
     - plain text
       
       - *block variant (textarea)*
@@ -68,7 +62,7 @@ Only the pages/layouts are responsible for state CRUD operations. Data should be
 
 - Links
   
-  - inline link
+  - _inline link_
 
 - State screens
   
@@ -130,24 +124,22 @@ Only the pages/layouts are responsible for state CRUD operations. Data should be
     
     - mutation
   
-  - ▶ Pickers
+  - ▶ Pickers _"Modal" not in component names for brevity_
     
     - 🗃 subject _(Only use when using the dropdown is not possible)_
     
     - color
   
-  - dialogs
+  - dialogs _"Modal" not in component names for brevity_
     
     - confirm (w/ challenge)
   
   - context menu
 
-- Subject
-  
-  - Badge
-  
-  - Dot
-
+- Badges
+  - Subject
+    - _dot_
+    - _badge_
 - Schedule
 
 - Unique components (prefixed with "The") _(This is not a base component)_
