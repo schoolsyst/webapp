@@ -78,13 +78,13 @@ import {
   addDays,
 } from 'date-fns'
 import { fr } from 'date-fns/locale'
-import CardHomework from '~/components/CardHomework.vue'
-import ScreenEmpty from '~/components/ScreenEmpty.vue'
-import ModalAddHomework from '~/components/ModalAddHomework.vue'
-import ButtonNormal from '~/components/ButtonNormal.vue'
-import HeadingSub from '~/components/HeadingSub.vue'
-import InputSetting from '~/components/InputSetting.vue'
-import Icon from '~/components/Icon.vue'
+import CardHomework from '~/components/legacy/CardHomework.vue'
+import ScreenEmpty from '~/components/legacy/ScreenEmpty.vue'
+import ModalAddHomework from '~/components/legacy/ModalAddHomework.vue'
+import ButtonNormal from '~/components/legacy/ButtonNormal.vue'
+import HeadingSub from '~/components/legacy/HeadingSub.vue'
+import InputSetting from '~/components/legacy/InputSetting.vue'
+import Icon from '~/components/legacy/Icon.vue'
 
 export default {
   components: {

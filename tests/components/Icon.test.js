@@ -1,5 +1,5 @@
 import { bootstrapComponentTest } from '../utils'
-import Icon from '~/components/Icon.vue'
+import Icon from '~/components/legacy/Icon.vue'
 
 const { mnt } = bootstrapComponentTest(
   Icon

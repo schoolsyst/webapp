@@ -27,10 +27,10 @@
 
 <script>
 import { mapGetters } from 'vuex'
-import ButtonNormal from '~/components/ButtonNormal.vue'
-import CardReport from '~/components/CardReport.vue'
-import HeadingSub from '~/components/HeadingSub.vue'
-import Icon from '~/components/Icon.vue'
+import ButtonNormal from '~/components/legacy/ButtonNormal.vue'
+import CardReport from '~/components/legacy/CardReport.vue'
+import HeadingSub from '~/components/legacy/HeadingSub.vue'
+import Icon from '~/components/legacy/Icon.vue'
 
 export default {
   components: { ButtonNormal, CardReport, HeadingSub, Icon },

@@ -37,8 +37,8 @@
 
 <script>
 import { mapGetters, mapActions } from 'vuex'
-import InputField from '~/components/InputField.vue'
-import ButtonNormal from '~/components/ButtonNormal.vue'
+import InputField from '~/components/legacy/InputField.vue'
+import ButtonNormal from '~/components/legacy/ButtonNormal.vue'
 
 export default {
   components: { InputField, ButtonNormal },

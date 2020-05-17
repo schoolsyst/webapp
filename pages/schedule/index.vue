@@ -14,10 +14,10 @@
 <script>
 import { mapGetters, mapState } from 'vuex'
 import { getUnixTime, addDays } from 'date-fns'
-import Schedule from '~/components/Schedule.vue'
-import HeadingSub from '~/components/HeadingSub.vue'
-import ButtonNormal from '~/components/ButtonNormal.vue'
-import CardMutation from '~/components/CardMutation.vue'
+import Schedule from '~/components/legacy/Schedule.vue'
+import HeadingSub from '~/components/legacy/HeadingSub.vue'
+import ButtonNormal from '~/components/legacy/ButtonNormal.vue'
+import CardMutation from '~/components/legacy/CardMutation.vue'
 export default {
   components: { Schedule, HeadingSub, ButtonNormal, CardMutation },
   head: {

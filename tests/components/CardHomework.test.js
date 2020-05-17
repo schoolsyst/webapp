@@ -1,23 +1,23 @@
 import { bootstrapComponentTest } from '../utils'
-import CardHomework from '~/components/CardHomework.vue'
+import CardHomework from '~/components/legacy/CardHomework.vue'
 // import homework from '~/store/homework'
 
 const mockHomework = {
   uuid: 'c0ffee-daedead-b16b00b5',
   subject: {
     name: 'Subject',
-    color: '#c0ffee'
+    color: '#c0ffee',
   },
   progress: 0.3,
   type: 'HOMEWORK',
   name: 'Lorem ipsum',
   details:
-    'Lorem ipsum dolor sit amet consecitur nae doe flat is justice et deald.'
+    'Lorem ipsum dolor sit amet consecitur nae doe flat is justice et deald.',
 }
 const homeworkStore = {
   actions: {
-    switchCompletion: jest.fn()
-  }
+    switchCompletion: jest.fn(),
+  },
 }
 
 const { mnt, store } = bootstrapComponentTest(
@@ -53,7 +53,7 @@ describe('<CardHomework>', () => {
       expect(CardHomework.emitted('completion-switch')).toBeTruthy()
       expect(CardHomework.emitted('completion-switch')[1]).toEqual(true)
       expect(store.dispatch).toHaveBeenCalledWith('homework/switchCompletion', {
-        uuid: mockHomework.uuid
+        uuid: mockHomework.uuid,
       })
     }, 500)
   })

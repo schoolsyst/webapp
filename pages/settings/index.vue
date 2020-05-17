@@ -42,13 +42,13 @@
 
 <script>
 import { mapGetters, mapActions } from 'vuex'
-import HeadingSub from '~/components/HeadingSub.vue'
-import CardSubject from '~/components/CardSubject.vue'
-import InputSetting from '~/components/InputSetting.vue'
-import Icon from '~/components/Icon.vue'
-import InputField from '~/components/InputField.vue'
-import ModalAddSubject from '~/components/ModalAddSubject.vue'
-import ButtonNormal from '~/components/ButtonNormal.vue'
+import HeadingSub from '~/components/legacy/HeadingSub.vue'
+import CardSubject from '~/components/legacy/CardSubject.vue'
+import InputSetting from '~/components/legacy/InputSetting.vue'
+import Icon from '~/components/legacy/Icon.vue'
+import InputField from '~/components/legacy/InputField.vue'
+import ModalAddSubject from '~/components/legacy/ModalAddSubject.vue'
+import ButtonNormal from '~/components/legacy/ButtonNormal.vue'
 export default {
   components: {
     HeadingSub,

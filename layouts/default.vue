@@ -18,13 +18,13 @@
 <script>
 import { toDate } from 'date-fns'
 import { mapGetters, mapState, mapActions } from 'vuex'
-import TheDrawer from '~/components/TheDrawer.vue'
-import TheTopBar from '~/components/TheTopBar.vue'
-import TheFooter from '~/components/TheFooter.vue'
-import TheSideRail from '~/components/TheSideRail.vue'
-import BaseModal from '~/components/BaseModal.vue'
-import OverlayLoadingLogo from '~/components/OverlayLoadingLogo.vue'
-import ModalAddReport from '~/components/ModalAddReport.vue'
+import TheDrawer from '~/components/legacy/TheDrawer.vue'
+import TheTopBar from '~/components/legacy/TheTopBar.vue'
+import TheFooter from '~/components/legacy/TheFooter.vue'
+import TheSideRail from '~/components/legacy/TheSideRail.vue'
+import BaseModal from '~/components/legacy/BaseModal.vue'
+import OverlayLoadingLogo from '~/components/legacy/OverlayLoadingLogo.vue'
+import ModalAddReport from '~/components/legacy/ModalAddReport.vue'
 
 export default {
   components: {

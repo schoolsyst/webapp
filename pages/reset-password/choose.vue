@@ -38,9 +38,9 @@
 
 <script>
 import { mapGetters, mapActions } from 'vuex'
-import Icon from '~/components/Icon.vue'
-import ButtonNormal from '~/components/ButtonNormal.vue'
-import InputField from '~/components/InputField.vue'
+import Icon from '~/components/legacy/Icon.vue'
+import ButtonNormal from '~/components/legacy/ButtonNormal.vue'
+import InputField from '~/components/legacy/InputField.vue'
 
 export default {
   components: { ButtonNormal, InputField, Icon },

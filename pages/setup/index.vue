@@ -9,7 +9,7 @@
 </template>
 
 <script>
-import ButtonNormal from '~/components/ButtonNormal.vue'
+import ButtonNormal from '~/components/legacy/ButtonNormal.vue'
 
 export default {
   components: { ButtonNormal },

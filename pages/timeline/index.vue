@@ -50,10 +50,10 @@ import { formatDistanceStrict } from 'date-fns'
 import { fr } from 'date-fns/locale'
 import { firstBy } from 'thenby'
 import { mapState, mapGetters } from 'vuex'
-import HeadingSub from '~/components/HeadingSub.vue'
-import Icon from '~/components/Icon.vue'
-import CardCourse from '~/components/CardCourse.vue'
-import ScreenEmpty from '~/components/ScreenEmpty.vue'
+import HeadingSub from '~/components/legacy/HeadingSub.vue'
+import Icon from '~/components/legacy/Icon.vue'
+import CardCourse from '~/components/legacy/CardCourse.vue'
+import ScreenEmpty from '~/components/legacy/ScreenEmpty.vue'
 
 export default {
   components: { HeadingSub, Icon, CardCourse, ScreenEmpty },

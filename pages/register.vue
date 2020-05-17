@@ -52,9 +52,9 @@
 
 <script>
 import { mapGetters, mapActions } from 'vuex'
-import OverlayLoadingLogo from '~/components/OverlayLoadingLogo.vue'
-import InputField from '~/components/InputField.vue'
-import ButtonNormal from '~/components/ButtonNormal.vue'
+import OverlayLoadingLogo from '~/components/legacy/OverlayLoadingLogo.vue'
+import InputField from '~/components/legacy/InputField.vue'
+import ButtonNormal from '~/components/legacy/ButtonNormal.vue'
 
 export default {
   layout: 'bare',

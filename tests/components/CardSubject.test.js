@@ -2,7 +2,7 @@ import { shallowMount, createLocalVue } from '@vue/test-utils'
 import VTooltip from 'v-tooltip'
 import Vuex from 'vuex'
 import { getters } from '../../store/index'
-import CardSubject from '~/components/CardSubject.vue'
+import CardSubject from '~/components/legacy/CardSubject.vue'
 
 const vue = createLocalVue()
 vue.directive('tooltip', VTooltip)
