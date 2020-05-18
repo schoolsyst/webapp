@@ -68,4 +68,8 @@ export default {
 :hover, :focus
   border-color var(--blue)
   color var(--blue-dark)
+
+:active
+  border-color var(--blue-dark)
+  background-color var(--blue-offset)
 </style>
