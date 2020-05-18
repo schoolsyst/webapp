@@ -1,4 +1,4 @@
-import { bootstrapComponentTest } from '../utils'
+import { bootstrapComponentTest } from '../../utils'
 import CardReport from '~/components/legacy/CardReport.vue'
 
 const { mnt } = bootstrapComponentTest(

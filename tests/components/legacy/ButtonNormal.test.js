@@ -1,9 +1,9 @@
 import { mount, createLocalVue } from '@vue/test-utils'
 import VTooltip from 'v-tooltip'
-import ButtonNormal from '../../components/ButtonNormal.vue'
+import ButtonNormal from '../../../components/legacy/ButtonNormal.vue'
 const vue = createLocalVue()
 vue.directive('tooltip', VTooltip)
-const getButtonNormal = (props) =>
+const getButtonNormal = props =>
   mount(ButtonNormal, { propsData: props, localVue: vue })
 
 describe('<ButtonNormal>', () => {
@@ -39,9 +39,9 @@ describe('<ButtonNormal>', () => {
       validation: {
         validated: false,
         errors: {
-          lorem: ['ipsum', 'dolor', 'sit']
-        }
-      }
+          lorem: ['ipsum', 'dolor', 'sit'],
+        },
+      },
     })
     expect(Object.keys(btn.get('.btn').attributes())).toContain('disabled')
     expect(btn.vm.validationErrors).toBe(
@@ -53,8 +53,8 @@ describe('<ButtonNormal>', () => {
     const btn = getButtonNormal({
       validation: {
         validated: true,
-        errors: {}
-      }
+        errors: {},
+      },
     })
     expect(btn.get('.btn').attributes()).not.toContain('disabled')
   })

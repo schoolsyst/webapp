@@ -1,17 +1,17 @@
 import { mount, createLocalVue } from '@vue/test-utils'
-import BaseModal from '../../components/BaseModal.vue'
-import $modal from '../../plugins/vue-js-modal'
+import BaseModal from '../../../components/legacy/BaseModal.vue'
+import $modal from '../../../plugins/vue-js-modal'
 
 const vue = createLocalVue()
 vue.use($modal)
 
 describe('<BaseModal>', () => {
-  const getModal = (props) =>
+  const getModal = props =>
     mount(BaseModal, {
       propsData: {
         name: 'lorem-ipsum',
-        ...props
-      }
+        ...props,
+      },
     })
   describe('opened', () => {
     test('is visible', () => {

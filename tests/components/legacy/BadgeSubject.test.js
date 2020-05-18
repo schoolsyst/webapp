@@ -1,8 +1,8 @@
 import { mount, createLocalVue } from '@vue/test-utils'
 import VTooltip from 'v-tooltip'
 import Vuex from 'vuex'
-import BadgeSubject from '../../components/BadgeSubject.vue'
-import { getters } from '../../store/index'
+import BadgeSubject from '../../../components/legacy/BadgeSubject.vue'
+import { getters } from '../../../store/index'
 
 const vue = createLocalVue()
 vue.directive('tooltip', VTooltip)

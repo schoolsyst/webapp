@@ -1,23 +1,23 @@
 import { mount, createLocalVue } from '@vue/test-utils'
 import VTooltip from 'v-tooltip'
 import Vuex from 'vuex'
-import CardCourse from '../../components/CardCourse.vue'
-import { getters } from '../../store/index'
+import CardCourse from '../../../components/legacy/CardCourse.vue'
+import { getters } from '../../../store/index'
 
 const vue = createLocalVue()
 vue.use(Vuex)
 vue.directive('tooltip', VTooltip)
 const mockSubject = {
-  color: 'red'
+  color: 'red',
 }
 const store = {
-  getters: { textColor: getters.textColor }
+  getters: { textColor: getters.textColor },
 }
-const mnt = (props) =>
+const mnt = props =>
   mount(CardCourse, {
     propsData: { subject: mockSubject, ...props },
     localVue: vue,
-    store
+    store,
   })
 
 describe('<CardCourse>', () => {
@@ -38,7 +38,7 @@ describe('<CardCourse>', () => {
       const CardCourse = mnt({
         room: 'L102',
         start: new Date(0),
-        end: new Date(3600 * 1000)
+        end: new Date(3600 * 1000),
       })
       expect(CardCourse).toMatchSnapshot()
     })

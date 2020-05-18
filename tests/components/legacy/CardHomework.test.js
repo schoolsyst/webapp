@@ -1,4 +1,4 @@
-import { bootstrapComponentTest } from '../utils'
+import { bootstrapComponentTest } from '../../utils'
 import CardHomework from '~/components/legacy/CardHomework.vue'
 // import homework from '~/store/homework'
 
