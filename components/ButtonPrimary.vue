@@ -9,16 +9,7 @@ import BaseButton from '~/components/BaseButton.vue'
 
 export default {
   components: { BaseButton },
-  props: {
-    dangerous: {
-      type: Boolean,
-      default: false,
-    },
-    small: {
-      type: Boolean,
-      default: false,
-    },
-  },
+  extends: BaseButton,
 }
 </script>
 
