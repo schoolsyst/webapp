@@ -126,8 +126,8 @@ export default {
   buildModules: [
     // Doc: https://github.com/nuxt-community/eslint-module
     '@nuxtjs/eslint-module',
-    // // Doc: https://github.com/nuxt-community/stylelint-module
-    // '@nuxtjs/stylelint-module'
+    // Doc: https://typescript.nuxtjs.org/guide/setup.html
+    '@nuxt/typescript-build',
   ],
   /*
    ** Nuxt.js modules
@@ -208,6 +208,11 @@ export default {
       lang: 'fr',
       // Needed to make sure it works w/ iOS, will do testing (See: https://medium.com/@firt/dont-use-ios-web-app-meta-tag-irresponsibly-in-your-progressive-web-apps-85d70f4438cb)
       nativeUI: true,
+    },
+  },
+  typescript: {
+    typeCheck: {
+      eslint: true,
     },
   },
 }

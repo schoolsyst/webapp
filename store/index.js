@@ -22,6 +22,13 @@ export const state = () => ({
   },
   links: [
     {
+      name: 'Tests du refactoring',
+      href: '/refactor-test',
+      icon: 'build',
+      id: 'refactor-test',
+    },
+    'separator',
+    {
       name: 'Timeline',
       href: '/timeline',
       icon: 'timeline',
@@ -207,7 +214,8 @@ export const getValidator = ({
         ? object[fieldName].length <= arg
         : true,
     required: ({ arg, fieldName }) =>
-      object.hasOwnProperty(fieldName) && object[fieldName] !== null,
+      Object.prototype.hasOwnProperty.call(object, fieldName) &&
+      object[fieldName] !== null,
     notEmpty: ({ arg, fieldName }) =>
       object[fieldName] && object[fieldName].trim().length > 0,
     isAWeekType: ({ arg, fieldName }) =>
@@ -230,7 +238,10 @@ export const getValidator = ({
     /* Special case for required, which checks if the property exist
        and returnes *false* instead.
     */
-    if (errorName !== 'required' && !object.hasOwnProperty(fieldName)) {
+    if (
+      errorName !== 'required' &&
+      !Object.prototype.hasOwnProperty.call(object, fieldName)
+    ) {
       return true
     }
     return checkers[errorName]({ arg: errorArg, fieldName })
@@ -281,7 +292,7 @@ export const getValidator = ({
 
   // Go through the constraints
   for (const errorName in constraints) {
-    if (constraints.hasOwnProperty(errorName)) {
+    if (Object.prototype.hasOwnProperty.call(constraints, errorName)) {
       const fieldsOrArgs = constraints[errorName]
       // No arguments, field names are passed directly
       // eslint-disable-next-line
@@ -299,7 +310,7 @@ export const getValidator = ({
       // Error arguments, multiple cases. eg: maximum
       else {
         for (const errorArg in fieldsOrArgs) {
-          if (fieldsOrArgs.hasOwnProperty(errorArg)) {
+          if (Object.prototype.hasOwnProperty.call(fieldsOrArgs, errorArg)) {
             const fields = fieldsOrArgs[errorArg]
             fields.forEach(fieldName => {
               if (!check({ errorName, fieldName, errorArg })) {
@@ -319,7 +330,7 @@ export const getValidator = ({
   customConstraints.forEach(({ message, constraint, field }) => {
     if (!constraint(getters, object)) {
       field = field === null ? 'nonFieldErrors' : field
-      if (errorMessages.hasOwnProperty(field)) {
+      if (Object.prototype.hasOwnProperty.call(errorMessages, field)) {
         errorMessages[field].push(message)
       } else {
         errorMessages[field] = [message]
@@ -333,7 +344,7 @@ export const getValidator = ({
   let flatErrorMessage = ''
   let errorsCount = 0
   for (const field in errorMessages) {
-    if (errorMessages.hasOwnProperty(field)) {
+    if (Object.prototype.hasOwnProperty.call(errorMessages, field)) {
       const errors = errorMessages[field]
       if (errors.length) {
         flatErrorMessage += errors.join(', ') + '\n'

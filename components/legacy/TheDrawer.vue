@@ -58,7 +58,7 @@ export default {
       return '/' + topPathFragment === link.href
     },
     hasNotifications(link) {
-      if (link.hasOwnProperty('notifications')) {
+      if (Object.prototype.hasOwnProperty.call(link, 'notifications')) {
         return link.notifications >= 1 || link.notifications === '99+'
       }
     },

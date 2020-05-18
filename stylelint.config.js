@@ -3,6 +3,6 @@ module.exports = {
   // https://stylelint.io/user-guide/configuration
   rules: {
     'block-no-empty': null,
-    'color-no-invalid-hex': true
-  }
+    'color-no-invalid-hex': true,
+  },
 }

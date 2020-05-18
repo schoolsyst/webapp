@@ -29,7 +29,7 @@ export const getters = {
     date = 'added'
   ) => {
     switch (what) {
-      case 'trimester':
+      case 'trimester': {
         let trimesterInterval
         if (value === null) {
           trimesterInterval = rootGetters['schedule/currentTrimester']
@@ -42,7 +42,7 @@ export const getters = {
         return getters.all.filter(
           o => o[date] && isWithinInterval(o[date], trimesterInterval)
         )
-
+      }
       case 'interval':
         return getters.all.filter(
           o => o[date] && isWithinInterval(o[date], value)

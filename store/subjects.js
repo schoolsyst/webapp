@@ -23,7 +23,7 @@ export const getters = {
       uuid: firstBy('uuid'),
     }
 
-    if (!sorters.hasOwnProperty(what)) {
+    if (!Object.prototype.hasOwnProperty.call(sorters, what)) {
       console.warn(
         `subjects/orderBy: unknown ordering method '${what}': defaulting to UUID sorting`
       )

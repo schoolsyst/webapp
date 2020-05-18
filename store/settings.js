@@ -166,7 +166,7 @@ export const actions = {
   async patch({ commit, getters }, { key, modifications, early }) {
     early = early || false
     const type = getters.one(key).type
-    if (modifications.hasOwnProperty('value')) {
+    if (Object.prototype.hasOwnProperty.call(modifications, 'value')) {
       modifications.value = stringifiedValue({
         value: modifications.value,
         type,
@@ -313,7 +313,7 @@ const parsedValue = (
         parsed = parseISO(value)
         break
 
-      case 'DATERANGE':
+      case 'DATERANGE': {
         // Gets the start and stop dates.
         let dates = value.split(' - ')
         // Parse each date
@@ -334,7 +334,7 @@ const parsedValue = (
             ? { start: dates[0], end: dates[1] }
             : (parsed = dates[0])
         break
-
+      }
       case 'TIMERANGE':
         // TODO
         throw new Error('TIMERANGE setting types are not available yet.')

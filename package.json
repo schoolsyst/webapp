@@ -7,11 +7,11 @@
   "private": true,
   "scripts": {
     "dev": "tmux new -s schoolsyst-dev -d 'yarn dev:frontend' \\; split-window -h -d 'yarn dev:backend' \\; attach",
-    "dev:frontend": "nuxt",
-    "build": "nuxt build",
-    "start": "nuxt start",
-    "generate": "nuxt generate",
-    "lint": "eslint --ext .js,.vue --ignore-path .gitignore .",
+    "dev:frontend": "nuxt-ts",
+    "build": "nuxt-ts build",
+    "start": "nuxt-ts start",
+    "generate": "nuxt-ts generate",
+    "lint": "eslint --ext .js,.vue,.ts --ignore-path .gitignore .",
     "test": "cross-env NODE_ENV=test jest",
     "dev:backend": "cd ../schoolsyst-api && poetry run python manage.py runserver 9999"
   },
@@ -71,7 +71,7 @@
     ]
   },
   "lint-staged": {
-    "*.{js,vue}": "eslint"
+    "*.{js,vue,ts}": "eslint"
   },
   "husky": {
     "hooks": {
@@ -79,6 +79,7 @@
     }
   },
   "dependencies": {
+    "@nuxt/typescript-runtime": "^0.4.7",
     "@nuxtjs/auth": "^4.8.1",
     "@nuxtjs/axios": "^5.3.6",
     "@nuxtjs/dotenv": "^1.4.0",
@@ -130,12 +131,12 @@
     "@babel/plugin-transform-regenerator": "^7.8.7",
     "@babel/plugin-transform-runtime": "^7.9.0",
     "@babel/preset-env": "^7.8.7",
-    "@nuxtjs/eslint-config": "^1.0.1",
+    "@nuxt/typescript-build": "^1.0.0",
+    "@nuxtjs/eslint-config-typescript": "^2.0.0",
     "@nuxtjs/eslint-module": "^1.0.0",
     "@nuxtjs/stylelint-module": "^3.1.0",
     "@vue/test-utils": "^1.0.0-beta.32",
     "babel-core": "7.0.0-bridge.0",
-    "babel-eslint": "^10.0.1",
     "babel-jest": "^25.1.0",
     "babel-plugin-module-resolver": "^3.2.0",
     "babel-register": "^6.26.0",

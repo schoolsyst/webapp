@@ -7,7 +7,7 @@ export const state = () => ({
 
 export const getters = {
   current: state => state.current,
-  resolveAuto: (state, getters, rootState) => {
+  resolveAuto: (_, __, rootState) => {
     const { latitude, longitude } = rootState.location
     const now = rootState.now
     const { sunrise, sunset } = SunCalc.getTimes(now, latitude, longitude)

@@ -67,7 +67,10 @@ export default {
     verboseChoices() {
       const choices = []
       this.choices.forEach(choice => {
-        const verboseChoice = this.verboseChoices.hasOwnProperty(choice)
+        const verboseChoice = Object.prototype.hasOwnProperty.call(
+          this.verboseChoices,
+          choice
+        )
           ? this.verboseChoices[choice]
           : choice
         choices.push({ key: choice, label: verboseChoice })
