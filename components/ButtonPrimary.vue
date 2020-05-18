@@ -34,6 +34,8 @@ export default {
 //
 //Positioning
 //
+.--button-primary
+  display inline-block
 
 //
 //Sizing
