@@ -9,6 +9,8 @@
 </template>
 
 <script>
+import { isURL } from '~/utils/validators'
+
 export default {
   props: {
     dangerous: {
@@ -22,7 +24,7 @@ export default {
     href: {
       type: String,
       default: null,
-      validator: value => /^https?:\/\/([^.]+){2,}.*/.test(value),
+      validator: isURL,
     },
   },
   computed: {
