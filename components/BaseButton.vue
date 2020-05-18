@@ -1,19 +1,16 @@
 <template>
-  <button
+  <tag
+    :is="tagName"
     @click="handleClick"
-    :class="{ '--base-button': true, disabled, dangerous, small, clicked }"
+    :class="{ '--base-button': true, dangerous, small, clicked }"
   >
     <slot></slot>
-  </button>
+  </tag>
 </template>
 
 <script>
 export default {
   props: {
-    disabled: {
-      type: Boolean,
-      default: false,
-    },
     dangerous: {
       type: Boolean,
       default: false,
@@ -22,19 +19,22 @@ export default {
       type: Boolean,
       default: false,
     },
+    href: {
+      type: String,
+      default: null,
+      validator: value => /^https?:\/\/([^.]+){2,}.*/.test(value),
+    },
   },
-  data() {
-    return {
-      clicked: false,
-    }
+  computed: {
+    tagName() {
+      return this.href ? 'a' : 'button'
+    },
   },
   methods: {
     handleClick() {
-      this.$emit('click')
-      this.clicked = true
-      setTimeout(() => {
-        this.clicked = false
-      }, 100)
+      if (!this.href) {
+        this.$emit('click')
+      }
     },
   },
 }
@@ -65,4 +65,10 @@ export default {
 
 .--base-button
   outline 0
+
+//
+//States
+//
+[disabled]
+  cursor not-allowed
 </style>

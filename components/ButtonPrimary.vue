@@ -10,10 +10,6 @@ import BaseButton from '~/components/BaseButton.vue'
 export default {
   components: { BaseButton },
   props: {
-    disabled: {
-      type: Boolean,
-      default: false,
-    },
     dangerous: {
       type: Boolean,
       default: false,
@@ -57,9 +53,6 @@ export default {
   border 1px solid transparent //To prevent jittering when :hover'ing
   border-radius var(--border-radius)
 
-.disabled
-  cursor not-allowed
-
 //
 //Colors
 //
@@ -71,7 +64,7 @@ export default {
   background-color var(--red-offset)
   color var(--red-dark)
 
-.disabled
+[disabled]
   background-color var(--grey-offset-dark)
   color var(--grey-dark)
 
@@ -85,21 +78,21 @@ export default {
 .--button-primary:hover, .--button-primary:focus
   border 1px solid
 
-  &:not(.dangerous):not(.disabled)
+  &:not(.dangerous):not([disabled])
     border-color var(--blue)
     color var(--blue)
 
-  &.dangerous:not(.disabled)
+  &.dangerous:not([disabled])
     border-color var(--red)
     color var(--red)
 
-  &.disabled
+  &[disabled]
     border-color var(--black)
 
-  &.disabled.dangerous
+  &[disabled].dangerous
     border-color var(--red)
 
-.--button-primary.clicked:not(.disabled)
+.--button-primary:active:not([disabled])
   border-color var(--blue-dark)
   background-color var(--blue-offset-dark)
   color var(--blue-dark)
