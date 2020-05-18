@@ -163,32 +163,9 @@ order(objects, { by: '_your_default_sorting_method_' }) ::
 ## Code clarity guidelines
 ### In vue files' <template>
 
-Language :: pug
+Language :: html
 Indentation :: 2 spaces
-
-#### Attribute shorthands order
-
-_In single-line component uses_:
-Put the class shorthand .class _after_ an attribute list and the #id shortand _before_:
-
-```pug
-ComponentName#id(attr="value").class.class2
-```
-
-_In multiline uses (eg. the attributes list is split on multiple lines)_:
-Put all of the shorthands _before_ the attribute list
-
-```pug
-component#id.class.class2(
-  :is="componentName"
-  :style="styles"
-  :class="{clickable, multiline, thin, inline}"
-  :data-variant="variant"
-  type="button"
-  @click="$emit('click')"
-  v-tooltip="tooltipContent"
-)
-```
+Class for root element of every component :: .--<component-kebab-case>; eg. for <BaseCard> root element has class=--base-card
 
 #### Attribute list order
 
@@ -235,10 +212,10 @@ For object literals, don't add spaces around the braces (but do it in JS code)
 For multi-values attributes (eg. `style` or `class`), prefer an object literal of computed values instead of a single computed value returning the entire object:
 
 .`<template>`
-```pug
-component(
+```html
+<component
   :style="{backgroundColor, color: subjectNameColor}"
-)
+>
 ```
 
 .`<script>`
@@ -256,8 +233,8 @@ computed: {
 Instead of:
 
 .`<template>`
-```pug
-component(:style="styles")
+```html
+<component :style="styles">
 ```
 
 .`<script>`
@@ -277,8 +254,8 @@ computed: {
 In conditonnal directives, the value can be one of the above, or a logical-operator-separated list of variables, but there must be at most two operators.
 
 .Example
-```pug
-template(v-if="loggedIn || passwordForgotten")
+```html
+<template v-if="loggedIn || passwordForgotten">
 ```
 
 If the exact same condition is reused, make a computed property instead.
@@ -288,18 +265,19 @@ If the exact same condition is reused, make a computed property instead.
 If the element contains more than two attributes:
 
 .Bad example
-```pug
-template(v-if="thing" my-stuff :thingie="foo" bar="baz" quux)
+```html
+<template v-if="thing" my-stuff :thingie="foo" bar="baz" quux>
 ```
 
 .Good example
-```pug
-template(
+```html
+<template
   v-if="thing"
   :thingie="foo"
   bar="baz"
-  my-stuff quux
-)
+  my-stuff
+  quux
+>
 ```
 
 ### In vue _component_ file's <script>
@@ -363,7 +341,7 @@ Separate your styles into sections using the following comment decorations (incl
 
 ```
 
-Include the following sections (even if empty, except for Hack), in order:
+Include the following sections, in order:
 
 . Definitions +
   _Includes stylus variables & functions as well as CSS variables_
