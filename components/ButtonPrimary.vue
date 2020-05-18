@@ -43,7 +43,10 @@ export default {
 //Spacing
 //
 .--button-primary
-  padding .7em 1.2em
+  padding 0.8em 1.4em
+
+.small
+  padding 0.5em 0.7em
 
 //
 //Decoration
@@ -78,19 +81,26 @@ export default {
 //Reactions
 //
 .--button-primary:hover, .--button-primary:focus
-  border 1px solid var(--blue)
-  color var(--blue)
+  border 1px solid
 
-  &.dangerous
+  &:not(.dangerous):not(.disabled)
+    border-color var(--blue)
+    color var(--blue)
+
+  &.dangerous:not(.disabled)
     border-color var(--red)
+    color var(--red)
 
   &.disabled
     border-color var(--black)
 
+  &.disabled.dangerous
+    border-color var(--red)
+
 .--button-primary.clicked:not(.disabled)
+  border-color var(--blue-dark)
   background-color var(--blue-offset-dark)
   color var(--blue-dark)
-  border-color var(--blue-dark)
 
   &.dangerous
     background-color var(--red-offset-dark)
