@@ -13,13 +13,21 @@
   </base-button>
 </template>
 
-<script>
+<script lang="ts">
+// eslint-disable-next-line no-unused-vars
+import Vue, { PropOptions } from 'vue'
 import BaseButton from '~/components/BaseButton.vue'
 
-export default {
+export default Vue.extend({
   components: { BaseButton },
   extends: BaseButton,
-}
+  props: {
+    filled: {
+      type: Boolean,
+      default: null,
+    } as PropOptions<boolean | null>,
+  },
+})
 </script>
 
 <style lang="stylus" scoped>
