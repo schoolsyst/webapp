@@ -1,11 +1,12 @@
 <template>
-  <tag
+  <component
     :is="tagName"
-    @click="handleClick"
     :class="{ '--base-button': true, dangerous, small, clicked }"
+    :href="href"
+    @click="handleClick"
   >
     <slot></slot>
-  </tag>
+  </component>
 </template>
 
 <script lang="ts">
