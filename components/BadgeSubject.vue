@@ -1,7 +1,7 @@
 <template>
   <div
     :class="{
-      '--subject-badge': true,
+      '--badge-subject': true,
       expandable,
       expanded,
       editable,
@@ -78,23 +78,23 @@ dot-size = 1.8em
 //
 //Positioning
 //
-.--subject-badge
+.--badge-subject
   display inline-flex
   align-items center
 
-.--subject-badge.editable .name
+.--badge-subject.editable .name
   margin-left 0.5em
 
 .name
   white-space nowrap
 
-.--subject-badge:not(.editable) .button-edit
+.--badge-subject:not(.editable) .button-edit
   width 0
 
 //
 //Sizing
 //
-.--subject-badge:not(.expanded)
+.--badge-subject:not(.expanded)
   max-width dot-size
 
 //
@@ -104,7 +104,7 @@ dot-size = 1.8em
   width dot-size
   font-size 0.85em
 
-.--subject-badge
+.--badge-subject
   padding 0 0.5em
   height dot-size
 
@@ -115,10 +115,10 @@ dot-size = 1.8em
 //
 //Decoration
 //
-.--subject-badge
+.--badge-subject
   border-radius 1000px
 
-.--subject-badge:not(.editable) .button-edit
+.--badge-subject:not(.editable) .button-edit
   cursor default
 
 //
