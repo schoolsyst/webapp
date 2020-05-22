@@ -75,20 +75,8 @@ export default Vue.extend({
     } as PropOptions<number>,
     events: {
       type: Array,
-      default: () => [
-        {
-          day: 1,
-          room: 'L666',
-          start: 8 * 3600,
-          end: 9 * 3600,
-          subject: {
-            name: 'English',
-            color: 'blue',
-          },
-          week_type: 'Q1',
-        },
-      ],
-    } as PropOptions<Event[]>,
+      required: true,
+    } as PropOptions<ApiResourceEvent[]>,
   },
   data() {
     const defaults = {
@@ -228,13 +216,13 @@ export default Vue.extend({
       }
       return width
     },
-    resolveHeight(event: Event): number {
+    resolveHeight(event: ApiResourceEvent): number {
       // Get the duration of this event
       const duration = event.end - event.start
       // Multiply by the factor
       return (duration / 60) * this.pixelsPerMinute
     },
-    resolvePosition(event: Event) {
+    resolvePosition(event: ApiResourceEvent) {
       // Get the day and multiply by the base width of an event
       const baseWidth = this.resolveWidth({ week_type: 'BOTH' })
       let x = baseWidth * event.day - baseWidth
@@ -249,7 +237,7 @@ export default Vue.extend({
       y += this.headerHeight
       return { x, y }
     },
-    resolveRect(event: Event) {
+    resolveRect(event: ApiResourceEvent) {
       const { x, y } = this.resolvePosition(event)
       return {
         width: this.resolveWidth(event),
@@ -259,7 +247,7 @@ export default Vue.extend({
         fill: event.subject.color,
       }
     },
-    resolveText(event: Event) {
+    resolveText(event: ApiResourceEvent) {
       const rect = this.resolveRect(event)
       return {
         text: event.subject.name + '\n' + event.room,
@@ -292,18 +280,23 @@ export default Vue.extend({
         start: parse(event.start, 'HH:mm:ss', new Date(0)),
         end: parse(event.end, 'HH:mm:ss', new Date(0)),
       }
+      // Open the modal
+      // @ts-ignore TODO: typescriptify plugins so that I don't have to do this
       this.$modal.open('edit-event')
     },
     handleHover(evt: { target: { attrs: { id: string } }; type: string }) {
+      // this.$el's reported type is `Element`, which does not contain `.style`, so I'm resorting to  @ts-ingore comments
       const canvas = this.$el
       // Check if its an event
       if (!evt.target.attrs.id) return
       switch (evt.type) {
         case 'mouseenter':
+          // @ts-ignore
           canvas.style.cursor = 'pointer'
           break
 
         case 'mouseleave':
+          // @ts-ignore
           canvas.style.cursor = 'default'
           break
       }
