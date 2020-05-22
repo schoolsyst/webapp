@@ -44,26 +44,20 @@ fontstack-outlined = 'Material Icons Outlined', sans-serif
 //
 //Positioning
 //
-
 .--button-icon
   display inline-flex
-  align-items center
   justify-content center
+  align-items center
 
 //
 //Sizing
 //
-
 .small
-  font-size: 1em
+  font-size 1em
 
 //
 //Spacing
 //
-.--button-icon
-  padding 0.5em
-.small
-  padding: 0.1em
 
 //
 //Decoration
@@ -74,6 +68,7 @@ fontstack-outlined = 'Material Icons Outlined', sans-serif
 //
 .--button-icon
   color inherit
+
 .dangerous
   color var(--red)
 
@@ -96,8 +91,8 @@ fontstack-outlined = 'Material Icons Outlined', sans-serif
   &:not([disabled]) .icon:not(.force-outlined)
     font-family fontstack-filled
 
-  // If we are forcing the icons to be in one style or another,
-  // We change the color so that a difference can still be perceived
+  //If we are forcing the icons to be in one style or another,
+  //We change the color so that a difference can still be perceived
   .icon[class^=force-]
     color var(--blue)
 </style>
