@@ -54,10 +54,9 @@ export default Vue.extend({
     },
     rel(): string | null {
       let relArray: string[] = []
-      // Use rel="external" when relevant
-      if (this.isExternal) relArray = [...relArray, 'external']
       // Prevent leaks via `Window.opener`
-      if (this.newTab) relArray = [...relArray, 'noopener', 'noreferrer']
+      if (this.isExternal)
+        relArray = [...relArray, 'external', 'noopener', 'noreferrer']
       // rel list is space-separated
       const relString = relArray.join(' ')
       // Don't include the attribute if the list is empty
