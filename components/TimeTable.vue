@@ -271,10 +271,13 @@ export default Vue.extend({
       target: { attrs: { id: string } }
       type: string
     }) {
+      // The event's target element's id is the UUID
       const eventUUID = vueComponent.target.attrs.id
+      // If the target element doesn't have an ID, we have nothing to handle
       if (!eventUUID) return
-      console.log(vueComponent)
+      // Get the element from the store with that UUID
       const event = this.event()(eventUUID)
+      // Set the `editingEvent` data variable
       this.editingEvent = {
         ...event,
         start: parse(event.start, 'HH:mm:ss', new Date(0)),
