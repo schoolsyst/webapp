@@ -288,18 +288,16 @@ export default Vue.extend({
       this.$modal.open('edit-event')
     },
     handleHover(evt: { target: { attrs: { id: string } }; type: string }) {
-      // this.$el's reported type is `Element`, which does not contain `.style`, so I'm resorting to  @ts-ingore comments
-      const canvas = this.$el
+      // this.$el's reported type is `Element`, which does not contain `.style`, so I'm typecasting it as an HTMLElement
+      const canvas = this.$el as HTMLElement
       // Check if its an event
       if (!evt.target.attrs.id) return
       switch (evt.type) {
         case 'mouseenter':
-          // @ts-ignore
           canvas.style.cursor = 'pointer'
           break
 
         case 'mouseleave':
-          // @ts-ignore
           canvas.style.cursor = 'default'
           break
       }
