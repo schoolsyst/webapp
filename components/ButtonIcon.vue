@@ -1,5 +1,9 @@
 <template>
-  <base-button v-bind="{ ...$props }" class="--button-icon">
+  <base-button
+    v-bind="{ ...$props }"
+    class="--button-icon"
+    @click="$emit('click')"
+  >
     <span
       :class="{
         'force-filled': filled === true,
