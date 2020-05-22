@@ -73,7 +73,7 @@ export default Vue.extend({
 //
 //Definitions
 //
-dot-size = 1.8em
+dot-size = 1.4em
 
 //
 //Positioning
@@ -140,7 +140,6 @@ dot-size = 1.8em
   transition 250ms ease all
 
 .expanded.editable
-  cursor pointer
 
   .button-edit
     opacity 1
