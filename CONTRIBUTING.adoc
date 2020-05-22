@@ -85,24 +85,23 @@ For each mutation, when the API request fails, handle the error by showing the u
 
 Each mutation should return...
 
-When the action succeeded :: 
-  `[true, object, null]` with `object` the value returned by the matching mutation, or the inner action's `object` return value.
+When the action succeededs :: 
+  `{ data: object, error: null]` with `object` the value returned by the matching mutation, or the inner action's `object` return value.
 
 When the action fails because of a validation error :: 
-  `[false, validation, 'validation']` with `validation` the value returned by the `validate` getter, or by the inner action's `validation` return value
+  `{ data: validation, error: 'validation'}` with `validation` the value returned by the `validate` getter, or by the inner action's `validation` return value
 
 When the action fails because of a network error ::
-  `[false, error, 'network']` with `error` the error object from the `try`/`catch` block.
+  `{ data: error, error: 'network'}` with `error` the error object from the `try`/`catch` block.
 
-More generally, the return value is an array with:
+More generally, the return value is an object with:
 
-1. whether the action succeeded or not
-2. the object/array that results from the underlying mutation
-3. the failure level, if any. If it succeeded, this is `null`.
+1. the object/array that results from the underlying mutation
+2. the failure level, if any. If it succeeded, this is `null`.
 
 Include the following actions: 
 
-load({ force: false, verbose: true }) ::
+load({ force: false, verbose: false }) ::
   - If `loaded` is false or `force` is true
   ** Do a `GET` request
   ** Use the `SET` mutation to store the response in the store
@@ -169,6 +168,7 @@ order(objects, { by: '_your_default_sorting_method_' }) ::
 
 Language :: html
 Indentation :: 2 spaces
+write component tag names in :: kebab-case
 Class for root element of every component :: .--<component-kebab-case>; eg. for <BaseCard> root element has class=--base-card
 
 #### Attribute list order
