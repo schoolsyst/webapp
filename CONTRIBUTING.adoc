@@ -25,6 +25,10 @@ Additionally, prefix component names with the following:
 | UI Component that are made for user data input
 |===
 
+### No outer margins on components
+
+Components should not include any king of spacing on the component's root element: components and pages that includes a component should be responsible for its spacing relative to the other elements included.
+
 ### Inheritance
 
 [%header, cols=2*]
