@@ -1,7 +1,7 @@
 <template>
   <component
     :is="tagName"
-    :class="{ '--base-button': true, dangerous, small, clicked }"
+    :class="{ '--base-button': true, dangerous, small }"
     :href="href"
     @click="handleClick"
   >
@@ -12,7 +12,6 @@
 <script lang="ts">
 // eslint-disable-next-line no-unused-vars
 import Vue, { PropOptions } from 'vue'
-import { isURL } from '~/utils/validators'
 
 export default Vue.extend({
   props: {
@@ -27,7 +26,6 @@ export default Vue.extend({
     href: {
       type: String,
       default: null,
-      validator: isURL,
     } as PropOptions<string | null>,
   },
   computed: {
