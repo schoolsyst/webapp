@@ -1,5 +1,9 @@
 <template>
-  <base-button v-bind="{ ...$props }" class="--button-primary">
+  <base-button
+    v-bind="{ ...$props }"
+    class="--button-primary"
+    @click="$emit('click')"
+  >
     <slot></slot>
   </base-button>
 </template>

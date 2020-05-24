@@ -4,54 +4,40 @@
   </div>
 </template>
 
+<script lang="ts">
+import Vue from 'vue'
+export default Vue.extend({})
+</script>
+
 <style lang="stylus" scoped>
 //
-// Definitions
+//Definitions
 //
 
-
-
 //
-// Positioning
+//Positioning
 //
 
-
-
 //
-// Sizing
+//Sizing
 //
 
-
-
 //
-// Spacing
+//Spacing
 //
-
 .--base-card
-  padding 1.2rem
+  padding 1rem
 
 //
-// Decoration
+//Decoration
 //
-
 .--base-card
   border 1px solid var(--grey-offset-dark)
   border-radius var(--border-radius)
 
 //
-// Colors
+//Colors
 //
-
 .--base-card
   background var(--white)
-
-//
-// Typography
-//
-
-
-
-//
-// States
-//
 </style>

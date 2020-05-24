@@ -11,13 +11,12 @@
 <script lang="ts">
 // eslint-disable-next-line no-unused-vars
 import Vue, { PropOptions } from 'vue'
-import { isURL } from '~/utils/validators'
+
 export default Vue.extend({
   props: {
     to: {
       type: String,
       required: true,
-      validator: isURL,
     } as PropOptions<string>,
     newTab: {
       type: Boolean,
