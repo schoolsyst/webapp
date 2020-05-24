@@ -32,7 +32,7 @@ export default Vue.extend({})
 //Decoration
 //
 .--base-card
-  border 1px solid var(--grey-offset-dark)
+  border 1px solid
   border-radius var(--border-radius)
 
 //
@@ -40,4 +40,5 @@ export default Vue.extend({})
 //
 .--base-card
   background var(--white)
+  border-color var(--grey-offset-dark)
 </style>
