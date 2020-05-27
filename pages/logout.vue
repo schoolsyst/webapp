@@ -6,7 +6,7 @@
 </template>
 
 <script>
-import OverlayLoadingLogo from '~/components/OverlayLoadingLogo.vue'
+import OverlayLoadingLogo from '~/components/legacy/OverlayLoadingLogo.vue'
 export default {
   layout: 'bare',
   components: { OverlayLoadingLogo },

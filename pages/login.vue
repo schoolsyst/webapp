@@ -41,10 +41,10 @@
 
 <script>
 import { mapGetters, mapActions } from 'vuex'
-import TheHeading from '~/components/TheHeading.vue'
-import OverlayLoadingLogo from '~/components/OverlayLoadingLogo.vue'
-import ButtonNormal from '~/components/ButtonNormal.vue'
-import InputField from '~/components/InputField.vue'
+import TheHeading from '~/components/legacy/TheHeading.vue'
+import OverlayLoadingLogo from '~/components/legacy/OverlayLoadingLogo.vue'
+import ButtonNormal from '~/components/legacy/ButtonNormal.vue'
+import InputField from '~/components/legacy/InputField.vue'
 
 export default {
   middleware: false,

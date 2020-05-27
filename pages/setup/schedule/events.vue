@@ -18,13 +18,13 @@
 <script>
 import { mapActions } from 'vuex'
 import { parse, getUnixTime } from 'date-fns'
-import TheBottomBar from '~/components/TheBottomBar.vue'
-import ButtonNormal from '~/components/ButtonNormal.vue'
-import ModalDialogConfirm from '~/components/ModalDialogConfirm.vue'
-import Schedule from '~/components/Schedule.vue'
-import ModalAddEvent from '~/components/ModalAddEvent.vue'
-import Icon from '~/components/Icon.vue'
-import InputSetting from '~/components/InputSetting.vue'
+import TheBottomBar from '~/components/legacy/TheBottomBar.vue'
+import ButtonNormal from '~/components/legacy/ButtonNormal.vue'
+import ModalDialogConfirm from '~/components/legacy/ModalDialogConfirm.vue'
+import Schedule from '~/components/legacy/Schedule.vue'
+import ModalAddEvent from '~/components/legacy/ModalAddEvent.vue'
+import Icon from '~/components/legacy/Icon.vue'
+import InputSetting from '~/components/legacy/InputSetting.vue'
 
 export default {
   components: {

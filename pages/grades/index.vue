@@ -55,14 +55,14 @@
 import { mapGetters, mapActions } from 'vuex'
 import VueContext from 'vue-context'
 import 'vue-context/src/sass/vue-context.scss'
-import ModalAddGrade from '~/components/ModalAddGrade.vue'
-import ButtonNormal from '~/components/ButtonNormal.vue'
-import ScreenEmpty from '~/components/ScreenEmpty.vue'
-import BadgeSubject from '~/components/BadgeSubject.vue'
-import InputSelectSubject from '~/components/InputSelectSubject.vue'
-import HeadingSub from '~/components/HeadingSub.vue'
-import CardGrade from '~/components/CardGrade.vue'
-import Icon from '~/components/Icon.vue'
+import ModalAddGrade from '~/components/legacy/ModalAddGrade.vue'
+import ButtonNormal from '~/components/legacy/ButtonNormal.vue'
+import ScreenEmpty from '~/components/legacy/ScreenEmpty.vue'
+import BadgeSubject from '~/components/legacy/BadgeSubject.vue'
+import InputSelectSubject from '~/components/legacy/InputSelectSubject.vue'
+import HeadingSub from '~/components/legacy/HeadingSub.vue'
+import CardGrade from '~/components/legacy/CardGrade.vue'
+import Icon from '~/components/legacy/Icon.vue'
 export default {
   components: {
     ModalAddGrade,

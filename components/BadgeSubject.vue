@@ -1,194 +1,152 @@
-<template lang="pug">
-component.subject(
-  :is="element"
-  :style="{backgroundColor, color: subjectNameColor}"
-  :class="{clickable, multiline, thin, inline}"
-  :data-variant="variant"
-  type="button"
-  @click="$emit('click')"
-  v-tooltip="tooltipContent"
-)
-  Icon(v-if="!color").unknown-icon more_horiz
-  span.name {{ name || placeholderName }}
+<template>
+  <div
+    :class="{
+      '--badge-subject': true,
+      expandable,
+      expanded,
+      editable,
+    }"
+    :style="{ backgroundColor: bgColor, color: fgColor }"
+    :title="badgeTitle"
+    @mouseenter="expanded = alwaysExpanded || expandable"
+    @mouseleave="expanded = alwaysExpanded"
+  >
+    <button-icon small class="button-edit" @click="$emit('edit')"
+      >edit</button-icon
+    >
+    <div class="name">
+      <slot></slot>
+    </div>
+  </div>
 </template>
 
-<script>
-import { mapGetters } from 'vuex'
-import Icon from '~/components/Icon.vue'
-export default {
-  name: 'BadgeSubject',
-  components: { Icon },
+<script lang="ts">
+// eslint-disable-next-line no-unused-vars
+import Vue, { PropOptions } from 'vue'
+import { isHexColor } from '~/utils/validators'
+import { lightColor, darkColor } from '~/utils/colors'
+import ButtonIcon from '~/components/ButtonIcon.vue'
+
+export default Vue.extend({
+  components: { ButtonIcon },
   props: {
-    // Data
+    expandable: {
+      type: Boolean,
+      default: false,
+    } as PropOptions<boolean>,
+    alwaysExpanded: {
+      type: Boolean,
+      default: false,
+    } as PropOptions<boolean>,
     color: {
       type: String,
-      default: null,
-    },
-    name: {
-      type: String,
-      default: null,
-    },
-    // Supporting data
-    placeholderName: {
-      type: String,
-      default: 'Choisir...',
-    },
-    // Style
-    clickable: {
+      required: true,
+      validator: isHexColor,
+    } as PropOptions<string>,
+    editable: {
       type: Boolean,
       default: false,
-    },
-    multiline: {
-      type: Boolean,
-      default: false,
-    },
-    variant: {
-      type: String,
-      default: 'badge',
-    },
-    thin: {
-      type: Boolean,
-      default: false,
-    },
-    inline: {
-      type: Boolean,
-      default: false,
-    },
-    noTooltip: {
-      type: Boolean,
-      default: false,
-    },
+    } as PropOptions<boolean>,
+  },
+  data() {
+    return { expanded: this.alwaysExpanded }
   },
   computed: {
-    backgroundColor() {
-      return this.color || 'var(--black)'
+    bgColor(): string {
+      return this.expanded ? lightColor(this.color) : this.color
     },
-    subjectNameColor() {
-      return this.color ? this.textColor()(this.color) : 'var(--white)'
+    fgColor(): string {
+      return darkColor(this.color)
     },
-    element() {
-      return this.clickable ? 'button' : 'span'
-    },
-    tooltipContent() {
-      if (this.noTooltip) return null
-      return this.name || this.placeholderName
+    badgeTitle(): string | null {
+      const slotText = this.$slots.default?.[0]?.text
+      if (slotText && !this.expanded) {
+        return slotText
+      }
+      return null
     },
   },
-  methods: {
-    ...mapGetters(['textColor']),
-  },
-}
+})
 </script>
 
 <style lang="stylus" scoped>
 //
 //Definitions
 //
-badge-aspect()
-  //==== Positioning
-  align-items center
-  //==== Spacing
-  padding 0.7em
-  //==== Decorations
-  border-radius var(--border-radius)
-
-dot-aspect()
-  //==== Definitions
-  size = 1.2em
-
-  //==== Positioning
-  display flex
-  flex-shrink 0
-  justify-content center
-  align-items center
-  min-width size / 2
-  min-height size / 2
-  width size
-  //==== Sizing
-  height size
-  //==== Decoration
-  border-radius 50%
-
-  //==== Appearance
-  .name
-    display none
+dot-size = 1.4em
 
 //
-//Layout
+//Positioning
 //
-.subject
-  position relative
-  //==== Positioning
-  display block
-  //==== Appearance
-  overflow hidden
-  //==== Sizing
-  max-height 25vh
+.--badge-subject
+  display inline-flex
+  align-items center
+
+.--badge-subject.editable .name
+  margin-left 0.5em
+
+.name
+  white-space nowrap
+
+.--badge-subject:not(.editable) .button-edit
+  width 0
+
+//
+//Sizing
+//
+.--badge-subject:not(.expanded)
+  max-width dot-size
+
+//
+//Spacing
+//
+.button-edit
+  width dot-size
+  font-size 0.85em
+
+.--badge-subject
+  padding 0 0.5em
+  height dot-size
+
+//
+//Color
+//
 
 //
 //Decoration
 //
-.subject
-  appearance none
+.--badge-subject
+  border-radius 1000px
+
+.--badge-subject:not(.editable) .button-edit
+  cursor default
 
 //
-//Colors
+//Visibility
 //
-.unknown-icon
-  color var(--white)
+.name
+  overflow hidden
+  opacity 0
 
-//
-//Typography
-//
-.subject
-  text-overflow ellipsis
-  font-weight normal
-
-  &:not(.multiline)
-    flex-shrink 0
-    white-space nowrap
-
-  &.multiline
-    white-space wrap
+.button-edit
+  opacity 0
 
 //
 //States
 //
-[data-variant=badge]
-  badge-aspect()
 
-  &.thin
-    padding 0.3em 0.5em
+//When the element is not expanded and _can_ be expanded
+.expandable
+  transition 250ms ease all
 
-[data-variant=dot]
-  dot-aspect()
+.expanded.editable
 
-[data-variant=pill]
-  badge-aspect()
-  size = 1.5em
+  .button-edit
+    opacity 1
 
-  display flex
-  flex-shrink 1
-  align-items center
-  height size
-  border-radius size
+.expanded
+  max-width 25ch
 
-[data-variant=responsive]
-  @media (max-width: 650px)
-    badge-aspect()
-
-  @media (min-width: 651px)
-    dot-aspect()
-
-.inline
-  display inline-flex
-  padding 0
-  padding-bottom -0.5em
-  width 1em
-  height 1em
-
-.clickable
-  &:focus, &:hover
-    outline none
-    opacity 0.75
+  .name
+    opacity 1
 </style>

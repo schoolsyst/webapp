@@ -226,18 +226,18 @@ import {
   Underline,
 } from 'tiptap-extensions'
 import debounce from 'lodash.debounce'
-import ModalNoteDownload from '~/components/ModalNoteDownload.vue'
+import ModalNoteDownload from '~/components/legacy/ModalNoteDownload.vue'
 import Superscript from '~/plugins/tiptap-extensions/Superscript'
 import MathBlock from '~/plugins/tiptap-extensions/MathBlock'
 import MathInline from '~/plugins/tiptap-extensions/MathInline'
 import Marker from '~/plugins/tiptap-extensions/Marker'
 import Subscript from '~/plugins/tiptap-extensions/Subscript'
-import Icon from '~/components/Icon.vue'
-import InputField from '~/components/InputField.vue'
-import BadgeSubject from '~/components/BadgeSubject.vue'
-import PickerSubject from '~/components/PickerSubject.vue'
-import InputSelect from '~/components/InputSelect.vue'
-import TheBottomBar from '~/components/TheBottomBar.vue'
+import Icon from '~/components/legacy/Icon.vue'
+import InputField from '~/components/legacy/InputField.vue'
+import BadgeSubject from '~/components/legacy/BadgeSubject.vue'
+import PickerSubject from '~/components/legacy/PickerSubject.vue'
+import InputSelect from '~/components/legacy/InputSelect.vue'
+import TheBottomBar from '~/components/legacy/TheBottomBar.vue'
 
 export default {
   components: {

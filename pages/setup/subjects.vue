@@ -33,11 +33,11 @@
 
 <script>
 import { mapActions, mapGetters } from 'vuex'
-import ModalAddSubject from '~/components/ModalAddSubject.vue'
-import TheBottomBar from '~/components/TheBottomBar.vue'
-import CardSubject from '~/components/CardSubject.vue'
-import ButtonNormal from '~/components/ButtonNormal.vue'
-import Icon from '~/components/Icon.vue'
+import ModalAddSubject from '~/components/legacy/ModalAddSubject.vue'
+import TheBottomBar from '~/components/legacy/TheBottomBar.vue'
+import CardSubject from '~/components/legacy/CardSubject.vue'
+import ButtonNormal from '~/components/legacy/ButtonNormal.vue'
+import Icon from '~/components/legacy/Icon.vue'
 
 export default {
   components: {

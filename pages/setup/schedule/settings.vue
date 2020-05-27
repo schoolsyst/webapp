@@ -26,11 +26,11 @@
 
 <script>
 import { mapGetters, mapActions } from 'vuex'
-import ModalDialogConfirm from '~/components/ModalDialogConfirm.vue'
-import TheBottomBar from '~/components/TheBottomBar.vue'
-import Icon from '~/components/Icon.vue'
-import ButtonNormal from '~/components/ButtonNormal.vue'
-import InputSetting from '~/components/InputSetting.vue'
+import ModalDialogConfirm from '~/components/legacy/ModalDialogConfirm.vue'
+import TheBottomBar from '~/components/legacy/TheBottomBar.vue'
+import Icon from '~/components/legacy/Icon.vue'
+import ButtonNormal from '~/components/legacy/ButtonNormal.vue'
+import InputSetting from '~/components/legacy/InputSetting.vue'
 
 export default {
   components: {

@@ -1,187 +1,189 @@
-<template lang="pug">
-    .card(
-        @click="$emit('click')"
-        :class="{completed, opened, [`is-a-${type.toLowerCase()}`]: true}"
-        v-touch:swipe.left="toggleComplete"
-        v-touch:swipe.right="toggleComplete"
-    )
-        .complete-slider(@click.stop="toggleComplete" :title="sliderTooltip")
-            Icon(v-show="completed") refresh
-            Icon(v-show="!completed") check
-        .infos
-            .first-line
-                .strikethrough-line
-                BadgeSubject.subject-color(v-bind="subject" variant="dot")
-                span.name {{ name }}
-                Icon.graded-indicator(
-                  v-if="['COURSEWORK', 'TEST'].includes(type)"
-                  v-tooltip="type === 'TEST' ? 'Contrôle' : 'Noté'"
-                ) error_outline
-            .details(v-if="details" v-html="details")
+<template>
+  <base-card :class="{ '--card-homework': true, expanded }">
+    <div class="header">
+      <badge-subject
+        :color="homework.subject.color"
+        editable
+        expandable
+        @edit="editSubject"
+        >{{ homework.subject.name }}</badge-subject
+      >
+      <p class="title" @input="$emit('input', { title: $event })">
+        {{ homework.title }}
+      </p>
+      <button-icon class="toggle-expand" @click="toggleExpand"
+        >keyboard_arrow_down</button-icon
+      >
+    </div>
+    <div class="details">
+      <p>{{ homework.details }}</p>
+    </div>
+    <transition name="slide">
+      <div key="1" class="actions" v-if="!editing">
+        <button-icon @click="deleteHomework">delete</button-icon>
+        <button-icon @click="editHomework">edit</button-icon>
+        <text-link
+          v-if="homework.quizzes.length > 0"
+          :to="`/learn/${homework.uuid}`"
+          >Réviser</text-link
+        >
+      </div>
+      <div key="2" class="actions" v-else>
+        <button-primary @click="finishEditing" small>OK</button-primary>
+      </div>
+    </transition>
+  </base-card>
 </template>
 
-<script>
-import { mapActions } from 'vuex'
-import debounce from 'lodash.debounce'
-import Icon from '~/components/Icon.vue'
+<script lang="ts">
+// eslint-disable-next-line no-unused-vars
+import Vue, { PropOptions } from 'vue'
+import BaseCard from '~/components/BaseCard.vue'
 import BadgeSubject from '~/components/BadgeSubject.vue'
-import InputField from '~/components/InputField.vue'
-export default {
-  components: { Icon, BadgeSubject, InputField },
+import ButtonPrimary from '~/components/ButtonPrimary.vue'
+import ButtonIcon from '~/components/ButtonIcon.vue'
+import TextLink from '~/components/TextLink.vue'
+// import '~/types/api-resources'
+
+export default Vue.extend({
+  components: { BaseCard, BadgeSubject, ButtonPrimary, ButtonIcon, TextLink },
   props: {
-    name: {
-      type: String,
-      required: true,
-    },
-    details: {
-      type: String,
-      default: '',
-    },
-    subject: {
+    homework: {
       type: Object,
       required: true,
-    },
-    uuid: {
-      type: String,
-      required: true,
-    },
-    progress: {
-      type: Number,
-      default: 0,
-    },
-    opened: {
-      type: Boolean,
-      default: false,
-    },
-    type: {
-      type: String,
-      required: true,
-    },
+    } as PropOptions<ApiResourceHomework>,
   },
-  computed: {
-    completed() {
-      return this.progress >= 1
-    },
-    sliderTooltip() {
-      return `Marquer comme ${this.completed ? 'non-' : ''}terminé`
-    },
+  data() {
+    return {
+      editing: false,
+      saving: false,
+      deleting: false,
+      expanded: false,
+    }
   },
   methods: {
-    ...mapActions('homework', ['switchCompletion']),
-    toggleComplete: debounce(
-      async function() {
-        this.$emit('completion-switch', !this.completed)
-        await this.switchCompletion({ uuid: this.uuid })
-      },
-      500,
-      { leading: true, trailing: false }
-    ),
+    editHomework(): void {
+      this.editing = true
+    },
+    async finishEditing(): Promise<void> {
+      this.saving = true
+      await this.$store.dispatch('homework/edit', { modifications: {} })
+      // await this.$store.dispatch('homework/load')
+      this.saving = false
+      this.editing = false
+    },
+    editSubject(): void {
+      // this.$emit('input', {
+      //   subject: this.$pickSubject({ selected: this.homework.uuid }),
+      // })
+    },
+    async deleteHomework(): Promise<void> {
+      this.deleting = true
+      await this.$store.dispatch('homework/delete', {
+        uuid: this.homework.uuid,
+      })
+      this.deleting = false
+    },
+    async toggleExpand(): Promise<void> {
+      this.expanded = !this.expanded
+      if (!this.expanded && this.editing) {
+        await this.finishEditing()
+      }
+    },
   },
-}
+})
 </script>
 
 <style lang="stylus" scoped>
-.card
+//
+//Definitions
+//
+
+//
+//Positioning
+//
+.header
   display flex
-  overflow hidden
-  max-width 100%
-  //height: 100px
-  width 500px
-  border-radius var(--border-radius)
-  cursor pointer
-  transition box-shadow 0.25s ease
-
-.strikethrough-line
-  position absolute
-  top 50%
-  left calc(((100% - (100% - (var(--strikethrough-line-offset) * 2))) / 2))
-  width 0
-  height 0.1em
-  background var(--black)
-  transition width 0.25s ease
-  --strikethrough-line-offset 0
-
-.card.completed .complete-slider
-  background-color var(--blue)
-
-.card:not(.completed) .complete-slider
-  background-color var(--green)
-
-.complete-slider
-  z-index 10
-  display flex
-  flex-shrink 0
   align-items center
-  overflow hidden
-  width 0
-  border-radius var(--border-radius)
-  border-top-right-radius 0
-  border-bottom-right-radius 0
-  color var(--white)
-  transition width 0.25s ease
 
-  i
-    margin-left 0.5em
+.toggle-expand
+  margin-left auto
 
-.infos
-  position relative
+.actions
   display flex
-  flex-direction column
-  padding 1.1em 1.2em
-  width 100%
-  border 1px solid var(--grey-light)
-  border-radius var(--border-radius)
+  justify-content end
+  align-items center
 
-  .first-line
-    position relative
-    display flex
-    align-items center
-    overflow hidden
-    width 100%
-    text-overflow ellipsis
-    white-space nowrap
+//
+//Sizing
+//
 
-  .name
-    margin-left 0.5rem
+.details
+  font-size 0.75em
+
+//
+//Spacing
+//
+.title
+  margin-left 0.5em
+
+.details
+  margin-top 0.5em
+
+.actions
+  margin-top 0.5em
+
+.actions > *:not(:last-child)
+  margin-right 0.7em
+
+//
+//Decoration
+//
+
+//
+//Colors
+//
+
+//
+//Typography
+//
+
+//
+//States
+//
+
+//// Expanded/not expanded
+.--card-homework, .actions, .details, .toggle-expand
+  transition ease 250ms all
+
+.--card-homework:not(.expanded)
+  max-height 5.1rem
+
+  .actions
+    opacity 0
 
   .details
-    flex-grow 0
-    overflow hidden
-    margin-top 0.5em
-    width 100%
-    text-overflow ellipsis
-    white-space pre-wrap
-    font-size 0.75em
+    line-clamp 1
 
-  .graded-indicator
-    margin-left auto
-    font-size 1.3em
+  .toggle-expand
+    transform rotate(0)
 
-.is-a-test .graded-indicator
-  color var(--red)
+.--card-homework.expanded
+  max-height 100rem
 
-.card.completed
-  .infos
-    opacity 0.5
+  .actions
+    opacity 1
 
-  .strikethrough-line
-    width calc(100% - (var(--strikethrough-line-offset) * 2))
+  .details
+    line-clamp 0
 
-.card:hover
-  &
-    box-shadow var(--shadow-2)
 
-  .complete-slider
-    width 3em
+  .toggle-expand
+    transform rotate(180deg)
 
-  &.completed .complete-slider:hover
-    background-color var(--blue-dark)
 
-  &:not(.completed) .complete-slider:hover
-    background-color var(--green-light)
-
-  .infos
-    border-left 0
-    border-top-left-radius 0
-    border-bottom-left-radius 0
+.slide-enter-active, .slide-leave-active
+    transition all 250ms ease
+.slide-enter, .slide-eave-to
+    opacity: 0 !important
 </style>

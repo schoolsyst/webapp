@@ -176,7 +176,7 @@ export const getters = {
     ),
 
   isDeleted: (state, getters) => (course, mutation) => {
-    if (!mutation.hasOwnProperty('event')) return false
+    if (!Object.prototype.hasOwnProperty.call(mutation, 'event')) return false
     if (course.uuid !== mutation.event.uuid) return false
     if (!mutation.deleted_start || !mutation.deleted_end) return false
     return (
@@ -185,7 +185,7 @@ export const getters = {
     )
   },
   isAdded: (state, getters) => (course, mutation) => {
-    if (!mutation.hasOwnProperty('event')) return false
+    if (!Object.prototype.hasOwnProperty.call(mutation, 'event')) return false
     if (course.uuid !== mutation.event.uuid) return false
     if (!mutation.added_start || !mutation.added_end) return false
     return (
@@ -457,8 +457,8 @@ export const getters = {
           /* Checks if -- when the mutation is rescheduled -- no courses already exists between the chosen dates */
           if (
             !(
-              object.hasOwnProperty('added_start') &&
-              object.hasOwnProperty('added_end')
+              Object.prototype.hasOwnProperty.call(object, 'added_start') &&
+              Object.prototype.hasOwnProperty.call(object, 'added_end')
             )
           )
             return !getters
@@ -478,8 +478,8 @@ export const getters = {
           /* Checks if -- when the mutation is deleted -- some course(s) already exists between the chosen dates */
           if (
             !(
-              object.hasOwnProperty('deleted_start') &&
-              object.hasOwnProperty('deleted_end')
+              Object.prototype.hasOwnProperty.call(object, 'deleted_start') &&
+              Object.prototype.hasOwnProperty.call(object, 'deleted_end')
             )
           )
             return (
@@ -501,8 +501,8 @@ export const getters = {
           /* Checks if -- when the mutation is deleted -- no more than one course already exists between the chosen dates */
           if (
             !(
-              object.hasOwnProperty('deleted_start') &&
-              object.hasOwnProperty('deleted_end')
+              Object.prototype.hasOwnProperty.call(object, 'deleted_start') &&
+              Object.prototype.hasOwnProperty.call(object, 'deleted_end')
             )
           )
             return (

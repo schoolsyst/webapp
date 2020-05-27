@@ -10,7 +10,7 @@
 
 <script>
 import { toDate } from 'date-fns'
-import OverlayLoadingLogo from '~/components/OverlayLoadingLogo.vue'
+import OverlayLoadingLogo from '~/components/legacy/OverlayLoadingLogo.vue'
 export default {
   components: { OverlayLoadingLogo },
   head() {

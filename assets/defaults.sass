@@ -37,8 +37,8 @@ body
     // Greys
     --black: #111111
     --white: #ffffff
-    --grey-light: #c0c0c0
-    --grey: #d4d3d3
+    --grey-light: #d4d3d3
+    --grey: #c0c0c0
     --grey-dark: #757575
     --grey-offset: #F3F3F3
     --grey-offset-dark: #e6e6e6
@@ -52,7 +52,8 @@ body
     --red: #D50000
     --red-light: #ff3519
     --red-dark: #940000
-    --red-offset: #FF9E9E
+    --red-offset: #ffdddd
+    --red-offset-dark: #ffc3c3
     // Greens
     --green: #27CE5F
     --green-light: #86e6b1
@@ -78,7 +79,7 @@ body
         --blue-light: #89c4fe
         --blue-dark: #006BD4
         --blue-offset: #0b123a
-        --blue-offset-dark: #0d143a
+        --blue-offset-dark: #060b2b
         // Reds
         --red: #ee4949
         --red-light: #ff604b
@@ -281,31 +282,6 @@ $bk-sidebar: 650px
             border-radius: calc(var(--border-radius) * 2)
             border-bottom-left-radius: 0
             border-bottom-right-radius: 0
-
-
-//=====================
-//        LINKS
-//=====================
-
-p, pre
-    font-family: var(--fonts-normal)
-    a:not([no-default])
-        color: var(--blue)
-        border-bottom: 2px solid var(--blue)
-        &:hover,
-        &:focus,
-        &:active
-            color: var(--blue-dark)
-            border-color: var(--blue-dark)
-
-
-p a[target=_blank]:not([no-external-link-indicator])::after
-  font-family: 'Material Icons'
-  content: '\e89e'
-  font-size: 1.2em
-  margin-left: 0.1em
-  position: relative
-  bottom: -.1em
 
 //=====================
 //    LOADING SCREEN
