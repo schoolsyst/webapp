@@ -39,7 +39,7 @@ export default {
   padding 0.8em 1.4em
 
 .small
-  padding 0.5em 0.7em
+  padding 0.3em 0.7em
 
 //
 //Decoration
