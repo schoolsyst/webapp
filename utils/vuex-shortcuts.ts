@@ -1,156 +1,16 @@
-import { toDate, addDays, isBefore, format } from 'date-fns'
-import tinycolor from 'tinycolor2'
-import constantCase from 'constant-case'
-import Vue from 'vue'
-const npm = require('~/package.json')
-
-const version = npm.version.split('.')
-
-export const state = () => ({
-  version: {
-    feature: version[0],
-    ui: version[1],
-    bug: version[2],
-    channel: 'beta',
-  },
-  now: toDate(Date.now()), // For time-dependent getters.
-  tomorrow: addDays(toDate(Date.now()), 1),
-  today: new Date(),
-  location: {
-    latitude: null,
-    longitude: null,
-  },
-  links: [
-    {
-      name: 'Tests du refactoring',
-      href: '/refactor-test',
-      icon: 'build',
-      id: 'refactor-test',
-    },
-    'separator',
-    {
-      name: 'Timeline',
-      href: '/timeline',
-      icon: 'timeline',
-      id: 'timeline',
-    },
-    {
-      name: 'Cours',
-      href: '/notes',
-      icon: 'insert_drive_file',
-      id: 'notes',
-    },
-    {
-      name: 'Devoirs',
-      href: '/homework',
-      icon: 'book',
-      id: 'homework',
-    },
-    {
-      name: 'Emploi du temps',
-      href: '/coming-soon',
-      icon: 'today',
-      id: 'schedule',
-    },
-    {
-      name: 'Notes',
-      href: '/coming-soon',
-      icon: 'school',
-      id: 'grades',
-    },
-    {
-      name: 'Sac',
-      href: '/coming-soon',
-      icon: 'work_outline',
-      id: 'bag',
-    },
-    'separator',
-    {
-      name: 'Paramètres',
-      href: '/settings',
-      icon: 'settings',
-      id: 'settings',
-    },
-    {
-      name: 'Vos contributions',
-      href: '/reports',
-      icon: 'bug_report',
-      id: 'reports',
-    },
-    {
-      name: 'Signaler un bug',
-      modal: 'add-report',
-      icon: 'bug_report',
-      id: 'new-report',
-    },
-  ],
-})
-
-export const getters = {
-  textColor: (state, getters) => backgroundColor =>
-    // TODO: handle var(--) ?
-    /* returns the corresponding text color most visible
-     * on backgroundColor: either 'black' or 'white'.
-     */
-    tinycolor(backgroundColor).isLight() ? 'black' : 'white',
-  formatTime: (state, getters) => time => {
-    if (time === null) return null
-    return format(time, 'HH:mm')
-  },
-  drawerLinks: state =>
-    state.links.filter(link => {
-      if (link === 'separator') return true
-      return !['new-report'].includes(link.id)
-    }),
-  sideRailLinks: state =>
-    state.links.filter(link => {
-      if (link === 'separator') return false
-      return ['timeline', 'notes', 'homework', 'grades', 'new-report'].includes(
-        link.id
-      )
-    }),
-}
-
-export const mutations = {
-  UPDATE_TIME: (state, newTime) => {
-    state.now = newTime
-    state.tomorrow = addDays(newTime, 1)
-  },
-  UPDATE_LOCATION: (state, newLocation) => {
-    state.location = newLocation
-  },
-}
-
-export const actions = {
-  async loadAll({ dispatch }) {
-    await dispatch('settings/load')
-    await dispatch('subjects/load')
-    await dispatch('homework/load')
-    await dispatch('grades/load')
-    await dispatch('schedule/load')
-    await dispatch('notes/load')
-    await dispatch('learndata/load')
-  },
-
-  async nuxtServerInit({ dispatch }) {
-    await dispatch('settings/load')
-    await dispatch('subjects/load')
-  },
-
-  acquireLocation({ commit, state }) {
-    if (state.longitude === null || state.latitude === null)
-      navigator.geolocation.getCurrentPosition(
-        pos => {
-          commit('UPDATE_LOCATION', pos.coords)
-        },
-        // eslint-disable-next-line
-        (err) => {
-          // eslint-disable-next-line
-          this.$toast.error("Impossible d'obtenir la localisation")
-        }
-      )
-  },
-}
+import { isBefore } from 'date-fns'
+type Gender = 'F' | 'M'
+type CheckerName =
+  | 'maximum'
+  | 'minimum'
+  | 'maxLength'
+  | 'required'
+  | 'notEmpty'
+  | 'isAWeekType'
+  | 'before'
+  | 'isAnEmail'
+  | 'isOfType'
+  | 'isAColor'
 
 export const getValidator = ({
   constraints,
@@ -158,7 +18,22 @@ export const getValidator = ({
   fieldNames,
   customConstraints = [],
   debug,
-}) => getters => object => {
+}: {
+  constraints: Record<CheckerName, Record<any, string[]> | string[]>
+  resourceName: {
+    name: string
+    gender: Gender
+    article: string | null
+    indeterminateArticle: string | null
+  }
+  fieldNames: Record<string, { name: string; gender: Gender }>
+  customConstraints: {
+    message: string
+    field: string | null
+    constraint: (getters: object, object: object) => boolean
+  }[]
+  debug: boolean
+}) => getters => (object: Record<string, any>) => {
   debug = debug || false
   if (process.env.NODE_ENV !== 'development') debug = false
   /* Factory to create a validator.
@@ -179,7 +54,7 @@ export const getValidator = ({
   }
 
   // Article in french
-  const article = (noun, feminine, indeterminate = false) => {
+  const article = (noun: string, feminine: boolean, indeterminate = false) => {
     const vowels = ['a', 'e', 'i', 'o', 'u', 'y']
     if (vowels.includes(noun[0]) && !indeterminate) return "l'"
     else if (feminine) return indeterminate ? 'une ' : 'la '
@@ -199,10 +74,19 @@ export const getValidator = ({
   )
 
   // Uppercase first char
-  const upperFirst = string => string[0].toUpperCase() + string.slice(1)
+  const upperFirst = (string: string) => string[0].toUpperCase() + string.slice(1)
 
   // Checkers
-  const checkers = {
+
+  const checkers: {
+    [key in CheckerName]: ({
+      arg,
+      fieldName,
+    }: {
+      arg: any
+      fieldName: string
+    }) => boolean
+  } = {
     maximum: ({ arg, fieldName }) =>
       object[fieldName] === null ||
       (typeof object[fieldName] === 'number' && object[fieldName] <= arg),
@@ -233,7 +117,15 @@ export const getValidator = ({
       // eslint-disable-next-line valid-typeof
       typeof object[fieldName] === arg,
   }
-  const check = ({ errorName, fieldName, errorArg }) => {
+  const check = ({
+    errorName,
+    fieldName,
+    errorArg,
+  }: {
+    errorName: CheckerName
+    fieldName: string
+    errorArg: any
+  }) => {
     // Wrap checkers with object property existential check
     /* Special case for required, which checks if the property exist
        and returnes *false* instead.
@@ -248,7 +140,15 @@ export const getValidator = ({
   }
 
   // Error messages
-  const message = ({ errorName, errorArg, fieldName }) => {
+  const message = ({
+    errorName,
+    errorArg,
+    fieldName,
+  }: {
+    errorName: CheckerName
+    errorArg: any
+    fieldName: string
+  }): string => {
     const { gender, name } = fieldNames[fieldName]
     const fieldIsFeminine = gender === 'F'
     const determinateArticle = article(name, fieldIsFeminine, false)
@@ -266,14 +166,14 @@ export const getValidator = ({
         minimum: `${fieldNameWithArticle} doit être d'au moins ${errorArg}`,
         maxLength: `${fieldNameWithArticle} ne doit pas dépasser ${errorArg} caractère${
           errorArg === 1 ? '' : 's'
-        }`,
+          }`,
         required: `Veuillez renseigner ${indeterminateArticle}${name}`,
         isAWeekType: `${fieldNameWithArticle} doit être paire, impaire ou les deux.`,
         before: `${fieldNameWithArticle} doit être avant ${argNameWithArticle}`,
         isAColor: `${fieldNameWithArticle} doit être une couleur au format hexadécimal. Exemple: #09f ou #0479cf`,
         notEmpty: `${fieldNameWithArticle} est requis${
           fieldIsFeminine ? 'e' : ''
-        }`,
+          }`,
         isAnEmail:
           name === 'adresse email'
             ? `${fieldNameWithArticle} doit être valide`
@@ -283,7 +183,7 @@ export const getValidator = ({
   }
 
   // Stores the errors
-  const errorMessages = {}
+  const errorMessages: Record<string, string[]> = {}
   // Fill each field with an empty array
   Object.keys(fieldNames).forEach(field => {
     errorMessages[field] = []
@@ -481,21 +381,4 @@ export const getMutations = (
     }
 
   return mutations
-}
-
-export const removeByProp = (arrayOfObjects, propName, propValue) => {
-  const arr = [...arrayOfObjects]
-  return arr.splice(
-    arr.findIndex(obj => obj[propName] === propValue),
-    1
-  )
-}
-
-// Reset time component to 00:00:00
-// Useful to do date-wise comparison, w/o taking time into account.
-export const removeTime = date => {
-  date.setHours(0)
-  date.setMinutes(0)
-  date.setSeconds(0)
-  return date
 }

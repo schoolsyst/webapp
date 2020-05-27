@@ -128,6 +128,8 @@ export default {
     '@nuxtjs/eslint-module',
     // Doc: https://typescript.nuxtjs.org/guide/setup.html
     '@nuxt/typescript-build',
+    // Doc: https://nuxt-typed-vuex.danielcroe.com/setup.html
+    'nuxt-typed-vuex',
   ],
   /*
    ** Nuxt.js modules
@@ -197,6 +199,7 @@ export default {
         config.devtool = ctx.isClient ? 'source-map' : 'inline-source-map'
       }
     },
+    transpile: ['/typed-vuex/'],
   },
   pwa: {
     meta: {
