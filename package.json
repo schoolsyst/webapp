@@ -9,6 +9,7 @@
     "dev": "tmux new -s schoolsyst-dev -d 'yarn dev:frontend' \\; split-window -h -d 'yarn dev:backend' \\; attach",
     "dev:frontend": "nuxt",
     "build": "nuxt build",
+    "build:dev": "cross-env NODE_ENV=development nuxt build",
     "start": "nuxt start",
     "generate": "nuxt generate",
     "lint": "eslint --ext .js,.vue --ignore-path .gitignore .",
