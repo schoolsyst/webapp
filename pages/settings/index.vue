@@ -89,7 +89,6 @@ export default {
       if (setting.key === 'theme') {
         // Reload the page to apply the theme
         window.location.reload(true) // $router.go work fine but some navigator (especially  electron) doesn't work : see https://stackoverflow.com/questions/41301099/do-we-have-router-reload-in-vue-router
-        //this.$router.go({ path: '/settings', force: true })
       }
     },
   },
