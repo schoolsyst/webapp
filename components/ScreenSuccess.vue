@@ -1,5 +1,5 @@
 <template lang="pug">
-  .success-wrapper#success-state(:class="{small, [`image-${image}`]: true}")
+  .success-wrapper.success-state(:class="{small, fullscreen, [`image-${image}`]: true}")
     .success
       img(:src="`/misc/${image}.svg`")
       .text
@@ -18,6 +18,10 @@ export default {
     small: {
       type: Boolean,
       default: false,
+    },
+    fullscreen: {
+      type: Boolean,
+      default: true,
     },
     image: {
       type: String,
