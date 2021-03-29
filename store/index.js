@@ -86,6 +86,16 @@ export const getters = {
      * on backgroundColor: either 'black' or 'white'.
      */
     tinycolor(backgroundColor).isLight() ? 'black' : 'white',
+  lightColor: () => baseColor => {
+    /* see https://codepen.io/ewen-lbh/pen/dyYKWVL */
+    const { h, s } = tinycolor(baseColor).toHsl()
+    return tinycolor({ h, s: 2 * s, l: 0.9 }).toHslString()
+  },
+  darkColor: () => baseColor => {
+    /* see https://codepen.io/ewen-lbh/pen/dyYKWVL */
+    const { h, s } = tinycolor(baseColor).toHsl()
+    return tinycolor({ h, s: 0.25 * s, l: 0.4 }).toHslString()
+  },
   formatTime: (state, getters) => time => {
     if (time === null) return null
     return format(time, 'HH:mm')
