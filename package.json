@@ -114,7 +114,7 @@
     "tinycolor2": "^1.4.1",
     "tiptap": "^1.26.4",
     "tiptap-extensions": "^1.28.4",
-    "ua-parser-js": "^0.7.21",
+    "ua-parser-js": "^0.7.24",
     "v-tooltip": "^2.0.3",
     "vue-chartkick": "^0.6.0",
     "vue-context": "^5.0.0",
